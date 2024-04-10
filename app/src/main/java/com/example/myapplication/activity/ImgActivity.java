@@ -3,8 +3,6 @@ package com.example.myapplication.activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -15,9 +13,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -31,17 +27,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Karson Tiger
- */
-//获取本地图片并显示
-//参考：https://www.jb51.net/article/81948.htm
-public class ImgActivity extends Activity implements View.OnClickListener{
+public class ImgActivity extends Activity implements View.OnClickListener {
 
-    private List<Image> imageList = new ArrayList<>();
+    private List<Image> imageList = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_img);
@@ -51,22 +46,27 @@ public class ImgActivity extends Activity implements View.OnClickListener{
         ListView listView = findViewById(R.id.img_list);
         listView.setAdapter(adapter);
         ///list的点击事件
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick (AdapterView < ? > parent, View view,int position, long id){
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Image image = imageList.get(position);
 //                ToastUtil.showLong("你点击了图片" + image.getName());
             }
         });
     }
+
     //查询图片信息
     private void initImages() {
         /* 因为手机本地图片过多，若将其全部查询出来并显示，需要耗费过多时间，
            这里定义一个count变量用于控制显示出的图片数目 */
         int count = 0;
-        imageList = new ArrayList();
-        @SuppressLint("Recycle") Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                null, null,  null, null);
+        String[] perojection = {MediaStore.Images.Media.DATA};
+        String sortyOrder = MediaStore.Images.Media.DATE_MODIFIED + " DESC";
+
+        imageList = new ArrayList<>();
+
+        Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                perojection, null, null, sortyOrder);
         while (cursor.moveToNext()) {
             //获取图片的名称
             @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME));
@@ -88,7 +88,7 @@ public class ImgActivity extends Activity implements View.OnClickListener{
 
             count++;
             //显示出3张图片，可改变该数字，控制显示出的图片数目
-            if(count >= 3) break;
+            if (count >= 3) break;
         }
         Log.d("ImgActivity: ", "initImage: " + "imageList.size: " + imageList.size());
     }
@@ -124,7 +124,7 @@ public class ImgActivity extends Activity implements View.OnClickListener{
         Log.d("ImgActivity: ", "readPermission: " + permission_readStorage + "\n");
         Log.d("ImgActivity： ", "cameraPermission: " + permission_camera + "\n");
 
-        if(file.exists()) {
+        if (file.exists()) {
             bm = BitmapFactory.decodeFile(path);
         } else {
 //            Log.d("该图片不存在！");

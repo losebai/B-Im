@@ -48,8 +48,27 @@ android {
 }
 
 dependencies {
+    val nav_version = "2.2.2"
+    //noinspection GradleDependency
+    implementation("androidx.navigation:navigation-fragment:$nav_version")
+    //noinspection GradleDependency
+    implementation( "androidx.navigation:navigation-ui:$nav_version")
+
+    // Kotlin
+    implementation( "androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation( "androidx.navigation:navigation-ui-ktx:$nav_version")
+
+    // Dynamic Fea()ture Module Support
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
+
+    // Testing Nav()
+    testImplementation( "androidx.navigation:navigation-testing:$nav_version")
+
+    //noinspection GradlePluginVersion
+//    implementation("com.android.tools.build:gradle:8.2.2")
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
     implementation("com.google.accompanist:accompanist-permissions:0.31.0-alpha")
-    implementation("com.google.accompanist:accompanist-placeholder-material:0.31.0-alphac")
+    implementation("com.google.accompanist:accompanist-placeholder-material:0.31.0-alpha")
     implementation("io.coil-kt:coil-compose:2.2.2")
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
