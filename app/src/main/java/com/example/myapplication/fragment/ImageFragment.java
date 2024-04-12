@@ -22,7 +22,6 @@ public class ImageFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fg_content,container,false);
         TextView txt_content = view.findViewById(R.id.txt_content);
         txt_content.setText(content);
