@@ -20,7 +20,7 @@ import androidx.core.content.ContextCompat;
 
 
 import com.example.myapplication.R;
-import com.example.myapplication.entity.Image;
+import com.example.myapplication.entity.ImageEntity;
 import com.example.myapplication.ui.theme.ImageAdapter;
 
 import java.io.File;
@@ -29,7 +29,7 @@ import java.util.List;
 
 public class ImgActivity extends Activity implements View.OnClickListener {
 
-    private List<Image> imageList = null;
+    private List<ImageEntity> imageEntityList = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +42,15 @@ public class ImgActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_img);
         initImages();   //初始化图片数据
         ImageAdapter adapter = new ImageAdapter(ImgActivity.this,
-                R.layout.item_listview, imageList);
+                R.layout.item_listview, imageEntityList);
         ListView listView = findViewById(R.id.img_list);
         listView.setAdapter(adapter);
         ///list的点击事件
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Image image = imageList.get(position);
-//                ToastUtil.showLong("你点击了图片" + image.getName());
+                ImageEntity imageEntity = imageEntityList.get(position);
+//                ToastUtil.showLong("你点击了图片" + imageEntity.getName());
             }
         });
     }
@@ -63,7 +63,7 @@ public class ImgActivity extends Activity implements View.OnClickListener {
         String[] perojection = {MediaStore.Images.Media.DATA};
         String sortyOrder = MediaStore.Images.Media.DATE_MODIFIED + " DESC";
 
-        imageList = new ArrayList<>();
+        imageEntityList = new ArrayList<>();
 
         Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 perojection, null, null, sortyOrder);
@@ -83,14 +83,14 @@ public class ImgActivity extends Activity implements View.OnClickListener {
             @SuppressLint("Range") String desc = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DESCRIPTION));
             Log.d("ImgActivity", "initImages: " + "ImageDesc: " + desc);
 
-            Image image = new Image(bm, name, location);
-            imageList.add(image);
+            ImageEntity imageEntity = new ImageEntity(bm, name, location);
+            imageEntityList.add(imageEntity);
 
             count++;
             //显示出3张图片，可改变该数字，控制显示出的图片数目
             if (count >= 3) break;
         }
-        Log.d("ImgActivity: ", "initImage: " + "imageList.size: " + imageList.size());
+        Log.d("ImgActivity: ", "initImage: " + "imageEntityList.size: " + imageEntityList.size());
     }
 
     //根据路径获取图片

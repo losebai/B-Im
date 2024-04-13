@@ -9,24 +9,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.entity.Image;
+import com.example.myapplication.entity.ImageEntity;
 
 import java.util.List;
 
 
-public class ImageAdapter extends ArrayAdapter<Image> {
+public class ImageAdapter extends ArrayAdapter<ImageEntity> {
 
     private final int resourceId;
 
     public ImageAdapter(Context context, int textViewResourceId,
-                        List<Image> objects) {
+                        List<ImageEntity> objects) {
         super(context, textViewResourceId, objects);
         resourceId = textViewResourceId;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Image image = getItem(position);
+        ImageEntity imageEntity = getItem(position);
         View view;
         ViewHolder viewHolder;
         if(convertView == null) {
@@ -41,9 +41,9 @@ public class ImageAdapter extends ArrayAdapter<Image> {
             view = convertView;
             viewHolder = (ViewHolder) view.getTag();  //重新获取ViewHolder
         }
-        viewHolder.imageImage.setImageBitmap(image.getImage());
-        viewHolder.imageName.setText(image.getName());
-        viewHolder.imageLocation.setText(image.getLocation());
+        viewHolder.imageImage.setImageBitmap(imageEntity.getImage());
+        viewHolder.imageName.setText(imageEntity.getName());
+        viewHolder.imageLocation.setText(imageEntity.getLocation());
         return view;
     }
 
