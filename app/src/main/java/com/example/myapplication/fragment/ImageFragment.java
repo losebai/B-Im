@@ -27,4 +27,6 @@ public class ImageFragment extends Fragment {
         txt_content.setText(content);
         return view;
     }
+
+
 }
