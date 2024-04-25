@@ -2,13 +2,7 @@ package com.example.myapplication.common.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.net.Uri
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.rememberTransformableState
-import androidx.compose.foundation.gestures.transformable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,25 +14,14 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toFile
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.myapplication.R
@@ -128,28 +111,4 @@ fun ImageListView(messages: List<ImageEntity>, onClick: (ImageEntity) -> Unit) {
             ImageGroupButton(message, content, onClick=onClick)
         }
     }
-}
-
-@Composable
-@Preview(showBackground = true)
-fun TestFullScreenImage() {
-    val uri: Uri = Uri.parse("android:resource://myapplication/" + R.drawable.test)
-    FullScreenImage(
-        ImageEntity(null,null,uri.toString()
-        )
-    )
-}
-
-@Composable
-@Preview(showBackground = true)
-fun TestImageListView(){
-    val list: ArrayList<ImageEntity> = ArrayList()
-    val uri: Uri = Uri.parse("android:resource://myapplication/" + R.drawable.test)
-    list.add(ImageEntity(null, "test", uri.toString()))
-    list.add(ImageEntity(null, "test", uri.toString()))
-    list.add(ImageEntity(null, "test", uri.toString()))
-    list.add(ImageEntity(null, "test", uri.toString()))
-    list.add(ImageEntity(null, "test", uri.toString()))
-    list.add(ImageEntity(null, "test", uri.toString()))
-    ImageListView(list){}
 }
