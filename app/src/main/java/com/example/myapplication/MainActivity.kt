@@ -8,8 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -107,6 +111,21 @@ class MainActivity : AppCompatActivity() {
     @Composable
     @Preview(showBackground = true)
     fun ScaffoldExample(modifier: Modifier = Modifier) {
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = 128.dp),
+            modifier = modifier
+                .fillMaxSize()
+                .navigationBarsPadding()
+        ) {
+            if (!imageViewModel.isInit) {
+                imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.cameraDirPath));
+                imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.galleryDirPath));
+            }
+            imageViewModel.isInit = true
+            items(imageViewModel.groupList.size) { photo ->
+
+            }
+        }
         Column(
             modifier = modifier
                 .padding(15.dp),
