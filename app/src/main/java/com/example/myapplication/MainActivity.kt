@@ -33,6 +33,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.common.ImageUtils
+import com.example.myapplication.common.ui.ImageGroupButton
 import com.example.myapplication.common.ui.ImageListView
 import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
@@ -112,10 +113,10 @@ class MainActivity : AppCompatActivity() {
     @Preview(showBackground = true)
     fun ScaffoldExample(modifier: Modifier = Modifier) {
         LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 128.dp),
+            columns = GridCells.Adaptive(minSize = 96.dp),
             modifier = modifier
-                .fillMaxSize()
-                .navigationBarsPadding()
+                .padding(15.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             if (!imageViewModel.isInit) {
                 imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.cameraDirPath));
@@ -123,42 +124,7 @@ class MainActivity : AppCompatActivity() {
             }
             imageViewModel.isInit = true
             items(imageViewModel.groupList.size) { photo ->
-
-            }
-        }
-        Column(
-            modifier = modifier
-                .padding(15.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) { ->
-            if (!imageViewModel.isInit) {
-                imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.cameraDirPath));
-                imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.galleryDirPath));
-            }
-            imageViewModel.isInit = true
-            var count = 0;
-            imageViewModel.groupList.forEach { _ ->
-                count++
-                if (count % 3 == 0) {
-                    ImageListView(
-                        imageViewModel.groupList
-                            .subList(count - 3, count)
-                    ) { item ->
-                        if (item.isDir) {
-                            imageViewModel.groupName = item.name
-                            imageViewModel.groupPath = item.file?.parent.toString()
-                        }
-                        mainController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
-                    }
-                }
-            }
-            if (count % 3 > 0) {
-                ImageListView(
-                    imageViewModel.groupList.subList(
-                        if (count < 3) 0 else count - 3,
-                        count
-                    )
-                ) { item ->
+                ImageGroupButton(imageViewModel.groupList[photo]){item ->
                     if (item.isDir) {
                         imageViewModel.groupName = item.name
                         imageViewModel.groupPath = item.file?.parent.toString()
@@ -167,6 +133,47 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+//        Column(
+//            modifier = modifier
+//                .padding(15.dp),
+//            verticalArrangement = Arrangement.spacedBy(16.dp),
+//        ) { ->
+//            if (!imageViewModel.isInit) {
+//                imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.cameraDirPath));
+//                imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.galleryDirPath));
+//            }
+//            imageViewModel.isInit = true
+//            var count = 0;
+//            imageViewModel.groupList.forEach { _ ->
+//                count++
+//                if (count % 3 == 0) {
+//                    ImageListView(
+//                        imageViewModel.groupList
+//                            .subList(count - 3, count)
+//                    ) { item ->
+//                        if (item.isDir) {
+//                            imageViewModel.groupName = item.name
+//                            imageViewModel.groupPath = item.file?.parent.toString()
+//                        }
+//                        mainController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
+//                    }
+//                }
+//            }
+//            if (count % 3 > 0) {
+//                ImageListView(
+//                    imageViewModel.groupList.subList(
+//                        if (count < 3) 0 else count - 3,
+//                        count
+//                    )
+//                ) { item ->
+//                    if (item.isDir) {
+//                        imageViewModel.groupName = item.name
+//                        imageViewModel.groupPath = item.file?.parent.toString()
+//                    }
+//                    mainController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
+//                }
+//            }
+//        }
     }
 
 }
