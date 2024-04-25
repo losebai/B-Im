@@ -12,21 +12,20 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.common.ui.FullScreenImage
-import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.entity.ImageEntity
 
 
@@ -37,7 +36,7 @@ fun ImageDetail(imageEntity: ImageEntity, mainController: NavHostController) {
             ImageTopBar(imageEntity.name, mainController)
         },
         bottomBar = {
-            GetBottomBar(mainController)
+            GetBottomBar()
         }
     ) { innerPadding ->
         FullScreenImage(imageEntity = imageEntity, modifier = Modifier.padding(innerPadding))
@@ -45,9 +44,8 @@ fun ImageDetail(imageEntity: ImageEntity, mainController: NavHostController) {
 
 }
 
-@Preview(showBackground = true)
 @Composable
-fun GetBottomBar(navHostController: NavHostController = rememberNavController()) {
+fun GetBottomBar() {
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.primary,
@@ -60,7 +58,7 @@ fun GetBottomBar(navHostController: NavHostController = rememberNavController())
             val buttonModifier = Modifier.size(70.dp)
             val IconModifier = Modifier.size(30.dp)
             IconButton(
-                onClick = { navHostController.navigate(MenuRouteConfig.ROUTE_IMAGE) },
+                onClick = {  },
                 modifier = buttonModifier
             ) {
                 Column(
@@ -78,7 +76,7 @@ fun GetBottomBar(navHostController: NavHostController = rememberNavController())
                 }
             }
             IconButton(
-                onClick = { navHostController.navigate(MenuRouteConfig.ROUTE_COMMUNITY) },
+                onClick = { },
                 modifier = buttonModifier
             ) {
                 Column(
@@ -93,7 +91,7 @@ fun GetBottomBar(navHostController: NavHostController = rememberNavController())
                 }
             }
             IconButton(
-                onClick = { navHostController.navigate(MenuRouteConfig.ROUTE_SETTING) },
+                onClick = {  },
                 modifier = buttonModifier
             ) {
                 Column(
@@ -108,7 +106,7 @@ fun GetBottomBar(navHostController: NavHostController = rememberNavController())
                 }
             }
             IconButton(
-                onClick = { navHostController.navigate(MenuRouteConfig.ROUTE_SETTING) },
+                onClick = {  },
                 modifier = buttonModifier
             ) {
                 Column(
@@ -123,5 +121,13 @@ fun GetBottomBar(navHostController: NavHostController = rememberNavController())
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomActionBar(){
+    ModalBottomSheet(onDismissRequest = { /* Executed when the sheet is dismissed */ }) {
+        // Sheet content
     }
 }

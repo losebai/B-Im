@@ -1,12 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">My Application</string>
     <string name="menu_1" translatable="false">菜单一</string>
-    <string name="title_activity_img">activity_img</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -18,4 +13,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="titile">信息</string>
     <string name="todo">TODO</string>
+
+
+    <string name="image_p">成功获取相册权限</string>
+    <string name="app_p">成功获取应用权限</string>
 </resources>

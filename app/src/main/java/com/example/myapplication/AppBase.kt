@@ -33,6 +33,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -51,6 +52,8 @@ import com.example.myapplication.config.MenuRouteConfig
 class AppBase {
 
     lateinit var navHostController: NavHostController;
+
+    var Page by mutableStateOf(MenuRouteConfig.ROUTE_IMAGE)
 
 
     @Composable
@@ -75,7 +78,6 @@ class AppBase {
                             shape = CircleShape,
                             border = BorderStroke(0.dp, Color.Gray)
                         ) {
-
                             Image(
                                 painter = painterResource(id = R.drawable.test),
                                 contentDescription = null,
@@ -111,7 +113,7 @@ class AppBase {
                 val buttonModifier = Modifier.size(70.dp)
                 val IconModifier = Modifier.size(30.dp)
                 IconButton(
-                    onClick = { navHostController.navigate(MenuRouteConfig.ROUTE_IMAGE) },
+                    onClick = { Page = MenuRouteConfig.ROUTE_IMAGE },
                     modifier = buttonModifier
                 ) {
                     Column(
@@ -129,7 +131,7 @@ class AppBase {
                     }
                 }
                 IconButton(
-                    onClick = { navHostController.navigate(MenuRouteConfig.ROUTE_COMMUNITY) },
+                    onClick = { Page =  MenuRouteConfig.ROUTE_COMMUNITY },
                     modifier = buttonModifier
                 ) {
                     Column(
@@ -144,7 +146,7 @@ class AppBase {
                     }
                 }
                 IconButton(
-                    onClick = { navHostController.navigate(MenuRouteConfig.ROUTE_SETTING) },
+                    onClick = { Page = MenuRouteConfig.ROUTE_SETTING },
                     modifier = buttonModifier
                 ) {
                     Column(

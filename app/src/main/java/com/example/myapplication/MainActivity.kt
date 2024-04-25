@@ -1,8 +1,14 @@
 package com.example.myapplication
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.View
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
@@ -12,27 +18,34 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.common.ImageUtils
+import com.example.myapplication.common.PermissionUtils
 import com.example.myapplication.common.ui.ImageGroupButton
 import com.example.myapplication.common.ui.ImageListView
 import com.example.myapplication.config.MenuRouteConfig
@@ -41,16 +54,60 @@ import com.example.myapplication.entity.ImageEntity
 import com.example.myapplication.ui.ImageDetail
 import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.viewmodel.ImageViewModel
-
-val appBase: AppBase = AppBase()
+import com.google.android.material.snackbar.Snackbar
 
 
 class MainActivity : AppCompatActivity() {
 
 
-    lateinit var mainController: NavHostController;
-
     lateinit var imageViewModel: ImageViewModel;
+
+    val appBase: AppBase = AppBase()
+
+    @Composable
+    fun CheckoutSelfPermission(){
+        val requestPermissionLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted ->
+            }
+        )
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                Dialog(onDismissRequest={}){
+                    Text(
+                        text = getString(R.string.image_p),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Alignment.Center),
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.CAMERA
+            ) -> {
+                Dialog(onDismissRequest={}){
+                    Text(
+                        text = getString(R.string.app_p),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Alignment.Center),
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+            else -> {
+                requestPermissionLauncher.launch(
+                    Manifest.permission.CAMERA
+                )
+            }
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,23 +115,27 @@ class MainActivity : AppCompatActivity() {
         setContent {
             imageViewModel = viewModel<ImageViewModel>()
             ImageUtils.check(LocalContext.current, this)
-            mainController = rememberNavController();
+            appBase.navHostController = rememberNavController();
             NavHost(
-                navController = mainController,
+                navController = appBase.navHostController,
                 startDestination = PageRouteConfig.MENU_ROUTE,
                 modifier = Modifier
                     .fillMaxWidth(1f)
                     .fillMaxHeight(1f)
 
             ) {
+                // 一级页面
                 composable(PageRouteConfig.MENU_ROUTE) {
                     PageHost()
                 }
+                // 二级页面 相片页
                 composable(PageRouteConfig.IMAGE_PAGE_ROUTE) {
-                    PhotoDataSet(imageViewModel, mainController)
+                    PhotoDataSet(imageViewModel, appBase.navHostController)
                 }
+                // 三级页面 相片详情
+                // todo 后面要优化
                 composable(PageRouteConfig.IMAGE_DETAIL_ROUTE) {
-                    ImageDetail(imageViewModel.imageEntity, mainController)
+                    ImageDetail(imageViewModel.imageEntity, appBase.navHostController)
                 }
             }
         }
@@ -84,24 +145,13 @@ class MainActivity : AppCompatActivity() {
     @Preview(showBackground = true)
     @Composable
     fun PageHost() {
-        appBase.navHostController = rememberNavController();
         appBase.Context(content = { innerPadding ->
-            val mod =  Modifier
+            val mod = Modifier
                 .padding(innerPadding)
-            NavHost(
-                navController = appBase.navHostController,
-                startDestination = MenuRouteConfig.ROUTE_IMAGE,
-                modifier = mod
-                    .fillMaxWidth(1f)
-                    .fillMaxHeight(1f)
-            ) {
-                composable(MenuRouteConfig.ROUTE_IMAGE) {
-                    ScaffoldExample()
-                }
-                composable(MenuRouteConfig.ROUTE_COMMUNITY) {
-                    Community(mod)
-                }
-                composable(MenuRouteConfig.ROUTE_SETTING) {
+            when (appBase.Page) {
+                MenuRouteConfig.ROUTE_IMAGE -> ScaffoldExample(mod)
+                MenuRouteConfig.ROUTE_COMMUNITY -> Community(mod)
+                MenuRouteConfig.ROUTE_SETTING -> {
                     Text(text = "设置", modifier = mod)
                     ImageUtils.CheckPermission()
                 }
@@ -121,59 +171,18 @@ class MainActivity : AppCompatActivity() {
             if (!imageViewModel.isInit) {
                 imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.cameraDirPath));
                 imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.galleryDirPath));
+                imageViewModel.isInit = true
             }
-            imageViewModel.isInit = true
             items(imageViewModel.groupList.size) { photo ->
-                ImageGroupButton(imageViewModel.groupList[photo]){item ->
+                ImageGroupButton(imageViewModel.groupList[photo]) { item ->
                     if (item.isDir) {
                         imageViewModel.groupName = item.name
                         imageViewModel.groupPath = item.file?.parent.toString()
                     }
-                    mainController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
+                    appBase.navHostController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
                 }
             }
         }
-//        Column(
-//            modifier = modifier
-//                .padding(15.dp),
-//            verticalArrangement = Arrangement.spacedBy(16.dp),
-//        ) { ->
-//            if (!imageViewModel.isInit) {
-//                imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.cameraDirPath));
-//                imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.galleryDirPath));
-//            }
-//            imageViewModel.isInit = true
-//            var count = 0;
-//            imageViewModel.groupList.forEach { _ ->
-//                count++
-//                if (count % 3 == 0) {
-//                    ImageListView(
-//                        imageViewModel.groupList
-//                            .subList(count - 3, count)
-//                    ) { item ->
-//                        if (item.isDir) {
-//                            imageViewModel.groupName = item.name
-//                            imageViewModel.groupPath = item.file?.parent.toString()
-//                        }
-//                        mainController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
-//                    }
-//                }
-//            }
-//            if (count % 3 > 0) {
-//                ImageListView(
-//                    imageViewModel.groupList.subList(
-//                        if (count < 3) 0 else count - 3,
-//                        count
-//                    )
-//                ) { item ->
-//                    if (item.isDir) {
-//                        imageViewModel.groupName = item.name
-//                        imageViewModel.groupPath = item.file?.parent.toString()
-//                    }
-//                    mainController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
-//                }
-//            }
-//        }
     }
 
 }
