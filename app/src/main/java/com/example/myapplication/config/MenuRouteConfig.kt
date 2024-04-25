@@ -26,4 +26,6 @@ object PageRouteConfig{
     const val MENU_ROUTE = "MENU_ROUTE"
 
     const val IMAGE_PAGE_ROUTE = "IMAGE_PAGE_ROUTE"
+
+    const val IMAGE_DETAIL_ROUTE = "IMAGE_SHOW_ROUTE";
 }

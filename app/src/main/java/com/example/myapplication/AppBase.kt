@@ -50,8 +50,6 @@ import com.example.myapplication.config.MenuRouteConfig
 
 class AppBase {
 
-    private var topAppBar: Unit? = null;
-
     lateinit var navHostController: NavHostController;
 
 
@@ -173,8 +171,7 @@ class AppBase {
     ) {
         var presses by remember { mutableIntStateOf(0) }
         Scaffold(
-            topBar = {
-                topBar()
+            topBar = {                topBar()
             },
             bottomBar = {
                 bottomBar()

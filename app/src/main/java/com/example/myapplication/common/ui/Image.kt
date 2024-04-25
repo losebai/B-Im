@@ -1,6 +1,7 @@
 package com.example.myapplication.common.ui
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -34,7 +35,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toFile
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.myapplication.R
@@ -47,50 +50,27 @@ fun FullScreenImage(
     imageEntity: ImageEntity,
     contentDescription: String? = null,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
 ) {
-    var scale by remember { mutableStateOf(1f) }
-    var offset by remember { mutableStateOf(Offset.Zero) }
-    val state = rememberTransformableState { zoomChange, _, _ ->
-        scale = (zoomChange * scale).coerceAtLeast(1f)
-    }
-
-    Surface(
-        color = Color.DarkGray,
+    val content = LocalContext.current
+    Image(
+        painter = rememberAsyncImagePainter(
+            ImageRequest.Builder
+            //淡出效果
+            //圆形效果
+                (content).data(data = imageEntity.location)
+                .apply(block = fun ImageRequest.Builder.() {
+                    //占位图
+                    placeholder(R.drawable.test)
+                    //淡出效果
+                    crossfade(true)
+                    //圆形效果
+                }).build()
+        ),
+        contentDescription = contentDescription,
         modifier = modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onDoubleTap = {
-                        scale = 1f
-                        offset = Offset.Zero
-                    },
-                    onTap = {
-                        onClick.invoke()
-                    }
-                )
-            }
-    ) {
-        Image(
-            painter = rememberAsyncImagePainter(imageEntity.location),
-            contentDescription = contentDescription,
-            modifier = Modifier
-                .fillMaxSize()
-                .transformable(state = state)
-                .graphicsLayer(
-                    scaleX = scale,
-                    scaleY = scale,
-                    translationX = offset.x,
-                    translationY = offset.y
-                )
-                .pointerInput(Unit) {
-                    detectDragGestures { _, dragAmount ->
-                        offset += dragAmount
-                    }
-                },
-            contentScale = ContentScale.FillBounds
-        )
-    }
+            .fillMaxSize(),
+        contentScale = ContentScale.None
+    )
 }
 
 @Composable
@@ -145,6 +125,28 @@ fun ImageListView(messages: List<ImageEntity>, onClick: (ImageEntity) -> Unit) {
             }
         }
     }
-
 }
 
+@Composable
+@Preview(showBackground = true)
+fun TestFullScreenImage() {
+    val uri: Uri = Uri.parse("android:resource://myapplication/" + R.drawable.test)
+    FullScreenImage(
+        ImageEntity(null,null,uri.toString()
+        )
+    )
+}
+
+@Composable
+@Preview(showBackground = true)
+fun TestImageListView(){
+    val list: ArrayList<ImageEntity> = ArrayList()
+    val uri: Uri = Uri.parse("android:resource://myapplication/" + R.drawable.test)
+    list.add(ImageEntity(null, "test", uri.toString()))
+    list.add(ImageEntity(null, "test", uri.toString()))
+    list.add(ImageEntity(null, "test", uri.toString()))
+    list.add(ImageEntity(null, "test", uri.toString()))
+    list.add(ImageEntity(null, "test", uri.toString()))
+    list.add(ImageEntity(null, "test", uri.toString()))
+    ImageListView(list){}
+}

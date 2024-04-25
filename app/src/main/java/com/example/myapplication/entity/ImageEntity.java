@@ -1,14 +1,16 @@
 package com.example.myapplication.entity;
 
-import android.graphics.Bitmap;
 
 import java.io.File;
+
 
 public class ImageEntity {
     private String name;
     private String location;
     private boolean isDir;
     private File file;
+
+    public ImageEntity(){}
 
     public ImageEntity(File file) {
         this.file = file;

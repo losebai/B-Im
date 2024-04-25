@@ -1,7 +1,8 @@
 package com.example.myapplication.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
+import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -9,10 +10,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,21 +26,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import com.example.myapplication.R
 import com.example.myapplication.common.ImageUtils
-import com.example.myapplication.common.ui.FullScreenImage
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.ImageEntity
 import com.example.myapplication.viewmodel.ImageViewModel
@@ -67,7 +70,9 @@ fun ImageTopBar(name: String, mainController: NavHostController) {
         },
         // 返回
         navigationIcon = {
-            IconButton(onClick = { mainController.navigate(PageRouteConfig.MENU_ROUTE) }) {
+            IconButton(onClick = {
+                mainController.navigateUp()
+            }) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = "Localized description"
@@ -86,6 +91,49 @@ fun ImageTopBar(name: String, mainController: NavHostController) {
     )
 }
 
+@Composable
+fun PhotoDataSetBody(list: ArrayList<ImageEntity>,imageViewModel: ImageViewModel, mainController: NavHostController , modifier: Modifier = Modifier) {
+    val content = LocalContext.current
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = 128.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .navigationBarsPadding()
+    ) {
+        items(list.size) { photo ->
+            Button(
+                onClick = {
+                    imageViewModel.imageEntity = list[photo]
+                    mainController.navigate(PageRouteConfig.IMAGE_DETAIL_ROUTE)
+                },
+                modifier = ImageModifier,
+                shape = RoundedCornerShape(20),
+                colors = ButtonDefaults.buttonColors(Color.White)
+            ) {
+                Image(
+                    painter =
+                    rememberAsyncImagePainter(
+                        ImageRequest.Builder
+                        //淡出效果
+                        //圆形效果
+                            (content).data(data = list[photo].location)
+                            .apply(block = fun ImageRequest.Builder.() {
+                                //占位图
+                                placeholder(R.drawable.test)
+                                //淡出效果
+                                crossfade(true)
+                                //圆形效果
+                            }).build()
+                    ),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.padding(0.dp),
+                )
+            }
+        }
+    }
+
+}
 
 @Preview(showBackground = true)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -96,71 +144,21 @@ fun PhotoDataSet(
     mainController: NavHostController = rememberNavController()
 ) {
     val list: ArrayList<ImageEntity> = ArrayList()
-    val path = imageViewModel.groupPath;
+    val path = imageViewModel.groupPath
     if (path != "") {
-        list.addAll(ImageUtils.getImageList(path));
+        list.addAll(ImageUtils.getImageList(path))
     } else {
-
+        val uri: Uri = Uri.parse("android:resource://drawable/" + R.drawable.test)
+        list.add(ImageEntity(null, "test", uri.toString()))
     }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = {
-                    Text(
-                        imageViewModel.groupName,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
-                // 返回
-                navigationIcon = {
-                    IconButton(onClick = { mainController.navigate(PageRouteConfig.MENU_ROUTE) }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                scrollBehavior = scrollBehavior,
-            )
+            ImageTopBar(imageViewModel.groupName, mainController)
         },
     ) { innerPadding ->
-        var isShowImageFullScreen by remember {
-            mutableStateOf(false)
-        }
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 128.dp),
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .background(Color.White)
-                .navigationBarsPadding()
-        ) {
-            items(list.size) { photo ->
-                Button(onClick = { isShowImageFullScreen = true }) {
-                    PhotoItem(list[photo], modifier = ImageModifier)
-                }
-            }
-        }
+        PhotoDataSetBody(list,imageViewModel, mainController, modifier = Modifier.padding(innerPadding))
     }
-}
-
-@Composable
-fun PhotoItem(image: ImageEntity, modifier: Modifier = Modifier) {
-    FullScreenImage(image, modifier = modifier)
 }
 

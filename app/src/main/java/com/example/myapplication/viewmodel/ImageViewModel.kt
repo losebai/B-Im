@@ -20,6 +20,8 @@ class ImageViewModel : ViewModel() {
 
     var isInit by mutableStateOf(false)
 
+    var imageEntity by mutableStateOf(ImageEntity())
+
     private fun groupAddAll(images: ArrayList<ImageEntity>){
         for ( c:ImageEntity in  images){
             if (c.isDir){

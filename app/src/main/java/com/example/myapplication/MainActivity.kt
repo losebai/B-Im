@@ -33,6 +33,7 @@ import com.example.myapplication.common.ui.ImageListView
 import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.ImageEntity
+import com.example.myapplication.ui.ImageDetail
 import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.viewmodel.ImageViewModel
 
@@ -66,6 +67,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(PageRouteConfig.IMAGE_PAGE_ROUTE) {
                     PhotoDataSet(imageViewModel, mainController)
+                }
+                composable(PageRouteConfig.IMAGE_DETAIL_ROUTE) {
+                    ImageDetail(imageViewModel.imageEntity, mainController)
                 }
             }
         }
@@ -126,7 +130,6 @@ class MainActivity : AppCompatActivity() {
                             imageViewModel.groupPath = item.file?.parent.toString()
                         }
                         mainController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
-
                     }
                 }
             }
