@@ -12,7 +12,6 @@ abstract class UIBase {
     var groupName by mutableStateOf(0)
 
 
-
     abstract fun GetTopAppBar()
 
 

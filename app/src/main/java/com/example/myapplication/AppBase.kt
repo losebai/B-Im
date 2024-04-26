@@ -13,12 +13,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -55,6 +60,8 @@ class AppBase {
 
     var Page by mutableStateOf(MenuRouteConfig.ROUTE_IMAGE)
 
+    var settingDrawerState by mutableStateOf(DrawerState(DrawerValue.Closed))
+
 
     @Composable
     @Preview(showBackground = true)
@@ -68,7 +75,7 @@ class AppBase {
             title = {
                 Row {
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { settingDrawerState = DrawerState(DrawerValue.Open) },
                         modifier = Modifier.size(40.dp),
                         shape = RoundedCornerShape(50),
                         contentPadding = PaddingCommon.ZERO_PADDING,
@@ -121,17 +128,17 @@ class AppBase {
                     ) {
                         Icon(
                             modifier = IconModifier,
-                            imageVector = Icons.Filled.Home,
+                            imageVector = Icons.Filled.MailOutline,
                             contentDescription = "Localized description"
                         )
                         Text(
-                            text = "相册",
+                            text = "消息",
                             fontSize = 12.sp,
                         )
                     }
                 }
                 IconButton(
-                    onClick = { Page =  MenuRouteConfig.ROUTE_COMMUNITY },
+                    onClick = { Page = MenuRouteConfig.ROUTE_IMAGE },
                     modifier = buttonModifier
                 ) {
                     Column(
@@ -139,14 +146,17 @@ class AppBase {
                     ) {
                         Icon(
                             modifier = IconModifier,
-                            imageVector = Icons.Filled.AccountBox,
+                            imageVector = Icons.Filled.AccountCircle,
                             contentDescription = "Localized description"
                         )
-                        Text(text = "社区", fontSize = 12.sp)
+                        Text(
+                            text = "联系人",
+                            fontSize = 12.sp,
+                        )
                     }
                 }
                 IconButton(
-                    onClick = { Page = MenuRouteConfig.ROUTE_SETTING },
+                    onClick = { Page = MenuRouteConfig.ROUTE_IMAGE },
                     modifier = buttonModifier
                 ) {
                     Column(
@@ -157,7 +167,25 @@ class AppBase {
                             imageVector = Icons.Filled.Favorite,
                             contentDescription = "Localized description"
                         )
-                        Text(text = "设置", fontSize = 12.sp)
+                        Text(
+                            text = "相册",
+                            fontSize = 12.sp,
+                        )
+                    }
+                }
+                IconButton(
+                    onClick = { Page = MenuRouteConfig.ROUTE_COMMUNITY },
+                    modifier = buttonModifier
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            modifier = IconModifier,
+                            imageVector = Icons.Filled.Home,
+                            contentDescription = "Localized description"
+                        )
+                        Text(text = "社区", fontSize = 12.sp)
                     }
                 }
             }
@@ -173,7 +201,8 @@ class AppBase {
     ) {
         var presses by remember { mutableIntStateOf(0) }
         Scaffold(
-            topBar = {                topBar()
+            topBar = {
+                topBar()
             },
             bottomBar = {
                 bottomBar()
