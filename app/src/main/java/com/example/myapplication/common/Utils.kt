@@ -1,5 +1,8 @@
 package com.example.myapplication.common
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.res.Resources
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -18,6 +21,15 @@ object Utils {
                 duration = SnackbarDuration.Short
             )
         }
+    }
+
+    internal fun Context.findActivity(): Activity {
+        var context = this
+        while (context is ContextWrapper) {
+            if (context is Activity) return context
+            context = context.baseContext
+        }
+        throw IllegalStateException("Permissions should be called in the context of an Activity")
     }
 
 }

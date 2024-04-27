@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -199,7 +200,6 @@ class AppBase {
         bottomBar: @Composable () -> Unit = { GetBottomBar() },
         floatingActionButton: @Composable () -> Unit = {  },
     ) {
-//        snackbarHostState = remember { SnackbarHostState() }
         Scaffold(
             snackbarHost={
                 SnackbarHost(hostState = snackbarHostState, modifier = Modifier.padding(0.dp))
@@ -213,7 +213,7 @@ class AppBase {
             floatingActionButton = { floatingActionButton() },
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(),
+                .fillMaxHeight().background(MaterialTheme.colorScheme.background),
             content = content
         )
     }

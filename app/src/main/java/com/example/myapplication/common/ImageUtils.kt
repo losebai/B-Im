@@ -192,13 +192,5 @@ object ImageUtils {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    @Composable
-    fun CheckPermission() {
-        PermissionUtils.ApplyPermission(Manifest.permission.READ_MEDIA_IMAGES) {laun->
-            SideEffect {
-                laun?.launch(Manifest.permission.READ_MEDIA_IMAGES)
-            }
-        }
-    }
+
 }

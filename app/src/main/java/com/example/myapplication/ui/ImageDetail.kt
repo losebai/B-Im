@@ -1,5 +1,7 @@
 package com.example.myapplication.ui
 
+import android.app.Activity
+import android.app.ActivityManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,12 +38,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.myapplication.R
+import com.example.myapplication.common.ShareUtil
 import com.example.myapplication.common.Utils
 import com.example.myapplication.common.ui.FullScreenImage
 import com.example.myapplication.entity.ImageEntity
@@ -76,6 +80,7 @@ fun GetBottomBar() {
     var visible by remember {
         mutableStateOf(false)
     }
+    val activity = LocalContext.current as Activity
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.primary,
@@ -107,7 +112,10 @@ fun GetBottomBar() {
                 }
             }
             IconButton(
-                onClick = { visible = !visible },
+                onClick = {
+//                    visible = !visible
+                    ShareUtil.shareImage(activity)
+                          },
                 modifier = buttonModifier
             ) {
                 Column(

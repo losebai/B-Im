@@ -19,4 +19,8 @@
 
     <string name="image_p">成功获取相册权限</string>
     <string name="app_p">成功获取应用权限</string>
+
+    <string name="checkout_permission">权限检查</string>
+
+    <string name="checkout_permission_close">点击任意空白处关闭......</string>
 </resources>

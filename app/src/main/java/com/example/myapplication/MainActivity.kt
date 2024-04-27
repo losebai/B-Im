@@ -1,10 +1,6 @@
 package com.example.myapplication
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -31,10 +27,13 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -60,11 +59,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.common.ImageUtils
+import com.example.myapplication.common.ShareUtil
 import com.example.myapplication.common.ui.ImageGroupButton
 import com.example.myapplication.common.ui.ImageListView
 import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.ImageEntity
+import com.example.myapplication.ui.AppTheme
 import com.example.myapplication.ui.ImageDetail
 import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.ui.SettingHome
@@ -75,41 +76,45 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
+
 class MainActivity : AppCompatActivity() {
 
 
     private lateinit var imageViewModel: ImageViewModel;
 
-    private val appBase: AppBase = AppBase()
+    private lateinit var appBase: AppBase;
 
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            imageViewModel = viewModel<ImageViewModel>()
-            ImageUtils.check(LocalContext.current, this)
-            appBase.navHostController = rememberNavController();
-            NavHost(
-                navController = appBase.navHostController,
-                startDestination = PageRouteConfig.MENU_ROUTE,
-                modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .fillMaxHeight(1f)
+            AppTheme() {
+                appBase = AppBase()
+                imageViewModel = viewModel<ImageViewModel>()
+//              ImageUtils.check(LocalContext.current, this)
+                appBase.navHostController = rememberNavController();
+                NavHost(
+                    navController = appBase.navHostController,
+                    startDestination = PageRouteConfig.MENU_ROUTE,
+                    modifier = Modifier
+                        .fillMaxWidth(1f)
+                        .fillMaxHeight(1f)
 
-            ) {
-                // 一级页面
-                composable(PageRouteConfig.MENU_ROUTE) {
-                    PageHost(imageViewModel)
-                }
-                // 二级页面 相片页
-                composable(PageRouteConfig.IMAGE_PAGE_ROUTE) {
-                    PhotoDataSet(imageViewModel, appBase.navHostController)
-                }
-                // 三级页面 相片详情
-                // todo 后面要优化
-                composable(PageRouteConfig.IMAGE_DETAIL_ROUTE) {
-                    ImageDetail(imageViewModel.imageEntity, appBase.navHostController)
+                ) {
+                    // 一级页面
+                    composable(PageRouteConfig.MENU_ROUTE) {
+                        PageHost(imageViewModel)
+                    }
+                    // 二级页面 相片页
+                    composable(PageRouteConfig.IMAGE_PAGE_ROUTE) {
+                        PhotoDataSet(imageViewModel, appBase.navHostController)
+                    }
+                    // 三级页面 相片详情
+                    // todo 后面要优化
+                    composable(PageRouteConfig.IMAGE_DETAIL_ROUTE) {
+                        ImageDetail(imageViewModel.imageEntity, appBase.navHostController)
+                    }
                 }
             }
         }
