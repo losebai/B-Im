@@ -147,9 +147,6 @@ fun PhotoDataSet(
     val path = imageViewModel.groupPath
     if (path != "") {
         list.addAll(ImageUtils.getImageList(path))
-    } else {
-        val uri: Uri = Uri.parse("android:resource://drawable/" + R.drawable.test)
-        list.add(ImageEntity(null, "test", uri.toString()))
     }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(

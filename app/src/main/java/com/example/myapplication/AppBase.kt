@@ -8,14 +8,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MailOutline
@@ -25,11 +23,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -37,9 +36,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,11 +59,13 @@ class AppBase {
 
     var settingDrawerState by mutableStateOf(DrawerState(DrawerValue.Closed))
 
+    var snackbarHostState =   SnackbarHostState()
+
 
     @Composable
     @Preview(showBackground = true)
     @OptIn(ExperimentalMaterial3Api::class)
-    fun Get_TopAppBar() {
+    fun GetTopAppBar() {
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -120,7 +119,7 @@ class AppBase {
                 val buttonModifier = Modifier.size(70.dp)
                 val IconModifier = Modifier.size(30.dp)
                 IconButton(
-                    onClick = { Page = MenuRouteConfig.ROUTE_IMAGE },
+                    onClick = { Page = MenuRouteConfig.ROUTE_MESSAGE },
                     modifier = buttonModifier
                 ) {
                     Column(
@@ -138,7 +137,7 @@ class AppBase {
                     }
                 }
                 IconButton(
-                    onClick = { Page = MenuRouteConfig.ROUTE_IMAGE },
+                    onClick = { Page = MenuRouteConfig.ROUTE_USERS },
                     modifier = buttonModifier
                 ) {
                     Column(
@@ -196,22 +195,22 @@ class AppBase {
     @Composable
     fun Context(
         content: @Composable (PaddingValues) -> Unit,
-        topBar: @Composable () -> Unit = { Get_TopAppBar() },
+        topBar: @Composable () -> Unit = { GetTopAppBar() },
         bottomBar: @Composable () -> Unit = { GetBottomBar() },
+        floatingActionButton: @Composable () -> Unit = {  },
     ) {
-        var presses by remember { mutableIntStateOf(0) }
+//        snackbarHostState = remember { SnackbarHostState() }
         Scaffold(
+            snackbarHost={
+                SnackbarHost(hostState = snackbarHostState, modifier = Modifier.padding(0.dp))
+            },
             topBar = {
                 topBar()
             },
             bottomBar = {
                 bottomBar()
             },
-            floatingActionButton = {
-                FloatingActionButton(onClick = { presses++ }) {
-                    Icon(Icons.Default.Add, contentDescription = "Add")
-                }
-            },
+            floatingActionButton = { floatingActionButton() },
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(),

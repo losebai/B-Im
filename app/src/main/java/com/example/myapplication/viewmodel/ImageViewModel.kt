@@ -18,6 +18,8 @@ class ImageViewModel : ViewModel() {
 
     private val groupNames = ArrayList<String>()
 
+    var isLoad by mutableStateOf(false)
+
     var isInit by mutableStateOf(false)
 
     var imageEntity by mutableStateOf(ImageEntity())

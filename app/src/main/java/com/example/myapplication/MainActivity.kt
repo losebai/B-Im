@@ -1,6 +1,8 @@
 package com.example.myapplication
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -22,14 +24,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -57,12 +65,15 @@ import com.example.myapplication.common.ui.ImageListView
 import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.ImageEntity
-import com.example.myapplication.ui.DrawerPage
 import com.example.myapplication.ui.ImageDetail
 import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.ui.SettingHome
 import com.example.myapplication.viewmodel.ImageViewModel
+import kotlinx.coroutines.launch
+import mu.KotlinLogging
 
+
+private val logger = KotlinLogging.logger {}
 
 class MainActivity : AppCompatActivity() {
 
@@ -89,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             ) {
                 // 一级页面
                 composable(PageRouteConfig.MENU_ROUTE) {
-                    PageHost()
+                    PageHost(imageViewModel)
                 }
                 // 二级页面 相片页
                 composable(PageRouteConfig.IMAGE_PAGE_ROUTE) {
@@ -104,10 +115,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("CoroutineCreationDuringComposition")
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @Preview(showBackground = true)
     @Composable
     fun PageHost(imageViewModel: ImageViewModel = viewModel()) {
+        val scope = rememberCoroutineScope()
         ModalNavigationDrawer(drawerState = appBase.settingDrawerState, drawerContent = {
             ModalDrawerSheet {
                 SettingHome()
@@ -119,25 +132,60 @@ class MainActivity : AppCompatActivity() {
                 when (appBase.Page) {
                     MenuRouteConfig.ROUTE_IMAGE -> {
                         if (!imageViewModel.isInit) {
+                            logger.info { "未加载" }
                             Column(
                                 modifier = mod.fillMaxHeight(),
                                 verticalArrangement = Arrangement.SpaceEvenly
                             ) {
-                                Text(text = stringResource(R.string.image_empty),
-                                    color=Color.Gray,
-                                    fontWeight= FontWeight.Bold,
-                                    fontSize = 20.sp)
+                                Text(
+                                    text = stringResource(R.string.image_empty),
+                                    color = Color.Gray,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp
+                                )
                             }
-                        }else{
-                            ScaffoldExample(imageViewModel)
+                        } else {
+                            logger.info { "加载" }
+                            ScaffoldExample(imageViewModel, mod)
+
                         }
                     }
 
                     MenuRouteConfig.ROUTE_COMMUNITY -> Community(mod)
                     MenuRouteConfig.ROUTE_SETTING -> {
                         Text(text = "设置", modifier = mod)
-                        ImageUtils.CheckPermission()
+//                        ImageUtils.CheckPermission()
                     }
+
+                    MenuRouteConfig.ROUTE_MESSAGE -> {
+                        scope.launch {
+                            appBase.snackbarHostState.showSnackbar(
+                                getString(R.string.empty_ui),
+                                actionLabel = "关闭",
+                                // Defaults to SnackbarDuration.Short
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    }
+
+                    MenuRouteConfig.ROUTE_USERS -> {
+                        scope.launch {
+                            appBase.snackbarHostState.showSnackbar(
+                                getString(R.string.empty_ui),
+                                actionLabel = "关闭",
+                                // Defaults to SnackbarDuration.Short
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    }
+                }
+            }, floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {
+                        imageViewModel.isInit = true
+                    },
+                ) {
+                    Icon(Icons.Filled.Add, "Floating action button.")
                 }
             })
         }
@@ -151,10 +199,10 @@ class MainActivity : AppCompatActivity() {
                 .padding(15.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            if (imageViewModel.isInit) {
+            if (!imageViewModel.isLoad) {
                 imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.cameraDirPath));
                 imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.galleryDirPath));
-                imageViewModel.isInit = false
+                imageViewModel.isLoad = true
             }
             items(imageViewModel.groupList.size) { photo ->
                 ImageGroupButton(imageViewModel.groupList[photo]) { item ->
@@ -167,7 +215,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 }
 
 

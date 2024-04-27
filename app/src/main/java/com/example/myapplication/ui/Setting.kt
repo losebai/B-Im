@@ -34,6 +34,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -42,75 +43,25 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
 import com.example.myapplication.common.PaddingCommon
+import com.example.myapplication.common.Utils
 import com.example.myapplication.entity.ImageEntity
 import kotlin.math.absoluteValue
 
 
-@Composable
-fun DrawerPage(
-    drawerContent: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
-    drawerState: MutableState<DrawerValue> = remember {
-        mutableStateOf(DrawerValue.Closed)
-    },
-) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        // 是否显示遮罩层
-        val showMask = remember {
-            mutableStateOf(false)
-        }
-        // 抽屉宽度
-        val drawerWidth = remember {
-            mutableStateOf(0)
-        }
-        // 抽屉的 x 位置
-        val xOffset by animateFloatAsState(
-            targetValue = 0 - drawerWidth.value.toFloat(),
-            animationSpec = tween(durationMillis = 400)
-        )
-        // 半透明
-        val maskLayerAlpha by animateFloatAsState(
-            targetValue = if (drawerState.value == DrawerValue.Closed) 0f else 0.6f,
-            animationSpec = tween(durationMillis = 400),
-            finishedListener = {
-                showMask.value = it.absoluteValue > 0f
-            }
-        )
-
-        // 遮罩
-        if (showMask.value || drawerState.value == DrawerValue.Open) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .alpha(maskLayerAlpha)
-                    .background(color = Color(0xff000000))
-                    .clickable {
-                        drawerState.value = DrawerValue.Closed
-                    }) {}
-        }
-        // 抽屉
-        Box(modifier = Modifier
-            .onSizeChanged {
-                drawerWidth.value = it.width
-            }
-            .graphicsLayer {
-                translationX = xOffset
-            }) {
-            drawerContent()
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
+    val scope = rememberCoroutineScope()
     val buttonModifier = Modifier.fillMaxWidth()
     val IconModifier = Modifier.size(25.dp)
+    val message = stringResource(id = R.string.empty_ui)
     Box(modifier = Modifier.background(Color.White).fillMaxHeight()){
         Column() {
             Row(
@@ -125,16 +76,11 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
                     contentPadding = PaddingCommon.ZERO_PADDING,
                     colors = ButtonDefaults.buttonColors(Color.White)
                 ) {
-                    Surface(
-                        shape = CircleShape,
-                        border = BorderStroke(0.dp, Color.Gray)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.test),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop
-                        )
-                    }
+                    Image(
+                        painter = painterResource(id = R.drawable.test),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop
+                    )
                 }
                 Column {
                     TextButton(
@@ -170,7 +116,7 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
                 }
             }
             IconButton(
-                onClick = { },
+                onClick = { Utils.message(scope, message, snackbarHostState)},
                 modifier = buttonModifier
             ) {
                 Row(
@@ -184,13 +130,13 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
                         contentDescription = "Localized description"
                     )
                     Text(
-                        text = "  检查权限",
+                        text = "  我的设置",
 //                        fontSize = 12.sp,
                     )
                 }
             }
             IconButton(
-                onClick = { },
+                onClick = { Utils.message(scope, message, snackbarHostState)},
                 modifier = buttonModifier
             ) {
                 Row(
@@ -204,13 +150,13 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
                         contentDescription = "Localized description"
                     )
                     Text(
-                        text = "  检查权限",
+                        text = "  意见反馈",
 //                        fontSize = 12.sp,
                     )
                 }
             }
             IconButton(
-                onClick = { },
+                onClick = { Utils.message(scope, message, snackbarHostState)},
                 modifier = buttonModifier
             ) {
                 Row(
@@ -224,13 +170,13 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
                         contentDescription = "Localized description"
                     )
                     Text(
-                        text = "  检查权限",
+                        text = "  夜间模式",
 //                        fontSize = 12.sp,
                     )
                 }
             }
             IconButton(
-                onClick = { },
+                onClick = { Utils.message(scope, message, snackbarHostState)},
                 modifier = buttonModifier
             ) {
                 Row(
@@ -244,7 +190,7 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
                         contentDescription = "Localized description"
                     )
                     Text(
-                        text = "  检查权限",
+                        text = "  加入QQ群",
 //                        fontSize = 12.sp,
                     )
                 }

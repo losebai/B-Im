@@ -3,21 +3,32 @@ package com.example.myapplication.config
 object MenuRouteConfig {
 
     /**
-     * 页面1路由
+     * 相册路由
      */
     const val ROUTE_IMAGE = "ROUTE_IMAGE_PAGE"
 
 
     /**
-     * 页面1路由
+     * 设置路由
      */
     const val ROUTE_SETTING = "ROUTE_SETTING"
 
 
     /**
-     * 页面1路由
+     * 社区路由
      */
     const val ROUTE_COMMUNITY = "ROUTE_COMMUNITY"
+
+    /**
+     * 消息路由
+     */
+    const val ROUTE_MESSAGE = "ROUTE_MESSAGE"
+
+
+    /**
+     * 联系人路由
+     */
+    const val ROUTE_USERS = "ROUTE_USERS"
 
 }
 

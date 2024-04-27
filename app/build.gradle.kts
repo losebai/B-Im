@@ -49,6 +49,7 @@ android {
 }
 
 dependencies {
+    implementation("io.github.microutils:kotlin-logging-jvm:2.0.6")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     val nav_version = "2.2.2"
     //noinspection GradleDependency
