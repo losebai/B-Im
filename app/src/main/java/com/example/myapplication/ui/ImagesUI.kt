@@ -109,12 +109,10 @@ fun ImageTopBar(name: String, mainController: NavHostController) {
 fun PhotoDataSetBody(
     list: Array<ImageEntity>,
     imageViewModel: ImageViewModel,
-    mainController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val content = LocalContext.current
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 128.dp),
+        columns = GridCells.Adaptive(minSize = 96.dp),
         modifier = modifier
             .fillMaxSize()
             .navigationBarsPadding()
@@ -124,7 +122,6 @@ fun PhotoDataSetBody(
                 onClick = {
                     imageViewModel.imageDetail = list[photo]
                     isDetail = true
-//                    mainController.navigate(PageRouteConfig.IMAGE_DETAIL_ROUTE)
                 },
                 modifier = ImageModifier,
                 shape = RoundedCornerShape(20),
@@ -132,19 +129,7 @@ fun PhotoDataSetBody(
             ) {
                 Image(
                     painter =
-                    rememberAsyncImagePainter(
-                        ImageRequest.Builder
-                        //淡出效果
-                        //圆形效果
-                            (content).data(data = list[photo].location)
-                            .apply(block = fun ImageRequest.Builder.() {
-                                //占位图
-                                placeholder(R.drawable.test)
-                                //淡出效果
-                                crossfade(true)
-                                //圆形效果
-                            }).build()
-                    ),
+                    rememberAsyncImagePainter(list[photo].location),
                     contentDescription = null,
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier.padding(0.dp),
@@ -197,7 +182,6 @@ fun PhotoDataSet(
                     PhotoDataSetBody(
                         it,
                         imageViewModel,
-                        mainController,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }

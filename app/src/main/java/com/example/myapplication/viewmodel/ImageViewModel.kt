@@ -22,12 +22,7 @@ class ImageViewModel : ViewModel() {
     // 是否加载
     var isLoad by mutableStateOf(false)
 
-    // 初始化
-    var isInit by mutableStateOf(false)
 
-
-    // 详情
-    var isDetail by mutableStateOf(false)
 
     // 详情
     var imageDetail by mutableStateOf(ImageEntity())

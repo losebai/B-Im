@@ -1,45 +1,31 @@
 package com.example.myapplication.ui
 
 import android.app.Activity
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,29 +35,31 @@ import com.example.myapplication.common.ShareUtil
 import com.example.myapplication.common.Utils
 import com.example.myapplication.common.ui.FullScreenImage
 import com.example.myapplication.entity.ImageEntity
+import mu.KotlinLogging
 import java.io.File
 
 
 var snackbarHostState = SnackbarHostState()
 
-//@Composable
-//fun ImageDetail(imageEntity: ImageEntity, mainController: NavHostController) {
-//    Scaffold(
-//        snackbarHost = {
-//            SnackbarHost(hostState = snackbarHostState, modifier = Modifier.padding(0.dp))
-//        },
-//        topBar = {
-//            ImageTopBar(imageEntity.name, mainController)
-//        },
-//        bottomBar = {
-//            GetBottomBar(imageEntity.file)
-//        }
-//    ) { innerPadding ->
-//        FullScreenImage(imageEntity = imageEntity, modifier = Modifier.padding(innerPadding).fillMaxSize())
-//    }
-//}
+private val logger = KotlinLogging.logger {}
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ImageDetail(imageEntity: ImageEntity, mainController: NavHostController) {
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState, modifier = Modifier.padding(0.dp))
+        },
+        topBar = {
+            ImageTopBar(imageEntity.name, mainController)
+        },
+        bottomBar = {
+            GetBottomBar(imageEntity.file)
+        }
+    ) { innerPadding ->
+        FullScreenImage(imageEntity = imageEntity, modifier = Modifier.padding(innerPadding).fillMaxSize())
+    }
+}
+
 @Composable
 fun GetBottomBar(file: File) {
     val scope = rememberCoroutineScope()
@@ -90,7 +78,7 @@ fun GetBottomBar(file: File) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             val buttonModifier = Modifier.size(70.dp)
-            val IconModifier = Modifier.size(30.dp)
+            val iconModifier = Modifier.size(30.dp)
             val message = stringResource(id = R.string.empty_ui)
             val activity = LocalContext.current as Activity
             IconButton(
@@ -101,7 +89,7 @@ fun GetBottomBar(file: File) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        modifier = IconModifier,
+                        modifier = iconModifier,
                         imageVector = Icons.Filled.Edit,
                         contentDescription = "Localized description"
                     )
@@ -127,7 +115,7 @@ fun GetBottomBar(file: File) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        modifier = IconModifier,
+                        modifier = iconModifier,
                         imageVector = Icons.Filled.Share,
                         contentDescription = "Localized description"
                     )
@@ -135,14 +123,17 @@ fun GetBottomBar(file: File) {
                 }
             }
             IconButton(
-                onClick = { Utils.message(scope, message, snackbarHostState) },
+                onClick = {
+
+                    logger.info { "文件删除 ${file.delete()}" }
+                },
                 modifier = buttonModifier
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        modifier = IconModifier,
+                        modifier = iconModifier,
                         imageVector = Icons.Filled.Delete,
                         contentDescription = "Localized description"
                     )
@@ -157,7 +148,7 @@ fun GetBottomBar(file: File) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        modifier = IconModifier,
+                        modifier = iconModifier,
                         imageVector = Icons.Filled.MoreVert,
                         contentDescription = "Localized description"
                     )

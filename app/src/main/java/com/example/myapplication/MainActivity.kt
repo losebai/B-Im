@@ -19,12 +19,17 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -40,6 +45,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.common.ImageUtils
+import com.example.myapplication.common.ui.DialogImageAdd
 import com.example.myapplication.common.ui.ImageGroupButton
 import com.example.myapplication.common.ui.ImageListView
 import com.example.myapplication.config.MenuRouteConfig
@@ -62,6 +68,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var imageViewModel: ImageViewModel;
 
     private lateinit var appBase: AppBase;
+
+    var isInit by mutableStateOf(false)
 
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -110,7 +118,7 @@ class MainActivity : AppCompatActivity() {
                     .padding(innerPadding)
                 when (appBase.Page) {
                     MenuRouteConfig.ROUTE_IMAGE -> {
-                        if (!imageViewModel.isInit) {
+                        if (!isInit) {
                             logger.info { "未加载" }
                             Column(
                                 modifier = mod.fillMaxHeight(),
@@ -161,7 +169,7 @@ class MainActivity : AppCompatActivity() {
             }, floatingActionButton = {
                 FloatingActionButton(
                     onClick = {
-                        imageViewModel.isInit = true
+                        isInit = true
                     },
                 ) {
                     Icon(Icons.Filled.Add, "Floating action button.")
@@ -172,6 +180,9 @@ class MainActivity : AppCompatActivity() {
 
     @Composable
     fun ScaffoldExample(imageViewModel: ImageViewModel, modifier: Modifier = Modifier) {
+        var isAdd by remember {
+            mutableStateOf(false)
+        }
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 96.dp),
             modifier = modifier
@@ -192,9 +203,25 @@ class MainActivity : AppCompatActivity() {
                     appBase.navHostController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
                 }
             }
+            item {
+                IconButton(onClick = {  isAdd = true}) {
+                    Icon(
+                        modifier = Modifier.padding(0.dp) ,
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = "Localized description"
+                    )
+                }
+                if (isAdd){
+                    DialogImageAdd(onDismissRequest = {}, onClose = {
+                        isAdd = false
+                    })
+                }
+            }
         }
     }
 }
+
+
 
 
 @Preview(showBackground = true)
