@@ -1,6 +1,5 @@
 package com.example.myapplication.common;
 
-import static androidx.core.app.ActivityCompat.startActivityForResult;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -23,41 +22,46 @@ public class ShareUtil {
     public static void shareText(Activity activity, String title, String text) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        if (title.isEmpty()) {
-            title = "share";
-        }
         sendIntent.putExtra(Intent.EXTRA_TEXT, text);
         sendIntent.setType("text/plain");
         activity.startActivityForResult(Intent.createChooser(sendIntent, title), 80001);
     }
 
     // 原生通用分享图片
-    public static void shareImage(Activity activity, String authority, String title, String filePath) {
+    public static void shareImage(Activity activity, String authority, String title, File file){
+        shareImage(activity, authority, title, file, false);
+    }
+    public static void shareImage(Activity activity, String authority, String title, File file,  boolean isApp) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        if (title.isEmpty()) {
-            title = "share";
-        }
-        File file = new File(filePath);
-        Uri uri = getFileUri(activity, authority, file);
+        Uri uri = getFileUri(activity, authority, file, isApp);
         sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
         sendIntent.setType("image/png");
         activity.startActivityForResult(Intent.createChooser(sendIntent, title), 80002);
     }
 
-    public static Uri getFileUri(Context context, String authority, File file) {
+
+    // 通用文件
+    public static void shareFile(Activity activity, String authority, String type, File file,  boolean isApp) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        Uri uri = FileProvider.getUriForFile(activity, authority , file);
+        sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        sendIntent.setType(type);
+        activity.startActivityForResult(Intent.createChooser(sendIntent, file.getName()), 80002);
+    }
+
+    public static Uri getFileUri(Context context, String authority, File file, boolean isApp) {
         Uri uri;
         // 低版本直接用 Uri.fromFile
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             uri = Uri.fromFile(file);
         } else {
-            try {
-                uri = FileProvider.getUriForFile(context, authority + ".fileProvider", file);
-            } catch (Exception e) {
-                e.printStackTrace();
-                uri = getImageContentUri(context, file);
-            }
-            if (uri == null) {
+            if(isApp){
+                // 分享当前应用下的共享路径中的
+                uri = FileProvider.getUriForFile(context, authority , file);
+            }else {
+                // 分享外部的文件
                 uri = getImageContentUri(context, file);
             }
         }

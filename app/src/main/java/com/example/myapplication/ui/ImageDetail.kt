@@ -1,7 +1,6 @@
 package com.example.myapplication.ui
 
 import android.app.Activity
-import android.app.ActivityManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,6 +48,7 @@ import com.example.myapplication.common.ShareUtil
 import com.example.myapplication.common.Utils
 import com.example.myapplication.common.ui.FullScreenImage
 import com.example.myapplication.entity.ImageEntity
+import java.io.File
 
 
 var snackbarHostState = SnackbarHostState()
@@ -63,23 +63,22 @@ fun ImageDetail(imageEntity: ImageEntity, mainController: NavHostController) {
             ImageTopBar(imageEntity.name, mainController)
         },
         bottomBar = {
-            GetBottomBar()
+            GetBottomBar(imageEntity.file)
         }
     ) { innerPadding ->
         FullScreenImage(imageEntity = imageEntity, modifier = Modifier.padding(innerPadding))
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GetBottomBar() {
+fun GetBottomBar(file: File) {
     val scope = rememberCoroutineScope()
     // 分享
-    val sheetState = rememberModalBottomSheetState();
-    var visible by remember {
-        mutableStateOf(false)
-    }
+//    val sheetState = rememberModalBottomSheetState();
+//    var visible by remember {
+//        mutableStateOf(false)
+//    }
     val activity = LocalContext.current as Activity
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -114,8 +113,13 @@ fun GetBottomBar() {
             IconButton(
                 onClick = {
 //                    visible = !visible
-                    ShareUtil.shareImage(activity)
-                          },
+                    ShareUtil.shareImage(
+                        activity,
+                        "com.example.myapplication.fileprovider",
+                        file.name,
+                        file
+                    )
+                },
                 modifier = buttonModifier
             ) {
                 Column(
@@ -161,36 +165,36 @@ fun GetBottomBar() {
             }
         }
     }
-    if (visible) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                visible = false
-            },
-            sheetState = sheetState
-        ) {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 128.dp),
-                modifier = Modifier
-            ) {
-                item(1) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Image(
-                            painter =
-                            painterResource(id = R.drawable.test),
-                            alignment = Alignment.Center,
-                            contentScale = ContentScale.Crop,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .height(80.dp)
-                                .padding(5.dp)
-                        )
-                        Text(
-                            text = "微信",
-                            color = Color.Black
-                        )
-                    }
-                }
-            }
-        }
-    }
+//    if (visible) {
+//        ModalBottomSheet(
+//            onDismissRequest = {
+//                visible = false
+//            },
+//            sheetState = sheetState
+//        ) {
+//            LazyVerticalGrid(
+//                columns = GridCells.Adaptive(minSize = 128.dp),
+//                modifier = Modifier
+//            ) {
+//                item(1) {
+//                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+//                        Image(
+//                            painter =
+//                            painterResource(id = R.drawable.test),
+//                            alignment = Alignment.Center,
+//                            contentScale = ContentScale.Crop,
+//                            contentDescription = null,
+//                            modifier = Modifier
+//                                .height(80.dp)
+//                                .padding(5.dp)
+//                        )
+//                        Text(
+//                            text = "微信",
+//                            color = Color.Black
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    }
 }

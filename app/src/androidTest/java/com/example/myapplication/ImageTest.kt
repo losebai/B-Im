@@ -27,6 +27,7 @@ import com.example.myapplication.common.ui.FullScreenImage
 import com.example.myapplication.common.ui.ImageListView
 import com.example.myapplication.entity.ImageEntity
 import com.example.myapplication.ui.GetBottomBar
+import java.io.File
 
 @Composable
 @Preview(showBackground = true)
@@ -55,7 +56,7 @@ fun TestImageListView(){
 @Composable
 @Preview(showBackground = true)
 fun TestGetBottomBar(){
-    GetBottomBar()
+    GetBottomBar(File(""))
 }
 
 
