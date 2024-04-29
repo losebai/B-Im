@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -23,27 +24,29 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
+import com.example.myapplication.R
 import com.example.myapplication.common.ui.FullScreenImage
 import com.example.myapplication.common.ui.ImageListView
 import com.example.myapplication.entity.ImageEntity
 import com.example.myapplication.ui.GetBottomBar
+import com.example.myapplication.ui.ImageDetail
 import java.io.File
 
 @Composable
 @Preview(showBackground = true)
 fun TestFullScreenImage() {
-    val uri: Uri = Uri.parse("android:resource://myapplication/" + R.drawable.test)
     FullScreenImage(
-        ImageEntity(null,null,uri.toString()
-        )
+        ImageEntity(null,null, "D:/java_items/images/app/src/main/res/drawable/test.jpg"
+        ), modifier = Modifier.fillMaxSize()
     )
 }
 
 @Composable
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 fun TestImageListView(){
     val list: ArrayList<ImageEntity> = ArrayList()
-    val uri: Uri = Uri.parse("android:resource://myapplication/" + R.drawable.test)
+    val uri: Uri = Uri.parse("android:resource://drawable/" + R.drawable.test)
     list.add(ImageEntity(null, "test", uri.toString()))
     list.add(ImageEntity(null, "test", uri.toString()))
     list.add(ImageEntity(null, "test", uri.toString()))
@@ -54,7 +57,7 @@ fun TestImageListView(){
 }
 
 @Composable
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 fun TestGetBottomBar(){
     GetBottomBar(File(""))
 }
@@ -62,7 +65,7 @@ fun TestGetBottomBar(){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview(showBackground = true, name = "TestImageShare", group = "test")
+//@Preview(showBackground = true, name = "TestImageShare", group = "test")
 fun TestImageShare() {
     // 分享
     val sheetState = rememberModalBottomSheetState();
@@ -75,7 +78,6 @@ fun TestImageShare() {
             Text(text = "打开底部弹出")
         }
     }
-
     if (visible) {
         ModalBottomSheet(
             onDismissRequest = {
@@ -102,4 +104,12 @@ fun TestImageShare() {
 
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TestImageDetail(){
+    val uri: Uri = Uri.parse("android:resource://drawable/" + R.drawable.zi)
+    val mainController = rememberNavController();
+    ImageDetail(ImageEntity(File(uri.toString())), mainController)
 }

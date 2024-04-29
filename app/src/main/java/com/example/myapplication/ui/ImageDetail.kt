@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -53,22 +54,22 @@ import java.io.File
 
 var snackbarHostState = SnackbarHostState()
 
-@Composable
-fun ImageDetail(imageEntity: ImageEntity, mainController: NavHostController) {
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState, modifier = Modifier.padding(0.dp))
-        },
-        topBar = {
-            ImageTopBar(imageEntity.name, mainController)
-        },
-        bottomBar = {
-            GetBottomBar(imageEntity.file)
-        }
-    ) { innerPadding ->
-        FullScreenImage(imageEntity = imageEntity, modifier = Modifier.padding(innerPadding))
-    }
-}
+//@Composable
+//fun ImageDetail(imageEntity: ImageEntity, mainController: NavHostController) {
+//    Scaffold(
+//        snackbarHost = {
+//            SnackbarHost(hostState = snackbarHostState, modifier = Modifier.padding(0.dp))
+//        },
+//        topBar = {
+//            ImageTopBar(imageEntity.name, mainController)
+//        },
+//        bottomBar = {
+//            GetBottomBar(imageEntity.file)
+//        }
+//    ) { innerPadding ->
+//        FullScreenImage(imageEntity = imageEntity, modifier = Modifier.padding(innerPadding).fillMaxSize())
+//    }
+//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +80,6 @@ fun GetBottomBar(file: File) {
 //    var visible by remember {
 //        mutableStateOf(false)
 //    }
-    val activity = LocalContext.current as Activity
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.primary,
@@ -92,6 +92,7 @@ fun GetBottomBar(file: File) {
             val buttonModifier = Modifier.size(70.dp)
             val IconModifier = Modifier.size(30.dp)
             val message = stringResource(id = R.string.empty_ui)
+            val activity = LocalContext.current as Activity
             IconButton(
                 onClick = { Utils.message(scope, message, snackbarHostState) },
                 modifier = buttonModifier

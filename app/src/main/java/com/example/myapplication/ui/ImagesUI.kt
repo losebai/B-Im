@@ -1,7 +1,6 @@
 package com.example.myapplication.ui
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -22,10 +21,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -40,7 +46,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.myapplication.R
-import com.example.myapplication.common.ImageUtils
+import com.example.myapplication.common.ui.FullScreenImage
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.ImageEntity
 import com.example.myapplication.viewmodel.ImageViewModel
@@ -50,6 +56,9 @@ val ImageModifier: Modifier = Modifier
     .width(100.dp)
     .height(100.dp)
     .padding(1.dp);
+
+var isDetail by mutableStateOf(false)
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,7 +80,12 @@ fun ImageTopBar(name: String, mainController: NavHostController) {
         // 返回
         navigationIcon = {
             IconButton(onClick = {
-                mainController.navigateUp()
+                if (!isDetail){
+                    // 从列表页返回
+                    mainController.navigateUp()
+                }else{
+                    isDetail = false
+                }
             }) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
@@ -92,7 +106,12 @@ fun ImageTopBar(name: String, mainController: NavHostController) {
 }
 
 @Composable
-fun PhotoDataSetBody(list: ArrayList<ImageEntity>,imageViewModel: ImageViewModel, mainController: NavHostController , modifier: Modifier = Modifier) {
+fun PhotoDataSetBody(
+    list: Array<ImageEntity>,
+    imageViewModel: ImageViewModel,
+    mainController: NavHostController,
+    modifier: Modifier = Modifier
+) {
     val content = LocalContext.current
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 128.dp),
@@ -103,8 +122,9 @@ fun PhotoDataSetBody(list: ArrayList<ImageEntity>,imageViewModel: ImageViewModel
         items(list.size) { photo ->
             Button(
                 onClick = {
-                    imageViewModel.imageEntity = list[photo]
-                    mainController.navigate(PageRouteConfig.IMAGE_DETAIL_ROUTE)
+                    imageViewModel.imageDetail = list[photo]
+                    isDetail = true
+//                    mainController.navigate(PageRouteConfig.IMAGE_DETAIL_ROUTE)
                 },
                 modifier = ImageModifier,
                 shape = RoundedCornerShape(20),
@@ -143,19 +163,45 @@ fun PhotoDataSet(
     imageViewModel: ImageViewModel = viewModel(),
     mainController: NavHostController = rememberNavController()
 ) {
-    val list: ArrayList<ImageEntity> = ArrayList()
     val path = imageViewModel.groupPath
     if (path != "") {
-        list.addAll(ImageUtils.getImageList(path))
+        imageViewModel.loadPath(path)
     }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            ImageTopBar(imageViewModel.groupName, mainController)
+        snackbarHost = {
+            if (isDetail) {
+                SnackbarHost(hostState = snackbarHostState, modifier = Modifier.padding(0.dp))
+            }
         },
+        topBar = {
+            if (isDetail) {
+                ImageTopBar(imageViewModel.imageDetail.name, mainController)
+            } else {
+                ImageTopBar(imageViewModel.groupName, mainController)
+            }
+        },
+        bottomBar = {
+            if (isDetail) {
+                GetBottomBar(imageViewModel.imageDetail.file)
+            }
+        },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
-        PhotoDataSetBody(list,imageViewModel, mainController, modifier = Modifier.padding(innerPadding))
+        if (isDetail){
+            FullScreenImage(imageEntity = imageViewModel.imageDetail, modifier = Modifier.padding(innerPadding).fillMaxSize())
+        }else{
+            imageViewModel.getImageList(path)
+                ?.let {
+                    PhotoDataSetBody(
+                        it,
+                        imageViewModel,
+                        mainController,
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
+        }
     }
 }
 

@@ -3,70 +3,49 @@ package com.example.myapplication
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.view.View
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.common.ImageUtils
-import com.example.myapplication.common.ShareUtil
 import com.example.myapplication.common.ui.ImageGroupButton
 import com.example.myapplication.common.ui.ImageListView
 import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.ImageEntity
 import com.example.myapplication.ui.AppTheme
-import com.example.myapplication.ui.ImageDetail
 import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.ui.SettingHome
 import com.example.myapplication.viewmodel.ImageViewModel
@@ -109,11 +88,6 @@ class MainActivity : AppCompatActivity() {
                     // 二级页面 相片页
                     composable(PageRouteConfig.IMAGE_PAGE_ROUTE) {
                         PhotoDataSet(imageViewModel, appBase.navHostController)
-                    }
-                    // 三级页面 相片详情
-                    // todo 后面要优化
-                    composable(PageRouteConfig.IMAGE_DETAIL_ROUTE) {
-                        ImageDetail(imageViewModel.imageEntity, appBase.navHostController)
                     }
                 }
             }

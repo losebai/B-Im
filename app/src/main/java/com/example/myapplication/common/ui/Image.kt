@@ -35,29 +35,17 @@ fun FullScreenImage(
     contentDescription: String? = null,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 ) {
-    val content = LocalContext.current
     Image(
         painter = rememberAsyncImagePainter(
-            ImageRequest.Builder
-            //淡出效果
-            //圆形效果
-                (content).data(data = imageEntity.location)
-                .apply(block = fun ImageRequest.Builder.() {
-                    //占位图
-                    placeholder(R.drawable.test)
-                    //淡出效果
-                    crossfade(true)
-                    //圆形效果
-                }).build()
+            imageEntity.location
         ),
         contentDescription = contentDescription,
-        modifier = modifier
-            .fillMaxSize(),
-        contentScale = ContentScale.None
+        modifier = modifier,
+        contentScale = ContentScale.Fit
     )
 }
 @Composable
-fun ImageGroupButton(message: ImageEntity,content: Context = LocalContext.current,  onClick: (ImageEntity) -> Unit){
+fun ImageGroupButton(message: ImageEntity,  onClick: (ImageEntity) -> Unit){
     Button(
         onClick = {
             onClick(message)
@@ -72,17 +60,7 @@ fun ImageGroupButton(message: ImageEntity,content: Context = LocalContext.curren
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
                 painter = //占位图
-                rememberAsyncImagePainter(ImageRequest.Builder
-                //淡出效果
-                //圆形效果
-                    (content).data(data = message.location)
-                    .apply(block = fun ImageRequest.Builder.() {
-                        //占位图
-                        placeholder(R.drawable.test)
-                        //淡出效果
-                        crossfade(true)
-                        //圆形效果
-                    }).build()),
+                rememberAsyncImagePainter(message.location),
                 alignment = Alignment.Center,
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
@@ -100,7 +78,6 @@ fun ImageGroupButton(message: ImageEntity,content: Context = LocalContext.curren
 
 @Composable
 fun ImageListView(messages: List<ImageEntity>, onClick: (ImageEntity) -> Unit) {
-    val content = LocalContext.current
     Row(
         modifier = Modifier
             .padding(8.dp)
@@ -108,7 +85,7 @@ fun ImageListView(messages: List<ImageEntity>, onClick: (ImageEntity) -> Unit) {
             .wrapContentHeight()
     ) {
         messages.forEach { message ->
-            ImageGroupButton(message, content, onClick=onClick)
+            ImageGroupButton(message, onClick=onClick)
         }
     }
 }
