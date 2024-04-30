@@ -1,6 +1,7 @@
 package com.example.myapplication.ui
 
 import android.app.Activity
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -18,10 +21,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +41,7 @@ import com.example.myapplication.common.ShareUtil
 import com.example.myapplication.common.Utils
 import com.example.myapplication.common.ui.FullScreenImage
 import com.example.myapplication.entity.ImageEntity
+import kotlinx.coroutines.launch
 import mu.KotlinLogging
 import java.io.File
 
@@ -53,15 +60,17 @@ fun ImageDetail(imageEntity: ImageEntity, mainController: NavHostController) {
             ImageTopBar(imageEntity.name, mainController)
         },
         bottomBar = {
-            GetBottomBar(imageEntity.file)
+            GetBottomBar(imageEntity.file){}
         }
     ) { innerPadding ->
-        FullScreenImage(imageEntity = imageEntity, modifier = Modifier.padding(innerPadding).fillMaxSize())
+        FullScreenImage(imageEntity = imageEntity, modifier = Modifier
+            .padding(innerPadding)
+            .fillMaxSize())
     }
 }
 
 @Composable
-fun GetBottomBar(file: File) {
+fun GetBottomBar(file: File, onChange: () -> Unit) {
     val scope = rememberCoroutineScope()
     // 分享
 //    val sheetState = rememberModalBottomSheetState();
@@ -124,8 +133,26 @@ fun GetBottomBar(file: File) {
             }
             IconButton(
                 onClick = {
+                    scope.launch {
+                        if (file.delete()){
+                            snackbarHostState.showSnackbar(
+                                "删除成功",
+                                actionLabel = "关闭",
+                                // Defaults to SnackbarDuration.Short
+                                duration = SnackbarDuration.Short
+                            )
+                            logger.info { "文件删除成功" }
+                            onChange()
+                        }else{
+                            snackbarHostState.showSnackbar(
+                                "删除失败",
+                                actionLabel = "关闭",
+                                // Defaults to SnackbarDuration.Short
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    }
 
-                    logger.info { "文件删除 ${file.delete()}" }
                 },
                 modifier = buttonModifier
             ) {
@@ -189,4 +216,11 @@ fun GetBottomBar(file: File) {
 //            }
 //        }
 //    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ImagePage(imagePageState: MutableState<Boolean>, images: Array<ImageEntity>,
+              modifier: Modifier){
+
 }

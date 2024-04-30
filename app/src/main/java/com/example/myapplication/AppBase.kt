@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MailOutline
@@ -23,6 +25,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,7 +41,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.myapplication.common.PaddingCommon
+import com.example.myapplication.common.ui.DialogImageAdd
 import com.example.myapplication.config.MenuRouteConfig
 
 
@@ -60,13 +67,16 @@ class AppBase {
 
     var settingDrawerState by mutableStateOf(DrawerState(DrawerValue.Closed))
 
-    var snackbarHostState =   SnackbarHostState()
+    var snackbarHostState = SnackbarHostState()
 
 
     @Composable
     @Preview(showBackground = true)
     @OptIn(ExperimentalMaterial3Api::class)
     fun GetTopAppBar() {
+        var expanded by remember { mutableStateOf(false) }
+        val items = listOf("导入", "创建文件夹", "刷新")
+        var selectedIndex by remember { mutableIntStateOf(0) }
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -74,30 +84,65 @@ class AppBase {
             ),
             title = {
                 Row {
-                    Button(
-                        onClick = { settingDrawerState = DrawerState(DrawerValue.Open) },
-                        modifier = Modifier.size(40.dp),
-                        shape = RoundedCornerShape(50),
-                        contentPadding = PaddingCommon.ZERO_PADDING,
-                        colors = ButtonDefaults.buttonColors(Color.White)
-                    ) {
-                        Surface(
-                            shape = CircleShape,
-                            border = BorderStroke(0.dp, Color.Gray)
+                    Row {
+                        Button(
+                            onClick = { settingDrawerState = DrawerState(DrawerValue.Open) },
+                            modifier = Modifier.size(40.dp),
+                            shape = RoundedCornerShape(50),
+                            contentPadding = PaddingCommon.ZERO_PADDING,
+                            colors = ButtonDefaults.buttonColors(Color.White)
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.test),
-                                contentDescription = null,
-                                modifier = Modifier.size(40.dp),
-                                contentScale = ContentScale.Crop
-                            )
+                            Surface(
+                                shape = CircleShape,
+                                border = BorderStroke(0.dp, Color.Gray)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.test),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(40.dp),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                        }
+                        TextButton(
+                            onClick = { /*TODO*/ },
+                            contentPadding = PaddingCommon.ZERO_PADDING,
+                        ) {
+                            Text(text = "白")
                         }
                     }
-                    TextButton(
-                        onClick = { /*TODO*/ },
-                        contentPadding = PaddingCommon.ZERO_PADDING,
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = "白")
+                        Column {
+                            IconButton(onClick = { expanded = true }) {
+                                Icon(
+                                    modifier = Modifier
+                                        .padding(0.dp)
+                                        .fillMaxSize(),
+                                    imageVector = Icons.Filled.Add,
+                                    contentDescription = "Localized description"
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }) {
+                                items.forEachIndexed { index, label ->
+                                    DropdownMenuItem(text = {
+                                        Text(text = label)
+                                    }, onClick = {
+                                        selectedIndex = index
+                                        expanded = false
+                                    })
+                                }
+                            }
+                        }
+                        if (selectedIndex == 1) {
+                            DialogImageAdd(onDismissRequest = {
+                                selectedIndex = 0
+                            })
+                        }
                     }
                 }
             }
@@ -198,11 +243,14 @@ class AppBase {
         content: @Composable (PaddingValues) -> Unit,
         topBar: @Composable () -> Unit = { GetTopAppBar() },
         bottomBar: @Composable () -> Unit = { GetBottomBar() },
-        floatingActionButton: @Composable () -> Unit = {  },
+        floatingActionButton: @Composable () -> Unit = { },
     ) {
         Scaffold(
-            snackbarHost={
-                SnackbarHost(hostState = snackbarHostState, modifier = Modifier.padding(0.dp))
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier.padding(0.dp)
+                )
             },
             topBar = {
                 topBar()
@@ -213,7 +261,8 @@ class AppBase {
             floatingActionButton = { floatingActionButton() },
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight().background(MaterialTheme.colorScheme.background),
+                .fillMaxHeight()
+                .background(MaterialTheme.colorScheme.background),
             content = content
         )
     }

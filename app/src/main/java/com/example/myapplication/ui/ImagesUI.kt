@@ -1,14 +1,19 @@
 package com.example.myapplication.ui
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -19,7 +24,9 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -31,8 +38,10 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -50,11 +59,11 @@ import com.example.myapplication.common.ui.FullScreenImage
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.ImageEntity
 import com.example.myapplication.viewmodel.ImageViewModel
+import kotlinx.coroutines.launch
 
 
 val ImageModifier: Modifier = Modifier
-    .width(100.dp)
-    .height(100.dp)
+    .size(100.dp)
     .padding(1.dp);
 
 var isDetail by mutableStateOf(false)
@@ -112,10 +121,10 @@ fun PhotoDataSetBody(
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 96.dp),
+        columns = GridCells.Adaptive(100.dp),
         modifier = modifier
-            .fillMaxSize()
-            .navigationBarsPadding()
+            .fillMaxSize(),
+        reverseLayout=false
     ) {
         items(list.size) { photo ->
             Button(
@@ -123,16 +132,16 @@ fun PhotoDataSetBody(
                     imageViewModel.imageDetail = list[photo]
                     isDetail = true
                 },
-                modifier = ImageModifier,
-                shape = RoundedCornerShape(20),
+                shape= RoundedCornerShape(10),
+                modifier = Modifier.clip(RoundedCornerShape(1.dp)),
                 colors = ButtonDefaults.buttonColors(Color.White)
             ) {
                 Image(
                     painter =
                     rememberAsyncImagePainter(list[photo].location),
                     contentDescription = null,
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier.padding(0.dp),
+                    contentScale = ContentScale.Crop,
+                    modifier = ImageModifier.clip(RoundedCornerShape(5)),
                 )
             }
         }
@@ -141,19 +150,23 @@ fun PhotoDataSetBody(
 }
 
 @Preview(showBackground = true)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun PhotoDataSet(
     imageViewModel: ImageViewModel = viewModel(),
     mainController: NavHostController = rememberNavController()
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val path = imageViewModel.groupPath
     if (path != "") {
-        imageViewModel.loadPath(path)
+        coroutineScope.launch {
+            imageViewModel.loadPath(path)
+        }
     }
+    val images = imageViewModel.getImageList(path)
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
+    val pagerState = rememberPagerState { images.size }
     Scaffold(
         snackbarHost = {
             if (isDetail) {
@@ -169,22 +182,31 @@ fun PhotoDataSet(
         },
         bottomBar = {
             if (isDetail) {
-                GetBottomBar(imageViewModel.imageDetail.file)
+                GetBottomBar(imageViewModel.imageDetail.file){
+                    // 这里是异步
+                    imageViewModel.reloadPath(path)
+                }
             }
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
         if (isDetail){
-            FullScreenImage(imageEntity = imageViewModel.imageDetail, modifier = Modifier.padding(innerPadding).fillMaxSize())
+            coroutineScope.launch {
+                pagerState.scrollToPage(imageViewModel.imageDetail.index)
+            }
+            HorizontalPager(state = pagerState) {it ->
+                FullScreenImage(imageEntity = images[it], modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize())
+            }
         }else{
-            imageViewModel.getImageList(path)
-                ?.let {
-                    PhotoDataSetBody(
-                        it,
-                        imageViewModel,
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+            PhotoDataSetBody(
+                images,
+                imageViewModel,
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+            )
         }
     }
 }

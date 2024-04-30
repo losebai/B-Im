@@ -1,12 +1,15 @@
 package com.example.myapplication.viewmodel
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.common.ImageUtils
 import com.example.myapplication.entity.ImageEntity
 import java.util.Hashtable
+
+private val EMPTY_IMAGES: Array<ImageEntity>  = arrayOf()
 
 class ImageViewModel : ViewModel() {
 
@@ -22,10 +25,10 @@ class ImageViewModel : ViewModel() {
     // 是否加载
     var isLoad by mutableStateOf(false)
 
-
-
     // 详情
     var imageDetail by mutableStateOf(ImageEntity())
+
+    var imageDetailIndex = 0
 
     fun loadPath(path: String){
         if (!groupMap.contains(path)){
@@ -37,8 +40,11 @@ class ImageViewModel : ViewModel() {
         groupMap[path] = ImageUtils.getImageList(path).toTypedArray()
     }
 
-    fun getImageList(path: String) : Array<ImageEntity>? {
-        return groupMap[path]
+    fun getImageList(path: String) : Array<ImageEntity> {
+        groupMap[path]?.let {
+            return it;
+        }
+        return EMPTY_IMAGES
     }
 
     override fun onCleared() {

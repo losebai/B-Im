@@ -21,11 +21,9 @@ object ImageUtils {
     private val filenameFilter: (File, String) -> Boolean =
         { dir: File, name: String -> checkFix(name) }
 
-    val imagePathsList = ArrayList<String>()
+    private val imagePathsList = ArrayList<String>()
 
-    val imageDirList = ArrayList<File>()
-
-    val emptyImage: ImageEntity = ImageEntity(null, null, null, false)
+    private val imageDirList = ArrayList<File>()
 
     // 获取存储目录路径
     val storageDirPath: String = Environment.getExternalStorageDirectory().absolutePath
@@ -56,12 +54,14 @@ object ImageUtils {
                 )
             }
             files?.let {
+                var index = 0
                 for (file in it) {
                     if (file.isDirectory) {
                         val oneImageEntity = getImageDirectoryOne(file)
                         if (oneImageEntity != null){
                             oneImageEntity.isDir = true
                             oneImageEntity.name = file.name
+                            oneImageEntity.index = index++
                             fileList.add(oneImageEntity)
                         }
                     }
@@ -84,10 +84,11 @@ object ImageUtils {
         val fileList = ArrayList<ImageEntity>()
         if (dir.isDirectory) {
             val files = dir.listFiles(filenameFilter)
+            var index = 0
             files?.let {
                 for (file in it) {
                     // 获取图片文件路径
-                    fileList.add(ImageEntity(file))
+                    fileList.add(ImageEntity(file, index++))
                 }
             }
         }

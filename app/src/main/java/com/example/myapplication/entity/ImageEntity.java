@@ -10,6 +10,8 @@ public class ImageEntity {
     private boolean isDir;
     private File file;
 
+    private int index = 0;
+
     public ImageEntity(){}
 
     public ImageEntity(File file) {
@@ -17,6 +19,14 @@ public class ImageEntity {
         this.name = file.getName();
         this.location = file.toURI().toString();
         this.isDir = file.isDirectory();
+    }
+
+    public ImageEntity(File file, int index) {
+        this.file = file;
+        this.name = file.getName();
+        this.location = file.toURI().toString();
+        this.isDir = file.isDirectory();
+        this.index = index;
     }
 
     public ImageEntity(File file, String name, String location,
@@ -67,5 +77,13 @@ public class ImageEntity {
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 }

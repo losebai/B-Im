@@ -180,9 +180,6 @@ class MainActivity : AppCompatActivity() {
 
     @Composable
     fun ScaffoldExample(imageViewModel: ImageViewModel, modifier: Modifier = Modifier) {
-        var isAdd by remember {
-            mutableStateOf(false)
-        }
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 96.dp),
             modifier = modifier
@@ -201,20 +198,6 @@ class MainActivity : AppCompatActivity() {
                         imageViewModel.groupPath = item.file?.parent.toString()
                     }
                     appBase.navHostController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
-                }
-            }
-            item {
-                IconButton(onClick = {  isAdd = true}) {
-                    Icon(
-                        modifier = Modifier.padding(0.dp) ,
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "Localized description"
-                    )
-                }
-                if (isAdd){
-                    DialogImageAdd(onDismissRequest = {}, onClose = {
-                        isAdd = false
-                    })
                 }
             }
         }
