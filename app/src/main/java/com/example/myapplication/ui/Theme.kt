@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import com.example.myapplication.AppBase
+import mu.KotlinLogging
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -49,13 +50,6 @@ private val lightScheme = lightColorScheme(
     inverseSurface = inverseSurfaceLight,
     inverseOnSurface = inverseOnSurfaceLight,
     inversePrimary = inversePrimaryLight,
-    
-    
-    
-    
-    
-    
-    
 )
 
 private val darkScheme = darkColorScheme(
@@ -259,6 +253,7 @@ data class ColorFamily(
 val unspecified_scheme = ColorFamily(
     Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
 )
+private val logger = KotlinLogging.logger {}
 
 @Composable
 fun AppTheme(
@@ -269,12 +264,19 @@ fun AppTheme(
 ) {
   val colorScheme = when {
       dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+          logger.info { "sys" }
           val context = LocalContext.current
           if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
       }
-      
-      darkTheme -> darkScheme
-      else -> lightScheme
+
+      darkTheme -> {
+          logger.info { "darkScheme" }
+          darkScheme
+      }
+      else -> {
+          logger.info { "lightScheme" }
+          lightScheme
+      }
   }
   val view = LocalView.current
   if (!view.isInEditMode) {
@@ -295,7 +297,7 @@ fun AppTheme(
 @Preview(showBackground = true)
 @Composable
 fun ContrastAwareReplyThemeTest(){
-    AppTheme(dynamicColor=true){
+    AppTheme(){
         val appBase: AppBase = AppBase()
         appBase.Context(content={
             Text(text = "test")

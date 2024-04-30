@@ -134,7 +134,6 @@ class MainActivity : AppCompatActivity() {
                         } else {
                             logger.info { "加载" }
                             ScaffoldExample(imageViewModel, mod)
-
                         }
                     }
 
@@ -180,6 +179,7 @@ class MainActivity : AppCompatActivity() {
 
     @Composable
     fun ScaffoldExample(imageViewModel: ImageViewModel, modifier: Modifier = Modifier) {
+        val coroutineScope = rememberCoroutineScope()
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 96.dp),
             modifier = modifier
@@ -187,9 +187,12 @@ class MainActivity : AppCompatActivity() {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             if (!imageViewModel.isLoad) {
-                imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.cameraDirPath));
-                imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.galleryDirPath));
-                imageViewModel.isLoad = true
+                coroutineScope.launch {
+                    imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.cameraDirPath));
+                    imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.galleryDirPath));
+                    imageViewModel.isLoad = true
+                    appBase.snackbarHostState.showSnackbar("加载完成")
+                }
             }
             items(imageViewModel.groupList.size) { photo ->
                 ImageGroupButton(imageViewModel.groupList[photo]) { item ->
@@ -203,8 +206,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
-
 
 
 @Preview(showBackground = true)
