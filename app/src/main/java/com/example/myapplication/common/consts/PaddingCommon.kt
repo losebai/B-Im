@@ -1,4 +1,4 @@
-package com.example.myapplication.common
+package com.example.myapplication.common.consts
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape

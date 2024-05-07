@@ -19,14 +19,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.example.myapplication.common.StyleCommon
+import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.entity.UserEntity
-import java.util.ArrayList
 
 
 @Composable

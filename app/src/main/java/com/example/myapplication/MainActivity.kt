@@ -13,21 +13,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -42,15 +35,20 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.common.ImageUtils
+import com.example.myapplication.common.util.ImageUtils
 import com.example.myapplication.common.ui.ImageGroupButton
 import com.example.myapplication.common.ui.ImageListView
+import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.ImageEntity
+import com.example.myapplication.entity.UserEntity
+import com.example.myapplication.remote.entity.AppUserEntity
+import com.example.myapplication.service.UserService
 import com.example.myapplication.ui.AppTheme
 import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.ui.SettingHome
+import com.example.myapplication.ui.UserList
 import com.example.myapplication.viewmodel.ImageViewModel
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
@@ -64,7 +62,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var imageViewModel: ImageViewModel;
 
-    private lateinit var appBase: AppBase;
+    private  var appBase: AppBase = AppBase()
+
+    private val userService : UserService = UserService()
 
     override fun finish() {
         super.finish()
@@ -76,7 +76,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme() {
-                appBase = AppBase()
                 imageViewModel = viewModel<ImageViewModel>()
 //              ImageUtils.check(LocalContext.current, this)
                 appBase.navHostController = rememberNavController();
@@ -107,6 +106,7 @@ class MainActivity : AppCompatActivity() {
     @Composable
     fun PageHost(imageViewModel: ImageViewModel = viewModel()) {
         val scope = rememberCoroutineScope()
+        var userImages: List<UserEntity> = mutableListOf()
         ModalNavigationDrawer(drawerState = appBase.settingDrawerState, drawerContent = {
             ModalDrawerSheet {
                 SettingHome()
@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity() {
                             ) {
                                 Text(
                                     text = stringResource(R.string.image_empty),
-                                    color = Color.Gray,
+                                    color = Color.Yellow,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 20.sp
                                 )
@@ -154,13 +154,11 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     MenuRouteConfig.ROUTE_USERS -> {
-                        scope.launch {
-                            appBase.snackbarHostState.showSnackbar(
-                                getString(R.string.empty_ui),
-                                actionLabel = "关闭",
-                                // Defaults to SnackbarDuration.Short
-                                duration = SnackbarDuration.Short
-                            )
+                        UserList(userImages, onClick = {
+
+                        })
+                        ThreadPoolManager.getInstance().addTask("Actity") {
+                            userImages = userService.getList(AppUserEntity())
                         }
                     }
                 }
@@ -178,13 +176,26 @@ class MainActivity : AppCompatActivity() {
                 .padding(15.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            if (!imageViewModel.isLoad) {
-                coroutineScope.launch {
-                    imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.cameraDirPath));
-                    imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.galleryDirPath));
-                    imageViewModel.isLoad = true
-                    appBase.snackbarHostState.showSnackbar("加载完成")
+            if (appBase.isLoadImage) {
+                val lock =  ThreadPoolManager.getInstance().getLock("imageLoad")
+                if (!lock.isLocked){
+                    ThreadPoolManager.getInstance().addTask("imageLoad") {
+                        try {
+                            lock.lock()
+                            logger.info { "开始导入图片" }
+                            imageViewModel.groupList.clear()
+                            imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.cameraDirPath));
+                            imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.galleryDirPath));
+                            appBase.isLoadImage = false
+                        }finally {
+                            lock.unlock()
+                        }
+                    }
+                    coroutineScope.launch {
+                        appBase.snackbarHostState.showSnackbar("加载完成")
+                    }
                 }
+
             }
             items(imageViewModel.groupList.size) { photo ->
                 ImageGroupButton(imageViewModel.groupList[photo]) { item ->

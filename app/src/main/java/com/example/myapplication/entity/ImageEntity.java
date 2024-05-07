@@ -3,6 +3,8 @@ package com.example.myapplication.entity;
 
 import java.io.File;
 
+import lombok.Data;
+
 
 public class ImageEntity {
     private String name;
@@ -46,15 +48,6 @@ public class ImageEntity {
         }
     }
 
-    public boolean isDir() {
-        return isDir;
-    }
-
-    public void setDir(boolean dir) {
-        isDir = dir;
-    }
-
-
     public String getName() {
         return name;
     }
@@ -69,6 +62,14 @@ public class ImageEntity {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public boolean isDir() {
+        return isDir;
+    }
+
+    public void setDir(boolean dir) {
+        isDir = dir;
     }
 
     public File getFile() {

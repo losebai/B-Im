@@ -53,18 +53,18 @@ android {
             )
             signingConfig = signingConfigs.getByName("config")
         }
-//        debug {
-//            isDebuggable = true
-//            isMinifyEnabled = false
-//            isShrinkResources = false
-//            proguardFiles(
-//                getDefaultProguardFile("proguard-android-optimize.txt"),
-//                "proguard-rules.pro"
-//            )
+        debug {
+            isDebuggable = true
+            isMinifyEnabled = false
+            isShrinkResources = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
 //            signingConfig = signingConfigs.getByName("config")
-//            //noinspection ChromeOsAbiSupport
-//            ndk.abiFilters += "x86"
-//        }
+            //noinspection ChromeOsAbiSupport
+            ndk.abiFilters += "x86"
+        }
     }
 
     compileOptions {
@@ -127,10 +127,11 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.6")
+    implementation("org.projectlombok:lombok:1.18.30")
     implementation("org.slf4j:slf4j-simple:1.7.30")
 
 //    implementation("org.noear:solon:2.7.5")
-//    implementation("org.noear.snack3:v3.2.90")
+    implementation("org.noear:snack3:3.2.95")
 
     //noinspection GradleDependency
     //noinspection GradleDependency

@@ -1,11 +1,10 @@
 package com.example.myapplication.viewmodel
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.myapplication.common.ImageUtils
+import com.example.myapplication.common.util.ImageUtils
 import com.example.myapplication.entity.ImageEntity
 import java.util.Hashtable
 

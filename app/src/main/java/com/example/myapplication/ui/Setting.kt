@@ -37,10 +37,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.myapplication.R
-import com.example.myapplication.common.PermissionUtils
-import com.example.myapplication.common.PermissionsChecker
-import com.example.myapplication.common.StyleCommon.ZERO_PADDING
-import com.example.myapplication.common.Utils
+import com.example.myapplication.common.util.PermissionUtils
+import com.example.myapplication.common.util.PermissionsChecker
+import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
+import com.example.myapplication.common.util.Utils
 import com.example.myapplication.entity.ImageEntity
 import com.example.myapplication.viewmodel.PermissionViewModel
 

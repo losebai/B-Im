@@ -1,4 +1,4 @@
-package com.example.myapplication.common
+package com.example.myapplication.common.consts
 
 import okhttp3.OkHttpClient
 

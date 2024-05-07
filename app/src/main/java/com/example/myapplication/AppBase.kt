@@ -54,7 +54,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.myapplication.common.StyleCommon.ZERO_PADDING
+import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
 import com.example.myapplication.common.ui.DialogImageAdd
 import com.example.myapplication.config.MenuRouteConfig
 
@@ -141,7 +141,9 @@ class AppBase {
                             }
                         }
                         when (selectedIndex) {
-                            0 -> isLoadImage = true
+                            0 -> {
+                                isLoadImage = true
+                            }
                             1 -> {
                                 DialogImageAdd(onDismissRequest = {
                                     selectedIndex = 0
