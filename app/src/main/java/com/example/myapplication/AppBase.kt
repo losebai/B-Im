@@ -54,7 +54,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.myapplication.common.PaddingCommon
+import com.example.myapplication.common.StyleCommon.ZERO_PADDING
 import com.example.myapplication.common.ui.DialogImageAdd
 import com.example.myapplication.config.MenuRouteConfig
 
@@ -68,6 +68,8 @@ class AppBase {
     var settingDrawerState by mutableStateOf(DrawerState(DrawerValue.Closed))
 
     var snackbarHostState = SnackbarHostState()
+
+    var isLoadImage by mutableStateOf(false)
 
 
     @Composable
@@ -89,7 +91,7 @@ class AppBase {
                             onClick = { settingDrawerState = DrawerState(DrawerValue.Open) },
                             modifier = Modifier.size(40.dp),
                             shape = RoundedCornerShape(50),
-                            contentPadding = PaddingCommon.ZERO_PADDING,
+                            contentPadding = ZERO_PADDING,
                             colors = ButtonDefaults.buttonColors(Color.White)
                         ) {
                             Surface(
@@ -106,7 +108,7 @@ class AppBase {
                         }
                         TextButton(
                             onClick = { /*TODO*/ },
-                            contentPadding = PaddingCommon.ZERO_PADDING,
+                            contentPadding = ZERO_PADDING,
                         ) {
                             Text(text = "白")
                         }
@@ -138,10 +140,13 @@ class AppBase {
                                 }
                             }
                         }
-                        if (selectedIndex == 1) {
-                            DialogImageAdd(onDismissRequest = {
-                                selectedIndex = 0
-                            })
+                        when (selectedIndex) {
+                            0 -> isLoadImage = true
+                            1 -> {
+                                DialogImageAdd(onDismissRequest = {
+                                    selectedIndex = 0
+                                })
+                            }
                         }
                     }
                 }

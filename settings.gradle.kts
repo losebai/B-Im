@@ -8,13 +8,14 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        mavenLocal()
         maven("https://maven.aliyun.com/repository/public/")
         maven("https://maven.aliyun.com/repository/gradle-plugin")
-        mavenLocal()
         google()
         mavenCentral()
     }
 }
+
 
 rootProject.name = "My Application"
 include(":app")

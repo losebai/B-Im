@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.myapplication.R
-import com.example.myapplication.common.PaddingCommon
+import com.example.myapplication.common.StyleCommon.ZERO_PADDING
 import com.example.myapplication.entity.ImageEntity
 
 
@@ -62,7 +62,7 @@ fun ImageGroupButton(message: ImageEntity,  onClick: (ImageEntity) -> Unit){
         modifier = Modifier
             .height(100.dp)
             .width(100.dp),
-        contentPadding = PaddingCommon.ZERO_PADDING,
+        contentPadding = ZERO_PADDING,
         colors = ButtonDefaults.buttonColors(Color.White)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

@@ -19,7 +19,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.SnackbarDuration
@@ -27,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -45,7 +43,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.common.ImageUtils
-import com.example.myapplication.common.ui.DialogImageAdd
 import com.example.myapplication.common.ui.ImageGroupButton
 import com.example.myapplication.common.ui.ImageListView
 import com.example.myapplication.config.MenuRouteConfig
@@ -69,7 +66,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBase: AppBase;
 
-    var isInit by mutableStateOf(false)
+    override fun finish() {
+        super.finish()
+    }
 
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -118,10 +117,10 @@ class MainActivity : AppCompatActivity() {
                     .padding(innerPadding)
                 when (appBase.Page) {
                     MenuRouteConfig.ROUTE_IMAGE -> {
-                        if (!isInit) {
+                        if (!appBase.isLoadImage) {
                             logger.info { "未加载" }
                             Column(
-                                modifier = mod.fillMaxHeight(),
+                                modifier = mod.fillMaxHeight().padding(20.dp),
                                 verticalArrangement = Arrangement.SpaceEvenly
                             ) {
                                 Text(
@@ -166,13 +165,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }, floatingActionButton = {
-                FloatingActionButton(
-                    onClick = {
-                        isInit = true
-                    },
-                ) {
-                    Icon(Icons.Filled.Add, "Floating action button.")
-                }
             })
         }
     }

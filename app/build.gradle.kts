@@ -1,14 +1,21 @@
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+import java.util.Properties
+import java.io.FileInputStream
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
 
+val configProperties = Properties()
+configProperties.load(FileInputStream(rootProject.file("config.properties")))
+
+val keystoreProperties = Properties()
+keystoreProperties.load(FileInputStream(rootProject.file("keystore.properties")))
 
 android {
     namespace = "com.example.myapplication"
-    compileSdk = 34
+    compileSdk = configProperties.getProperty("compileSdkVersion").toInt()
     defaultConfig {
         applicationId = "com.example.myapplication"
         minSdk = 24
@@ -22,43 +29,108 @@ android {
         }
     }
 
+
+    signingConfigs {
+        create("config") {
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            storeFile = file(keystoreProperties.getProperty("storeFile"))
+            storePassword = keystoreProperties.getProperty("storePassword")
+        }
+    }
+
     buildTypes {
         release {
+            isDebuggable = false
+            // 启用代码压缩、优化及混淆
             isMinifyEnabled = false
+            // 启用资源压缩，需配合 minifyEnabled=true 使用
+            isShrinkResources = false
+            // 指定混淆保留规则
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("config")
         }
+//        debug {
+//            isDebuggable = true
+//            isMinifyEnabled = false
+//            isShrinkResources = false
+//            proguardFiles(
+//                getDefaultProguardFile("proguard-android-optimize.txt"),
+//                "proguard-rules.pro"
+//            )
+//            signingConfig = signingConfigs.getByName("config")
+//            //noinspection ChromeOsAbiSupport
+//            ndk.abiFilters += "x86"
+//        }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
+
+    kotlin {
+        jvmToolchain(17)
+    }
+
     buildFeatures {
         compose = true
         viewBinding = true
+
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    flavorDimensions += "tier"
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
     buildToolsVersion = "34.0.0"
+
+    productFlavors {
+        create("free") {
+            //应用包名添加后缀
+            applicationIdSuffix = ".free"
+            //关联维度
+            dimension = "tier"
+            manifestPlaceholders["app_channel_value"] = name
+            manifestPlaceholders["app_name_value"] = "Android"
+        }
+    }
+    applicationVariants.all {
+        outputs.all {
+            if (this is BaseVariantOutputImpl) {
+                val name = "wan-${buildType.name}-${versionName}-${productFlavors.first().name}.apk"
+                outputFileName = name
+            }
+        }
+    }
 }
 
 dependencies {
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.6")
     implementation("org.slf4j:slf4j-simple:1.7.30")
 
 //    implementation("org.noear:solon:2.7.5")
+//    implementation("org.noear.snack3:v3.2.90")
 
     //noinspection GradleDependency
     //noinspection GradleDependency

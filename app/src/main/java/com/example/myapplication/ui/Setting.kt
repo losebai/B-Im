@@ -11,15 +11,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -39,11 +36,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.core.content.PermissionChecker
 import com.example.myapplication.R
-import com.example.myapplication.common.PaddingCommon
 import com.example.myapplication.common.PermissionUtils
 import com.example.myapplication.common.PermissionsChecker
+import com.example.myapplication.common.StyleCommon.ZERO_PADDING
 import com.example.myapplication.common.Utils
 import com.example.myapplication.entity.ImageEntity
 import com.example.myapplication.viewmodel.PermissionViewModel
@@ -58,12 +54,12 @@ val permissionViewModel: PermissionViewModel = PermissionViewModel()
 fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
     val scope = rememberCoroutineScope()
     val buttonModifier = Modifier.fillMaxWidth()
-    val IconModifier = Modifier.size(25.dp)
+    val iconModifier = Modifier.size(25.dp)
     val message = stringResource(id = R.string.empty_ui)
     Box(
         modifier = Modifier
             .background(Color.White)
-            .fillMaxHeight()
+            .fillMaxHeight().padding(end = 10.dp)
     ) {
         Column() {
             Row(
@@ -75,7 +71,7 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
                     onClick = { /*TODO*/ },
                     modifier = Modifier.size(60.dp),
                     shape = RoundedCornerShape(50),
-                    contentPadding = PaddingCommon.ZERO_PADDING,
+                    contentPadding = ZERO_PADDING,
                     colors = ButtonDefaults.buttonColors(Color.White)
                 ) {
                     Image(
@@ -87,7 +83,7 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
                 Column {
                     TextButton(
                         onClick = { /*TODO*/ },
-                        contentPadding = PaddingCommon.ZERO_PADDING,
+                        contentPadding = ZERO_PADDING,
                     ) {
                         Text(text = "白", fontSize = 20.sp)
                     }
@@ -110,7 +106,7 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = IconModifier,
+                        modifier = iconModifier,
                         imageVector = Icons.Filled.Home,
                         contentDescription = "Localized description"
                     )
@@ -129,7 +125,7 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = IconModifier,
+                        modifier = iconModifier,
                         imageVector = Icons.Filled.Home,
                         contentDescription = "Localized description"
                     )
@@ -149,7 +145,7 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = IconModifier,
+                        modifier = iconModifier,
                         imageVector = Icons.Filled.Home,
                         contentDescription = "Localized description"
                     )
@@ -169,7 +165,7 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = IconModifier,
+                        modifier = iconModifier,
                         imageVector = Icons.Filled.Home,
                         contentDescription = "Localized description"
                     )
@@ -189,7 +185,7 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = IconModifier,
+                        modifier = iconModifier,
                         imageVector = Icons.Filled.Home,
                         contentDescription = "Localized description"
                     )

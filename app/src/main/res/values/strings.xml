@@ -13,7 +13,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="titile">信息</string>
     <string name="todo">TODO</string>
-    <string name="image_empty">目前没有图片呢，请在下角导入</string>
+    <string name="image_empty">目前没有图片呢，请在右上角导入</string>
 
     <string name="empty_ui">敬请期待~</string>
 

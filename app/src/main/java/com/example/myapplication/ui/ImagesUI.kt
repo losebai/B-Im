@@ -3,10 +3,8 @@ package com.example.myapplication.ui
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -36,6 +34,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -45,7 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,13 +52,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import com.example.myapplication.R
 import com.example.myapplication.common.ui.FullScreenImage
-import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.ImageEntity
 import com.example.myapplication.viewmodel.ImageViewModel
 import kotlinx.coroutines.launch
+import mu.KotlinLogging
 
 
 val ImageModifier: Modifier = Modifier
@@ -68,7 +65,7 @@ val ImageModifier: Modifier = Modifier
 
 var isDetail by mutableStateOf(false)
 
-
+private val logger = KotlinLogging.logger {}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -151,7 +148,8 @@ fun PhotoDataSetBody(
 
 @Preview(showBackground = true)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
+)
 @Composable
 fun PhotoDataSet(
     imageViewModel: ImageViewModel = viewModel(),
@@ -163,6 +161,9 @@ fun PhotoDataSet(
         coroutineScope.launch {
             imageViewModel.loadPath(path)
         }
+    }
+    var contentWidth by remember {
+        mutableIntStateOf(0)
     }
     val images = imageViewModel.getImageList(path)
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -188,16 +189,22 @@ fun PhotoDataSet(
                 }
             }
         },
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+            .onGloballyPositioned {
+            contentWidth = it.size.width
+        },
     ) { innerPadding ->
         if (isDetail){
             coroutineScope.launch {
                 pagerState.scrollToPage(imageViewModel.imageDetail.index)
             }
+            // 详情页面
             HorizontalPager(state = pagerState) {it ->
+                imageViewModel.imageDetail = images[it]
                 FullScreenImage(imageEntity = images[it], modifier = Modifier
                     .padding(innerPadding)
-                    .fillMaxSize())
+                    .fillMaxSize()
+                )
             }
         }else{
             PhotoDataSetBody(
@@ -208,6 +215,7 @@ fun PhotoDataSet(
                     .fillMaxSize()
             )
         }
+        logger.info { "contentWidth: $contentWidth"  }
     }
 }
 
