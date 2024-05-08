@@ -39,7 +39,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.common.util.ImageUtils
+import com.example.myapplication.common.consts.PRODUCT_DEVICE_NUMBER
+import com.example.myapplication.common.consts.UserId
 import com.example.myapplication.common.ui.ImageGroupButton
 import com.example.myapplication.common.ui.ImageListView
 import com.example.myapplication.common.util.ThreadPoolManager
@@ -54,6 +55,7 @@ import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.ui.SettingHome
 import com.example.myapplication.ui.UserList
 import com.example.myapplication.viewmodel.ImageViewModel
+import com.example.myapplication.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
 
@@ -64,14 +66,39 @@ private val logger = KotlinLogging.logger {}
 class MainActivity : AppCompatActivity() {
 
 
-
     private var appBase: AppBase = AppBase()
 
     private val userService: UserService = UserService()
 
+    private lateinit var userViewModel: UserViewModel;
 
     override fun finish() {
         super.finish()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+    }
+
+    private fun init() {
+        // 初始化的时候保存和更新
+        // 默认账户信息
+        ThreadPoolManager.getInstance().addTask("init") {
+            val appUserEntity = AppUserEntity()
+            appUserEntity.deviceNumber = PRODUCT_DEVICE_NUMBER
+            val user = userService.gerUserByNumber(PRODUCT_DEVICE_NUMBER)
+            if (user.id != null) {
+                UserId = user.id
+                appUserEntity.id = user.id
+                userViewModel.userEntity.id = user.id
+                userViewModel.userEntity.name = user.name
+                userViewModel.userEntity.imageUrl = user.imageUrl
+                userViewModel.userEntity.note = user.note
+            } else{
+                userService.save(appUserEntity)
+            }
+        }
     }
 
 
@@ -80,9 +107,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme() {
+                userViewModel = viewModel<UserViewModel>()
                 appBase.imageViewModel = viewModel<ImageViewModel>()
 //              ImageUtils.check(LocalContext.current, this)
-                appBase.navHostController = rememberNavController();
+                appBase.navHostController = rememberNavController()
+                this.init()
                 NavHost(
                     navController = appBase.navHostController,
                     startDestination = PageRouteConfig.MENU_ROUTE,
@@ -102,6 +131,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
     }
 
     @SuppressLint("CoroutineCreationDuringComposition")
@@ -113,7 +143,7 @@ class MainActivity : AppCompatActivity() {
         var userImages: List<UserEntity> = mutableListOf()
         ModalNavigationDrawer(drawerState = appBase.settingDrawerState, drawerContent = {
             ModalDrawerSheet {
-                SettingHome()
+                SettingHome(userViewModel.userEntity)
             }
         }) {
             appBase.Context(content = { innerPadding ->
@@ -160,7 +190,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     MenuRouteConfig.ROUTE_USERS -> {
-                        UserList(userImages, onClick = {
+                        UserList(userImages, modifier = mod.padding(top = 1.dp), onClick = {
 
                         })
                         ThreadPoolManager.getInstance().addTask("Actity") {
@@ -174,8 +204,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Composable
-    fun ScaffoldExample(imageViewModel: ImageViewModel,
-                        modifier: Modifier = Modifier) {
+    fun ScaffoldExample(
+        imageViewModel: ImageViewModel,
+        modifier: Modifier = Modifier
+    ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 96.dp),
             modifier = modifier

@@ -9,10 +9,12 @@ import androidx.compose.material3.SnackbarHostState
 import com.example.myapplication.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.noear.snack.core.utils.StringUtil
+import kotlin.random.Random
 
 object Utils {
 
-    fun message(scope: CoroutineScope, message: String ,snackbarHostState: SnackbarHostState){
+    fun message(scope: CoroutineScope, message: String, snackbarHostState: SnackbarHostState) {
         scope.launch {
             snackbarHostState.showSnackbar(
                 message,
@@ -30,6 +32,18 @@ object Utils {
             context = context.baseContext
         }
         throw IllegalStateException("Permissions should be called in the context of an Activity")
+    }
+
+    fun stringOrNull(str: String): String {
+        return if (StringUtil.isEmpty(str)) "" else str
+    }
+
+    private val names = arrayOf("白白的小迷妹","一个孤儿","牛逼的我","神人")
+    fun randomName(): String {
+        val index = Random.nextInt(names.size)
+        val num = Random.nextInt()
+        val name = names[index]
+        return "$name$num"
     }
 
 }

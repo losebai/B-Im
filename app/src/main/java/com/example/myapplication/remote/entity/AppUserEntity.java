@@ -11,4 +11,13 @@ import lombok.NonNull;
 
 public class AppUserEntity extends UserEntity {
 
+    String deviceNumber;
+
+    public String getDeviceNumber() {
+        return deviceNumber;
+    }
+
+    public void setDeviceNumber(String deviceNumber) {
+        this.deviceNumber = deviceNumber;
+    }
 }

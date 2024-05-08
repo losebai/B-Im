@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
@@ -88,9 +89,9 @@ class AppBase {
     @OptIn(ExperimentalMaterial3Api::class)
     fun GetTopAppBar() {
         var expanded by remember { mutableStateOf(false) }
-        val items = listOf("导入", "创建文件夹", "刷新")
+//        val items = listOf("导入", "创建文件夹", "刷新")
         var selectedIndex by remember { mutableIntStateOf(-1) }
-        val lock = ThreadPoolManager.getInstance().getLock("imageLoad")
+//        val lock = ThreadPoolManager.getInstance().getLock("imageLoad")
         val coroutineScope = rememberCoroutineScope()
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
@@ -168,7 +169,7 @@ class AppBase {
                                     expanded = false
                                 })
                                 DropdownMenuItem(text = {
-                                    Text(text = "导入")
+                                    Text(text = "新建文件夹")
                                 }, onClick = {
                                     selectedIndex = 1
                                     expanded = false
@@ -295,6 +296,7 @@ class AppBase {
             },
             topBar = {
                 topBar()
+                Divider()
             },
             bottomBar = {
                 bottomBar()

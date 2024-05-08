@@ -36,12 +36,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.R
 import com.example.myapplication.common.util.PermissionUtils
 import com.example.myapplication.common.util.PermissionsChecker
 import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.entity.ImageEntity
+import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.viewmodel.PermissionViewModel
 
 
@@ -51,7 +53,7 @@ val permissionViewModel: PermissionViewModel = PermissionViewModel()
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview(showBackground = true)
 @Composable
-fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
+fun SettingHome(userEntity: UserEntity = UserEntity()) {
     val scope = rememberCoroutineScope()
     val buttonModifier = Modifier.fillMaxWidth()
     val iconModifier = Modifier.size(25.dp)
@@ -59,7 +61,8 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
     Box(
         modifier = Modifier
             .background(Color.White)
-            .fillMaxHeight().padding(end = 10.dp)
+            .fillMaxHeight()
+            .padding(end = 10.dp)
     ) {
         Column() {
             Row(
@@ -75,7 +78,8 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
                     colors = ButtonDefaults.buttonColors(Color.White)
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.test),
+                        painter = if (userEntity.imageUrl == null) painterResource(id = R.drawable.test)
+                        else rememberAsyncImagePainter(userEntity.imageUrl),
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )
@@ -85,10 +89,10 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
                         onClick = { /*TODO*/ },
                         contentPadding = ZERO_PADDING,
                     ) {
-                        Text(text = "白", fontSize = 20.sp)
+                        Text(text = userEntity.name, fontSize = 20.sp)
                     }
                     Text(
-                        text = "已使用10天", fontSize = 10.sp,
+                        text = userEntity.note, fontSize = 10.sp,
                         color = Color.Gray,
                         modifier = Modifier.padding(start = 15.dp)
                     )
@@ -208,9 +212,11 @@ fun SettingHome(imageEntity: ImageEntity = ImageEntity()) {
 fun CheckPermissionDialog() {
     val permissionChecker: PermissionsChecker = PermissionsChecker(LocalContext.current)
     Dialog(onDismissRequest = { permissionViewModel.isCheck = false }) {
-        Box(modifier = Modifier
-            .padding(10.dp)
-            .background(Color.White)) {
+        Box(
+            modifier = Modifier
+                .padding(10.dp)
+                .background(Color.White)
+        ) {
             Column(
                 Modifier.padding(10.dp)
             ) {
@@ -220,7 +226,11 @@ fun CheckPermissionDialog() {
                 ) {
                     Text(text = stringResource(id = R.string.checkout_permission), fontSize = 20.sp)
                 }
-                Row( modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text(text = "写入修改文件权限", fontSize = 12.sp)
                     if (!permissionChecker.lacksPermission(Manifest.permission.MANAGE_EXTERNAL_STORAGE)) {
                         TextButton(
@@ -255,7 +265,11 @@ fun CheckPermissionDialog() {
                         }
                     }
                 }
-                Row(modifier = Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically,horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text(text = "读取相册权限", fontSize = 12.sp)
                     if (!permissionChecker.lacksPermissions(
                             Manifest.permission.CAMERA,
@@ -284,7 +298,11 @@ fun CheckPermissionDialog() {
                         )
                     }
                 }
-                Row(modifier = Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically,horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text(text = "获取分享应用列表权限", fontSize = 12.sp)
                     if (!permissionChecker.lacksPermissions(Manifest.permission.QUERY_ALL_PACKAGES)) {
                         TextButton(
@@ -308,7 +326,11 @@ fun CheckPermissionDialog() {
                         )
                     }
                 }
-                Row(modifier = Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically,horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text(text = "网络权限", fontSize = 12.sp)
                     if (!permissionChecker.lacksPermissions(Manifest.permission.ACCESS_NETWORK_STATE)) {
                         TextButton(
@@ -328,8 +350,14 @@ fun CheckPermissionDialog() {
                         PermissionUtils.CheckPermission(Manifest.permission.ACCESS_NETWORK_STATE)
                     }
                 }
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement =Arrangement.Center){
-                    Text(text = stringResource(id = R.string.checkout_permission_close), color = Color.Gray)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.checkout_permission_close),
+                        color = Color.Gray
+                    )
                 }
             }
         }

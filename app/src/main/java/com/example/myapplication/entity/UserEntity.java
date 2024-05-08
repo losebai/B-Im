@@ -1,6 +1,6 @@
 package com.example.myapplication.entity;
 
-import lombok.Data;
+import com.example.myapplication.common.util.Utils;
 
 public class UserEntity {
 
@@ -11,7 +11,12 @@ public class UserEntity {
 
     String note;
 
-    public UserEntity(){};
+
+
+    public UserEntity(){
+        this.name = Utils.INSTANCE.randomName();
+        this.note = "那天，她说，她不会忘记我，可是我想太多";
+    };
 
     public UserEntity(Long id, String name, String imageUrl, String note) {
         this.id = id;

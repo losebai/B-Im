@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.myapplication.common.consts.StyleCommon
+import com.example.myapplication.common.util.Utils
 import com.example.myapplication.entity.UserEntity
 
 
@@ -35,8 +36,8 @@ fun AddUser() {
 
 
 @Composable
-fun UserList(userImages: List<UserEntity>, onClick: (UserEntity) -> Unit) {
-    LazyColumn(Modifier.fillMaxSize()) {
+fun UserList(userImages: List<UserEntity>,modifier: Modifier = Modifier, onClick: (UserEntity) -> Unit) {
+    LazyColumn(modifier.fillMaxSize()) {
         items(userImages.size) {
             Button(
                 onClick = {
@@ -55,7 +56,7 @@ fun UserList(userImages: List<UserEntity>, onClick: (UserEntity) -> Unit) {
                         painter =
                         rememberAsyncImagePainter(
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data(userImages[it].imageUrl)
+                                .data( Utils.stringOrNull(userImages[it].imageUrl))
                                 .size(100)
                                 .build()
                            ),
@@ -73,7 +74,7 @@ fun UserList(userImages: List<UserEntity>, onClick: (UserEntity) -> Unit) {
                         Text(text = userImages[it].name,modifier= Modifier
                             .fillMaxWidth()
                             .height(40.dp), color = Color.Black, fontSize = 20.sp)
-                        Text(text = userImages[it].note,modifier=Modifier.height(40.dp), color = Color.Black)
+                        Text(text = Utils.stringOrNull(userImages[it].note),modifier=Modifier.height(40.dp), color = Color.Black)
                     }
                 }
             }

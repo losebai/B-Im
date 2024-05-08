@@ -13,13 +13,26 @@ import java.util.Collections
 
 class UserService {
 
-     fun getUser(id: Int): AppUserEntity? {
+    companion object{
+        private val appUserEntity: AppUserEntity = AppUserEntity()
+    }
+
+     fun getUser(id: Long): AppUserEntity {
         val res: Response = HttpUtils.get(AppAPI.GET_USER.format(id))
         if (res.isSuccessful){
             val json = ONode.load(res.body?.string())
             return json["data"].toObject(AppUserEntityClass)
         }
-        return null
+        return appUserEntity
+    }
+
+    fun gerUserByNumber(deviceNumber: String): AppUserEntity {
+        val res: Response = HttpUtils.get(AppAPI.GET_USER_BY_NUMBER, hashMapOf("deviceNumber" to deviceNumber))
+        if (res.isSuccessful){
+            val json = ONode.load(res.body?.string())
+            return json["data"].toObject(AppUserEntityClass)
+        }
+        return appUserEntity
     }
 
     fun save(user: AppUserEntity): Boolean {
