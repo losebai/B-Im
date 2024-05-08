@@ -20,7 +20,11 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -60,11 +64,11 @@ private val logger = KotlinLogging.logger {}
 class MainActivity : AppCompatActivity() {
 
 
-    private lateinit var imageViewModel: ImageViewModel;
 
-    private  var appBase: AppBase = AppBase()
+    private var appBase: AppBase = AppBase()
 
-    private val userService : UserService = UserService()
+    private val userService: UserService = UserService()
+
 
     override fun finish() {
         super.finish()
@@ -76,7 +80,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme() {
-                imageViewModel = viewModel<ImageViewModel>()
+                appBase.imageViewModel = viewModel<ImageViewModel>()
 //              ImageUtils.check(LocalContext.current, this)
                 appBase.navHostController = rememberNavController();
                 NavHost(
@@ -89,11 +93,11 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     // 一级页面
                     composable(PageRouteConfig.MENU_ROUTE) {
-                        PageHost(imageViewModel)
+                        PageHost(appBase.imageViewModel)
                     }
                     // 二级页面 相片页
                     composable(PageRouteConfig.IMAGE_PAGE_ROUTE) {
-                        PhotoDataSet(imageViewModel, appBase.navHostController)
+                        PhotoDataSet(appBase.imageViewModel, appBase.navHostController)
                     }
                 }
             }
@@ -120,7 +124,9 @@ class MainActivity : AppCompatActivity() {
                         if (!appBase.isLoadImage) {
                             logger.info { "未加载" }
                             Column(
-                                modifier = mod.fillMaxHeight().padding(20.dp),
+                                modifier = mod
+                                    .fillMaxHeight()
+                                    .padding(20.dp),
                                 verticalArrangement = Arrangement.SpaceEvenly
                             ) {
                                 Text(
@@ -168,35 +174,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Composable
-    fun ScaffoldExample(imageViewModel: ImageViewModel, modifier: Modifier = Modifier) {
-        val coroutineScope = rememberCoroutineScope()
+    fun ScaffoldExample(imageViewModel: ImageViewModel,
+                        modifier: Modifier = Modifier) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 96.dp),
             modifier = modifier
                 .padding(15.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            if (appBase.isLoadImage) {
-                val lock =  ThreadPoolManager.getInstance().getLock("imageLoad")
-                if (!lock.isLocked){
-                    ThreadPoolManager.getInstance().addTask("imageLoad") {
-                        try {
-                            lock.lock()
-                            logger.info { "开始导入图片" }
-                            imageViewModel.groupList.clear()
-                            imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.cameraDirPath));
-                            imageViewModel.groupList.addAll(ImageUtils.getDirectoryList(ImageUtils.galleryDirPath));
-                            appBase.isLoadImage = false
-                        }finally {
-                            lock.unlock()
-                        }
-                    }
-                    coroutineScope.launch {
-                        appBase.snackbarHostState.showSnackbar("加载完成")
-                    }
-                }
-
-            }
             items(imageViewModel.groupList.size) { photo ->
                 ImageGroupButton(imageViewModel.groupList[photo]) { item ->
                     if (item.isDir) {

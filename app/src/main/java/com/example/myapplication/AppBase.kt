@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,6 +45,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,10 +58,18 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
 import com.example.myapplication.common.ui.DialogImageAdd
+import com.example.myapplication.common.util.ImageUtils
+import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.config.MenuRouteConfig
+import com.example.myapplication.viewmodel.ImageViewModel
+import kotlinx.coroutines.launch
+import mu.KotlinLogging
 
+private val logger = KotlinLogging.logger {}
 
 class AppBase {
+
+    lateinit var imageViewModel: ImageViewModel;
 
     lateinit var navHostController: NavHostController;
 
@@ -72,13 +82,16 @@ class AppBase {
     var isLoadImage by mutableStateOf(false)
 
 
+    @SuppressLint("CoroutineCreationDuringComposition")
     @Composable
     @Preview(showBackground = true)
     @OptIn(ExperimentalMaterial3Api::class)
     fun GetTopAppBar() {
         var expanded by remember { mutableStateOf(false) }
         val items = listOf("导入", "创建文件夹", "刷新")
-        var selectedIndex by remember { mutableIntStateOf(0) }
+        var selectedIndex by remember { mutableIntStateOf(-1) }
+        val lock = ThreadPoolManager.getInstance().getLock("imageLoad")
+        val coroutineScope = rememberCoroutineScope()
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -130,23 +143,44 @@ class AppBase {
                             DropdownMenu(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false }) {
-                                items.forEachIndexed { index, label ->
-                                    DropdownMenuItem(text = {
-                                        Text(text = label)
-                                    }, onClick = {
-                                        selectedIndex = index
-                                        expanded = false
-                                    })
-                                }
+//                                items.forEachIndexed { index, label ->
+                                DropdownMenuItem(text = {
+                                    Text(text = "导入")
+                                }, onClick = {
+//                                    ThreadPoolManager.getInstance().addTask("imageLoad") {
+//                                    }
+                                    coroutineScope.launch {
+                                        logger.info { "开始导入图片" }
+                                        imageViewModel.groupList.clear();
+                                        imageViewModel.groupList.addAll(
+                                            ImageUtils.getDirectoryList(
+                                                ImageUtils.cameraDirPath
+                                            )
+                                        );
+                                        imageViewModel.groupList.addAll(
+                                            ImageUtils.getDirectoryList(
+                                                ImageUtils.galleryDirPath
+                                            )
+                                        );
+                                        isLoadImage = true
+                                        snackbarHostState.showSnackbar("图片导入完成")
+                                    }
+                                    expanded = false
+                                })
+                                DropdownMenuItem(text = {
+                                    Text(text = "导入")
+                                }, onClick = {
+                                    selectedIndex = 1
+                                    expanded = false
+                                })
                             }
                         }
                         when (selectedIndex) {
                             0 -> {
-                                isLoadImage = true
                             }
                             1 -> {
                                 DialogImageAdd(onDismissRequest = {
-                                    selectedIndex = 0
+                                    selectedIndex = -1
                                 })
                             }
                         }
