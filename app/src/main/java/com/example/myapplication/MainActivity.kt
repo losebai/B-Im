@@ -24,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -43,7 +42,9 @@ import com.example.myapplication.common.consts.PRODUCT_DEVICE_NUMBER
 import com.example.myapplication.common.consts.UserId
 import com.example.myapplication.common.ui.ImageGroupButton
 import com.example.myapplication.common.ui.ImageListView
+import com.example.myapplication.common.ui.pullRefresh
 import com.example.myapplication.common.util.ThreadPoolManager
+import com.example.myapplication.common.util.Utils
 import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.ImageEntity
@@ -52,6 +53,7 @@ import com.example.myapplication.remote.entity.AppUserEntity
 import com.example.myapplication.service.UserService
 import com.example.myapplication.ui.AppTheme
 import com.example.myapplication.ui.PhotoDataSet
+import com.example.myapplication.ui.SearchUser
 import com.example.myapplication.ui.SettingHome
 import com.example.myapplication.ui.UserList
 import com.example.myapplication.viewmodel.ImageViewModel
@@ -78,14 +80,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
     }
 
     private fun init() {
         // 初始化的时候保存和更新
         // 默认账户信息
         ThreadPoolManager.getInstance().addTask("init") {
-            val appUserEntity = AppUserEntity()
+            val appUserEntity = Utils.randomUser()
             appUserEntity.deviceNumber = PRODUCT_DEVICE_NUMBER
             val user = userService.gerUserByNumber(PRODUCT_DEVICE_NUMBER)
             if (user.id != null) {
@@ -95,7 +96,7 @@ class MainActivity : AppCompatActivity() {
                 userViewModel.userEntity.name = user.name
                 userViewModel.userEntity.imageUrl = user.imageUrl
                 userViewModel.userEntity.note = user.note
-            } else{
+            } else {
                 userService.save(appUserEntity)
             }
         }
@@ -118,7 +119,6 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier
                         .fillMaxWidth(1f)
                         .fillMaxHeight(1f)
-
                 ) {
                     // 一级页面
                     composable(PageRouteConfig.MENU_ROUTE) {
@@ -131,7 +131,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
     }
 
     @SuppressLint("CoroutineCreationDuringComposition")
@@ -140,15 +139,27 @@ class MainActivity : AppCompatActivity() {
     @Composable
     fun PageHost(imageViewModel: ImageViewModel = viewModel()) {
         val scope = rememberCoroutineScope()
-        var userImages: List<UserEntity> = mutableListOf()
+        var userImages: List<UserEntity> = remember {
+            mutableListOf()
+        }
+        val searchUserEntity by remember {
+            mutableStateOf(AppUserEntity())
+        }
         ModalNavigationDrawer(drawerState = appBase.settingDrawerState, drawerContent = {
             ModalDrawerSheet {
+                ThreadPoolManager.getInstance().addTask("init") {
+                    if (userViewModel.userEntity.id != null) {
+                        val user = userService.getUser(userViewModel.userEntity.id)
+                        userViewModel.userEntity = user
+                    }
+                }
                 SettingHome(userViewModel.userEntity)
             }
         }) {
             appBase.Context(content = { innerPadding ->
                 val mod = Modifier
                     .padding(innerPadding)
+
                 when (appBase.Page) {
                     MenuRouteConfig.ROUTE_IMAGE -> {
                         if (!appBase.isLoadImage) {
@@ -190,18 +201,27 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     MenuRouteConfig.ROUTE_USERS -> {
-                        UserList(userImages, modifier = mod.padding(top = 1.dp), onClick = {
-
-                        })
-                        ThreadPoolManager.getInstance().addTask("Actity") {
-                            userImages = userService.getList(AppUserEntity())
+                        Column(modifier = mod) {
+                            SearchUser(searchUserEntity.name, onValueChange = {
+                                searchUserEntity.name = it
+                            })
+                            UserList(userImages, onClick = {
+                            })
+                            ThreadPoolManager.getInstance().addTask("Actity") {
+                                logger.info { "开始加载联系人" }
+                                userImages = userService.getList(searchUserEntity)
+                            }
                         }
                     }
                 }
+            }, topBar = {
+                logger.info { "GetTopAppBar load ...." }
+                appBase.GetTopAppBar(userViewModel.userEntity)
             }, floatingActionButton = {
             })
         }
     }
+
 
     @Composable
     fun ScaffoldExample(

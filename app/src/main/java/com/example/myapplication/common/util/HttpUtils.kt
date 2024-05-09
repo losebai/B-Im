@@ -1,6 +1,6 @@
 package com.example.myapplication.common.util;
 
-import androidx.compose.ui.platform.isDebugInspectorInfoEnabled
+import com.example.myapplication.BuildConfig
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import java.util.concurrent.TimeUnit;
 
@@ -8,7 +8,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import java.util.Objects
 
 
 object HttpUtils {
@@ -27,27 +26,34 @@ object HttpUtils {
         params.forEach{
             param += it.key + "=" + it.value.toString()
         }
-        if (isDebugInspectorInfoEnabled) {
-            return "http://192.168.20.119:8082$url$param"
-        }
-        return "http://192.168.20.119:8082$url$param"
-//        return "http://121.40.62.167:8082$url"
+        return "${BuildConfig.BASE_URL}$url$param"
     }
 
-    fun get(url: String, params: HashMap<String, Any> = hashMapOf()): Response {
+    fun get(url: String, params: HashMap<String, Any> = hashMapOf()): Response? {
         val request: Request = Request.Builder()
             .get()
             .url(url(url, params))
             .build();
-        return client.newCall(request).execute();
+        return execute(request);
     }
 
-    fun post(url: String, body: RequestBody, params: HashMap<String, Any> = hashMapOf()): Response {
+    fun post(url: String, body: RequestBody, params: HashMap<String, Any> = hashMapOf()): Response? {
         val request: Request = Request.Builder()
             .post(body)
             .url(url(url, params))
             .build();
-        return client.newCall(request).execute();
+        return execute(request);
+    }
+
+
+    private fun execute(request: Request) : Response? {
+
+        return try {
+            client.newCall(request).execute();
+        }catch (e: Exception){
+            e.printStackTrace()
+            null
+        }
     }
 
 }

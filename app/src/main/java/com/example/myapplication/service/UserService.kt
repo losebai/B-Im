@@ -18,8 +18,8 @@ class UserService {
     }
 
      fun getUser(id: Long): AppUserEntity {
-        val res: Response = HttpUtils.get(AppAPI.GET_USER.format(id))
-        if (res.isSuccessful){
+        val res: Response? = HttpUtils.get("${AppAPI.GET_USER}$id")
+        if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
             return json["data"].toObject(AppUserEntityClass)
         }
@@ -27,8 +27,8 @@ class UserService {
     }
 
     fun gerUserByNumber(deviceNumber: String): AppUserEntity {
-        val res: Response = HttpUtils.get(AppAPI.GET_USER_BY_NUMBER, hashMapOf("deviceNumber" to deviceNumber))
-        if (res.isSuccessful){
+        val res: Response? = HttpUtils.get(AppAPI.GET_USER_BY_NUMBER, hashMapOf("deviceNumber" to deviceNumber))
+        if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
             return json["data"].toObject(AppUserEntityClass)
         }
@@ -37,8 +37,8 @@ class UserService {
 
     fun save(user: AppUserEntity): Boolean {
         val requestBody: RequestBody = ONode.serialize(user).toRequestBody(MEDIA_TYPE_JSON)
-        val res: Response = HttpUtils.post(AppAPI.POST_USER_SAVE, requestBody)
-        if (res.isSuccessful){
+        val res: Response? = HttpUtils.post(AppAPI.POST_USER_SAVE, requestBody)
+        if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
             return json["data"].toObject(Boolean.Companion::class.java)
         }
@@ -47,8 +47,8 @@ class UserService {
 
     fun getList(user: AppUserEntity): List<AppUserEntity> {
         val requestBody: RequestBody = ONode.serialize(user).toRequestBody(MEDIA_TYPE_JSON)
-        val res: Response = HttpUtils.post(AppAPI.POST_USER_LIST, requestBody)
-        if (res.isSuccessful){
+        val res: Response? = HttpUtils.post(AppAPI.POST_USER_LIST, requestBody)
+        if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
             return json["data"].toObjectList(AppUserEntityClass)
         }

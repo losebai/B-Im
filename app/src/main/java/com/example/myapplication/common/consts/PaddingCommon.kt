@@ -12,6 +12,7 @@ object StyleCommon {
         end = 0.dp,
         bottom = 0.dp
     )
+    val ROUND_SHAPE = RoundedCornerShape(50)
 
     val ZERO_Shape = RoundedCornerShape(0)
 

@@ -1,7 +1,6 @@
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import java.util.Properties
 import java.io.FileInputStream
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -83,6 +82,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig= true
 
     }
 
@@ -111,6 +111,15 @@ android {
             dimension = "tier"
             manifestPlaceholders["app_channel_value"] = name
             manifestPlaceholders["app_name_value"] = "Android"
+            buildConfigField("String", "BASE_URL", "\"http://192.168.20.119:8082\"")
+        }
+        create("dev") {
+            buildConfigField("String", "BUILD_ENV_TYPE", "dev")
+            buildConfigField("String", "BASE_URL", "\"http://192.168.20.119:8082\"")
+        }
+        create("pro") {
+            buildConfigField("String", "BUILD_ENV_TYPE", "pro")
+            buildConfigField("String", "BASE_URL", "\"http://121.40.62.167:8082\"")
         }
     }
     applicationVariants.all {
@@ -127,7 +136,7 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.6")
-    implementation("org.projectlombok:lombok:1.18.30")
+    annotationProcessor("org.projectlombok:lombok:1.18.30")
     implementation("org.slf4j:slf4j-simple:1.7.30")
 
 //    implementation("org.noear:solon:2.7.5")

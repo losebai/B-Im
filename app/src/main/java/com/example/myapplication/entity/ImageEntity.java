@@ -3,9 +3,6 @@ package com.example.myapplication.entity;
 
 import java.io.File;
 
-import lombok.Data;
-
-
 public class ImageEntity {
     private String name;
     private String location;

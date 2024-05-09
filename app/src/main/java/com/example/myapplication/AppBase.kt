@@ -51,18 +51,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
 import com.example.myapplication.common.ui.DialogImageAdd
 import com.example.myapplication.common.util.ImageUtils
 import com.example.myapplication.common.util.ThreadPoolManager
+import com.example.myapplication.common.util.Utils
 import com.example.myapplication.config.MenuRouteConfig
+import com.example.myapplication.entity.UserEntity
+import com.example.myapplication.remote.entity.AppUserEntity
 import com.example.myapplication.viewmodel.ImageViewModel
+import com.example.myapplication.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
 
@@ -87,7 +95,7 @@ class AppBase {
     @Composable
     @Preview(showBackground = true)
     @OptIn(ExperimentalMaterial3Api::class)
-    fun GetTopAppBar() {
+    fun GetTopAppBar(appUserEntity: UserEntity = UserEntity()) {
         var expanded by remember { mutableStateOf(false) }
 //        val items = listOf("导入", "创建文件夹", "刷新")
         var selectedIndex by remember { mutableIntStateOf(-1) }
@@ -113,7 +121,12 @@ class AppBase {
                                 border = BorderStroke(0.dp, Color.Gray)
                             ) {
                                 Image(
-                                    painter = painterResource(id = R.drawable.test),
+                                    painter = rememberAsyncImagePainter(
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data(Utils.stringOrNull(appUserEntity.imageUrl))
+                                            .size(100)
+                                            .build()
+                                    ),
                                     contentDescription = null,
                                     modifier = Modifier.size(40.dp),
                                     contentScale = ContentScale.Crop
@@ -124,7 +137,7 @@ class AppBase {
                             onClick = { /*TODO*/ },
                             contentPadding = ZERO_PADDING,
                         ) {
-                            Text(text = "白")
+                            Text(text =appUserEntity.name)
                         }
                     }
                     Row(
@@ -277,6 +290,7 @@ class AppBase {
                 }
             }
         }
+        Divider()
     }
 
 
@@ -294,13 +308,8 @@ class AppBase {
                     modifier = Modifier.padding(0.dp)
                 )
             },
-            topBar = {
-                topBar()
-                Divider()
-            },
-            bottomBar = {
-                bottomBar()
-            },
+            topBar = topBar,
+            bottomBar = bottomBar,
             floatingActionButton = { floatingActionButton() },
             modifier = Modifier
                 .fillMaxWidth()

@@ -5,6 +5,6 @@ import com.example.myapplication.entity.UserEntity
 
 class UserViewModel: ViewModel() {
 
-    val userEntity = UserEntity()
+    var userEntity = UserEntity()
 
 }

@@ -7,6 +7,8 @@ import android.content.res.Resources
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import com.example.myapplication.R
+import com.example.myapplication.entity.UserEntity
+import com.example.myapplication.remote.entity.AppUserEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.noear.snack.core.utils.StringUtil
@@ -46,4 +48,10 @@ object Utils {
         return "$name$num"
     }
 
+    fun randomUser() : AppUserEntity {
+        val user = AppUserEntity()
+        user.name = randomName();
+        user.note = "那天，她说，她不会忘记我，可是我想太多";
+        return user
+    }
 }

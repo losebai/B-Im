@@ -2,7 +2,7 @@ package com.example.myapplication.common.consts
 
 object AppAPI {
 
-    const val GET_USER: String = "/dispatch-app/appUser/{}"
+    const val GET_USER: String = "/dispatch-app/appUser/"
 
     const val GET_USER_BY_NUMBER: String = "/dispatch-app/appUser/gerUserByNumber"
 
