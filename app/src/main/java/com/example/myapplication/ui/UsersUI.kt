@@ -18,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -42,18 +43,21 @@ import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.entity.UserEntity
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchUser(username: String, modifier: Modifier = Modifier,
                onValueChange: (String) -> Unit, title: String = "搜索") =
-    TopAppBar(title = {
-        TextField(value = username, label = { Text(text = title) }, onValueChange = onValueChange)
-    }, modifier = modifier.fillMaxWidth(),navigationIcon={
-        Icon(
-            imageVector = Icons.Filled.Search,
-            contentDescription = "Localized description"
-        )
-    })
+    OutlinedTextField(value = username,
+        placeholder  = { Text(text = title) },
+        prefix = {
+            Icon(
+                imageVector = Icons.Filled.Search,
+                contentDescription = "Localized description",
+                modifier=Modifier.padding(0.dp)
+            )
+        },
+        onValueChange = onValueChange,
+        modifier= modifier
+    )
 
 
 @Composable
@@ -127,4 +131,23 @@ fun UserList(
 
 }
 
-
+@Composable
+fun HeadPhoto(userEntity: UserEntity=Utils.randomUser(), onClick: () -> Unit,){
+    Surface(onClick = onClick) {
+        Image(
+            painter =
+            rememberAsyncImagePainter(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(Utils.stringOrNull(userEntity.imageUrl))
+                    .size(100)
+                    .build()
+            ),
+            alignment = Alignment.Center,
+            contentScale = ContentScale.Fit,
+            contentDescription = null,
+            modifier = Modifier
+                .width(60.dp)
+                .height(60.dp)
+        )
+    }
+}

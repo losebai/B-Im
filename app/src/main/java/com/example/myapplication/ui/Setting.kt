@@ -3,6 +3,7 @@ package com.example.myapplication.ui
 import android.Manifest
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -21,6 +23,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -72,17 +75,21 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
             ) {
                 Button(
                     onClick = { /*TODO*/ },
-                    modifier = Modifier.size(60.dp),
-                    shape = RoundedCornerShape(50),
+                    modifier = Modifier.size(60.dp).padding(0.dp),
                     contentPadding = ZERO_PADDING,
                     colors = ButtonDefaults.buttonColors(Color.White)
                 ) {
-                    Image(
-                        painter = if (userEntity.imageUrl == null) painterResource(id = R.drawable.test)
-                        else rememberAsyncImagePainter(userEntity.imageUrl),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop
-                    )
+                    Surface(
+                        shape = CircleShape,
+                        border = BorderStroke(0.dp, Color.Gray)
+                    ) {
+                        Image(
+                            painter = if (userEntity.imageUrl == null) painterResource(id = R.drawable.test)
+                            else rememberAsyncImagePainter(userEntity.imageUrl),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
                 Column {
                     TextButton(

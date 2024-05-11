@@ -139,9 +139,6 @@ class MainActivity : AppCompatActivity() {
     @Composable
     fun PageHost(imageViewModel: ImageViewModel = viewModel()) {
         val scope = rememberCoroutineScope()
-        var userImages: List<UserEntity> = remember {
-            mutableListOf()
-        }
         val searchUserEntity by remember {
             mutableStateOf(AppUserEntity())
         }
@@ -204,12 +201,12 @@ class MainActivity : AppCompatActivity() {
                         Column(modifier = mod) {
                             SearchUser(searchUserEntity.name, onValueChange = {
                                 searchUserEntity.name = it
-                            })
-                            UserList(userImages, onClick = {
+                            }, modifier = Modifier.fillMaxWidth().padding(2.dp))
+                            UserList(userViewModel.users, onClick = {
                             })
                             ThreadPoolManager.getInstance().addTask("Actity") {
                                 logger.info { "开始加载联系人" }
-                                userImages = userService.getList(searchUserEntity)
+                                userViewModel.users = userService.getList(searchUserEntity)
                             }
                         }
                     }

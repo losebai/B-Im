@@ -15,6 +15,7 @@ public class UserEntity {
     public UserEntity(){
         name = "";
         note= "";
+        imageUrl = "";
     };
 
 

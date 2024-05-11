@@ -7,4 +7,6 @@ class UserViewModel: ViewModel() {
 
     var userEntity = UserEntity()
 
+    var users: List<UserEntity> = mutableListOf()
+
 }

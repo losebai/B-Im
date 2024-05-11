@@ -30,6 +30,9 @@ class UserService {
         val res: Response? = HttpUtils.get(AppAPI.GET_USER_BY_NUMBER, hashMapOf("deviceNumber" to deviceNumber))
         if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
+            if (!json.contains("data")){
+                return appUserEntity
+            }
             return json["data"].toObject(AppUserEntityClass)
         }
         return appUserEntity
