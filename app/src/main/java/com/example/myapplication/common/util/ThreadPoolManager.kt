@@ -104,8 +104,8 @@ class ThreadPoolManager private constructor() {
      *  @param tag 针对每个TAG 获取对应的线程池
      *  @param runnable 对应的 runnable 任务
      * */
-    fun addTask(tag: String, runnable: Runnable) {
-        getThreadPool(tag).execute(runnable)
+    fun addTask(tag: String, runnable: Runnable): Future<*> {
+        return getThreadPool(tag).submit(runnable)
     }
 
     /**

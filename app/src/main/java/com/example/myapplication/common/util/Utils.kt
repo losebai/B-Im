@@ -3,16 +3,18 @@ package com.example.myapplication.common.util
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
-import android.content.res.Resources
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import com.example.myapplication.R
-import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.remote.entity.AppUserEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.noear.snack.core.utils.StringUtil
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.random.Random
+
 
 object Utils {
 
@@ -54,5 +56,15 @@ object Utils {
         user.note = "那天，她说，她不会忘记我，可是我想太多";
         user.imageUrl = "https://pic.netbian.com/uploads/allimg/240429/225620-1714402580ab97.jpg"
         return user
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    var formatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd HH:mm:ss")
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun localDateTimeToString(time: LocalDateTime) : String{
+        return time.format(formatter)
     }
 }

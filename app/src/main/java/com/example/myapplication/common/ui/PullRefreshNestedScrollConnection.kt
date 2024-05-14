@@ -1,6 +1,9 @@
 package com.example.myapplication.common.ui
 
 import android.annotation.SuppressLint
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.currentRecomposeScope
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -11,8 +14,8 @@ import androidx.compose.ui.unit.Velocity
 
 private class PullRefreshNestedScrollConnection(
     private val onPull: (pullDelta: Float) -> Float,
-    private val onRelease: suspend (flingVelocity: Float) -> Unit,
-    private val enabled: Boolean
+    private val onRelease: (pullDelta: Float) -> Float,
+    private val enabled: Boolean,
 ) : NestedScrollConnection {
 
     override fun onPreScroll(
@@ -32,7 +35,7 @@ private class PullRefreshNestedScrollConnection(
     ): Offset = when {
         !enabled -> Offset.Zero
         // 向下滑动，如果子布局处理完了还有剩余（拉到顶了还往下拉），就展示偏移
-        source == Drag && available.y > 0 -> Offset(0f, onPull(available.y)) // Pulling down
+        source == Drag && available.y > 0 -> Offset(0f, onRelease(available.y)) // Pulling down
         else -> Offset.Zero
     }
 
@@ -44,7 +47,7 @@ private class PullRefreshNestedScrollConnection(
 
 @SuppressLint("ModifierFactoryUnreferencedReceiver")
 fun Modifier.pullRefresh(
-    onRelease: suspend (flingVelocity: Float) -> Unit,
+    onRelease: (pullDelta: Float) -> Float,
     onPull: (pullDelta: Float) -> Float,
     enabled: Boolean = true
 ) = nestedScroll(PullRefreshNestedScrollConnection(onPull, onRelease, enabled))

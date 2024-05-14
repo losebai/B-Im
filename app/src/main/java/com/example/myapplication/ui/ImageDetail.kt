@@ -215,9 +215,3 @@ fun GetBottomBar(file: File, onChange: () -> Unit) {
 //    }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun ImagePage(imagePageState: MutableState<Boolean>, images: Array<ImageEntity>,
-              modifier: Modifier){
-
-}

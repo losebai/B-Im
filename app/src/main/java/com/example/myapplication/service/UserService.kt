@@ -13,7 +13,7 @@ import java.util.Collections
 
 class UserService {
 
-    companion object{
+    companion object {
         private val appUserEntity: AppUserEntity = AppUserEntity()
     }
 

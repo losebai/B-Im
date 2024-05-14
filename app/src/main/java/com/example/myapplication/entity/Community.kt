@@ -1,6 +1,11 @@
 package com.example.myapplication.entity
 
+import java.time.LocalDateTime
+import java.time.LocalTime
 
-data class Message(val message: String, val images: List<ImageEntity>);
 
-data class Community(val imageEntity: ImageEntity, val message: Message);
+
+data class CommunityEntity(val userEntity: UserEntity,
+                           val message: String,
+                           val images: List<String>,
+                           val createTime: String);

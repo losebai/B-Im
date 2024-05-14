@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -21,9 +22,11 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -52,10 +55,13 @@ import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.remote.entity.AppUserEntity
 import com.example.myapplication.service.UserService
 import com.example.myapplication.ui.AppTheme
+import com.example.myapplication.ui.CommunityHome
+import com.example.myapplication.ui.DynamicMessage
 import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.ui.SearchUser
 import com.example.myapplication.ui.SettingHome
 import com.example.myapplication.ui.UserList
+import com.example.myapplication.viewmodel.CommunityViewModel
 import com.example.myapplication.viewmodel.ImageViewModel
 import com.example.myapplication.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
@@ -73,6 +79,10 @@ class MainActivity : AppCompatActivity() {
     private val userService: UserService = UserService()
 
     private lateinit var userViewModel: UserViewModel;
+
+    private lateinit var communityViewModel: CommunityViewModel;
+
+    private val searchUserEntity by mutableStateOf(AppUserEntity())
 
     override fun finish() {
         super.finish()
@@ -99,6 +109,9 @@ class MainActivity : AppCompatActivity() {
             } else {
                 userService.save(appUserEntity)
             }
+
+            logger.info { "开始加载联系人" }
+            userViewModel.users = userService.getList(searchUserEntity)
         }
     }
 
@@ -107,10 +120,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AppTheme() {
+            AppTheme {
                 userViewModel = viewModel<UserViewModel>()
                 appBase.imageViewModel = viewModel<ImageViewModel>()
 //              ImageUtils.check(LocalContext.current, this)
+                communityViewModel = viewModel<CommunityViewModel>()
                 appBase.navHostController = rememberNavController()
                 this.init()
                 NavHost(
@@ -139,9 +153,7 @@ class MainActivity : AppCompatActivity() {
     @Composable
     fun PageHost(imageViewModel: ImageViewModel = viewModel()) {
         val scope = rememberCoroutineScope()
-        val searchUserEntity by remember {
-            mutableStateOf(AppUserEntity())
-        }
+
         ModalNavigationDrawer(drawerState = appBase.settingDrawerState, drawerContent = {
             ModalDrawerSheet {
                 ThreadPoolManager.getInstance().addTask("init") {
@@ -156,8 +168,8 @@ class MainActivity : AppCompatActivity() {
             appBase.Context(content = { innerPadding ->
                 val mod = Modifier
                     .padding(innerPadding)
-
-                when (appBase.Page) {
+                appBase.topVisible = true
+                when (appBase.page) {
                     MenuRouteConfig.ROUTE_IMAGE -> {
                         if (!appBase.isLoadImage) {
                             logger.info { "未加载" }
@@ -175,15 +187,18 @@ class MainActivity : AppCompatActivity() {
                                 )
                             }
                         } else {
-                            logger.info { "加载" }
+                            logger.info { "加载图片" }
                             ScaffoldExample(imageViewModel, mod)
                         }
                     }
 
-                    MenuRouteConfig.ROUTE_COMMUNITY -> Community(mod)
+                    MenuRouteConfig.ROUTE_COMMUNITY -> {
+                        appBase.topVisible = false
+                        Community(communityViewModel, modifier = mod)
+                    }
+
                     MenuRouteConfig.ROUTE_SETTING -> {
                         Text(text = "设置", modifier = mod)
-//                        ImageUtils.CheckPermission()
                     }
 
                     MenuRouteConfig.ROUTE_MESSAGE -> {
@@ -199,21 +214,19 @@ class MainActivity : AppCompatActivity() {
 
                     MenuRouteConfig.ROUTE_USERS -> {
                         Column(modifier = mod) {
-                            SearchUser(searchUserEntity.name, onValueChange = {
-                                searchUserEntity.name = it
-                            }, modifier = Modifier.fillMaxWidth().padding(2.dp))
+                            SearchUser(
+                                searchUserEntity.name, onValueChange = {
+                                    searchUserEntity.name = it
+                                }, modifier = Modifier
+                                    .height(10.dp)
+                                    .fillMaxWidth()
+                                    .padding(2.dp)
+                            )
                             UserList(userViewModel.users, onClick = {
                             })
-                            ThreadPoolManager.getInstance().addTask("Actity") {
-                                logger.info { "开始加载联系人" }
-                                userViewModel.users = userService.getList(searchUserEntity)
-                            }
                         }
                     }
                 }
-            }, topBar = {
-                logger.info { "GetTopAppBar load ...." }
-                appBase.GetTopAppBar(userViewModel.userEntity)
             }, floatingActionButton = {
             })
         }
@@ -242,59 +255,25 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-}
 
-
-@Preview(showBackground = true)
-@Composable
-fun Community(modifier: Modifier = Modifier) {
-//    appBase.Context { innerPadding ->
-    Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(Color.White),
-        elevation = CardDefaults.cardElevation(10.dp)
-        // 设置点击波纹效果，注意如果 CardDemo() 函数不在 MaterialTheme 下调用
-        // 将无法显示波纹效果
-    ) {
-        Column(
-            modifier = Modifier.padding(15.dp) // 内边距
-        ) {
-            Text(
-                buildAnnotatedString {
-                    append("欢迎来到 ")
-                    withStyle(
-                        style = SpanStyle(
-                            fontWeight = FontWeight.W900,
-                            color = Color(0xFF4552B8)
-                        )
-                    ) {
-                        append("Jetpack Compose 博物馆")
-                    }
-                }
-            )
-            val list = ArrayList<ImageEntity>()
-
-            list.add(
-                ImageEntity(
-                    null,
-                    "name",
-                    R.drawable.test.toString()
-                )
-            );
-            list.add(
-                ImageEntity(
-                    null,
-                    "name",
-                    R.drawable.test.toString()
-                )
-            );
-            ImageListView(list) {}
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Preview(showBackground = true)
+    @Composable
+    fun Community(communityViewModel: CommunityViewModel = viewModel(), @SuppressLint("ModifierParameter") modifier: Modifier = Modifier) {
+        var page by remember {
+            mutableIntStateOf(1)
         }
-//        }
+        CommunityHome(
+            userViewModel.userEntity,
+            communityList = communityViewModel.getCommunityList(),
+            modifier = modifier.pullRefresh(onPull = {
+                return@pullRefresh it
+            },
+            onRelease = {
+                communityViewModel.nextCommunityPage()
+                page = communityViewModel.page
+                return@pullRefresh it
+            })
+        )
     }
 }
-
-
-
-
-

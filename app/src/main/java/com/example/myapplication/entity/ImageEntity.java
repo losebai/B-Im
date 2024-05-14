@@ -3,6 +3,9 @@ package com.example.myapplication.entity;
 
 import java.io.File;
 
+/**
+ * 本地图片实体
+ */
 public class ImageEntity {
     private String name;
     private String location;

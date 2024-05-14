@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -52,7 +54,7 @@ fun FullScreenImage(
     imageEntity: ImageEntity,
     contentDescription: String? = null,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
-) {
+) =
     Image(
         painter = rememberAsyncImagePainter(
             imageEntity.location
@@ -61,7 +63,7 @@ fun FullScreenImage(
         modifier = modifier,
         contentScale = ContentScale.Fit
     )
-}
+
 @Composable
 fun ImageGroupButton(message: ImageEntity,  onClick: (ImageEntity) -> Unit){
     Button(
@@ -116,16 +118,15 @@ fun imagePainter() =
 
 @Composable
 fun ImageListView(messages: List<ImageEntity>, onClick: (ImageEntity) -> Unit) {
-    Row(
+    LazyColumn(
         modifier = Modifier
             .padding(8.dp)
             .wrapContentWidth()
             .wrapContentHeight()
     ) {
-        messages.forEach { message ->
-            ImageGroupButton(message, onClick=onClick)
-        }
-
+       items(messages){
+           ImageGroupButton(it, onClick=onClick)
+       }
     }
 }
 @SuppressLint("ModifierParameter")
