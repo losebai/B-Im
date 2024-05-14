@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -51,10 +52,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,9 +67,7 @@ import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.entity.UserEntity
-import com.example.myapplication.remote.entity.AppUserEntity
 import com.example.myapplication.viewmodel.ImageViewModel
-import com.example.myapplication.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
 
@@ -82,13 +79,15 @@ class AppBase {
 
     lateinit var navHostController: NavHostController;
 
-    var Page by mutableStateOf(MenuRouteConfig.ROUTE_IMAGE)
+    var page by mutableStateOf(MenuRouteConfig.ROUTE_IMAGE)
 
     var settingDrawerState by mutableStateOf(DrawerState(DrawerValue.Closed))
 
     var snackbarHostState = SnackbarHostState()
 
     var isLoadImage by mutableStateOf(false)
+
+    var topVisible = false
 
 
     @SuppressLint("CoroutineCreationDuringComposition")
@@ -97,9 +96,7 @@ class AppBase {
     @OptIn(ExperimentalMaterial3Api::class)
     fun GetTopAppBar(appUserEntity: UserEntity = UserEntity()) {
         var expanded by remember { mutableStateOf(false) }
-//        val items = listOf("导入", "创建文件夹", "刷新")
         var selectedIndex by remember { mutableIntStateOf(-1) }
-//        val lock = ThreadPoolManager.getInstance().getLock("imageLoad")
         val coroutineScope = rememberCoroutineScope()
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
@@ -157,27 +154,17 @@ class AppBase {
                             DropdownMenu(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false }) {
-//                                items.forEachIndexed { index, label ->
                                 DropdownMenuItem(text = {
                                     Text(text = "导入")
                                 }, onClick = {
-//                                    ThreadPoolManager.getInstance().addTask("imageLoad") {
-//                                    }
-                                    coroutineScope.launch {
+                                    ThreadPoolManager.getInstance().addTask("imageLoad") {
                                         logger.info { "开始导入图片" }
-                                        imageViewModel.groupList.clear();
-                                        imageViewModel.groupList.addAll(
-                                            ImageUtils.getDirectoryList(
-                                                ImageUtils.cameraDirPath
-                                            )
-                                        );
-                                        imageViewModel.groupList.addAll(
-                                            ImageUtils.getDirectoryList(
-                                                ImageUtils.galleryDirPath
-                                            )
-                                        );
+                                        imageViewModel.loadPath(ImageUtils.cameraDirPath);
+                                        imageViewModel.loadPath(ImageUtils.galleryDirPath);
                                         isLoadImage = true
-                                        snackbarHostState.showSnackbar("图片导入完成")
+                                        coroutineScope.launch {
+                                            snackbarHostState.showSnackbar("图片导入完成 共${imageViewModel.groupList.size}")
+                                        }
                                     }
                                     expanded = false
                                 })
@@ -220,7 +207,7 @@ class AppBase {
                 val buttonModifier = Modifier.size(70.dp)
                 val IconModifier = Modifier.size(30.dp)
                 IconButton(
-                    onClick = { Page = MenuRouteConfig.ROUTE_MESSAGE },
+                    onClick = { page = MenuRouteConfig.ROUTE_MESSAGE },
                     modifier = buttonModifier
                 ) {
                     Column(
@@ -238,7 +225,7 @@ class AppBase {
                     }
                 }
                 IconButton(
-                    onClick = { Page = MenuRouteConfig.ROUTE_USERS },
+                    onClick = { page = MenuRouteConfig.ROUTE_USERS },
                     modifier = buttonModifier
                 ) {
                     Column(
@@ -256,7 +243,7 @@ class AppBase {
                     }
                 }
                 IconButton(
-                    onClick = { Page = MenuRouteConfig.ROUTE_IMAGE },
+                    onClick = { page = MenuRouteConfig.ROUTE_IMAGE },
                     modifier = buttonModifier
                 ) {
                     Column(
@@ -274,7 +261,7 @@ class AppBase {
                     }
                 }
                 IconButton(
-                    onClick = { Page = MenuRouteConfig.ROUTE_COMMUNITY },
+                    onClick = { page = MenuRouteConfig.ROUTE_COMMUNITY },
                     modifier = buttonModifier
                 ) {
                     Column(
@@ -297,7 +284,6 @@ class AppBase {
     @Composable
     fun Context(
         content: @Composable (PaddingValues) -> Unit,
-        topBar: @Composable () -> Unit = { GetTopAppBar() },
         bottomBar: @Composable () -> Unit = { GetBottomBar() },
         floatingActionButton: @Composable () -> Unit = { },
     ) {
@@ -308,7 +294,11 @@ class AppBase {
                     modifier = Modifier.padding(0.dp)
                 )
             },
-            topBar = topBar,
+            topBar = {
+                if (topVisible){
+                    GetTopAppBar()
+                }
+            },
             bottomBar = bottomBar,
             floatingActionButton = { floatingActionButton() },
             modifier = Modifier
