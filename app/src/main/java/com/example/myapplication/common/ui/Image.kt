@@ -131,7 +131,7 @@ fun ImageListView(messages: List<ImageEntity>, onClick: (ImageEntity) -> Unit) {
 }
 @SuppressLint("ModifierParameter")
 @Composable
-fun HeadImage(userEntity: UserEntity = Utils.randomUser(), onClick: () -> Unit, modifier: Modifier = Modifier){
+fun HeadImage(userEntity: UserEntity = Utils.randomUser(), modifier: Modifier = Modifier, onClick: () -> Unit){
     Surface(
         onClick = onClick,
         shape = CircleShape,

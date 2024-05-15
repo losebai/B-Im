@@ -1,6 +1,7 @@
 package com.example.myapplication.ui
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
@@ -86,10 +87,10 @@ fun ImageTopBar(name: String, mainController: NavHostController) {
         // 返回
         navigationIcon = {
             IconButton(onClick = {
-                if (!isDetail){
+                if (!isDetail) {
                     // 从列表页返回
                     mainController.navigateUp()
-                }else{
+                } else {
                     isDetail = false
                 }
             }) {
@@ -121,7 +122,7 @@ fun PhotoDataSetBody(
         columns = GridCells.Adaptive(100.dp),
         modifier = modifier
             .fillMaxSize(),
-        reverseLayout=false
+        reverseLayout = false
     ) {
         items(list.size) { photo ->
             Button(
@@ -129,7 +130,7 @@ fun PhotoDataSetBody(
                     imageViewModel.imageDetail = list[photo]
                     isDetail = true
                 },
-                shape= RoundedCornerShape(10),
+                shape = RoundedCornerShape(10),
                 modifier = Modifier.clip(RoundedCornerShape(1.dp)),
                 colors = ButtonDefaults.buttonColors(Color.White)
             ) {
@@ -148,7 +149,8 @@ fun PhotoDataSetBody(
 
 @Preview(showBackground = true)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
 )
 @Composable
 fun PhotoDataSet(
@@ -168,6 +170,9 @@ fun PhotoDataSet(
     val images = imageViewModel.getImageList(path)
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val pagerState = rememberPagerState { images.size }
+    var topVisible by remember {
+        mutableStateOf(true)
+    }
     Scaffold(
         snackbarHost = {
             if (isDetail) {
@@ -176,37 +181,45 @@ fun PhotoDataSet(
         },
         topBar = {
             if (isDetail) {
-                ImageTopBar(imageViewModel.imageDetail.name, mainController)
+                AnimatedVisibility(visible = topVisible) {
+                    ImageTopBar(imageViewModel.imageDetail.name, mainController)
+                }
             } else {
                 ImageTopBar(imageViewModel.groupName, mainController)
             }
         },
         bottomBar = {
             if (isDetail) {
-                GetBottomBar(imageViewModel.imageDetail.file){
-                    // 这里是异步
-                    imageViewModel.reloadPath(path)
+                AnimatedVisibility(visible = topVisible) {
+                    GetBottomBar(imageViewModel.imageDetail.file) {
+                        // 这里是异步
+                        imageViewModel.reloadPath(path)
+                    }
                 }
             }
         },
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+        modifier = Modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
             .onGloballyPositioned {
-            contentWidth = it.size.width
-        },
+                contentWidth = it.size.width
+            },
     ) { innerPadding ->
-        if (isDetail){
+        if (isDetail) {
             coroutineScope.launch {
                 pagerState.scrollToPage(imageViewModel.imageDetail.index)
             }
             // 详情页面
-            HorizontalPager(state = pagerState) {it ->
+            HorizontalPager(state = pagerState) { it ->
                 imageViewModel.imageDetail = images[it]
-                FullScreenImage(imageEntity = images[it], modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                )
+                Button(onClick = { topVisible = !topVisible }) {
+                    FullScreenImage(
+                        imageEntity = images[it], modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                    )
+                }
             }
-        }else{
+        } else {
             PhotoDataSetBody(
                 images,
                 imageViewModel,
@@ -215,7 +228,6 @@ fun PhotoDataSet(
                     .fillMaxSize()
             )
         }
-        logger.info { "contentWidth: $contentWidth"  }
+        logger.info { "contentWidth: $contentWidth" }
     }
 }
-

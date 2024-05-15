@@ -17,17 +17,25 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -61,6 +69,7 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
     val buttonModifier = Modifier.fillMaxWidth()
     val iconModifier = Modifier.size(25.dp)
     val message = stringResource(id = R.string.empty_ui)
+    var checked by remember { mutableStateOf(true) }
     Box(
         modifier = Modifier
             .background(Color.White)
@@ -75,7 +84,9 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
             ) {
                 Button(
                     onClick = { /*TODO*/ },
-                    modifier = Modifier.size(60.dp).padding(0.dp),
+                    modifier = Modifier
+                        .size(60.dp)
+                        .padding(0.dp),
                     contentPadding = ZERO_PADDING,
                     colors = ButtonDefaults.buttonColors(Color.White)
                 ) {
@@ -105,7 +116,7 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
                     )
                 }
             }
-            IconButton(
+            TextButton(
                 onClick = {
                     permissionViewModel.isCheck = true
                 },
@@ -118,7 +129,7 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
                 ) {
                     Icon(
                         modifier = iconModifier,
-                        imageVector = Icons.Filled.Home,
+                        imageVector = Icons.Filled.Build,
                         contentDescription = "Localized description"
                     )
                     Text(
@@ -126,18 +137,18 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
                     )
                 }
             }
-            IconButton(
+            TextButton(
                 onClick = { Utils.message(scope, message, snackbarHostState) },
                 modifier = buttonModifier
             ) {
                 Row(
-                    modifier = buttonModifier.padding(start = 10.dp, top = 0.dp),
+                    modifier = buttonModifier.padding(start = 10.dp),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         modifier = iconModifier,
-                        imageVector = Icons.Filled.Home,
+                        imageVector = Icons.Filled.Settings,
                         contentDescription = "Localized description"
                     )
                     Text(
@@ -146,7 +157,7 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
                     )
                 }
             }
-            IconButton(
+            TextButton(
                 onClick = { Utils.message(scope, message, snackbarHostState) },
                 modifier = buttonModifier
             ) {
@@ -157,7 +168,7 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
                 ) {
                     Icon(
                         modifier = iconModifier,
-                        imageVector = Icons.Filled.Home,
+                        imageVector = Icons.Filled.MailOutline,
                         contentDescription = "Localized description"
                     )
                     Text(
@@ -166,27 +177,8 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
                     )
                 }
             }
-            IconButton(
-                onClick = { Utils.message(scope, message, snackbarHostState) },
-                modifier = buttonModifier
-            ) {
-                Row(
-                    modifier = buttonModifier.padding(start = 10.dp),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = iconModifier,
-                        imageVector = Icons.Filled.Home,
-                        contentDescription = "Localized description"
-                    )
-                    Text(
-                        text = "  夜间模式",
-//                        fontSize = 12.sp,
-                    )
-                }
-            }
-            IconButton(
+
+            TextButton(
                 onClick = { Utils.message(scope, message, snackbarHostState) },
                 modifier = buttonModifier
             ) {
@@ -206,7 +198,16 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
                     )
                 }
             }
+
         }
+//        Column {
+//            Switch(
+//                checked = checked,
+//                onCheckedChange = {
+//                    checked = it
+//                }
+//            )
+//        }
     }
     if (permissionViewModel.isCheck) {
         CheckPermissionDialog()
@@ -217,7 +218,7 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
 @Preview(showBackground = true)
 @Composable
 fun CheckPermissionDialog() {
-    val permissionChecker: PermissionsChecker = PermissionsChecker(LocalContext.current)
+    val permissionChecker = PermissionsChecker(LocalContext.current)
     Dialog(onDismissRequest = { permissionViewModel.isCheck = false }) {
         Box(
             modifier = Modifier

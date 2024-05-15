@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -45,18 +46,19 @@ import com.example.myapplication.common.consts.PRODUCT_DEVICE_NUMBER
 import com.example.myapplication.common.consts.UserId
 import com.example.myapplication.common.ui.ImageGroupButton
 import com.example.myapplication.common.ui.ImageListView
-import com.example.myapplication.common.ui.pullRefresh
+import com.example.myapplication.common.ui.LOADING_MORE
+import com.example.myapplication.common.ui.MySwipeRefresh
+import com.example.myapplication.common.ui.MySwipeRefreshState
+import com.example.myapplication.common.ui.NORMAL
+import com.example.myapplication.common.ui.REFRESHING
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
-import com.example.myapplication.entity.ImageEntity
-import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.remote.entity.AppUserEntity
 import com.example.myapplication.service.UserService
 import com.example.myapplication.ui.AppTheme
 import com.example.myapplication.ui.CommunityHome
-import com.example.myapplication.ui.DynamicMessage
 import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.ui.SearchUser
 import com.example.myapplication.ui.SettingHome
@@ -112,6 +114,7 @@ class MainActivity : AppCompatActivity() {
 
             logger.info { "开始加载联系人" }
             userViewModel.users = userService.getList(searchUserEntity)
+            communityViewModel.nextCommunityPage()
         }
     }
 
@@ -120,7 +123,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AppTheme {
+            AppTheme(appBase.darkTheme) {
                 userViewModel = viewModel<UserViewModel>()
                 appBase.imageViewModel = viewModel<ImageViewModel>()
 //              ImageUtils.check(LocalContext.current, this)
@@ -153,7 +156,6 @@ class MainActivity : AppCompatActivity() {
     @Composable
     fun PageHost(imageViewModel: ImageViewModel = viewModel()) {
         val scope = rememberCoroutineScope()
-
         ModalNavigationDrawer(drawerState = appBase.settingDrawerState, drawerContent = {
             ModalDrawerSheet {
                 ThreadPoolManager.getInstance().addTask("init") {
@@ -194,7 +196,8 @@ class MainActivity : AppCompatActivity() {
 
                     MenuRouteConfig.ROUTE_COMMUNITY -> {
                         appBase.topVisible = false
-                        Community(communityViewModel, modifier = mod)
+                        Community(communityViewModel, modifier = Modifier
+                            .padding(innerPadding))
                     }
 
                     MenuRouteConfig.ROUTE_SETTING -> {
@@ -218,7 +221,7 @@ class MainActivity : AppCompatActivity() {
                                 searchUserEntity.name, onValueChange = {
                                     searchUserEntity.name = it
                                 }, modifier = Modifier
-                                    .height(10.dp)
+                                    .height(50.dp)
                                     .fillMaxWidth()
                                     .padding(2.dp)
                             )
@@ -227,8 +230,11 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-            }, floatingActionButton = {
-            })
+            },
+                topBar = {
+                    appBase.GetTopAppBar(userViewModel.userEntity)
+                }, floatingActionButton = {
+                })
         }
     }
 
@@ -259,21 +265,37 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     @Preview(showBackground = true)
     @Composable
-    fun Community(communityViewModel: CommunityViewModel = viewModel(), @SuppressLint("ModifierParameter") modifier: Modifier = Modifier) {
-        var page by remember {
-            mutableIntStateOf(1)
-        }
-        CommunityHome(
-            userViewModel.userEntity,
-            communityList = communityViewModel.getCommunityList(),
-            modifier = modifier.pullRefresh(onPull = {
-                return@pullRefresh it
+    fun Community(
+        communityViewModel: CommunityViewModel = viewModel(),
+        @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
+    ) {
+        val state = MySwipeRefreshState(NORMAL)
+        val scope = rememberCoroutineScope()
+        MySwipeRefresh(
+            state = state,
+            onRefresh = {
+                scope.launch {
+                    state.loadState = REFRESHING
+                    //模拟网络请求
+                    communityViewModel.clearCommunityList()
+                    communityViewModel.nextCommunityPage()
+                    state.loadState = NORMAL
+                }
             },
-            onRelease = {
-                communityViewModel.nextCommunityPage()
-                page = communityViewModel.page
-                return@pullRefresh it
-            })
-        )
+            onLoadMore = {
+                scope.launch {
+                    state.loadState = LOADING_MORE
+                    communityViewModel.nextCommunityPage()
+                    state.loadState = NORMAL
+                }
+            },
+            modifier = modifier.fillMaxSize()
+        ) { _modifier ->
+            CommunityHome(
+                userViewModel.userEntity,
+                communityList = communityViewModel.getCommunityList(),
+                modifier = _modifier
+            )
+        }
     }
 }

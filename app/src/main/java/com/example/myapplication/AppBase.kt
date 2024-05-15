@@ -43,6 +43,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -87,7 +88,9 @@ class AppBase {
 
     var isLoadImage by mutableStateOf(false)
 
-    var topVisible = false
+    var topVisible  by mutableStateOf(false)
+
+    var darkTheme by mutableStateOf(false)
 
 
     @SuppressLint("CoroutineCreationDuringComposition")
@@ -98,98 +101,101 @@ class AppBase {
         var expanded by remember { mutableStateOf(false) }
         var selectedIndex by remember { mutableIntStateOf(-1) }
         val coroutineScope = rememberCoroutineScope()
-        TopAppBar(
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary,
-            ),
-            title = {
-                Row {
+        if (topVisible){
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = {
                     Row {
-                        Button(
-                            onClick = { settingDrawerState = DrawerState(DrawerValue.Open) },
-                            modifier = Modifier.size(40.dp),
-                            shape = RoundedCornerShape(50),
-                            contentPadding = ZERO_PADDING,
-                            colors = ButtonDefaults.buttonColors(Color.White)
-                        ) {
-                            Surface(
-                                shape = CircleShape,
-                                border = BorderStroke(0.dp, Color.Gray)
+                        Row {
+                            Button(
+                                onClick = {
+                                    settingDrawerState = DrawerState(DrawerValue.Open)
+                                          },
+                                modifier = Modifier.size(40.dp),
+                                shape = RoundedCornerShape(50),
+                                contentPadding = ZERO_PADDING,
+                                colors = ButtonDefaults.buttonColors(Color.White)
                             ) {
-                                Image(
-                                    painter = rememberAsyncImagePainter(
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data(Utils.stringOrNull(appUserEntity.imageUrl))
-                                            .size(100)
-                                            .build()
-                                    ),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(40.dp),
-                                    contentScale = ContentScale.Crop
-                                )
+                                Surface(
+                                    shape = CircleShape,
+                                    border = BorderStroke(0.dp, Color.Gray)
+                                ) {
+                                    Image(
+                                        painter = rememberAsyncImagePainter(
+                                            model = ImageRequest.Builder(LocalContext.current)
+                                                .data(Utils.stringOrNull(appUserEntity.imageUrl))
+                                                .size(100)
+                                                .build()
+                                        ),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(40.dp),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+                            }
+                            TextButton(
+                                onClick = { /*TODO*/ },
+                                contentPadding = ZERO_PADDING,
+                            ) {
+                                Text(text =appUserEntity.name)
                             }
                         }
-                        TextButton(
-                            onClick = { /*TODO*/ },
-                            contentPadding = ZERO_PADDING,
+                        Row(
+                            horizontalArrangement = Arrangement.End,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(text =appUserEntity.name)
-                        }
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.End,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column {
-                            IconButton(onClick = { expanded = true }) {
-                                Icon(
-                                    modifier = Modifier
-                                        .padding(0.dp)
-                                        .fillMaxSize(),
-                                    imageVector = Icons.Filled.Add,
-                                    contentDescription = "Localized description"
-                                )
-                            }
-                            DropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = { expanded = false }) {
-                                DropdownMenuItem(text = {
-                                    Text(text = "导入")
-                                }, onClick = {
-                                    ThreadPoolManager.getInstance().addTask("imageLoad") {
-                                        logger.info { "开始导入图片" }
-                                        imageViewModel.loadPath(ImageUtils.cameraDirPath);
-                                        imageViewModel.loadPath(ImageUtils.galleryDirPath);
-                                        isLoadImage = true
-                                        coroutineScope.launch {
-                                            snackbarHostState.showSnackbar("图片导入完成 共${imageViewModel.groupList.size}")
+                            Column {
+                                IconButton(onClick = { expanded = true }) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .padding(0.dp)
+                                            .fillMaxSize(),
+                                        imageVector = Icons.Filled.Add,
+                                        contentDescription = "Localized description"
+                                    )
+                                }
+                                DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }) {
+                                    DropdownMenuItem(text = {
+                                        Text(text = "导入")
+                                    }, onClick = {
+                                        ThreadPoolManager.getInstance().addTask("imageLoad") {
+                                            logger.info { "开始导入图片" }
+                                            imageViewModel.loadPath(ImageUtils.cameraDirPath);
+                                            imageViewModel.loadPath(ImageUtils.galleryDirPath);
+                                            isLoadImage = true
+                                            coroutineScope.launch {
+                                                snackbarHostState.showSnackbar("图片导入完成 共${imageViewModel.groupList.size}")
+                                            }
                                         }
-                                    }
-                                    expanded = false
-                                })
-                                DropdownMenuItem(text = {
-                                    Text(text = "新建文件夹")
-                                }, onClick = {
-                                    selectedIndex = 1
-                                    expanded = false
-                                })
+                                        expanded = false
+                                    })
+                                    DropdownMenuItem(text = {
+                                        Text(text = "新建文件夹")
+                                    }, onClick = {
+                                        selectedIndex = 1
+                                        expanded = false
+                                    })
+                                }
                             }
-                        }
-                        when (selectedIndex) {
-                            0 -> {
-                            }
-                            1 -> {
-                                DialogImageAdd(onDismissRequest = {
-                                    selectedIndex = -1
-                                })
+                            when (selectedIndex) {
+                                0 -> {
+                                }
+                                1 -> {
+                                    DialogImageAdd(onDismissRequest = {
+                                        selectedIndex = -1
+                                    })
+                                }
                             }
                         }
                     }
                 }
-            }
-        )
-
+            )
+        }
     }
 
     @Preview(showBackground = true)
@@ -284,6 +290,9 @@ class AppBase {
     @Composable
     fun Context(
         content: @Composable (PaddingValues) -> Unit,
+        topBar: @Composable () -> Unit = {
+            GetTopAppBar()
+        },
         bottomBar: @Composable () -> Unit = { GetBottomBar() },
         floatingActionButton: @Composable () -> Unit = { },
     ) {
@@ -294,11 +303,7 @@ class AppBase {
                     modifier = Modifier.padding(0.dp)
                 )
             },
-            topBar = {
-                if (topVisible){
-                    GetTopAppBar()
-                }
-            },
+            topBar = topBar,
             bottomBar = bottomBar,
             floatingActionButton = { floatingActionButton() },
             modifier = Modifier
@@ -308,6 +313,4 @@ class AppBase {
             content = content
         )
     }
-
-
 }

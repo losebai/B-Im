@@ -9,7 +9,7 @@ import java.util.stream.Collectors
 
 class CommunityViewModel: ViewModel() {
 
-    private val communityList = ArrayList<CommunityEntity>()
+    private val communityList = mutableListOf<CommunityEntity>()
 
     private val messageService: MessageService = MessageService()
 
@@ -26,17 +26,17 @@ class CommunityViewModel: ViewModel() {
         if (pages.contains(page)){
             return communityList
         }
-        pages.add(page);
-        val appDynamicList = messageService.appDynamicPage(page++, size)
+        val appDynamicList = messageService.appDynamicPage(page, size)
         val communityList = appDynamicList.stream().map { item ->
             return@map CommunityEntity(UserEntity(item.userId, item.name, item.imageUrl, "",),
                 item.dynamicBody, item.images, item.createTime)
         }.collect(Collectors.toList())
         this.communityList.addAll(communityList)
+        pages.add(page++);
         return communityList
     }
 
-    fun getCommunityList(): ArrayList<CommunityEntity> {
+    fun getCommunityList(): MutableList<CommunityEntity> {
         return this.communityList
     }
 

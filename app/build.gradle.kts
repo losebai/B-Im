@@ -111,15 +111,17 @@ android {
             dimension = "tier"
             manifestPlaceholders["app_channel_value"] = name
             manifestPlaceholders["app_name_value"] = "Android"
-            buildConfigField("String", "BASE_URL", "\"http://192.168.20.119:8082\"")
-        }
-        create("dev") {
-            buildConfigField("String", "BUILD_ENV_TYPE", "dev")
-            buildConfigField("String", "BASE_URL", "\"http://192.168.20.119:8082\"")
+            buildConfigField("String", "BASE_URL", "\"http://121.40.62.167:8000\"")
+//            buildConfigField("String", "BASE_URL", "\"http://192.168.20.119:8082\"")
         }
         create("pro") {
-            buildConfigField("String", "BUILD_ENV_TYPE", "pro")
-            buildConfigField("String", "BASE_URL", "\"http://121.40.62.167:8082\"")
+            //应用包名添加后缀
+            applicationIdSuffix = ".free"
+            //关联维度
+            dimension = "tier"
+            manifestPlaceholders["app_channel_value"] = name
+            manifestPlaceholders["app_name_value"] = "Android"
+            buildConfigField("String", "BASE_URL", "\"http://121.40.62.167:8000\"")
         }
     }
     applicationVariants.all {
