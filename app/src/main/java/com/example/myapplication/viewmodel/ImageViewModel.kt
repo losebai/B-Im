@@ -18,8 +18,10 @@ class ImageViewModel : ViewModel() {
 
     private val groupMap = Hashtable<String, Array<ImageEntity>>()
 
+    val groupList: List<ImageEntity> = mutableListOf()
+
     // 目录图片集合
-    val groupList = mutableListOf<ImageEntity>()
+    val dirList = ArrayList<ImageEntity>()
 
     // 是否加载
     var isLoad by mutableStateOf(false)

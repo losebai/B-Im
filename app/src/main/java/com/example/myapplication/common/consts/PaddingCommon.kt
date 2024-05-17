@@ -26,6 +26,8 @@ object StyleCommon {
 
 
     val HEAD_IMAGE = Modifier.height(50.dp).width(50.dp)
+
+    val IMAGE_SIZE =  Modifier.height(100.dp).width(100.dp);
 }
 
 

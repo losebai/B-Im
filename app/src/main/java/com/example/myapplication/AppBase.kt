@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -43,7 +42,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -165,20 +163,20 @@ class AppBase {
                                     }, onClick = {
                                         ThreadPoolManager.getInstance().addTask("imageLoad") {
                                             logger.info { "开始导入图片" }
-                                            imageViewModel.groupList.clear();
-                                            imageViewModel.groupList.addAll(
+                                            imageViewModel.dirList.clear();
+                                            imageViewModel.dirList.addAll(
                                                 ImageUtils.getDirectoryList(
                                                     ImageUtils.cameraDirPath
                                                 )
                                             );
-                                            imageViewModel.groupList.addAll(
+                                            imageViewModel.dirList.addAll(
                                                 ImageUtils.getDirectoryList(
                                                     ImageUtils.galleryDirPath
                                                 )
                                             );
                                             isLoadImage = true
                                             coroutineScope.launch {
-                                                snackbarHostState.showSnackbar("图片导入完成 共${imageViewModel.groupList.size}")
+                                                snackbarHostState.showSnackbar("图片导入完成 共${imageViewModel.dirList.size}")
                                             }
                                         }
                                         expanded = false

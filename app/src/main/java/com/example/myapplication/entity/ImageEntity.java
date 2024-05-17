@@ -11,7 +11,6 @@ public class ImageEntity {
     private String location;
     private boolean isDir;
     private File file;
-
     private int index = 0;
 
     public ImageEntity(){}

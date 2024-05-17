@@ -4,11 +4,10 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
@@ -23,17 +22,13 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -54,6 +49,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.common.ui.FullScreenImage
+import com.example.myapplication.common.ui.ImageGroupButton
+import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.ImageEntity
 import com.example.myapplication.viewmodel.ImageViewModel
 import kotlinx.coroutines.launch
@@ -112,6 +109,9 @@ fun ImageTopBar(name: String, mainController: NavHostController) {
     )
 }
 
+/**
+ * 图片列表
+ */
 @Composable
 fun PhotoDataSetBody(
     list: Array<ImageEntity>,
@@ -147,6 +147,11 @@ fun PhotoDataSetBody(
 
 }
 
+/**
+ * 图片一级详情页面
+ * @param [imageViewModel]
+ * @param [mainController]
+ */
 @Preview(showBackground = true)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @OptIn(
@@ -227,7 +232,38 @@ fun PhotoDataSet(
                     .padding(innerPadding)
                     .fillMaxSize()
             )
+
         }
         logger.info { "contentWidth: $contentWidth" }
+    }
+}
+
+/**
+ * 图片分组列表
+ * @param [imageViewModel]
+ * @param [modifier]
+ * @param [navHostController]
+ */
+@Composable
+fun ImageGroupList(
+    imageViewModel: ImageViewModel,
+    modifier: Modifier = Modifier,
+    navHostController: NavHostController = rememberNavController()
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = 96.dp),
+        modifier = modifier
+            .padding(15.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(imageViewModel.dirList.size) { photo ->
+            ImageGroupButton(imageViewModel.dirList[photo]) { item ->
+                if (item.isDir) {
+                    imageViewModel.groupName = item.name
+                    imageViewModel.groupPath = item.file?.parent.toString()
+                }
+                navHostController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
+            }
+        }
     }
 }

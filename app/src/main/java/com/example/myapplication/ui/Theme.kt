@@ -1,7 +1,11 @@
 package com.example.myapplication.ui
+
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.lightColorScheme
@@ -10,6 +14,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
@@ -19,6 +24,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import com.example.myapplication.AppBase
+import com.example.myapplication.R
 import mu.KotlinLogging
 
 private val lightScheme = lightColorScheme(
@@ -112,14 +118,9 @@ private val mediumContrastLightColorScheme = lightColorScheme(
     inverseSurface = inverseSurfaceLightMediumContrast,
     inverseOnSurface = inverseOnSurfaceLightMediumContrast,
     inversePrimary = inversePrimaryLightMediumContrast,
-    
-    
-    
-    
-    
-    
-    
-)
+
+
+    )
 
 private val highContrastLightColorScheme = lightColorScheme(
     primary = primaryLightHighContrast,
@@ -150,14 +151,9 @@ private val highContrastLightColorScheme = lightColorScheme(
     inverseSurface = inverseSurfaceLightHighContrast,
     inverseOnSurface = inverseOnSurfaceLightHighContrast,
     inversePrimary = inversePrimaryLightHighContrast,
-    
-    
-    
-    
-    
-    
-    
-)
+
+
+    )
 
 private val mediumContrastDarkColorScheme = darkColorScheme(
     primary = primaryDarkMediumContrast,
@@ -188,14 +184,9 @@ private val mediumContrastDarkColorScheme = darkColorScheme(
     inverseSurface = inverseSurfaceDarkMediumContrast,
     inverseOnSurface = inverseOnSurfaceDarkMediumContrast,
     inversePrimary = inversePrimaryDarkMediumContrast,
-    
-    
-    
-    
-    
-    
-    
-)
+
+
+    )
 
 private val highContrastDarkColorScheme = darkColorScheme(
     primary = primaryDarkHighContrast,
@@ -226,14 +217,9 @@ private val highContrastDarkColorScheme = darkColorScheme(
     inverseSurface = inverseSurfaceDarkHighContrast,
     inverseOnSurface = inverseOnSurfaceDarkHighContrast,
     inversePrimary = inversePrimaryDarkHighContrast,
-    
-    
-    
-    
-    
-    
-    
-)
+
+
+    )
 
 @Immutable
 data class ColorFamily(
@@ -248,6 +234,7 @@ val unspecified_scheme = ColorFamily(
 )
 private val logger = KotlinLogging.logger {}
 
+@SuppressLint("ResourceAsColor")
 @Composable
 fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -273,28 +260,32 @@ fun AppTheme(
 //  }
 
     val colorScheme = lightScheme
-  val view = LocalView.current
-  if (!view.isInEditMode) {
-    SideEffect {
-      val window = (view.context as Activity).window
-      window.statusBarColor = colorScheme.primary.toArgb()
-      WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = colorScheme.primary.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+        }
     }
-  }
 
-  MaterialTheme(
-    colorScheme = colorScheme,
-    typography = AppTypography,
-    content = content
-  )
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = AppTypography,
+    ) {
+        CompositionLocalProvider(
+            LocalIndication provides rememberRipple(color = Color(R.color.button_click)),
+            content = content,
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun ContrastAwareReplyThemeTest(){
-    AppTheme(){
+fun ContrastAwareReplyThemeTest() {
+    AppTheme() {
         val appBase: AppBase = AppBase()
-        appBase.Context(content={
+        appBase.Context(content = {
             Text(text = "test")
         })
     }

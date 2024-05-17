@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -56,6 +57,7 @@ import com.example.myapplication.service.UserService
 import com.example.myapplication.ui.AppTheme
 import com.example.myapplication.ui.CommunityHome
 import com.example.myapplication.ui.DynamicMessage
+import com.example.myapplication.ui.ImageGroupList
 import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.ui.SearchUser
 import com.example.myapplication.ui.SettingHome
@@ -186,7 +188,7 @@ class MainActivity : AppCompatActivity() {
                                 )
                             }
                         } else {
-                            ImageList(imageViewModel, mod)
+                            ImageGroupList(imageViewModel, mod)
                         }
                     }
 
@@ -237,29 +239,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    @Composable
-    fun ImageList(
-        imageViewModel: ImageViewModel,
-        modifier: Modifier = Modifier
-    ) {
-        logger.info { "加载图片${imageViewModel.groupList.size}" }
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 96.dp),
-            modifier = modifier
-                .padding(15.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(imageViewModel.groupList.size) { photo ->
-                ImageGroupButton(imageViewModel.groupList[photo]) { item ->
-                    if (item.isDir) {
-                        imageViewModel.groupName = item.name
-                        imageViewModel.groupPath = item.file?.parent.toString()
-                    }
-                    appBase.navHostController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
-                }
-            }
-        }
-    }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Preview(showBackground = true)
@@ -281,7 +261,7 @@ class MainActivity : AppCompatActivity() {
             onRefresh = {
                 scope.launch {
                     state.loadState = REFRESHING
-                    ThreadPoolManager.getInstance().addTask("community"){
+                    ThreadPoolManager.getInstance().addTask("community") {
                         communityViewModel.clearCommunityList()
                         list = communityViewModel.nextCommunityPage()
                     }
@@ -292,7 +272,7 @@ class MainActivity : AppCompatActivity() {
             onLoadMore = {
                 scope.launch {
                     state.loadState = LOADING_MORE
-                    ThreadPoolManager.getInstance().addTask("community"){
+                    ThreadPoolManager.getInstance().addTask("community") {
                         list = communityViewModel.nextCommunityPage()
                     }
                     logger.info { "社区上拉刷新" }
@@ -313,25 +293,25 @@ class MainActivity : AppCompatActivity() {
 @SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = true)
 @Composable
-fun Test(){
+fun Test() {
     val scope = rememberCoroutineScope()
     val state by mutableStateOf(MySwipeRefreshState(NORMAL))
 
     var list by remember {
-        mutableStateOf(List(40){"I'm item $it"})
+        mutableStateOf(List(40) { "I'm item $it" })
     }
 
     MySwipeRefresh(
         state = state,
-        indicator = {modifier, s, indicatorHeight ->
-            LoadingIndicator(modifier,s,indicatorHeight)
+        indicator = { modifier, s, indicatorHeight ->
+            LoadingIndicator(modifier, s, indicatorHeight)
         },
         onRefresh = {
             scope.launch {
                 state.loadState = REFRESHING
                 //模拟网络请求
                 delay(200)
-                list = List(20){"I'm item $it"}
+                list = List(20) { "I'm item $it" }
                 state.loadState = NORMAL
             }
         },
@@ -340,18 +320,20 @@ fun Test(){
                 state.loadState = LOADING_MORE
                 //模拟网络请求
                 delay(200)
-                list = list + List(20){"I'm item ${it+list.size}"}
+                list = list + List(20) { "I'm item ${it + list.size}" }
                 state.loadState = NORMAL
             }
         }
-    ){modifier->
+    ) { modifier ->
 //注意这里要把modifier设置过来，要不然LazyColumn不会跟随它上下拖动
         LazyColumn(modifier) {
-            items(items = list, key = {it}){
-                Text(text = it,
+            items(items = list, key = { it }) {
+                Text(
+                    text = it,
                     Modifier
                         .fillMaxWidth()
-                        .padding(10.dp))
+                        .padding(10.dp)
+                )
             }
         }
     }

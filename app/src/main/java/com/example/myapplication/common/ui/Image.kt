@@ -42,6 +42,7 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.myapplication.R
+import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.entity.ImageEntity
@@ -65,17 +66,14 @@ fun FullScreenImage(
     )
 
 @Composable
-fun ImageGroupButton(message: ImageEntity,  onClick: (ImageEntity) -> Unit){
+fun ImageGroupButton(message: ImageEntity,  onClick:  (ImageEntity) -> Unit){
     Button(
         onClick = {
             onClick(message)
         },
-        shape = RoundedCornerShape(20),
-        modifier = Modifier
-            .height(100.dp)
-            .width(100.dp),
+        shape = StyleCommon.ZERO_SHAPE,
+        modifier = StyleCommon.IMAGE_SIZE,
         contentPadding = ZERO_PADDING,
-        colors = ButtonDefaults.buttonColors(Color.White)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
@@ -84,9 +82,6 @@ fun ImageGroupButton(message: ImageEntity,  onClick: (ImageEntity) -> Unit){
                 alignment = Alignment.Center,
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
-                modifier = Modifier
-                    .height(80.dp)
-                    .padding(5.dp)
             )
             Text(
                 text = message.name,
