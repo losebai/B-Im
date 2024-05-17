@@ -9,21 +9,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,10 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,8 +40,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.common.consts.PRODUCT_DEVICE_NUMBER
 import com.example.myapplication.common.consts.UserId
 import com.example.myapplication.common.ui.ImageGroupButton
-import com.example.myapplication.common.ui.ImageListView
 import com.example.myapplication.common.ui.LOADING_MORE
+import com.example.myapplication.common.ui.LoadingIndicator
 import com.example.myapplication.common.ui.MySwipeRefresh
 import com.example.myapplication.common.ui.MySwipeRefreshState
 import com.example.myapplication.common.ui.NORMAL
@@ -55,10 +50,12 @@ import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
+import com.example.myapplication.entity.CommunityEntity
 import com.example.myapplication.remote.entity.AppUserEntity
 import com.example.myapplication.service.UserService
 import com.example.myapplication.ui.AppTheme
 import com.example.myapplication.ui.CommunityHome
+import com.example.myapplication.ui.DynamicMessage
 import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.ui.SearchUser
 import com.example.myapplication.ui.SettingHome
@@ -66,6 +63,7 @@ import com.example.myapplication.ui.UserList
 import com.example.myapplication.viewmodel.CommunityViewModel
 import com.example.myapplication.viewmodel.ImageViewModel
 import com.example.myapplication.viewmodel.UserViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
 
@@ -78,7 +76,6 @@ class MainActivity : AppCompatActivity() {
 
     private var appBase: AppBase = AppBase()
 
-    private val userService: UserService = UserService()
 
     private lateinit var userViewModel: UserViewModel;
 
@@ -100,7 +97,7 @@ class MainActivity : AppCompatActivity() {
         ThreadPoolManager.getInstance().addTask("init") {
             val appUserEntity = Utils.randomUser()
             appUserEntity.deviceNumber = PRODUCT_DEVICE_NUMBER
-            val user = userService.gerUserByNumber(PRODUCT_DEVICE_NUMBER)
+            val user = userViewModel.gerUserByNumber(PRODUCT_DEVICE_NUMBER)
             if (user.id != null) {
                 UserId = user.id
                 appUserEntity.id = user.id
@@ -109,11 +106,11 @@ class MainActivity : AppCompatActivity() {
                 userViewModel.userEntity.imageUrl = user.imageUrl
                 userViewModel.userEntity.note = user.note
             } else {
-                userService.save(appUserEntity)
+                userViewModel.saveUser(appUserEntity)
             }
 
             logger.info { "开始加载联系人" }
-            userViewModel.users = userService.getList(searchUserEntity)
+            userViewModel.users = userViewModel.getReferUser(searchUserEntity)
             communityViewModel.nextCommunityPage()
         }
     }
@@ -160,7 +157,7 @@ class MainActivity : AppCompatActivity() {
             ModalDrawerSheet {
                 ThreadPoolManager.getInstance().addTask("init") {
                     if (userViewModel.userEntity.id != null) {
-                        val user = userService.getUser(userViewModel.userEntity.id)
+                        val user = userViewModel.getUserById(userViewModel.userEntity.id)
                         userViewModel.userEntity = user
                     }
                 }
@@ -189,15 +186,16 @@ class MainActivity : AppCompatActivity() {
                                 )
                             }
                         } else {
-                            logger.info { "加载图片" }
-                            ScaffoldExample(imageViewModel, mod)
+                            ImageList(imageViewModel, mod)
                         }
                     }
 
                     MenuRouteConfig.ROUTE_COMMUNITY -> {
                         appBase.topVisible = false
-                        Community(communityViewModel, modifier = Modifier
-                            .padding(innerPadding))
+                        Community(
+                            communityViewModel, modifier = Modifier
+                                .padding(innerPadding)
+                        )
                     }
 
                     MenuRouteConfig.ROUTE_SETTING -> {
@@ -225,7 +223,7 @@ class MainActivity : AppCompatActivity() {
                                     .fillMaxWidth()
                                     .padding(2.dp)
                             )
-                            UserList(userViewModel.users, onClick = {
+                            UserList(userViewModel, onClick = {
                             })
                         }
                     }
@@ -240,10 +238,11 @@ class MainActivity : AppCompatActivity() {
 
 
     @Composable
-    fun ScaffoldExample(
+    fun ImageList(
         imageViewModel: ImageViewModel,
         modifier: Modifier = Modifier
     ) {
+        logger.info { "加载图片${imageViewModel.groupList.size}" }
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 96.dp),
             modifier = modifier
@@ -271,31 +270,89 @@ class MainActivity : AppCompatActivity() {
     ) {
         val state = MySwipeRefreshState(NORMAL)
         val scope = rememberCoroutineScope()
+        var list: List<CommunityEntity> by remember {
+            mutableStateOf(communityViewModel.getCommunityList())
+        }
         MySwipeRefresh(
             state = state,
+            indicator = { _modifier, s, indicatorHeight ->
+                LoadingIndicator(_modifier, s, indicatorHeight)
+            },
             onRefresh = {
                 scope.launch {
                     state.loadState = REFRESHING
-                    //模拟网络请求
-                    communityViewModel.clearCommunityList()
-                    communityViewModel.nextCommunityPage()
+                    ThreadPoolManager.getInstance().addTask("community"){
+                        communityViewModel.clearCommunityList()
+                        list = communityViewModel.nextCommunityPage()
+                    }
+                    logger.info { "社区下拉刷新" }
                     state.loadState = NORMAL
                 }
             },
             onLoadMore = {
                 scope.launch {
                     state.loadState = LOADING_MORE
-                    communityViewModel.nextCommunityPage()
+                    ThreadPoolManager.getInstance().addTask("community"){
+                        list = communityViewModel.nextCommunityPage()
+                    }
+                    logger.info { "社区上拉刷新" }
                     state.loadState = NORMAL
                 }
             },
-            modifier = modifier.fillMaxSize()
+            modifier = modifier
         ) { _modifier ->
             CommunityHome(
                 userViewModel.userEntity,
                 communityList = communityViewModel.getCommunityList(),
                 modifier = _modifier
             )
+        }
+    }
+}
+
+@SuppressLint("UnrememberedMutableState")
+@Preview(showBackground = true)
+@Composable
+fun Test(){
+    val scope = rememberCoroutineScope()
+    val state by mutableStateOf(MySwipeRefreshState(NORMAL))
+
+    var list by remember {
+        mutableStateOf(List(40){"I'm item $it"})
+    }
+
+    MySwipeRefresh(
+        state = state,
+        indicator = {modifier, s, indicatorHeight ->
+            LoadingIndicator(modifier,s,indicatorHeight)
+        },
+        onRefresh = {
+            scope.launch {
+                state.loadState = REFRESHING
+                //模拟网络请求
+                delay(200)
+                list = List(20){"I'm item $it"}
+                state.loadState = NORMAL
+            }
+        },
+        onLoadMore = {
+            scope.launch {
+                state.loadState = LOADING_MORE
+                //模拟网络请求
+                delay(200)
+                list = list + List(20){"I'm item ${it+list.size}"}
+                state.loadState = NORMAL
+            }
+        }
+    ){modifier->
+//注意这里要把modifier设置过来，要不然LazyColumn不会跟随它上下拖动
+        LazyColumn(modifier) {
+            items(items = list, key = {it}){
+                Text(text = it,
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp))
+            }
         }
     }
 }

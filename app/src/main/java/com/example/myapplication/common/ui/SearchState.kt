@@ -5,6 +5,7 @@ import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.MutatorMutex
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlin.math.abs
@@ -25,7 +26,7 @@ class MySwipeRefreshState(
     private val _indicatorOffset = Animatable(0f)
     private val mutatorMutex = MutatorMutex()
 
-    var loadState: Int by mutableStateOf(loadState)
+    var loadState: Int by mutableIntStateOf(loadState)
 
     /**
      * Whether a swipe/drag is currently in progress.

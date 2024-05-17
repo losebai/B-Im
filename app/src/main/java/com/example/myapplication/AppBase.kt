@@ -165,8 +165,17 @@ class AppBase {
                                     }, onClick = {
                                         ThreadPoolManager.getInstance().addTask("imageLoad") {
                                             logger.info { "开始导入图片" }
-                                            imageViewModel.loadPath(ImageUtils.cameraDirPath);
-                                            imageViewModel.loadPath(ImageUtils.galleryDirPath);
+                                            imageViewModel.groupList.clear();
+                                            imageViewModel.groupList.addAll(
+                                                ImageUtils.getDirectoryList(
+                                                    ImageUtils.cameraDirPath
+                                                )
+                                            );
+                                            imageViewModel.groupList.addAll(
+                                                ImageUtils.getDirectoryList(
+                                                    ImageUtils.galleryDirPath
+                                                )
+                                            );
                                             isLoadImage = true
                                             coroutineScope.launch {
                                                 snackbarHostState.showSnackbar("图片导入完成 共${imageViewModel.groupList.size}")

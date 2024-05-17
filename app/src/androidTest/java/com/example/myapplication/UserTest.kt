@@ -38,7 +38,7 @@ fun UserListTest(){
         "这是一个签名" ))
     list.add(UserEntity(1,"test", "https://profile-avatar.csdnimg.cn/fbf610cacb2842c1aeb9582d3f0ef4f4_weixin_45904404.jpg!1",
         "这是一个签名" ))
-    UserList(list){}
+//    UserList(list){}
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

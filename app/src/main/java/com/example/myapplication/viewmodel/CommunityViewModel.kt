@@ -9,7 +9,7 @@ import java.util.stream.Collectors
 
 class CommunityViewModel: ViewModel() {
 
-    private val communityList = mutableListOf<CommunityEntity>()
+    private val communityList = ArrayList<CommunityEntity>()
 
     private val messageService: MessageService = MessageService()
 
@@ -36,7 +36,7 @@ class CommunityViewModel: ViewModel() {
         return communityList
     }
 
-    fun getCommunityList(): MutableList<CommunityEntity> {
+    fun getCommunityList(): List<CommunityEntity> {
         return this.communityList
     }
 

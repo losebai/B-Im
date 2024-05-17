@@ -1,7 +1,5 @@
 package com.example.myapplication.common.ui
 
-import android.annotation.SuppressLint
-import android.telephony.DisconnectCause.NORMAL
 import android.util.Log
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
@@ -163,6 +161,8 @@ private class SwipeRefreshNestedScrollConnection(
     }
 }
 
+
+
 @Composable
 fun MySwipeRefresh(
     state: MySwipeRefreshState,
@@ -174,7 +174,7 @@ fun MySwipeRefresh(
     refreshEnabled: Boolean = true,//是否支持下拉刷新
     loadMoreEnabled: Boolean = true,//是否支持上拉加载更多
     indicator: @Composable BoxScope.(modifier: Modifier, state: MySwipeRefreshState, indicatorHeight: Dp) -> Unit = { m, s, height ->
-        LoadingIndicatorSample(m, s, height)
+        LoadingIndicator(m, s, height)
     },//顶部或者底部的Indicator
     content: @Composable (modifier: Modifier) -> Unit,
 ) {

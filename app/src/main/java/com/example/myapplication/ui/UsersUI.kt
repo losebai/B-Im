@@ -19,6 +19,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,23 +35,43 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.common.ui.HeadImage
+import com.example.myapplication.common.ui.LOADING_MORE
+import com.example.myapplication.common.ui.LoadingIndicator
+import com.example.myapplication.common.ui.MySwipeRefresh
+import com.example.myapplication.common.ui.MySwipeRefreshState
+import com.example.myapplication.common.ui.NORMAL
+import com.example.myapplication.common.ui.REFRESHING
+import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.common.util.Utils
+import com.example.myapplication.entity.CommunityEntity
 import com.example.myapplication.entity.UserEntity
+import com.example.myapplication.remote.entity.AppUserEntity
+import com.example.myapplication.viewmodel.UserViewModel
+import kotlinx.coroutines.launch
+import mu.KotlinLogging
+
+
+private val logger = KotlinLogging.logger {}
 
 @Composable
-fun SearchUser(username: String, modifier: Modifier = Modifier,
-               onValueChange: (String) -> Unit, title: String = "搜索") =
-    OutlinedTextField(value = username,
-        placeholder  = { Text(text = title, fontSize = 12.sp) },
+fun SearchUser(
+    username: String, modifier: Modifier = Modifier,
+    onValueChange: (String) -> Unit, title: String = "搜索"
+) =
+    OutlinedTextField(
+        value = username,
+        placeholder = { Text(text = title, fontSize = 12.sp) },
         prefix = {
             Icon(
                 imageVector = Icons.Filled.Search,
                 contentDescription = "Localized description",
-                modifier=Modifier.padding(1.dp).size(20.dp)
+                modifier = Modifier
+                    .padding(1.dp)
+                    .size(20.dp)
             )
         },
         onValueChange = onValueChange,
-        modifier= modifier
+        modifier = modifier
     )
 
 
@@ -59,37 +84,59 @@ fun AddUser() {
 
 @Composable
 fun UserList(
-    userImages: List<UserEntity>,
+    userViewModel: UserViewModel,
     modifier: Modifier = Modifier,
     onClick: (UserEntity) -> Unit
 ) {
-    LazyColumn(modifier.fillMaxSize()) {
-        items(userImages.size) {
-            Button(
-                onClick = {
-                    onClick(userImages[it])
-                },
-                shape= StyleCommon.ZERO_SHAPE,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(60.dp),
-                colors = ButtonDefaults.buttonColors(Color.White)
-            ) {
-                Row {
-                    HeadImage(userImages[it]){
-                    }
-                    Column(modifier = Modifier.padding(start = 10.dp)) {
-                        Text(
-                            text = userImages[it].name, modifier = Modifier
-                                .fillMaxWidth()
-                                ,
-                            color = Color.Black, fontSize = 20.sp
-                        )
-                        Text(
-                            text = Utils.stringOrNull(userImages[it].note),
-                            fontSize = 14.sp,
-                            color = Color.Black
-                        )
+    val state = MySwipeRefreshState(NORMAL)
+    val scope = rememberCoroutineScope()
+    var list by remember {
+        mutableStateOf(userViewModel.users)
+    }
+    val user = AppUserEntity()
+    MySwipeRefresh(
+        state = state,
+        indicator = { _modifier, s, indicatorHeight ->
+            LoadingIndicator(_modifier, s, indicatorHeight)
+        },
+        onRefresh = {
+            scope.launch {
+                state.loadState = REFRESHING
+                ThreadPoolManager.getInstance().addTask("user"){
+                    list = userViewModel.getReferUser(user)
+                }
+                logger.info { "用户下拉刷新" }
+                state.loadState = NORMAL
+            }
+        },
+        onLoadMore = {
+        },
+        modifier = modifier
+    ) {
+        LazyColumn(it) {
+            items(list.size) {
+                Button(
+                    onClick = {
+                        onClick(list[it])
+                    },
+                    shape = StyleCommon.ZERO_SHAPE,
+                    colors = ButtonDefaults.buttonColors(Color.White)
+                ) {
+                    Row {
+                        HeadImage(list[it], modifier = StyleCommon.HEAD_IMAGE) {
+                        }
+                        Column(modifier = Modifier.padding(start = 10.dp)) {
+                            Text(
+                                text = list[it].name, modifier = Modifier
+                                    .fillMaxWidth(),
+                                color = Color.Black, fontSize = 20.sp
+                            )
+                            Text(
+                                text = Utils.stringOrNull(list[it].note),
+                                fontSize = 14.sp,
+                                color = Color.Black
+                            )
+                        }
                     }
                 }
             }
@@ -98,23 +145,3 @@ fun UserList(
 
 }
 
-@Composable
-fun HeadPhoto(userEntity: UserEntity=Utils.randomUser(), onClick: () -> Unit,){
-    Surface(onClick = onClick) {
-        Image(
-            painter =
-            rememberAsyncImagePainter(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(Utils.stringOrNull(userEntity.imageUrl))
-                    .size(100)
-                    .build()
-            ),
-            alignment = Alignment.Center,
-            contentScale = ContentScale.Fit,
-            contentDescription = null,
-            modifier = Modifier
-                .width(60.dp)
-                .height(60.dp)
-        )
-    }
-}

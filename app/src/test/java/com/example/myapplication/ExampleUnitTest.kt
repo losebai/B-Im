@@ -24,4 +24,10 @@ class ExampleUnitTest {
         logger.debug { "debug" }
         logger.error { "error" }
     }
+    @Test
+    fun intest(){
+        println(Int.MAX_VALUE)
+        println(Long.MAX_VALUE)
+        println(Double.MAX_VALUE)
+    }
 }
