@@ -40,7 +40,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,6 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.myapplication.common.consts.snackBarHostState
 import com.example.myapplication.common.ui.FullScreenImage
 import com.example.myapplication.common.ui.ImageGroupButton
 import com.example.myapplication.config.PageRouteConfig
@@ -61,7 +61,8 @@ val ImageModifier: Modifier = Modifier
     .size(100.dp)
     .padding(1.dp);
 
-var isDetail by mutableStateOf(false)
+private var isDetail by mutableStateOf(false)
+
 
 private val logger = KotlinLogging.logger {}
 
@@ -163,14 +164,11 @@ fun PhotoDataSet(
     mainController: NavHostController = rememberNavController()
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val path = imageViewModel.groupPath
-    if (path != "") {
-        coroutineScope.launch {
-            imageViewModel.loadPath(path)
-        }
+    var path by remember {
+        mutableStateOf(imageViewModel.groupPath)
     }
-    var contentWidth by remember {
-        mutableIntStateOf(0)
+    if (path != "") {
+        imageViewModel.loadPath(path)
     }
     val images = imageViewModel.getImageList(path)
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -181,7 +179,7 @@ fun PhotoDataSet(
     Scaffold(
         snackbarHost = {
             if (isDetail) {
-                SnackbarHost(hostState = snackbarHostState, modifier = Modifier.padding(0.dp))
+                SnackbarHost(hostState = snackBarHostState, modifier = Modifier.padding(0.dp))
             }
         },
         topBar = {
@@ -196,7 +194,7 @@ fun PhotoDataSet(
         bottomBar = {
             if (isDetail) {
                 AnimatedVisibility(visible = topVisible) {
-                    GetBottomBar(imageViewModel.imageDetail.file) {
+                    GetBottomBar(imageViewModel.imageDetail.filePath) {
                         // 这里是异步
                         imageViewModel.reloadPath(path)
                     }
@@ -205,11 +203,9 @@ fun PhotoDataSet(
         },
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .onGloballyPositioned {
-                contentWidth = it.size.width
-            },
     ) { innerPadding ->
         if (isDetail) {
+            // 定位
             coroutineScope.launch {
                 pagerState.scrollToPage(imageViewModel.imageDetail.index)
             }
@@ -234,7 +230,6 @@ fun PhotoDataSet(
             )
 
         }
-        logger.info { "contentWidth: $contentWidth" }
     }
 }
 
@@ -248,7 +243,7 @@ fun PhotoDataSet(
 fun ImageGroupList(
     imageViewModel: ImageViewModel,
     modifier: Modifier = Modifier,
-    navHostController: NavHostController = rememberNavController()
+    navHostController: NavHostController
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 96.dp),
@@ -260,7 +255,7 @@ fun ImageGroupList(
             ImageGroupButton(imageViewModel.dirList[photo]) { item ->
                 if (item.isDir) {
                     imageViewModel.groupName = item.name
-                    imageViewModel.groupPath = item.file?.parent.toString()
+                    imageViewModel.groupPath = item.parentPath
                 }
                 navHostController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
             }

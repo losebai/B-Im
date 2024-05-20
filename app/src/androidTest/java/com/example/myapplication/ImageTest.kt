@@ -59,7 +59,7 @@ fun TestImageListView(){
 @Composable
 //@Preview(showBackground = true)
 fun TestGetBottomBar(){
-    GetBottomBar(File("")){}
+    GetBottomBar(""){}
 }
 
 
