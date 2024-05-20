@@ -10,41 +10,38 @@ public class ImageEntity {
     private String name;
     private String location;
     private boolean isDir;
-    private File file;
     private int index = 0;
+
+    private String filePath;
+
+    private String parentPath;
 
     public ImageEntity(){}
 
     public ImageEntity(File file) {
-        this.file = file;
         this.name = file.getName();
         this.location = file.toURI().toString();
         this.isDir = file.isDirectory();
-    }
-
-    public ImageEntity(File file, int index) {
-        this.file = file;
-        this.name = file.getName();
-        this.location = file.toURI().toString();
-        this.isDir = file.isDirectory();
-        this.index = index;
-    }
-
-    public ImageEntity(File file, String name, String location,
-                       Boolean isDir) {
-        this.file = file;
-        this.name = name;
-        this.location = location;
-        this.isDir = isDir;
+        this.filePath = file.getPath();
+        this.parentPath = file.getParent();
     }
 
     public ImageEntity(File file, String name, String location) {
-        this.file = file;
         this.name = name;
         this.location = location;
         if (file != null){
             this.isDir = file.isDirectory();
+            this.filePath = file.getPath();
+            this.parentPath = file.getParent();
         }
+    }
+
+    public String getParentPath() {
+        return parentPath;
+    }
+
+    public void setParentPath(String parentPath) {
+        this.parentPath = parentPath;
     }
 
     public String getName() {
@@ -71,13 +68,6 @@ public class ImageEntity {
         isDir = dir;
     }
 
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
 
     public int getIndex() {
         return index;
@@ -85,5 +75,13 @@ public class ImageEntity {
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 }

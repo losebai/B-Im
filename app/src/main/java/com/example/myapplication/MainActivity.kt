@@ -35,9 +35,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.myapplication.common.consts.PRODUCT_DEVICE_NUMBER
 import com.example.myapplication.common.consts.UserId
 import com.example.myapplication.common.ui.ImageGroupButton
@@ -51,6 +53,7 @@ import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
+import com.example.myapplication.config.ParamsConfig
 import com.example.myapplication.entity.CommunityEntity
 import com.example.myapplication.remote.entity.AppUserEntity
 import com.example.myapplication.service.UserService
@@ -188,7 +191,7 @@ class MainActivity : AppCompatActivity() {
                                 )
                             }
                         } else {
-                            ImageGroupList(imageViewModel, mod)
+                            ImageGroupList(imageViewModel, mod.padding(10.dp), appBase.navHostController)
                         }
                     }
 
@@ -237,8 +240,6 @@ class MainActivity : AppCompatActivity() {
                 })
         }
     }
-
-
 
 
     @RequiresApi(Build.VERSION_CODES.O)

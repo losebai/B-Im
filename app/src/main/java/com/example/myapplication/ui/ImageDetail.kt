@@ -1,6 +1,9 @@
 package com.example.myapplication.ui
 
 import android.app.Activity
+import android.os.Build
+import android.os.FileUtils
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,10 +24,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.myapplication.R
+import com.example.myapplication.common.consts.snackBarHostState
 import com.example.myapplication.common.util.ShareUtil
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.common.ui.FullScreenImage
@@ -43,7 +45,6 @@ import mu.KotlinLogging
 import java.io.File
 
 
-var snackbarHostState = SnackbarHostState()
 
 private val logger = KotlinLogging.logger {}
 
@@ -51,13 +52,13 @@ private val logger = KotlinLogging.logger {}
 fun ImageDetail(imageEntity: ImageEntity, mainController: NavHostController) {
     Scaffold(
         snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState, modifier = Modifier.padding(0.dp))
+            SnackbarHost(hostState = snackBarHostState, modifier = Modifier.padding(0.dp))
         },
         topBar = {
             ImageTopBar(imageEntity.name, mainController)
         },
         bottomBar = {
-            GetBottomBar(imageEntity.file){}
+            GetBottomBar(imageEntity.filePath){}
         }
     ) { innerPadding ->
         FullScreenImage(imageEntity = imageEntity, modifier = Modifier
@@ -67,7 +68,7 @@ fun ImageDetail(imageEntity: ImageEntity, mainController: NavHostController) {
 }
 
 @Composable
-fun GetBottomBar(file: File, onChange: () -> Unit) {
+fun GetBottomBar(filePath: String, onChange: () -> Unit) {
     val scope = rememberCoroutineScope()
     // 分享
 //    val sheetState = rememberModalBottomSheetState();
@@ -88,7 +89,7 @@ fun GetBottomBar(file: File, onChange: () -> Unit) {
             val message = stringResource(id = R.string.empty_ui)
             val activity = LocalContext.current as Activity
             IconButton(
-                onClick = { Utils.message(scope, message, snackbarHostState) },
+                onClick = { Utils.message(scope, message, snackBarHostState) },
                 modifier = buttonModifier
             ) {
                 Column(
@@ -108,6 +109,7 @@ fun GetBottomBar(file: File, onChange: () -> Unit) {
             IconButton(
                 onClick = {
 //                    visible = !visible
+                    val file = File(filePath)
                     ShareUtil.shareImage(
                         activity,
                         "com.example.myapplication.fileprovider",
@@ -131,8 +133,8 @@ fun GetBottomBar(file: File, onChange: () -> Unit) {
             IconButton(
                 onClick = {
                     scope.launch {
-                        if (file.delete()){
-                            snackbarHostState.showSnackbar(
+                        if (File(filePath).delete()){
+                            snackBarHostState.showSnackbar(
                                 "删除成功",
                                 actionLabel = "关闭",
                                 // Defaults to SnackbarDuration.Short
@@ -141,7 +143,7 @@ fun GetBottomBar(file: File, onChange: () -> Unit) {
                             logger.info { "文件删除成功" }
                             onChange()
                         }else{
-                            snackbarHostState.showSnackbar(
+                            snackBarHostState.showSnackbar(
                                 "删除失败",
                                 actionLabel = "关闭",
                                 // Defaults to SnackbarDuration.Short
@@ -165,7 +167,7 @@ fun GetBottomBar(file: File, onChange: () -> Unit) {
                 }
             }
             IconButton(
-                onClick = { Utils.message(scope, message, snackbarHostState) },
+                onClick = { Utils.message(scope, message, snackBarHostState) },
                 modifier = buttonModifier
             ) {
                 Column(

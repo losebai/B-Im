@@ -1,6 +1,7 @@
 package com.example.myapplication.viewmodel
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -12,15 +13,16 @@ private val EMPTY_IMAGES: Array<ImageEntity>  = arrayOf()
 
 class ImageViewModel : ViewModel() {
 
-    var groupName by mutableStateOf("全部")
+    var groupName = "全部"
 
-    var groupPath by mutableStateOf("")
+    var groupPath = ""
 
     private val groupMap = Hashtable<String, Array<ImageEntity>>()
 
+    // 分组集合 相机 qq 微信
     val groupList: List<ImageEntity> = mutableListOf()
 
-    // 目录图片集合
+    // 本机目录图片集合
     val dirList = ArrayList<ImageEntity>()
 
     // 是否加载
@@ -29,7 +31,6 @@ class ImageViewModel : ViewModel() {
     // 详情
     var imageDetail by mutableStateOf(ImageEntity())
 
-    var imageDetailIndex = 0
 
     fun loadPath(path: String){
         if (!groupMap.contains(path)){

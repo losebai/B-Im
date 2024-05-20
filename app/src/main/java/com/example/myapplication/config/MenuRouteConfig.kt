@@ -34,9 +34,26 @@ object MenuRouteConfig {
 
 object PageRouteConfig{
 
+    // 菜单主页
     const val MENU_ROUTE = "MENU_ROUTE"
 
+
+    // 图片
     const val IMAGE_PAGE_ROUTE = "IMAGE_PAGE_ROUTE"
 
     const val IMAGE_DETAIL_ROUTE = "IMAGE_SHOW_ROUTE";
+}
+
+object ParamsConfig {
+
+    /**
+     * 参数-name
+     */
+    const val IMAGE_TYPE = "type"
+
+    /**
+     * 参数-age
+     */
+    const val PARAMS_AGE = "age"
+
 }

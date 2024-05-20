@@ -72,7 +72,7 @@ fun ImageGroupButton(message: ImageEntity,  onClick:  (ImageEntity) -> Unit){
             onClick(message)
         },
         shape = StyleCommon.ZERO_SHAPE,
-        modifier = StyleCommon.IMAGE_SIZE,
+        modifier = Modifier.height(100.dp).width(100.dp),
         contentPadding = ZERO_PADDING,
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

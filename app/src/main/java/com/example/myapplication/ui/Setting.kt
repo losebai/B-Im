@@ -52,6 +52,7 @@ import com.example.myapplication.R
 import com.example.myapplication.common.util.PermissionUtils
 import com.example.myapplication.common.util.PermissionsChecker
 import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
+import com.example.myapplication.common.consts.snackBarHostState
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.entity.ImageEntity
 import com.example.myapplication.entity.UserEntity
@@ -138,7 +139,7 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
                 }
             }
             TextButton(
-                onClick = { Utils.message(scope, message, snackbarHostState) },
+                onClick = { Utils.message(scope, message, snackBarHostState) },
                 modifier = buttonModifier
             ) {
                 Row(
@@ -158,7 +159,7 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
                 }
             }
             TextButton(
-                onClick = { Utils.message(scope, message, snackbarHostState) },
+                onClick = { Utils.message(scope, message, snackBarHostState) },
                 modifier = buttonModifier
             ) {
                 Row(
@@ -179,7 +180,7 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
             }
 
             TextButton(
-                onClick = { Utils.message(scope, message, snackbarHostState) },
+                onClick = { Utils.message(scope, message, snackBarHostState) },
                 modifier = buttonModifier
             ) {
                 Row(
