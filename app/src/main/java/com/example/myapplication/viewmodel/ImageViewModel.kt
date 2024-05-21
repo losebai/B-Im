@@ -29,7 +29,7 @@ class ImageViewModel : ViewModel() {
     var isLoad by mutableStateOf(false)
 
     // 详情
-    var imageDetail by mutableStateOf(ImageEntity())
+    var imageDetail = ImageEntity()
 
 
     fun loadPath(path: String){

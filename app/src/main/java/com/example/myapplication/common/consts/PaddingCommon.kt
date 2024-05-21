@@ -17,6 +17,7 @@ object StyleCommon {
         bottom = 0.dp
     )
 
+    val IMAGE_BUTTON_SHAPE = RoundedCornerShape(20)
 
     val ROUND_SHAPE = RoundedCornerShape(50)
 

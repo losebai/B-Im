@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -66,6 +67,7 @@ import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.entity.UserEntity
+import com.example.myapplication.ui.ImportImages
 import com.example.myapplication.viewmodel.ImageViewModel
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
@@ -98,7 +100,8 @@ class AppBase {
     fun GetTopAppBar(appUserEntity: UserEntity = UserEntity()) {
         var expanded by remember { mutableStateOf(false) }
         var selectedIndex by remember { mutableIntStateOf(-1) }
-        val coroutineScope = rememberCoroutineScope()
+        var importImaged by remember { mutableStateOf(false) }
+        logger.info { "TopAppBar 重组" }
         if (topVisible){
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -161,25 +164,11 @@ class AppBase {
                                     DropdownMenuItem(text = {
                                         Text(text = "导入")
                                     }, onClick = {
-                                        ThreadPoolManager.getInstance().addTask("imageLoad") {
-                                            logger.info { "开始导入图片" }
-                                            imageViewModel.dirList.clear();
-                                            imageViewModel.dirList.addAll(
-                                                ImageUtils.getDirectoryList(
-                                                    ImageUtils.cameraDirPath
-                                                )
-                                            );
-                                            imageViewModel.dirList.addAll(
-                                                ImageUtils.getDirectoryList(
-                                                    ImageUtils.galleryDirPath
-                                                )
-                                            );
-                                            isLoadImage = true
-                                            coroutineScope.launch {
-                                                snackbarHostState.showSnackbar("图片导入完成 共${imageViewModel.dirList.size}")
-                                            }
-                                        }
+                                        logger.info { "开始导入图片" }
+                                        imageViewModel.dirList.clear();
+                                        importImaged = true
                                         expanded = false
+                                        isLoadImage = true
                                     })
                                     DropdownMenuItem(text = {
                                         Text(text = "新建文件夹")
@@ -203,6 +192,17 @@ class AppBase {
                 }
             )
         }
+        if (importImaged){
+            ImportImages(imageViewModel = imageViewModel){
+                importImaged = false
+                this.page = MenuRouteConfig.ROUTE_IMAGE
+            }
+        }
+//        if (importImaged){
+//            ImportImages(){i, s ->
+//
+//            }
+//        }
     }
 
     @Preview(showBackground = true)

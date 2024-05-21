@@ -25,6 +25,14 @@ public class ImageEntity {
         this.filePath = file.getPath();
         this.parentPath = file.getParent();
     }
+    public ImageEntity(File file, int index) {
+        this.name = file.getName();
+        this.location = file.toURI().toString();
+        this.isDir = file.isDirectory();
+        this.filePath = file.getPath();
+        this.parentPath = file.getParent();
+        this.index = index;
+    }
 
     public ImageEntity(File file, String name, String location) {
         this.name = name;

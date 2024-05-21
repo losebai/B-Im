@@ -4,8 +4,14 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -22,34 +28,44 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.myapplication.common.consts.IMAGE_PATHS
+import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.common.consts.snackBarHostState
 import com.example.myapplication.common.ui.FullScreenImage
 import com.example.myapplication.common.ui.ImageGroupButton
+import com.example.myapplication.common.util.ImageUtils
+import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.ImageEntity
 import com.example.myapplication.viewmodel.ImageViewModel
@@ -65,6 +81,8 @@ private var isDetail by mutableStateOf(false)
 
 
 private val logger = KotlinLogging.logger {}
+
+private val TEXT_ROW_MODIFIER = Modifier.fillMaxWidth(0.8f)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -131,7 +149,7 @@ fun PhotoDataSetBody(
                     imageViewModel.imageDetail = list[photo]
                     isDetail = true
                 },
-                shape = RoundedCornerShape(10),
+                shape = StyleCommon.ZERO_SHAPE,
                 modifier = Modifier.clip(RoundedCornerShape(1.dp)),
                 colors = ButtonDefaults.buttonColors(Color.White)
             ) {
@@ -145,7 +163,6 @@ fun PhotoDataSetBody(
             }
         }
     }
-
 }
 
 /**
@@ -153,7 +170,7 @@ fun PhotoDataSetBody(
  * @param [imageViewModel]
  * @param [mainController]
  */
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
@@ -164,14 +181,11 @@ fun PhotoDataSet(
     mainController: NavHostController = rememberNavController()
 ) {
     val coroutineScope = rememberCoroutineScope()
-    var path by remember {
-        mutableStateOf(imageViewModel.groupPath)
-    }
+    val path = imageViewModel.groupPath
     if (path != "") {
         imageViewModel.loadPath(path)
     }
     val images = imageViewModel.getImageList(path)
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val pagerState = rememberPagerState { images.size }
     var topVisible by remember {
         mutableStateOf(true)
@@ -201,8 +215,6 @@ fun PhotoDataSet(
                 }
             }
         },
-        modifier = Modifier
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
         if (isDetail) {
             // 定位
@@ -210,13 +222,21 @@ fun PhotoDataSet(
                 pagerState.scrollToPage(imageViewModel.imageDetail.index)
             }
             // 详情页面
-            HorizontalPager(state = pagerState) { it ->
+            HorizontalPager(
+                state = pagerState,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxHeight()
+            ) { it ->
                 imageViewModel.imageDetail = images[it]
-                Button(onClick = { topVisible = !topVisible }) {
+                Button(
+                    onClick = { topVisible = !topVisible },
+                    shape = StyleCommon.ZERO_SHAPE,
+                    colors = ButtonDefaults.buttonColors(Color.White),
+                ) {
                     FullScreenImage(
-                        imageEntity = images[it], modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
+                        imageEntity = images[it]
                     )
                 }
             }
@@ -258,6 +278,89 @@ fun ImageGroupList(
                     imageViewModel.groupPath = item.parentPath
                 }
                 navHostController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
+            }
+        }
+    }
+}
+
+@Composable
+fun ImportImages(  imageViewModel: ImageViewModel= viewModel(),
+                   onDismissRequest: () -> Unit) {
+    val checkeds = remember { mutableStateListOf(false, false, false, false) }
+
+    var currentProgress by remember { mutableFloatStateOf(0f) }
+    var loading by remember { mutableStateOf(false) }
+    var enabled by remember {
+        mutableStateOf(true)
+    }
+    Dialog(onDismissRequest = onDismissRequest) {
+        Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+            Column(
+                modifier = Modifier
+                    .padding(20.dp),
+            ) {
+                Row {
+                    Text(text = "本机相册", modifier = TEXT_ROW_MODIFIER)
+                    Switch(
+                        checked = checkeds[0],
+                        onCheckedChange = {
+                            checkeds[0] = it
+                        }
+                    )
+                }
+                Row {
+                    Text(text = "相机", modifier = TEXT_ROW_MODIFIER)
+                    Switch(
+                        checked = checkeds[1],
+                        onCheckedChange = {
+                            checkeds[1] = it
+                        }
+                    )
+                }
+                Row {
+                    Text(text = "腾讯QQ", modifier = TEXT_ROW_MODIFIER)
+                    Switch(
+                        checked = checkeds[2],
+                        onCheckedChange = {
+                            checkeds[2] = it
+                        }
+                    )
+                }
+                Row {
+                    Text(text = "微信", modifier = TEXT_ROW_MODIFIER)
+                    Switch(
+                        checked = checkeds[3],
+                        onCheckedChange = {
+                            checkeds[3] = it
+                        }
+                    )
+                }
+                if (loading) {
+                    LinearProgressIndicator(progress = currentProgress,
+                        modifier = Modifier.fillMaxWidth())
+                }else{
+                    Row(horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()) {
+                        OutlinedButton(onClick = {
+                            enabled = false
+                            loading = true
+//                        ThreadPoolManager.getInstance().addTask("imageLoad") {
+                            for ((i, path) in IMAGE_PATHS.withIndex()){
+                                currentProgress = ((i + 1) / IMAGE_PATHS.size).toFloat()
+                                if (checkeds[i]){
+                                    imageViewModel.dirList.addAll(
+                                        ImageUtils.getDirectoryList(path)
+                                    );
+                                }
+                            }
+//                        }
+                            enabled = true
+                            onDismissRequest()
+                        },enabled=enabled) {
+                            Text(text = "确定")
+                        }
+                    }
+                }
             }
         }
     }

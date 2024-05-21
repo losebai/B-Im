@@ -172,29 +172,20 @@ class MainActivity : AppCompatActivity() {
             appBase.Context(content = { innerPadding ->
                 val mod = Modifier
                     .padding(innerPadding)
-                appBase.topVisible = true
                 when (appBase.page) {
                     MenuRouteConfig.ROUTE_IMAGE -> {
-                        if (!appBase.isLoadImage) {
-                            logger.info { "未加载" }
-                            Column(
-                                modifier = mod
-                                    .fillMaxHeight()
-                                    .padding(20.dp),
-                                verticalArrangement = Arrangement.SpaceEvenly
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.image_empty),
-                                    color = Color.Yellow,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 20.sp
+                        appBase.topVisible = true
+                        if (imageViewModel.dirList.isEmpty()){
+                            scope.launch {
+                                appBase.snackbarHostState.showSnackbar(
+                                    getString(R.string.image_empty),
+                                    actionLabel = "关闭",
+                                    duration = SnackbarDuration.Short
                                 )
                             }
-                        } else {
-                            ImageGroupList(imageViewModel, mod.padding(10.dp), appBase.navHostController)
                         }
+                        ImageGroupList(imageViewModel, mod.padding(10.dp), appBase.navHostController)
                     }
-
                     MenuRouteConfig.ROUTE_COMMUNITY -> {
                         appBase.topVisible = false
                         Community(
@@ -203,11 +194,8 @@ class MainActivity : AppCompatActivity() {
                         )
                     }
 
-                    MenuRouteConfig.ROUTE_SETTING -> {
-                        Text(text = "设置", modifier = mod)
-                    }
-
                     MenuRouteConfig.ROUTE_MESSAGE -> {
+                        appBase.topVisible = true
                         scope.launch {
                             appBase.snackbarHostState.showSnackbar(
                                 getString(R.string.empty_ui),
@@ -219,6 +207,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     MenuRouteConfig.ROUTE_USERS -> {
+                        appBase.topVisible = true
                         Column(modifier = mod) {
                             SearchUser(
                                 searchUserEntity.name, onValueChange = {

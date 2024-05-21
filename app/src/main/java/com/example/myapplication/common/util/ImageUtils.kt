@@ -22,11 +22,11 @@ object ImageUtils {
     private val imageDirList = ArrayList<File>()
 
     // 获取相机目录路径
-    val cameraDirPath: String =
+    val DCIM_PATH: String =
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath
 
     // 获取相册目录路径
-    val galleryDirPath: String =
+    val PICTURES_PATH: String =
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath
 
 
@@ -79,18 +79,12 @@ object ImageUtils {
         val dir = File(path)
         val fileList = ArrayList<ImageEntity>()
         if (dir.isDirectory) {
-            val files = dir.listFiles()
-            if (files != null) {
-                for ((index, file) in files.withIndex()) {
+            val files = dir.listFiles(filenameFilter)
+            var index = 0
+            files?.let {
+                for (file in it) {
                     // 获取图片文件路径
-                    if (file.name[0] == '.'){
-                        continue
-                    }
-                    val it = if(file.isDirectory) getImageDirectoryOne(file) else ImageEntity(file)
-                    if (it != null){
-                        it.index = index
-                        fileList.add(it)
-                    }
+                    fileList.add(ImageEntity(file, index++))
                 }
             }
         }

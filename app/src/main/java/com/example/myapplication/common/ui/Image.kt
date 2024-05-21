@@ -71,11 +71,11 @@ fun ImageGroupButton(message: ImageEntity,  onClick:  (ImageEntity) -> Unit){
         onClick = {
             onClick(message)
         },
-        shape = StyleCommon.ZERO_SHAPE,
+        shape = StyleCommon.IMAGE_BUTTON_SHAPE,
         modifier = Modifier.height(100.dp).width(100.dp),
         contentPadding = ZERO_PADDING,
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column {
             Image(
                 painter = //占位图
                 rememberAsyncImagePainter(message.location),
