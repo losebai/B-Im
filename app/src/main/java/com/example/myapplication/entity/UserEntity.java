@@ -1,6 +1,5 @@
 package com.example.myapplication.entity;
 
-import com.example.myapplication.common.util.Utils;
 
 public class UserEntity {
 

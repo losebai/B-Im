@@ -14,6 +14,7 @@ class CommunityViewModel: ViewModel() {
     private val messageService: MessageService = MessageService()
 
     var page = 1
+
     private val size = 10
 
     private val pages = ArrayList<Int>()

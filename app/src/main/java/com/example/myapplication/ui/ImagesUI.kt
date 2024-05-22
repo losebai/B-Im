@@ -45,23 +45,27 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.myapplication.common.consts.IMAGE_PATHS
 import com.example.myapplication.common.consts.StyleCommon
-import com.example.myapplication.common.consts.snackBarHostState
+import com.example.myapplication.common.consts.SystemApp
+import com.example.myapplication.common.consts.SystemApp.snackBarHostState
 import com.example.myapplication.common.ui.FullScreenImage
 import com.example.myapplication.common.ui.ImageGroupButton
 import com.example.myapplication.common.util.ImageUtils
@@ -193,7 +197,7 @@ fun PhotoDataSet(
     Scaffold(
         snackbarHost = {
             if (isDetail) {
-                SnackbarHost(hostState = snackBarHostState, modifier = Modifier.padding(0.dp))
+                SnackbarHost(hostState =  snackBarHostState, modifier = Modifier.padding(0.dp))
             }
         },
         topBar = {
@@ -262,7 +266,7 @@ fun PhotoDataSet(
 @Composable
 fun ImageGroupList(
     imageViewModel: ImageViewModel,
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     navHostController: NavHostController
 ) {
     LazyVerticalGrid(
@@ -284,9 +288,9 @@ fun ImageGroupList(
 }
 
 @Composable
-fun ImportImages(  imageViewModel: ImageViewModel= viewModel(),
+fun ImportImages(  imageViewModel: ImageViewModel = viewModel(),
                    onDismissRequest: () -> Unit) {
-    val checkeds = remember { mutableStateListOf(false, false, false, false) }
+    val checkeds = remember  { mutableStateListOf(false, false, false, false) }
 
     var currentProgress by remember { mutableFloatStateOf(0f) }
     var loading by remember { mutableStateOf(false) }
@@ -345,8 +349,8 @@ fun ImportImages(  imageViewModel: ImageViewModel= viewModel(),
                             enabled = false
                             loading = true
 //                        ThreadPoolManager.getInstance().addTask("imageLoad") {
-                            for ((i, path) in IMAGE_PATHS.withIndex()){
-                                currentProgress = ((i + 1) / IMAGE_PATHS.size).toFloat()
+                            for ((i, path) in SystemApp.IMAGE_PATHS.withIndex()){
+                                currentProgress = ((i + 1) / SystemApp.IMAGE_PATHS.size).toFloat()
                                 if (checkeds[i]){
                                     imageViewModel.dirList.addAll(
                                         ImageUtils.getDirectoryList(path)

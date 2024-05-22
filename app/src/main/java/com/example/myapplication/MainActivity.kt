@@ -28,21 +28,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import com.example.myapplication.common.consts.PRODUCT_DEVICE_NUMBER
-import com.example.myapplication.common.consts.UserId
-import com.example.myapplication.common.ui.ImageGroupButton
+import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.ui.LOADING_MORE
 import com.example.myapplication.common.ui.LoadingIndicator
 import com.example.myapplication.common.ui.MySwipeRefresh
@@ -53,20 +49,19 @@ import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
-import com.example.myapplication.config.ParamsConfig
 import com.example.myapplication.entity.CommunityEntity
 import com.example.myapplication.remote.entity.AppUserEntity
-import com.example.myapplication.service.UserService
 import com.example.myapplication.ui.AppTheme
 import com.example.myapplication.ui.CommunityHome
-import com.example.myapplication.ui.DynamicMessage
 import com.example.myapplication.ui.ImageGroupList
+import com.example.myapplication.ui.MessagesList
 import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.ui.SearchUser
 import com.example.myapplication.ui.SettingHome
 import com.example.myapplication.ui.UserList
 import com.example.myapplication.viewmodel.CommunityViewModel
 import com.example.myapplication.viewmodel.ImageViewModel
+import com.example.myapplication.viewmodel.MessagesViewModel
 import com.example.myapplication.viewmodel.UserViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -101,10 +96,10 @@ class MainActivity : AppCompatActivity() {
         // 默认账户信息
         ThreadPoolManager.getInstance().addTask("init") {
             val appUserEntity = Utils.randomUser()
-            appUserEntity.deviceNumber = PRODUCT_DEVICE_NUMBER
-            val user = userViewModel.gerUserByNumber(PRODUCT_DEVICE_NUMBER)
+            appUserEntity.deviceNumber = SystemApp.PRODUCT_DEVICE_NUMBER
+            val user = userViewModel.gerUserByNumber(SystemApp.PRODUCT_DEVICE_NUMBER)
             if (user.id != null) {
-                UserId = user.id
+                SystemApp.UserId = user.id
                 appUserEntity.id = user.id
                 userViewModel.userEntity.id = user.id
                 userViewModel.userEntity.name = user.name
@@ -131,6 +126,7 @@ class MainActivity : AppCompatActivity() {
 //              ImageUtils.check(LocalContext.current, this)
                 communityViewModel = viewModel<CommunityViewModel>()
                 appBase.navHostController = rememberNavController()
+                val messagesViewModel: MessagesViewModel = ViewModelProvider(this )[MessagesViewModel::class.java]
                 this.init()
                 NavHost(
                     navController = appBase.navHostController,
@@ -154,9 +150,10 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("CoroutineCreationDuringComposition")
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    @Preview(showBackground = true)
+//    @Preview(showBackground = true)
     @Composable
-    fun PageHost(imageViewModel: ImageViewModel = viewModel()) {
+    fun PageHost(imageViewModel: ImageViewModel = viewModel<ImageViewModel>(),
+                 messagesViewModel: MessagesViewModel = viewModel<MessagesViewModel>()) {
         val scope = rememberCoroutineScope()
         ModalNavigationDrawer(drawerState = appBase.settingDrawerState, drawerContent = {
             ModalDrawerSheet {
@@ -177,7 +174,7 @@ class MainActivity : AppCompatActivity() {
                         appBase.topVisible = true
                         if (imageViewModel.dirList.isEmpty()){
                             scope.launch {
-                                appBase.snackbarHostState.showSnackbar(
+                                SystemApp.snackBarHostState.showSnackbar(
                                     getString(R.string.image_empty),
                                     actionLabel = "关闭",
                                     duration = SnackbarDuration.Short
@@ -196,14 +193,8 @@ class MainActivity : AppCompatActivity() {
 
                     MenuRouteConfig.ROUTE_MESSAGE -> {
                         appBase.topVisible = true
-                        scope.launch {
-                            appBase.snackbarHostState.showSnackbar(
-                                getString(R.string.empty_ui),
-                                actionLabel = "关闭",
-                                // Defaults to SnackbarDuration.Short
-                                duration = SnackbarDuration.Short
-                            )
-                        }
+                        MessagesList(messagesViewModel.messagesDetailList,
+                            modifier = mod.fillMaxWidth())
                     }
 
                     MenuRouteConfig.ROUTE_USERS -> {

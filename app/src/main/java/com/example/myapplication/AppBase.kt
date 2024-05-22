@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -61,6 +60,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
+import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.ui.DialogImageAdd
 import com.example.myapplication.common.util.ImageUtils
 import com.example.myapplication.common.util.ThreadPoolManager
@@ -84,7 +84,6 @@ class AppBase {
 
     var settingDrawerState by mutableStateOf(DrawerState(DrawerValue.Closed))
 
-    var snackbarHostState = SnackbarHostState()
 
     var isLoadImage by mutableStateOf(false)
 
@@ -198,11 +197,6 @@ class AppBase {
                 this.page = MenuRouteConfig.ROUTE_IMAGE
             }
         }
-//        if (importImaged){
-//            ImportImages(){i, s ->
-//
-//            }
-//        }
     }
 
     @Preview(showBackground = true)
@@ -306,7 +300,7 @@ class AppBase {
         Scaffold(
             snackbarHost = {
                 SnackbarHost(
-                    hostState = snackbarHostState,
+                    hostState = SystemApp.snackBarHostState,
                     modifier = Modifier.padding(0.dp)
                 )
             },

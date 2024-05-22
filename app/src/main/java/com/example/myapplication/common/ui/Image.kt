@@ -66,13 +66,15 @@ fun FullScreenImage(
     )
 
 @Composable
-fun ImageGroupButton(message: ImageEntity,  onClick:  (ImageEntity) -> Unit){
+fun ImageGroupButton(message: ImageEntity, onClick: (ImageEntity) -> Unit) {
     Button(
         onClick = {
             onClick(message)
         },
         shape = StyleCommon.IMAGE_BUTTON_SHAPE,
-        modifier = Modifier.height(100.dp).width(100.dp),
+        modifier = Modifier
+            .height(100.dp)
+            .width(100.dp),
         contentPadding = ZERO_PADDING,
     ) {
         Column {
@@ -93,7 +95,7 @@ fun ImageGroupButton(message: ImageEntity,  onClick:  (ImageEntity) -> Unit){
 
 @Composable
 fun imagePainter(location: String) =
-     rememberAsyncImagePainter(location)
+    rememberAsyncImagePainter(location)
 
 @Composable
 fun imagePainter() =
@@ -119,25 +121,39 @@ fun ImageListView(messages: List<ImageEntity>, onClick: (ImageEntity) -> Unit) {
             .wrapContentWidth()
             .wrapContentHeight()
     ) {
-       items(messages){
-           ImageGroupButton(it, onClick=onClick)
-       }
+        items(messages) {
+            ImageGroupButton(it, onClick = onClick)
+        }
     }
 }
 @SuppressLint("ModifierParameter")
 @Composable
-fun HeadImage(userEntity: UserEntity = Utils.randomUser(), modifier: Modifier = Modifier, onClick: () -> Unit){
+fun HeadImage(
+    userEntity: UserEntity = Utils.randomUser(),
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) = HeadImage(
+    mod = if (userEntity.imageUrl == null) painterResource(id = R.drawable.test)
+    else rememberAsyncImagePainter(userEntity.imageUrl), modifier, onClick
+)
+
+@SuppressLint("ModifierParameter")
+@Composable
+fun HeadImage(
+    mod: Any?,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) =
     Surface(
         onClick = onClick,
         shape = CircleShape,
         border = BorderStroke(0.dp, Color.Gray),
-                modifier=modifier
+        modifier = modifier
     ) {
         Image(
-            painter = if (userEntity.imageUrl == null) painterResource(id = R.drawable.test)
-            else rememberAsyncImagePainter(userEntity.imageUrl),
+            painter = rememberAsyncImagePainter(mod),
             contentDescription = null,
             contentScale = ContentScale.Crop
         )
     }
-}
+

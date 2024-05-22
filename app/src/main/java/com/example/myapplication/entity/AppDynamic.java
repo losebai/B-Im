@@ -1,8 +1,5 @@
 package com.example.myapplication.entity;
 
-import org.noear.snack.ONode;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class AppDynamic {

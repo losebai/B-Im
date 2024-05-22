@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Check
@@ -47,25 +46,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.R
 import com.example.myapplication.common.util.PermissionUtils
 import com.example.myapplication.common.util.PermissionsChecker
 import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
-import com.example.myapplication.common.consts.snackBarHostState
+import com.example.myapplication.common.consts.SystemApp.snackBarHostState
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.entity.ImageEntity
 import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.viewmodel.PermissionViewModel
 
 
-val permissionViewModel: PermissionViewModel = PermissionViewModel()
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview(showBackground = true)
 @Composable
 fun SettingHome(userEntity: UserEntity = UserEntity()) {
+    val permissionViewModel: PermissionViewModel = viewModel()
     val scope = rememberCoroutineScope()
     val buttonModifier = Modifier.fillMaxWidth()
     val iconModifier = Modifier.size(25.dp)
@@ -211,14 +211,14 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
 //        }
     }
     if (permissionViewModel.isCheck) {
-        CheckPermissionDialog()
+        CheckPermissionDialog(permissionViewModel)
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview(showBackground = true)
 @Composable
-fun CheckPermissionDialog() {
+fun CheckPermissionDialog(permissionViewModel: PermissionViewModel= viewModel()) {
     val permissionChecker = PermissionsChecker(LocalContext.current)
     Dialog(onDismissRequest = { permissionViewModel.isCheck = false }) {
         Box(

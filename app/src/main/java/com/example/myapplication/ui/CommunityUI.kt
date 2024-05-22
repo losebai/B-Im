@@ -247,9 +247,7 @@ fun CommunityHome(
             ) {
                 HeadImage(
                     onClick = {}, userEntity = userEntity,
-                    modifier = Modifier
-                        .size(100.dp)
-                        .padding(15.dp)
+                    modifier = StyleCommon.HEAD_IMAGE
                 )
             }
         }
