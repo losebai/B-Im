@@ -4,17 +4,15 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -27,17 +25,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.ui.LOADING_MORE
 import com.example.myapplication.common.ui.LoadingIndicator
@@ -51,9 +48,11 @@ import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.CommunityEntity
 import com.example.myapplication.remote.entity.AppUserEntity
+import com.example.myapplication.remote.entity.toUserEntity
 import com.example.myapplication.ui.AppTheme
 import com.example.myapplication.ui.CommunityHome
 import com.example.myapplication.ui.ImageGroupList
+import com.example.myapplication.ui.MessagesDetail
 import com.example.myapplication.ui.MessagesList
 import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.ui.SearchUser
@@ -79,7 +78,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var userViewModel: UserViewModel;
 
-    private lateinit var communityViewModel: CommunityViewModel;
+    private val communityViewModel: CommunityViewModel by viewModels()
+
+    private lateinit var messagesViewModel: MessagesViewModel;
 
     private val searchUserEntity by mutableStateOf(AppUserEntity())
 
@@ -98,7 +99,7 @@ class MainActivity : AppCompatActivity() {
             val appUserEntity = Utils.randomUser()
             appUserEntity.deviceNumber = SystemApp.PRODUCT_DEVICE_NUMBER
             val user = userViewModel.gerUserByNumber(SystemApp.PRODUCT_DEVICE_NUMBER)
-            if (user.id != null) {
+            if (user.id != 0L) {
                 SystemApp.UserId = user.id
                 appUserEntity.id = user.id
                 userViewModel.userEntity.id = user.id
@@ -121,12 +122,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme(appBase.darkTheme) {
-                userViewModel = viewModel<UserViewModel>()
                 appBase.imageViewModel = viewModel<ImageViewModel>()
-//              ImageUtils.check(LocalContext.current, this)
-                communityViewModel = viewModel<CommunityViewModel>()
                 appBase.navHostController = rememberNavController()
-                val messagesViewModel: MessagesViewModel = ViewModelProvider(this )[MessagesViewModel::class.java]
+                userViewModel = ViewModelProvider(
+                    this,
+                    UserViewModel.MessageViewModelFactory(this)
+                )[UserViewModel::class.java]
+
+                messagesViewModel =
+                    ViewModelProvider(
+                        this,
+                        MessagesViewModel.MessageViewModelFactory(this)
+                    )[MessagesViewModel::class.java]
                 this.init()
                 NavHost(
                     navController = appBase.navHostController,
@@ -137,11 +144,23 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     // 一级页面
                     composable(PageRouteConfig.MENU_ROUTE) {
-                        PageHost(appBase.imageViewModel)
+                        PageHost(
+                            appBase.imageViewModel,
+                            messagesViewModel,
+                            appBase.navHostController
+                        )
                     }
                     // 二级页面 相片页
                     composable(PageRouteConfig.IMAGE_PAGE_ROUTE) {
                         PhotoDataSet(appBase.imageViewModel, appBase.navHostController)
+                    }
+                    composable(PageRouteConfig.MESSAGE_ROUTE) {
+                        MessagesDetail(
+                            userViewModel.sendUserEntity,
+                            messagesViewModel,
+                            messagesViewModel.messagesDetail,
+                            appBase.navHostController
+                        )
                     }
                 }
             }
@@ -152,16 +171,17 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 //    @Preview(showBackground = true)
     @Composable
-    fun PageHost(imageViewModel: ImageViewModel = viewModel<ImageViewModel>(),
-                 messagesViewModel: MessagesViewModel = viewModel<MessagesViewModel>()) {
+    fun PageHost(
+        imageViewModel: ImageViewModel,
+        messagesViewModel: MessagesViewModel,
+        mainController: NavHostController
+    ) {
         val scope = rememberCoroutineScope()
         ModalNavigationDrawer(drawerState = appBase.settingDrawerState, drawerContent = {
             ModalDrawerSheet {
                 ThreadPoolManager.getInstance().addTask("init") {
-                    if (userViewModel.userEntity.id != null) {
-                        val user = userViewModel.getUserById(userViewModel.userEntity.id)
-                        userViewModel.userEntity = user
-                    }
+                    val user = userViewModel.getUserById(userViewModel.userEntity.id)
+                    userViewModel.userEntity = user.toUserEntity()
                 }
                 SettingHome(userViewModel.userEntity)
             }
@@ -172,7 +192,7 @@ class MainActivity : AppCompatActivity() {
                 when (appBase.page) {
                     MenuRouteConfig.ROUTE_IMAGE -> {
                         appBase.topVisible = true
-                        if (imageViewModel.dirList.isEmpty()){
+                        if (imageViewModel.dirList.isEmpty()) {
                             scope.launch {
                                 SystemApp.snackBarHostState.showSnackbar(
                                     getString(R.string.image_empty),
@@ -181,8 +201,13 @@ class MainActivity : AppCompatActivity() {
                                 )
                             }
                         }
-                        ImageGroupList(imageViewModel, mod.padding(10.dp), appBase.navHostController)
+                        ImageGroupList(
+                            imageViewModel,
+                            mod.padding(10.dp),
+                            appBase.navHostController
+                        )
                     }
+
                     MenuRouteConfig.ROUTE_COMMUNITY -> {
                         appBase.topVisible = false
                         Community(
@@ -193,8 +218,10 @@ class MainActivity : AppCompatActivity() {
 
                     MenuRouteConfig.ROUTE_MESSAGE -> {
                         appBase.topVisible = true
-                        MessagesList(messagesViewModel.messagesDetailList,
-                            modifier = mod.fillMaxWidth())
+                        MessagesList(
+                            messagesViewModel.userMessagesList,
+                            modifier = mod.fillMaxWidth()
+                        )
                     }
 
                     MenuRouteConfig.ROUTE_USERS -> {
@@ -209,6 +236,8 @@ class MainActivity : AppCompatActivity() {
                                     .padding(2.dp)
                             )
                             UserList(userViewModel, onClick = {
+                                userViewModel.sendUserEntity = it
+                                mainController.navigate(PageRouteConfig.MESSAGE_ROUTE)
                             })
                         }
                     }
@@ -222,7 +251,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     @Preview(showBackground = true)
     @Composable
     fun Community(

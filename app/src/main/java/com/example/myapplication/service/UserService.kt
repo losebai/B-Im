@@ -1,7 +1,6 @@
 package com.example.myapplication.service
 
 import com.example.myapplication.common.consts.AppAPI
-import com.example.myapplication.common.consts.AppUserEntityClass
 import com.example.myapplication.common.util.HttpUtils
 import com.example.myapplication.common.util.HttpUtils.MEDIA_TYPE_JSON
 import com.example.myapplication.remote.entity.AppUserEntity
@@ -21,7 +20,7 @@ class UserService {
         val res: Response? = HttpUtils.get("${AppAPI.GET_USER}$id")
         if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
-            return json["data"].toObject(AppUserEntityClass)
+            return json["data"].toObject(AppUserEntity::class.java)
         }
         return appUserEntity
     }
@@ -33,7 +32,7 @@ class UserService {
             if (!json.contains("data")){
                 return appUserEntity
             }
-            return json["data"].toObject(AppUserEntityClass)
+            return json["data"].toObject(AppUserEntity::class.java)
         }
         return appUserEntity
     }
@@ -53,7 +52,7 @@ class UserService {
         val res: Response? = HttpUtils.post(AppAPI.POST_USER_LIST, requestBody)
         if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
-            return json["data"].toObjectList(AppUserEntityClass)
+            return json["data"].toObjectList(AppUserEntity::class.java)
         }
         return Collections.emptyList()
     }

@@ -42,6 +42,9 @@ object PageRouteConfig{
     const val IMAGE_PAGE_ROUTE = "IMAGE_PAGE_ROUTE"
 
     const val IMAGE_DETAIL_ROUTE = "IMAGE_SHOW_ROUTE";
+
+    // 消息发送
+    const val MESSAGE_ROUTE = "MESSAGE_ROUTE"
 }
 
 object ParamsConfig {

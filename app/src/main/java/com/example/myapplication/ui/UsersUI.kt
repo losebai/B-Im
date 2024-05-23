@@ -111,7 +111,7 @@ fun UserList(
                     colors = ButtonDefaults.buttonColors(Color.White)
                 ) {
                     Row {
-                        HeadImage(list[it], modifier = StyleCommon.HEAD_IMAGE) {
+                        HeadImage(userEntity = list[it], modifier = StyleCommon.HEAD_IMAGE) {
                         }
                         Column(modifier = Modifier.padding(start = 10.dp)) {
                             Text(

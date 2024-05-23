@@ -2,10 +2,11 @@ import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import java.util.Properties
 import java.io.FileInputStream
 plugins {
+//    id("org.jetbrains.kotlin.plugin.compose")
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp") version "2.0.0-1.0.21"
-    id ("org.jetbrains.kotlin.kapt" ) version "2.0.0"
+    id("com.google.devtools.ksp")
+    id ("org.jetbrains.kotlin.kapt" )
 //    kotlin("jvm")
 }
 
@@ -20,7 +21,7 @@ android {
     compileSdk = configProperties.getProperty("compileSdkVersion").toInt()
     defaultConfig {
         applicationId = "com.example.myapplication"
-        minSdk = 24
+        minSdk = 27
         targetSdk = 34
         versionCode = 1
         versionName = "1.1"
@@ -115,6 +116,7 @@ android {
             manifestPlaceholders["app_channel_value"] = name
             manifestPlaceholders["app_name_value"] = "Android"
             buildConfigField("String", "BASE_URL", "\"http://121.40.62.167:8000\"")
+            buildConfigField("String", "SOCKET_URL", "\"http://121.40.62.167:8002\"")
 //            buildConfigField("String", "BASE_URL", "\"http://192.168.20.119:8082\"")
         }
         create("pro") {
@@ -124,6 +126,7 @@ android {
             dimension = "tier"
             manifestPlaceholders["app_channel_value"] = name
             manifestPlaceholders["app_name_value"] = "Android"
+            buildConfigField("String", "SOCKET_URL", "\"http://121.40.62.167:8002\"")
             buildConfigField("String", "BASE_URL", "\"http://121.40.62.167:8000\"")
         }
     }
@@ -141,7 +144,6 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.6")
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
     implementation("org.slf4j:slf4j-simple:1.7.30")
 
 //    implementation("org.noear:solon:2.7.5")
@@ -160,28 +162,14 @@ dependencies {
 
     // To use Kotlin Symbol Processing (KSP)
     ksp("androidx.room:room-compiler:$room_version")
-
     implementation("androidx.room:room-runtime:$room_version")
-
-    // To use Kotlin Symbol Processing (KSP)
-
-    // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
-
-    // optional - RxJava2 support for Room
     implementation("androidx.room:room-rxjava2:$room_version")
-
-    // optional - RxJava3 support for Room
     implementation("androidx.room:room-rxjava3:$room_version")
-
-    // optional - Guava support for Room, including Optional and ListenableFuture
     implementation("androidx.room:room-guava:$room_version")
-
-    // optional - Test helpers
     testImplementation("androidx.room:room-testing:$room_version")
-
-    // optional - Paging 3 Integration
     implementation("androidx.room:room-paging:$room_version")
+
     //noinspection GradlePluginVersion
 //    implementation("com.android.tools.build:gradle:8.2.2")
 //    implementation("com.google.accompanist:accompanist-permissions:0.31.0-alpha")
@@ -212,5 +200,4 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    annotationProcessor("androidx.room:room-compiler:$room_version")
 }

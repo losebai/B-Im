@@ -59,11 +59,9 @@ object Utils {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     var formatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd HH:mm:ss")
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun localDateTimeToString(time: LocalDateTime) : String{
         return time.format(formatter)
     }

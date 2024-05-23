@@ -234,7 +234,7 @@ fun MySwipeRefresh(
         }
         //子可组合项 根据state.progress来设置子可组合项的padding
         content(
-            modifier = when (state.progress.location) {
+           when (state.progress.location) {
                 TOP -> Modifier.padding(top = offsetDp)
                 BOTTOM -> Modifier.padding(bottom = offsetDp)
                 else -> Modifier
@@ -253,8 +253,8 @@ fun MySwipeRefresh(
             ) {
                 indicator(
                     Modifier.align(if (state.progress.location == TOP) Alignment.BottomStart else Alignment.TopStart),
-                    state = state,
-                    indicatorHeight = indicationHeight
+                    state,
+                    indicationHeight
                 )
             }
         }

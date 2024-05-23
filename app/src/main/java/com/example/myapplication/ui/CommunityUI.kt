@@ -68,6 +68,7 @@ import com.example.myapplication.common.ui.HeadImage
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.entity.CommunityEntity
 import com.example.myapplication.entity.UserEntity
+import com.example.myapplication.remote.entity.toUserEntity
 
 
 /**
@@ -229,7 +230,7 @@ fun DynamicMessage(communityEntity: CommunityEntity, modifier: Modifier = Modifi
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CommunityHome(
-    userEntity: UserEntity = Utils.randomUser(),
+    userEntity: UserEntity = Utils.randomUser().toUserEntity(),
     background: String? = null,
     communityList: List<CommunityEntity>,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,

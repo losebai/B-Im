@@ -54,7 +54,6 @@ import com.example.myapplication.common.util.PermissionsChecker
 import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
 import com.example.myapplication.common.consts.SystemApp.snackBarHostState
 import com.example.myapplication.common.util.Utils
-import com.example.myapplication.entity.ImageEntity
 import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.viewmodel.PermissionViewModel
 
@@ -70,7 +69,6 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
     val buttonModifier = Modifier.fillMaxWidth()
     val iconModifier = Modifier.size(25.dp)
     val message = stringResource(id = R.string.empty_ui)
-    var checked by remember { mutableStateOf(true) }
     Box(
         modifier = Modifier
             .background(Color.White)

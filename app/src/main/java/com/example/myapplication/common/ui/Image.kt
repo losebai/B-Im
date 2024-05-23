@@ -47,6 +47,7 @@ import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.entity.ImageEntity
 import com.example.myapplication.entity.UserEntity
+import com.example.myapplication.remote.entity.toUserEntity
 import kotlin.math.absoluteValue
 
 
@@ -126,21 +127,30 @@ fun ImageListView(messages: List<ImageEntity>, onClick: (ImageEntity) -> Unit) {
         }
     }
 }
-@SuppressLint("ModifierParameter")
-@Composable
-fun HeadImage(
-    userEntity: UserEntity = Utils.randomUser(),
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) = HeadImage(
-    mod = if (userEntity.imageUrl == null) painterResource(id = R.drawable.test)
-    else rememberAsyncImagePainter(userEntity.imageUrl), modifier, onClick
-)
 
 @SuppressLint("ModifierParameter")
 @Composable
 fun HeadImage(
-    mod: Any?,
+    userEntity: UserEntity = Utils.randomUser().toUserEntity(),
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) = Surface(
+    onClick = onClick,
+    shape = CircleShape,
+    border = BorderStroke(0.dp, Color.Gray),
+    modifier = modifier
+) {
+    Image(
+        painter = if (userEntity.imageUrl.isEmpty()) painterResource(id = R.drawable.test)
+        else rememberAsyncImagePainter(userEntity.imageUrl), contentDescription = null,
+        contentScale = ContentScale.Crop
+    )
+}
+
+@SuppressLint("ModifierParameter")
+@Composable
+fun HeadImage(
+    path: String?,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) =
@@ -151,7 +161,7 @@ fun HeadImage(
         modifier = modifier
     ) {
         Image(
-            painter = rememberAsyncImagePainter(mod),
+            painter = rememberAsyncImagePainter(path),
             contentDescription = null,
             contentScale = ContentScale.Crop
         )

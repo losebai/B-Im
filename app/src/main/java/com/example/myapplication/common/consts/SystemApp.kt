@@ -17,6 +17,8 @@ object SystemApp {
 
     val IMAGE_PATHS = arrayOf(ImageUtils.PICTURES_PATH, ImageUtils.DCIM_PATH)
 
+    var userStatus = UserStatus.INIT
+
 
 //val names = arrayOf("本机相册","相机","QQ","微信" )
 

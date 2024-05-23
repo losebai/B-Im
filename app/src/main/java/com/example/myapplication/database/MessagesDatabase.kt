@@ -5,14 +5,18 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.myapplication.dao.MessagesDao
+import com.example.myapplication.dao.UserDao
 import com.example.myapplication.entity.MessagesEntity
+import com.example.myapplication.entity.UserEntity
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.internal.synchronized
 
-@Database(entities = [MessagesEntity::class], version = 1)
+@Database(entities = [MessagesEntity::class, UserEntity::class], version = 1)
 abstract class MessagesDatabase : RoomDatabase() {
 
     abstract fun messagesDao(): MessagesDao
+
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile
