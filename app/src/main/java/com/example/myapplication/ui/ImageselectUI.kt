@@ -1,7 +1,6 @@
 package com.example.myapplication.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -48,7 +47,7 @@ import com.example.myapplication.common.ui.MySwipeRefresh
 import com.example.myapplication.common.ui.MySwipeRefreshState
 import com.example.myapplication.common.ui.NORMAL
 import com.example.myapplication.common.util.Utils
-import com.example.myapplication.entity.ImageEntity
+import com.example.myapplication.entity.FileEntity
 import com.example.myapplication.viewmodel.ImageViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -98,7 +97,7 @@ fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}) {
     }
     val imagesGroups = imageViewModel.dirList
     var imagesGroup by remember {
-        mutableStateOf<ImageEntity>(imagesGroups[0])
+        mutableStateOf<FileEntity>(imagesGroups[0])
     }
     val path = imageViewModel.groupPath
     val images = imageViewModel.getImageList(path)

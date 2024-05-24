@@ -7,7 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Environment
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.myapplication.entity.ImageEntity
+import com.example.myapplication.entity.FileEntity
 import java.io.File
 
 object ImageUtils {
@@ -35,9 +35,9 @@ object ImageUtils {
      * @param path 路径
      * @return list
      */
-    fun getDirectoryList(path: String): List<ImageEntity> {
+    fun getDirectoryList(path: String): List<FileEntity> {
         val dir = File(path)
-        val fileList = ArrayList<ImageEntity>()
+        val fileList = ArrayList<FileEntity>()
         if (dir.isDirectory) {
             // 筛选出文件夹
             val files = dir.listFiles { _dir: File, p: String ->
@@ -63,10 +63,10 @@ object ImageUtils {
         return fileList
     }
 
-    fun getImageDirectoryOne(dir: File): ImageEntity? {
+    fun getImageDirectoryOne(dir: File): FileEntity? {
         val files = dir.listFiles(filenameFilter)
         if (files != null && files.isNotEmpty()) {
-            return ImageEntity(files[files.size - 1]).let {
+            return FileEntity(files[files.size - 1]).let {
                 it.isDir = true
                 it.dirSize = files.size
                 it
@@ -75,16 +75,16 @@ object ImageUtils {
         return null
     }
 
-    fun getImageList(path: String): List<ImageEntity> {
+    fun getImageList(path: String): List<FileEntity> {
         val dir = File(path)
-        val fileList = ArrayList<ImageEntity>()
+        val fileList = ArrayList<FileEntity>()
         if (dir.isDirectory) {
             val files = dir.listFiles(filenameFilter)
             var index = 0
             files?.let {
                 for (file in it) {
                     // 获取图片文件路径
-                    fileList.add(ImageEntity(file, index++))
+                    fileList.add(FileEntity(file, index++))
                 }
             }
         }

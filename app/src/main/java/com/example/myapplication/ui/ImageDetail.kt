@@ -1,10 +1,6 @@
 package com.example.myapplication.ui
 
 import android.app.Activity
-import android.os.Build
-import android.os.FileUtils
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -40,7 +35,7 @@ import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.util.ShareUtil
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.common.ui.FullScreenImage
-import com.example.myapplication.entity.ImageEntity
+import com.example.myapplication.entity.FileEntity
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
 import java.io.File
@@ -50,19 +45,19 @@ import java.io.File
 private val logger = KotlinLogging.logger {}
 
 @Composable
-fun ImageDetail(imageEntity: ImageEntity, mainController: NavHostController) {
+fun ImageDetail(fileEntity: FileEntity, mainController: NavHostController) {
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = SystemApp.snackBarHostState, modifier = Modifier.padding(0.dp))
         },
         topBar = {
-            ImageTopBar(imageEntity.name, mainController)
+            ImageTopBar(fileEntity.name, mainController)
         },
         bottomBar = {
-            GetBottomBar(imageEntity.filePath){}
+            GetBottomBar(fileEntity.filePath){}
         }
     ) { innerPadding ->
-        FullScreenImage(imageEntity = imageEntity, modifier = Modifier
+        FullScreenImage(fileEntity = fileEntity, modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize())
     }

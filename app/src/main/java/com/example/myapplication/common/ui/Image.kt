@@ -2,11 +2,8 @@ package com.example.myapplication.common.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -14,52 +11,38 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.PointerInputScope
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.myapplication.R
 import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
 import com.example.myapplication.common.util.Utils
-import com.example.myapplication.entity.ImageEntity
+import com.example.myapplication.entity.FileEntity
 import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.remote.entity.toUserEntity
-import kotlin.math.absoluteValue
 
 
 @Composable
 fun FullScreenImage(
-    imageEntity: ImageEntity,
+    fileEntity: FileEntity,
     contentDescription: String? = null,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 ) =
     Image(
         painter = rememberAsyncImagePainter(
-            imageEntity.location
+            fileEntity.location
         ),
         contentDescription = contentDescription,
         modifier = modifier,
@@ -67,7 +50,7 @@ fun FullScreenImage(
     )
 
 @Composable
-fun ImageGroupButton(message: ImageEntity, onClick: (ImageEntity) -> Unit) {
+fun ImageGroupButton(message: FileEntity, onClick: (FileEntity) -> Unit) {
     Button(
         onClick = {
             onClick(message)
@@ -115,7 +98,7 @@ fun imagePainter() =
     )
 
 @Composable
-fun ImageListView(messages: List<ImageEntity>, onClick: (ImageEntity) -> Unit) {
+fun ImageListView(messages: List<FileEntity>, onClick: (FileEntity) -> Unit) {
     LazyColumn(
         modifier = Modifier
             .padding(8.dp)

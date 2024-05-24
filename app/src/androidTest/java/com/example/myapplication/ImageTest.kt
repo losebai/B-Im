@@ -24,11 +24,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toFile
 import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.R
 import com.example.myapplication.common.ui.FullScreenImage
 import com.example.myapplication.common.ui.ImageListView
-import com.example.myapplication.entity.ImageEntity
+import com.example.myapplication.entity.FileEntity
 import com.example.myapplication.ui.GetBottomBar
 import com.example.myapplication.ui.ImageDetail
 import java.io.File
@@ -36,23 +36,24 @@ import java.io.File
 @Composable
 @Preview(showBackground = true)
 fun TestFullScreenImage() {
+    val uri: Uri = Uri.parse("android:resource://drawable/" + R.drawable.test)
     FullScreenImage(
-        ImageEntity(null,null, "D:/java_items/images/app/src/main/res/drawable/test.jpg"
-        ), modifier = Modifier.fillMaxSize()
+        FileEntity(uri.toFile()), modifier = Modifier.fillMaxSize()
     )
 }
 
 @Composable
 //@Preview(showBackground = true)
 fun TestImageListView(){
-    val list: ArrayList<ImageEntity> = ArrayList()
+    val list: ArrayList<FileEntity> = ArrayList()
     val uri: Uri = Uri.parse("android:resource://drawable/" + R.drawable.test)
-    list.add(ImageEntity(null, "test", uri.toString()))
-    list.add(ImageEntity(null, "test", uri.toString()))
-    list.add(ImageEntity(null, "test", uri.toString()))
-    list.add(ImageEntity(null, "test", uri.toString()))
-    list.add(ImageEntity(null, "test", uri.toString()))
-    list.add(ImageEntity(null, "test", uri.toString()))
+    list.add(FileEntity(uri.toFile()))
+    list.add(FileEntity(uri.toFile()))
+    list.add(FileEntity(uri.toFile()))
+    list.add(FileEntity(uri.toFile()))
+    list.add(FileEntity(uri.toFile()))
+    list.add(FileEntity(uri.toFile()))
+    list.add(FileEntity(uri.toFile()))
     ImageListView(list){}
 }
 
@@ -111,5 +112,5 @@ fun TestImageShare() {
 fun TestImageDetail(){
     val uri: Uri = Uri.parse("android:resource://drawable/" + R.drawable.zi)
     val mainController = rememberNavController();
-    ImageDetail(ImageEntity(File(uri.toString())), mainController)
+    ImageDetail(FileEntity(File(uri.toString())), mainController)
 }
