@@ -16,6 +16,8 @@ public class ImageEntity {
 
     private String parentPath;
 
+    private int dirSize = 0;
+
     public ImageEntity(){}
 
     public ImageEntity(File file) {
@@ -91,5 +93,13 @@ public class ImageEntity {
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    public int getDirSize() {
+        return dirSize;
+    }
+
+    public void setDirSize(int dirSize) {
+        this.dirSize = dirSize;
     }
 }

@@ -11,7 +11,7 @@ import java.util.Hashtable
 
 private val EMPTY_IMAGES: Array<ImageEntity>  = arrayOf()
 
-class ImageViewModel : ViewModel() {
+class ImageViewModel() : ViewModel() {
 
     var groupName = "全部"
 
@@ -30,6 +30,12 @@ class ImageViewModel : ViewModel() {
 
     // 详情
     var imageDetail = ImageEntity()
+
+    init {
+        val img = ImageEntity()
+        img.name = "最近照片"
+        dirList.add(img)
+    }
 
 
     fun loadPath(path: String){

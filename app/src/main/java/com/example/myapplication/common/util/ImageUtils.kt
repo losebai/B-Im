@@ -21,11 +21,11 @@ object ImageUtils {
 
     private val imageDirList = ArrayList<File>()
 
-    // 获取相机目录路径
+    // 获取相册目录路径
     val DCIM_PATH: String =
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath
 
-    // 获取相册目录路径
+    // 获取照片目录路径
     val PICTURES_PATH: String =
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath
 
@@ -52,7 +52,6 @@ object ImageUtils {
                     if (file.isDirectory) {
                         val oneImageEntity = getImageDirectoryOne(file)
                         if (oneImageEntity != null){
-                            oneImageEntity.isDir = true
                             oneImageEntity.name = file.name
                             oneImageEntity.index = index++
                             fileList.add(oneImageEntity)
@@ -69,6 +68,7 @@ object ImageUtils {
         if (files != null && files.isNotEmpty()) {
             return ImageEntity(files[files.size - 1]).let {
                 it.isDir = true
+                it.dirSize = files.size
                 it
             }
         }

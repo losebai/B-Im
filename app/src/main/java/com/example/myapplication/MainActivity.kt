@@ -52,6 +52,7 @@ import com.example.myapplication.remote.entity.toUserEntity
 import com.example.myapplication.ui.AppTheme
 import com.example.myapplication.ui.CommunityHome
 import com.example.myapplication.ui.ImageGroupList
+import com.example.myapplication.ui.ImageSelect
 import com.example.myapplication.ui.MessagesDetail
 import com.example.myapplication.ui.MessagesList
 import com.example.myapplication.ui.PhotoDataSet
@@ -158,9 +159,15 @@ class MainActivity : AppCompatActivity() {
                         MessagesDetail(
                             userViewModel.sendUserEntity,
                             messagesViewModel,
+                            appBase.imageViewModel,
                             messagesViewModel.messagesDetail,
-                            appBase.navHostController
+                            appBase.navHostController,
                         )
+                    }
+                    composable(PageRouteConfig.IMAGE_SELECTOR){
+                        ImageSelect(appBase.imageViewModel){
+                            appBase.navHostController.navigateUp()
+                        }
                     }
                 }
             }

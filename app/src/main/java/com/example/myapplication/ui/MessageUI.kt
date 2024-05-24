@@ -1,6 +1,7 @@
 package com.example.myapplication.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -17,8 +19,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,11 +45,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.myapplication.R
 import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.ui.HeadImage
@@ -52,9 +62,11 @@ import com.example.myapplication.common.ui.MySwipeRefresh
 import com.example.myapplication.common.ui.MySwipeRefreshState
 import com.example.myapplication.common.ui.NORMAL
 import com.example.myapplication.common.util.Utils
+import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.UserMessages
 import com.example.myapplication.entity.MessagesEntity
 import com.example.myapplication.entity.UserEntity
+import com.example.myapplication.viewmodel.ImageViewModel
 import com.example.myapplication.viewmodel.MessagesViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -87,27 +99,27 @@ fun MessagesList(messages: List<UserMessages>, modifier: Modifier) {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "ResourceAsColor")
 @Composable
 fun MessagesDetail(
     sendUserEntity: UserEntity,
     messagesViewModel: MessagesViewModel,
+    imageViewModel: ImageViewModel,
     messages: MutableList<MessagesEntity>,
     mainController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
+    val activity = LocalContext.current as Activity
     val state = MySwipeRefreshState(NORMAL)
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var sendData by remember {
         mutableStateOf("")
     }
-    var bottomBarHeight by remember {
-        mutableStateOf(20.dp)
-    }
-    var isAdd by remember {
-        mutableStateOf(false)
-    }
+//    var bottomBarHeight by remember {
+//        mutableStateOf(20.dp)
+//    }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(
@@ -152,6 +164,21 @@ fun MessagesDetail(
             )
         },
         bottomBar = {
+            var isAdd by remember {
+                mutableStateOf(true)
+            }
+//            var isShowImageSelector by remember {
+//                mutableStateOf(false)
+//            }
+//            if (isShowImageSelector){
+//                Dialog(onDismissRequest = {
+//                    isShowImageSelector = false
+//                }){
+//                    ImageSelect(imageViewModel){
+//                        isShowImageSelector = false
+//                    }
+//                }
+//            }
             BottomAppBar(modifier= modifier.background(MaterialTheme.colorScheme.background)){
                 Row(
                     modifier = modifier
@@ -161,27 +188,24 @@ fun MessagesDetail(
                 ) {
                     TextField(value = sendData, onValueChange = {
                         sendData = it
+                        if (it.isEmpty()){
+                            isAdd = true
+                        }
                     }, modifier = Modifier.fillMaxWidth(0.8f))
-                    Surface(
-                        onClick = { },
-                        shape = CircleShape,
-                        border = BorderStroke(0.dp, Color.Gray),
-                        modifier = modifier.height(20.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.FavoriteBorder,
-                            contentDescription = "Localized description"
-                        )
-                    }
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Icon(
+                                imageVector = Icons.Filled.FavoriteBorder,
+                                contentDescription = "Localized description"
+                            )
+                        }
                     if (isAdd) {
-                        Surface(
+                        IconButton(
                             onClick = {
-                                bottomBarHeight = 100.dp
+//                                bottomBarHeight = 100.dp
                                 isAdd = false
+//                                isShowImageSelector = true
+                                mainController.navigate(PageRouteConfig.IMAGE_SELECTOR)
                             },
-                            shape = CircleShape,
-                            border = BorderStroke(0.dp, Color.Gray),
-                            modifier = modifier.height(20.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Add,
@@ -189,21 +213,30 @@ fun MessagesDetail(
                             )
                         }
                     } else {
-                        Button(onClick = {
-                            scope.launch {
-                                messagesViewModel.saveItem(
-                                    MessagesEntity(
-                                        sendUserId = SystemApp.UserId,
-                                        sendDateTime = Utils.localDateTimeToString(LocalDateTime.now()),
-                                        recvUserId = sendUserEntity.id,
-                                        messageData = sendData,
-                                        recvDateTime = null,
-                                        ack = 0
+                        IconButton(onClick = {
+                            // 关闭键盘
+                            activity.dismissKeyboardShortcutsHelper()
+                            if (sendData.isNotEmpty()){
+                                scope.launch {
+                                    messagesViewModel.saveItem(
+                                        MessagesEntity(
+                                            sendUserId = SystemApp.UserId,
+                                            sendDateTime = Utils.localDateTimeToString(LocalDateTime.now()),
+                                            recvUserId = sendUserEntity.id,
+                                            messageData = sendData,
+                                            recvDateTime = null,
+                                            ack = 0
+                                        )
                                     )
-                                )
+                                }
+                            }else{
+                                isAdd = true
                             }
                         }) {
-                            Text(text = "发送")
+                            Icon(
+                                imageVector = Icons.Filled.Send,
+                                contentDescription = "Localized description"
+                            )
                         }
                     }
                 }

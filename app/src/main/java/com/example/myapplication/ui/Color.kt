@@ -1,27 +1,45 @@
 package com.example.myapplication.ui
 import androidx.compose.ui.graphics.Color
 
-val primaryLight = Color(0xFF060707)
-val onPrimaryLight = Color(0xFF030303)
+// 基础 -对表面高度强调的填充、文本和图标
+val primaryLight = Color(0xFF000000)
+//+ On primary -文本和图标相对于primary
+val onPrimaryLight = Color(0xFF000000)
+// 主容器-突出的表面填充颜色，用于关键组件，如FAB
 val primaryContainerLight = Color(0xFFFFFFFF)
-val onPrimaryContainerLight = Color(0xFF000000)
+// 在主容器上-文本和图标对主容器
+val onPrimaryContainerLight = Color(0xFF9E4F4F)
+// 不太突出的填充、文本和图标对表面
 val secondaryLight = Color(0xFFC2C6CC)
-val onSecondaryLight = Color(0xFF000000)
+// 文本和图标相对次要
+val onSecondaryLight = Color(0xFFA528DA)
+// 对表面不太突出的填充颜色，用于色调按钮等隐性组件
 val secondaryContainerLight = Color(0xFFD8E3F8)
-val onSecondaryContainerLight = Color(0xFF000000)
+// 文本和图标对辅助容器
+val onSecondaryContainerLight = Color(0xFF327391)
+// 对表面补充填充、文本和图标
 val tertiaryLight = Color(0xFFC9C5CA)
-val onTertiaryLight = Color(0xFF000000)
+// 文本和图标对第三级
+val onTertiaryLight = Color(0xFFA01717)
+// 对表面的补充容器颜色，用于组件，如输入字段
 val tertiaryContainerLight = Color(0xFFF5D9FF)
+// 文本和图标对第三容器
 val onTertiaryContainerLight = Color(0xFFD3CFD6)
 val errorLight = Color(0xFFBA1A1A)
 val onErrorLight = Color(0xFFFFFFFF)
 val errorContainerLight = Color(0xFFFFDAD6)
 val onErrorContainerLight = Color(0xFF410002)
-val backgroundLight = Color(0xFFD8D6D6)
-val onBackgroundLight = Color(0xFF000000)
+
+val backgroundLight = Color(0xFF000000)
+val onBackgroundLight = Color(0xFF8A4343)
+// 默认的背景颜色
 val surfaceLight = Color(0xFFF8F9FF)
-val onSurfaceLight = Color(0xFF191C20)
+// 文本和图标反对任何表面颜色
+val onSurfaceLight = Color(0xFF0862DA)
+// 低强调颜色的文本和图标对任何表面颜色
 val surfaceVariantLight = Color(0xFFDFE2EB)
+
+// 表面变型光
 val onSurfaceVariantLight = Color(0xFF000000)
 val outlineLight = Color(0xFF73777F)
 val outlineVariantLight = Color(0xFF000000)
