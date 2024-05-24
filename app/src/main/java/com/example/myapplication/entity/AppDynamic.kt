@@ -1,12 +1,12 @@
 package com.example.myapplication.entity
 
 class AppDynamic {
-    var id: Long? = null
-    var userId: Long? = null
-    var dynamicBody: String? = null
-    var createTime: String? = null
-    var updateTime: String? = null
-    var images: List<String>? = null
-    var name: String? = null
-    var imageUrl: String? = null
+    var id: Long = 0L
+    var userId: Long = 0L
+    var dynamicBody: String = ""
+    var createTime: String = ""
+    var updateTime: String = ""
+    var images: List<String> = listOf()
+    var name: String = ""
+    var imageUrl: String = ""
 }
