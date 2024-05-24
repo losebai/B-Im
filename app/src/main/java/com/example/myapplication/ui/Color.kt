@@ -30,8 +30,8 @@ val onErrorLight = Color(0xFFFFFFFF)
 val errorContainerLight = Color(0xFFFFDAD6)
 val onErrorContainerLight = Color(0xFF410002)
 
-val backgroundLight = Color(0xFF000000)
-val onBackgroundLight = Color(0xFF8A4343)
+val backgroundLight = Color(0xFFFFFFFF)
+val onBackgroundLight = Color(0xFF000000)
 // 默认的背景颜色
 val surfaceLight = Color(0xFFF8F9FF)
 // 文本和图标反对任何表面颜色

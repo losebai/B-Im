@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -174,11 +175,8 @@ fun PhotoDataSetBody(
  * @param [imageViewModel]
  * @param [mainController]
  */
-//@Preview(showBackground = true)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
-@OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
-)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PhotoDataSet(
     imageViewModel: ImageViewModel = viewModel(),
@@ -194,16 +192,20 @@ fun PhotoDataSet(
     var topVisible by remember {
         mutableStateOf(true)
     }
+    var topTile by remember {
+        mutableStateOf("")
+    }
+    logger.info { "PhotoDataSet 重组了" }
     Scaffold(
         snackbarHost = {
             if (isDetail) {
-                SnackbarHost(hostState =  snackBarHostState, modifier = Modifier.padding(0.dp))
+                SnackbarHost(hostState = snackBarHostState, modifier = Modifier.padding(0.dp))
             }
         },
         topBar = {
             if (isDetail) {
                 AnimatedVisibility(visible = topVisible) {
-                    ImageTopBar(imageViewModel.imageDetail.name, mainController)
+                    ImageTopBar(topTile, mainController)
                 }
             } else {
                 ImageTopBar(imageViewModel.groupName, mainController)
@@ -233,7 +235,7 @@ fun PhotoDataSet(
                     .padding(innerPadding)
                     .fillMaxHeight()
             ) { it ->
-                imageViewModel.imageDetail = images[it]
+                topTile = images[it].name
                 Button(
                     onClick = { topVisible = !topVisible },
                     shape = StyleCommon.ZERO_SHAPE,
@@ -288,10 +290,11 @@ fun ImageGroupList(
 }
 
 @Composable
-fun ImportImages(  imageViewModel: ImageViewModel = viewModel(),
-                   onDismissRequest: () -> Unit) {
-    val checkeds = remember  { mutableStateListOf(false, false, false, false) }
-
+fun ImportImages(
+    imageViewModel: ImageViewModel = viewModel(),
+    onDismissRequest: () -> Unit
+) {
+    val checkeds = remember { mutableStateListOf(false, false, false, false) }
     var currentProgress by remember { mutableFloatStateOf(0f) }
     var loading by remember { mutableStateOf(false) }
     var enabled by remember {
@@ -340,27 +343,32 @@ fun ImportImages(  imageViewModel: ImageViewModel = viewModel(),
                     )
                 }
                 if (loading) {
-                    LinearProgressIndicator(progress = currentProgress,
-                        modifier = Modifier.fillMaxWidth())
-                }else{
-                    Row(horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()) {
+                    LinearProgressIndicator(
+                        progress = currentProgress,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                } else {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         OutlinedButton(onClick = {
                             enabled = false
                             loading = true
-//                        ThreadPoolManager.getInstance().addTask("imageLoad") {
-                            for ((i, path) in SystemApp.IMAGE_PATHS.withIndex()){
-                                currentProgress = ((i + 1) / SystemApp.IMAGE_PATHS.size).toFloat()
-                                if (checkeds[i]){
-                                    imageViewModel.dirList.addAll(
-                                        ImageUtils.getDirectoryList(path)
-                                    );
+                            ThreadPoolManager.getInstance().addTask("imageLoad") {
+                                for ((i, path) in SystemApp.IMAGE_PATHS.withIndex()) {
+                                    currentProgress =
+                                        ((i + 1) / SystemApp.IMAGE_PATHS.size).toFloat()
+                                    if (checkeds[i]) {
+                                        imageViewModel.dirList.addAll(
+                                            ImageUtils.getDirectoryList(path)
+                                        );
+                                    }
                                 }
                             }
-//                        }
                             enabled = true
                             onDismissRequest()
-                        },enabled=enabled) {
+                        }, enabled = enabled) {
                             Text(text = "确定")
                         }
                     }

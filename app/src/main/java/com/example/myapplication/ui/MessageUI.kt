@@ -104,7 +104,6 @@ fun MessagesList(messages: List<UserMessages>, modifier: Modifier) {
 fun MessagesDetail(
     sendUserEntity: UserEntity,
     messagesViewModel: MessagesViewModel,
-    imageViewModel: ImageViewModel,
     messages: MutableList<MessagesEntity>,
     mainController: NavHostController,
     modifier: Modifier = Modifier,
@@ -116,10 +115,6 @@ fun MessagesDetail(
     var sendData by remember {
         mutableStateOf("")
     }
-//    var bottomBarHeight by remember {
-//        mutableStateOf(20.dp)
-//    }
-
     Scaffold(
         snackbarHost = {
             SnackbarHost(
@@ -167,18 +162,6 @@ fun MessagesDetail(
             var isAdd by remember {
                 mutableStateOf(true)
             }
-//            var isShowImageSelector by remember {
-//                mutableStateOf(false)
-//            }
-//            if (isShowImageSelector){
-//                Dialog(onDismissRequest = {
-//                    isShowImageSelector = false
-//                }){
-//                    ImageSelect(imageViewModel){
-//                        isShowImageSelector = false
-//                    }
-//                }
-//            }
             BottomAppBar(modifier= modifier.background(MaterialTheme.colorScheme.background)){
                 Row(
                     modifier = modifier
@@ -201,9 +184,7 @@ fun MessagesDetail(
                     if (isAdd) {
                         IconButton(
                             onClick = {
-//                                bottomBarHeight = 100.dp
                                 isAdd = false
-//                                isShowImageSelector = true
                                 mainController.navigate(PageRouteConfig.IMAGE_SELECTOR)
                             },
                         ) {
@@ -260,7 +241,6 @@ fun MessagesDetail(
                         HeadImage(sendUserEntity.imageUrl, modifier = StyleCommon.HEAD_IMAGE) {
                         }
                         Row {
-//                            Text(text = it.sendUserName, fontSize = 18.sp)
                             Text(
                                 text = it.messageData.substring(
                                     0,

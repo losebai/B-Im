@@ -94,8 +94,7 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
                         border = BorderStroke(0.dp, Color.Gray)
                     ) {
                         Image(
-                            painter = if (userEntity.imageUrl == null) painterResource(id = R.drawable.test)
-                            else rememberAsyncImagePainter(userEntity.imageUrl),
+                            painter = rememberAsyncImagePainter(userEntity.imageUrl),
                             contentDescription = null,
                             contentScale = ContentScale.Crop
                         )

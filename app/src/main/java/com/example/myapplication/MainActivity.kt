@@ -159,7 +159,6 @@ class MainActivity : AppCompatActivity() {
                         MessagesDetail(
                             userViewModel.sendUserEntity,
                             messagesViewModel,
-                            appBase.imageViewModel,
                             messagesViewModel.messagesDetail,
                             appBase.navHostController,
                         )
