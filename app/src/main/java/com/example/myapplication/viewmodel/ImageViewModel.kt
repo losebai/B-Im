@@ -1,10 +1,13 @@
 package com.example.myapplication.viewmodel
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.common.util.ImageUtils
+import com.example.myapplication.common.util.MediaStoreUtils
+import com.example.myapplication.common.util.toFileEntity
 import com.example.myapplication.entity.FileEntity
 import java.util.Hashtable
 
@@ -16,28 +19,10 @@ class ImageViewModel() : ViewModel() {
 
     var groupPath = ""
 
-    private val groupMap = Hashtable<String, Array<FileEntity>>()
-
-    // 分组集合 相机 qq 微信
-    val groupList: List<FileEntity> = mutableListOf()
+    val groupMap = Hashtable<String, Array<FileEntity>>()
 
     // 本机目录图片集合
-    val dirList = ArrayList<FileEntity>()
-
-    // 是否加载
-    var isLoad by mutableStateOf(false)
-
-    // 详情
-    var imageDetail = FileEntity()
-
-    init {
-        val img = FileEntity()
-        img.name = "最近照片"
-        dirList.add(img)
-    }
-
-
-
+    var dirList = mutableListOf<FileEntity>()
 
 
     fun loadPath(path: String){
@@ -50,11 +35,32 @@ class ImageViewModel() : ViewModel() {
         groupMap[path] = ImageUtils.getImageList(path).toTypedArray()
     }
 
+    fun reload(){
+        dirList.clear()
+    }
+
     fun getImageList(path: String) : Array<FileEntity> {
         groupMap[path]?.let {
             return it;
         }
         return EMPTY_IMAGES
+    }
+
+    fun getDay7Images(context: Context){
+        val day7 = FileEntity()
+        day7.name = "最近图片"
+        day7.parentPath = "day7"
+        day7.isDir = true
+        dirList.add(0, day7)
+        val day7List = ArrayList<FileEntity>()
+        MediaStoreUtils.get7DayImages(context){ it, i ->
+            day7List.add(it.toFileEntity().apply {
+                this.index = i
+            })
+        }.apply {
+            day7.location = day7List[0].location
+        }
+        groupMap[day7.parentPath] = day7List.toTypedArray()
     }
 
     override fun onCleared() {

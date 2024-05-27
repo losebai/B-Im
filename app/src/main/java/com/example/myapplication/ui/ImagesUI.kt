@@ -1,19 +1,23 @@
 package com.example.myapplication.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
@@ -28,9 +32,11 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Switch
@@ -50,6 +56,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -75,12 +82,16 @@ val ImageModifier: Modifier = Modifier
     .size(100.dp)
     .padding(1.dp);
 
-private var isDetail by mutableStateOf(false)
-
-
 private val logger = KotlinLogging.logger {}
 
 private val TEXT_ROW_MODIFIER = Modifier.fillMaxWidth(0.8f)
+
+class ImagesUI {
+    companion object{
+        var isDetail by mutableStateOf(false)
+    }
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -101,11 +112,11 @@ fun ImageTopBar(name: String, mainController: NavHostController) {
         // 返回
         navigationIcon = {
             IconButton(onClick = {
-                if (!isDetail) {
+                if (!ImagesUI.isDetail) {
                     // 从列表页返回
                     mainController.navigateUp()
                 } else {
-                    isDetail = false
+                    ImagesUI.isDetail = false
                 }
             }) {
                 Icon(
@@ -132,33 +143,26 @@ fun ImageTopBar(name: String, mainController: NavHostController) {
 @Composable
 fun PhotoDataSetBody(
     list: Array<FileEntity>,
-    imageViewModel: ImageViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (FileEntity) -> Unit
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(100.dp),
-        modifier = modifier
-            .fillMaxSize(),
+        columns = GridCells.Fixed(4),
+        modifier = modifier,
         reverseLayout = false
     ) {
         items(list.size) { photo ->
-            Button(
-                onClick = {
-                    imageViewModel.imageDetail = list[photo]
-                    isDetail = true
+            Image(
+                painter =
+                rememberAsyncImagePainter(list[photo].location),
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+                modifier = ImageModifier
+                    .clip(RoundedCornerShape(1))
+                    .clickable {
+                    onClick(list[photo])
                 },
-                shape = StyleCommon.ZERO_SHAPE,
-                modifier = Modifier.clip(RoundedCornerShape(1.dp)),
-                colors = ButtonDefaults.buttonColors(Color.White)
-            ) {
-                Image(
-                    painter =
-                    rememberAsyncImagePainter(list[photo].location),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = ImageModifier.clip(RoundedCornerShape(5)),
-                )
-            }
+            )
         }
     }
 }
@@ -172,42 +176,45 @@ fun PhotoDataSetBody(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PhotoDataSet(
-    imageViewModel: ImageViewModel = viewModel(),
+    imageViewModel: ImageViewModel,
     mainController: NavHostController = rememberNavController()
 ) {
     val coroutineScope = rememberCoroutineScope()
     val path = imageViewModel.groupPath
     if (path != "") {
-        imageViewModel.loadPath(path)
+        coroutineScope.launch {
+            imageViewModel.loadPath(path)
+        }
     }
     val images = imageViewModel.getImageList(path)
     val pagerState = rememberPagerState { images.size }
     var topVisible by remember {
         mutableStateOf(true)
     }
-    var topTile by remember {
-        mutableStateOf("")
+    var imageDetail by remember{
+        mutableStateOf(FileEntity())
     }
+
     logger.info { "PhotoDataSet 重组了" }
     Scaffold(
         snackbarHost = {
-            if (isDetail) {
+            if (ImagesUI.isDetail) {
                 SnackbarHost(hostState = snackBarHostState, modifier = Modifier.padding(0.dp))
             }
         },
         topBar = {
-            if (isDetail) {
+            if (ImagesUI.isDetail) {
                 AnimatedVisibility(visible = topVisible) {
-                    ImageTopBar(topTile, mainController)
+                    ImageTopBar(imageDetail.name, mainController)
                 }
             } else {
                 ImageTopBar(imageViewModel.groupName, mainController)
             }
         },
         bottomBar = {
-            if (isDetail) {
+            if (ImagesUI.isDetail) {
                 AnimatedVisibility(visible = topVisible) {
-                    GetBottomBar(imageViewModel.imageDetail.filePath) {
+                    GetBottomBar(imageDetail.filePath) {
                         // 这里是异步
                         imageViewModel.reloadPath(path)
                     }
@@ -215,10 +222,10 @@ fun PhotoDataSet(
             }
         },
     ) { innerPadding ->
-        if (isDetail) {
+        if (ImagesUI.isDetail) {
             // 定位
             coroutineScope.launch {
-                pagerState.scrollToPage(imageViewModel.imageDetail.index)
+                pagerState.scrollToPage(imageDetail.index)
             }
             // 详情页面
             HorizontalPager(
@@ -226,11 +233,14 @@ fun PhotoDataSet(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .padding(innerPadding)
-                    .fillMaxHeight()
+                    .fillMaxSize()
             ) { it ->
-                topTile = images[it].name
                 Button(
-                    onClick = { topVisible = !topVisible },
+                    onClick = {
+                        topVisible = !topVisible
+                        if(imageDetail.index != it){
+                            imageDetail = images[it]
+                        } },
                     shape = StyleCommon.ZERO_SHAPE,
                     colors = ButtonDefaults.buttonColors(Color.White),
                 ) {
@@ -242,11 +252,13 @@ fun PhotoDataSet(
         } else {
             PhotoDataSetBody(
                 images,
-                imageViewModel,
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
-            )
+            ) {
+                imageDetail = it
+                ImagesUI.isDetail = true
+            }
 
         }
     }
@@ -293,6 +305,7 @@ fun ImportImages(
     var enabled by remember {
         mutableStateOf(true)
     }
+    val activity = LocalContext.current as Activity
     Dialog(onDismissRequest = onDismissRequest) {
         Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             Column(
@@ -349,6 +362,7 @@ fun ImportImages(
                             enabled = false
                             loading = true
                             ThreadPoolManager.getInstance().addTask("imageLoad") {
+                                imageViewModel.getDay7Images(activity)
                                 for ((i, path) in SystemApp.IMAGE_PATHS.withIndex()) {
                                     currentProgress =
                                         ((i + 1) / SystemApp.IMAGE_PATHS.size).toFloat()

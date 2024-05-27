@@ -164,7 +164,7 @@ class AppBase {
                                         Text(text = "导入")
                                     }, onClick = {
                                         logger.info { "开始导入图片" }
-                                        imageViewModel.dirList.clear();
+                                        imageViewModel.reload()
                                         importImaged = true
                                         expanded = false
                                         isLoadImage = true
@@ -284,7 +284,7 @@ class AppBase {
                 }
             }
         }
-        Divider()
+        Divider(color = Color.Black)
     }
 
 

@@ -42,11 +42,14 @@ import com.example.myapplication.common.ui.MySwipeRefresh
 import com.example.myapplication.common.ui.MySwipeRefreshState
 import com.example.myapplication.common.ui.NORMAL
 import com.example.myapplication.common.ui.REFRESHING
+import com.example.myapplication.common.util.MediaStoreUtils
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.common.util.Utils
+import com.example.myapplication.common.util.toFileEntity
 import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.CommunityEntity
+import com.example.myapplication.entity.FileEntity
 import com.example.myapplication.remote.entity.AppUserEntity
 import com.example.myapplication.remote.entity.toUserEntity
 import com.example.myapplication.ui.AppTheme
@@ -63,6 +66,7 @@ import com.example.myapplication.viewmodel.CommunityViewModel
 import com.example.myapplication.viewmodel.ImageViewModel
 import com.example.myapplication.viewmodel.MessagesViewModel
 import com.example.myapplication.viewmodel.UserViewModel
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
@@ -75,7 +79,6 @@ class MainActivity : AppCompatActivity() {
 
 
     private var appBase: AppBase = AppBase()
-
 
     private lateinit var userViewModel: UserViewModel;
 
@@ -114,6 +117,8 @@ class MainActivity : AppCompatActivity() {
             logger.info { "开始加载联系人" }
             userViewModel.users = userViewModel.getReferUser(searchUserEntity)
             communityViewModel.nextCommunityPage()
+            appBase.imageViewModel.getDay7Images(this)
+
         }
     }
 

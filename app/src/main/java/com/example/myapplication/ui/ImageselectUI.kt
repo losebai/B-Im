@@ -184,10 +184,11 @@ fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}) {
             ) { mod ->
                 PhotoDataSetBody(
                     images,
-                    imageViewModel,
                     modifier = mod
                         .fillMaxSize()
-                )
+                ){
+
+                }
             }
         }
     }

@@ -6,7 +6,9 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
+import com.example.myapplication.entity.FileEntity
 import java.io.File
+import java.util.Date
 
 
 data class MediaResource(
@@ -22,6 +24,8 @@ data class MediaResource(
     val bucketId: String?,
     val bucketDisplayName: String
 )
+
+
 
 object MediaStoreUtils {
 
@@ -39,9 +43,10 @@ object MediaStoreUtils {
     )
     private const val imageSortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} DESC"
 
+    private const val day7S = 7 * 24 * 60 * 60 * 1000
 
     @SuppressLint("Range")
-    suspend fun buildMediaResource(cursor: Cursor): MediaResource? {
+    fun buildMediaResource(cursor: Cursor): MediaResource? {
         val data = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
         if (data.isBlank() || !File(data).exists()) {
             return null
@@ -85,7 +90,7 @@ object MediaStoreUtils {
      * @param [uri]
      * @return [List<MediaResource>]
      */
-    suspend fun scanImage(
+    fun scanImage(
         context: Context,
         uri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
         block: (MediaResource) -> Unit
@@ -109,11 +114,39 @@ object MediaStoreUtils {
         }
     }
 
-    suspend fun get7DayImages(
+    fun get7DayImages(
         context: Context,
         uri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-        block: (MediaResource) -> Unit
+        block: (MediaResource,Int) -> Unit
     ) {
+//        val timeStamp = System.currentTimeMillis() - day7S
+        val mediaCursor = context.contentResolver.query(
+            uri,
+            projection,
+//            " ${MediaStore.Images.Media.DATE_MODIFIED} > ?",
+            null,
+            null,
+//            arrayOf("$timeStamp"),
+            imageSortOrder,
+        )
+        mediaCursor.use { cursor ->
+            if (cursor != null) {
+                var i = 0
+                while (cursor.moveToNext() && i <= 100) {
+                    buildMediaResource(cursor)?.let {
+                        block(it, i)
+                    }
+                    i++
+                }
+                cursor.close()
+            }
+        }
+    }
+
+    suspend fun getLastImages(
+        context: Context,
+        uri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+    ) : MediaResource? {
         val mediaCursor = context.contentResolver.query(
             uri,
             projection,
@@ -121,15 +154,17 @@ object MediaStoreUtils {
             null,
             imageSortOrder,
         )
-        mediaCursor.use { cursor ->
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    buildMediaResource(cursor)?.let {
-                        block(it)
+        mediaCursor.use {
+            if (it != null) {
+                if (it.moveToNext()) {
+                    return buildMediaResource(it).apply {
+                        it.close()
                     }
-                    cursor.close()
                 }
             }
         }
+        return null
     }
 }
+
+fun MediaResource.toFileEntity() = FileEntity(File(path))
