@@ -63,6 +63,7 @@ import coil.request.ImageRequest
 import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
 import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.ui.DialogImageAdd
+import com.example.myapplication.common.ui.HeadImage
 import com.example.myapplication.common.util.ImageUtils
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.common.util.Utils
@@ -100,103 +101,85 @@ class AppBase {
         var expanded by remember { mutableStateOf(false) }
         var selectedIndex by remember { mutableIntStateOf(-1) }
         var importImaged by remember { mutableStateOf(false) }
-        logger.info { "TopAppBar 重组" }
-        if (topVisible){
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = {
-                    Row {
+        Column {
+            if (topVisible){
+                TopAppBar(
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    title = {
                         Row {
-                            Button(
-                                onClick = {
-                                    settingDrawerState = DrawerState(DrawerValue.Open)
-                                          },
-                                modifier = Modifier.size(40.dp),
-                                shape = RoundedCornerShape(50),
-                                contentPadding = ZERO_PADDING,
-                                colors = ButtonDefaults.buttonColors(Color.White)
-                            ) {
-                                Surface(
-                                    shape = CircleShape,
-                                    border = BorderStroke(0.dp, Color.Gray)
+                            Row {
+                                HeadImage(appUserEntity,
+                                    modifier = Modifier.size(40.dp),
                                 ) {
-                                    Image(
-                                        painter = rememberAsyncImagePainter(
-                                            model = ImageRequest.Builder(LocalContext.current)
-                                                .data(Utils.stringOrNull(appUserEntity.imageUrl))
-                                                .size(100)
-                                                .build()
-                                        ),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(40.dp),
-                                        contentScale = ContentScale.Crop
-                                    )
+                                    settingDrawerState = DrawerState(DrawerValue.Open)
+                                }
+                                TextButton(
+                                    onClick = { /*TODO*/ },
+                                    contentPadding = ZERO_PADDING,
+                                ) {
+                                    Text(text =appUserEntity.name)
                                 }
                             }
-                            TextButton(
-                                onClick = { /*TODO*/ },
-                                contentPadding = ZERO_PADDING,
+                            Row(
+                                horizontalArrangement = Arrangement.End,
+                                modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text(text =appUserEntity.name)
-                            }
-                        }
-                        Row(
-                            horizontalArrangement = Arrangement.End,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Column {
-                                IconButton(onClick = { expanded = true }) {
-                                    Icon(
-                                        modifier = Modifier
-                                            .padding(0.dp)
-                                            .fillMaxSize(),
-                                        imageVector = Icons.Filled.Add,
-                                        contentDescription = "Localized description"
-                                    )
+                                Column {
+                                    IconButton(onClick = { expanded = true }) {
+                                        Icon(
+                                            modifier = Modifier
+                                                .padding(0.dp)
+                                                .fillMaxSize(),
+                                            imageVector = Icons.Filled.Add,
+                                            contentDescription = "Localized description"
+                                        )
+                                    }
+                                    DropdownMenu(
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false }) {
+                                        DropdownMenuItem(text = {
+                                            Text(text = "导入")
+                                        }, onClick = {
+                                            logger.info { "开始导入图片" }
+                                            imageViewModel.reload()
+                                            importImaged = true
+                                            expanded = false
+                                            isLoadImage = true
+                                        })
+                                        DropdownMenuItem(text = {
+                                            Text(text = "新建文件夹")
+                                        }, onClick = {
+                                            selectedIndex = 1
+                                            expanded = false
+                                        })
+                                    }
                                 }
-                                DropdownMenu(
-                                    expanded = expanded,
-                                    onDismissRequest = { expanded = false }) {
-                                    DropdownMenuItem(text = {
-                                        Text(text = "导入")
-                                    }, onClick = {
-                                        logger.info { "开始导入图片" }
-                                        imageViewModel.reload()
-                                        importImaged = true
-                                        expanded = false
-                                        isLoadImage = true
-                                    })
-                                    DropdownMenuItem(text = {
-                                        Text(text = "新建文件夹")
-                                    }, onClick = {
-                                        selectedIndex = 1
-                                        expanded = false
-                                    })
-                                }
-                            }
-                            when (selectedIndex) {
-                                0 -> {
-                                }
-                                1 -> {
-                                    DialogImageAdd(onDismissRequest = {
-                                        selectedIndex = -1
-                                    })
+                                when (selectedIndex) {
+                                    0 -> {
+                                    }
+                                    1 -> {
+                                        DialogImageAdd(onDismissRequest = {
+                                            selectedIndex = -1
+                                        })
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            )
-        }
-        if (importImaged){
-            ImportImages(imageViewModel = imageViewModel){
-                importImaged = false
-                this.page = MenuRouteConfig.ROUTE_IMAGE
+                )
             }
+            if (importImaged){
+                ImportImages(imageViewModel = imageViewModel){
+                    importImaged = false
+                    this@AppBase.page = MenuRouteConfig.ROUTE_IMAGE
+                }
+            }
+            Divider(color = Color.Black)
         }
+
     }
 
     @Preview(showBackground = true)
@@ -310,7 +293,7 @@ class AppBase {
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .background(MaterialTheme.colorScheme.background),
+                .background(Color.White),
             content = content
         )
     }

@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.R
 import com.example.myapplication.common.util.PermissionUtils
@@ -93,8 +94,8 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
                         shape = CircleShape,
                         border = BorderStroke(0.dp, Color.Gray)
                     ) {
-                        Image(
-                            painter = rememberAsyncImagePainter(userEntity.imageUrl),
+                        AsyncImage(
+                            userEntity.imageUrl,
                             contentDescription = null,
                             contentScale = ContentScale.Crop
                         )

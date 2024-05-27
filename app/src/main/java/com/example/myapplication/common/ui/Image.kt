@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.myapplication.R
@@ -40,10 +41,8 @@ fun FullScreenImage(
     contentDescription: String? = null,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 ) =
-    Image(
-        painter = rememberAsyncImagePainter(
-            fileEntity.location
-        ),
+    AsyncImage(
+        fileEntity.location,
         contentDescription = contentDescription,
         modifier = modifier,
         contentScale = ContentScale.Fit
@@ -62,9 +61,8 @@ fun ImageGroupButton(message: FileEntity, onClick: (FileEntity) -> Unit) {
         contentPadding = ZERO_PADDING,
     ) {
         Column {
-            Image(
-                painter = //占位图
-                rememberAsyncImagePainter(message.location),
+            AsyncImage(
+                message.location,
                 alignment = Alignment.Center,
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
@@ -123,9 +121,11 @@ fun HeadImage(
     border = BorderStroke(0.dp, Color.Gray),
     modifier = modifier
 ) {
-    Image(
-        painter = if (userEntity.imageUrl.isEmpty()) painterResource(id = R.drawable.test)
-        else rememberAsyncImagePainter(userEntity.imageUrl), contentDescription = null,
+    AsyncImage(
+        ImageRequest.Builder(LocalContext.current)
+            .data(userEntity.imageUrl)
+            .crossfade(true)
+            .build(), contentDescription = null,
         contentScale = ContentScale.Crop
     )
 }
@@ -143,8 +143,8 @@ fun HeadImage(
         border = BorderStroke(0.dp, Color.Gray),
         modifier = modifier
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(path),
+        AsyncImage(
+            path,
             contentDescription = null,
             contentScale = ContentScale.Crop
         )

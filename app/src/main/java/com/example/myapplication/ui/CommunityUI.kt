@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.gestures.scrollable
@@ -61,6 +62,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.R
 import com.example.myapplication.common.consts.StyleCommon
@@ -74,7 +76,6 @@ import com.example.myapplication.remote.entity.toUserEntity
 /**
  * 动态消息
  */
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DynamicMessage(communityEntity: CommunityEntity, modifier: Modifier = Modifier) {
     var pingLun by remember {
@@ -86,6 +87,7 @@ fun DynamicMessage(communityEntity: CommunityEntity, modifier: Modifier = Modifi
     Column(
         modifier = modifier
             .fillMaxSize()
+            .border(1.dp, Color.Black)
             .background(Color.White),
     ) {
         Column {
@@ -141,8 +143,8 @@ fun DynamicMessage(communityEntity: CommunityEntity, modifier: Modifier = Modifi
                         shape = StyleCommon.ZERO_SHAPE,
                         modifier = Modifier.padding(1.dp)
                     ) {
-                        Image(
-                            painter = rememberAsyncImagePainter(communityEntity.images[it]),
+                        AsyncImage(
+                            communityEntity.images[it],
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
                             modifier = Modifier.size(100.dp)
@@ -227,7 +229,6 @@ fun DynamicMessage(communityEntity: CommunityEntity, modifier: Modifier = Modifi
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CommunityHome(
     userEntity: UserEntity = Utils.randomUser().toUserEntity(),
@@ -244,11 +245,11 @@ fun CommunityHome(
                     .paint(
                         if (background == null) painterResource(id = R.drawable.test)
                         else rememberAsyncImagePainter(background)
-                    )
+                    ).padding(10.dp)
             ) {
                 HeadImage(
                     onClick = {}, userEntity = userEntity,
-                    modifier = StyleCommon.HEAD_IMAGE
+                    modifier = Modifier.size(70.dp)
                 )
             }
         }

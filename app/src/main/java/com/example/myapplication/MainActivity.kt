@@ -7,13 +7,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.SnackbarDuration
@@ -25,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
@@ -35,6 +39,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import coil.Coil
+import coil.ImageLoader
 import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.ui.LOADING_MORE
 import com.example.myapplication.common.ui.LoadingIndicator
@@ -97,6 +103,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun init() {
+//
         // 初始化的时候保存和更新
         // 默认账户信息
         ThreadPoolManager.getInstance().addTask("init") {
@@ -118,7 +125,6 @@ class MainActivity : AppCompatActivity() {
             userViewModel.users = userViewModel.getReferUser(searchUserEntity)
             communityViewModel.nextCommunityPage()
             appBase.imageViewModel.getDay7Images(this)
-
         }
     }
 
@@ -176,6 +182,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        Coil.setImageLoader(ImageLoader(this))
     }
 
     @SuppressLint("CoroutineCreationDuringComposition")
@@ -200,6 +207,8 @@ class MainActivity : AppCompatActivity() {
             appBase.Context(content = { innerPadding ->
                 val mod = Modifier
                     .padding(innerPadding)
+                    .background(Color.White)
+                    .fillMaxSize()
                 when (appBase.page) {
                     MenuRouteConfig.ROUTE_IMAGE -> {
                         appBase.topVisible = true

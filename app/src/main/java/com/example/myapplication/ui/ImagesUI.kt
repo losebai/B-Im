@@ -63,7 +63,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.consts.SystemApp.snackBarHostState
@@ -152,9 +154,12 @@ fun PhotoDataSetBody(
         reverseLayout = false
     ) {
         items(list.size) { photo ->
-            Image(
-                painter =
-                rememberAsyncImagePainter(list[photo].location),
+            AsyncImage(
+                ImageRequest.Builder(LocalContext.current)
+                    .data(list[photo].location)
+                    .crossfade(true)
+                    .build()
+                ,
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
                 modifier = ImageModifier
@@ -279,7 +284,8 @@ fun ImageGroupList(
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 96.dp),
         modifier = modifier
-            .padding(15.dp),
+            .padding(15.dp)
+        ,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(imageViewModel.dirList.size) { photo ->
@@ -307,7 +313,7 @@ fun ImportImages(
     }
     val activity = LocalContext.current as Activity
     Dialog(onDismissRequest = onDismissRequest) {
-        Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+        Box(modifier = Modifier.background(Color.White)) {
             Column(
                 modifier = Modifier
                     .padding(20.dp),

@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.R
 import com.example.myapplication.common.consts.StyleCommon
@@ -97,7 +98,7 @@ fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}) {
     }
     val imagesGroups = imageViewModel.dirList
     var imagesGroup by remember {
-        mutableStateOf<FileEntity>(imagesGroups[0])
+        mutableStateOf<FileEntity>(FileEntity())
     }
     val path = imageViewModel.groupPath
     val images = imageViewModel.getImageList(path)
@@ -165,8 +166,8 @@ fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}) {
                             shape = StyleCommon.ZERO_SHAPE,
                             colors = ButtonDefaults.buttonColors(Color.White)
                         ) {
-                            Image(
-                                rememberAsyncImagePainter(image.location),
+                            AsyncImage(
+                                image.location,
                                 contentDescription = null,
                                 modifier = Modifier
                                     .height(80.dp)
