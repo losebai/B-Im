@@ -17,11 +17,17 @@ class UserViewModel(context: Context): ViewModel() {
 
     private val userService: UserService = UserService()
 
+    // 当前用户
     var userEntity = UserEntity()
 
+    // 当前读取用户
     var recvUserEntity = UserEntity()
 
+    // 联系人列表
     var users: List<UserEntity> = mutableListOf()
+
+    // id对应
+    var userMap: MutableMap<Long, UserEntity> = mutableMapOf()
 
     class MessageViewModelFactory constructor(private val context: Context ) : ViewModelProvider.Factory{
 

@@ -6,13 +6,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface MessagesRepository  : OfflineRepository<MessagesEntity, MessagesDao> {
 
-    suspend fun getUserMessagesByRecvUserId(id : Long, page: Int, pageSize: Int) : Flow<List<MessagesEntity>>
+     fun getUserMessagesByRecvUserId(id : Long, page: Int, pageSize: Int) : Flow<List<MessagesEntity>>
 
-    suspend fun getUserMessagesBySendUserId(id : Long, page: Int, pageSize: Int) : Flow<List<MessagesEntity>>
+     fun getUserMessagesBySendUserId(id : Long, page: Int, pageSize: Int) : Flow<List<MessagesEntity>>
 
-    suspend fun getUserMessageLastByRecvUserId( sendUserId: Long, recvUserId : Long) : Flow<List<MessagesEntity>>
+     fun getUserMessageLastByRecvUserId( sendUserId: Long, recvUserId : Long) : Flow<List<MessagesEntity>>
 
-    suspend fun getMessagesSendAndRecvByUser(sendUserId: Long, recvUserId : Long,
+     fun getMessagesSendAndRecvByUser(sendUserId: Long, recvUserId : Long,
                                               page: Int,
                                               pageSize: Int) : Flow<List<MessagesEntity>>
 }

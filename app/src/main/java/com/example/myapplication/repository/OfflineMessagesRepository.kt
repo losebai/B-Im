@@ -7,25 +7,25 @@ import kotlinx.coroutines.flow.Flow
 
 class OfflineMessagesRepository(private val messagesDao: MessagesDao) : MessagesRepository {
 
-    override suspend fun getUserMessagesByRecvUserId(
+    override  fun getUserMessagesByRecvUserId(
         id: Long,
         page: Int,
         pageSize: Int
     ): Flow<List<MessagesEntity>> =
         messagesDao.getUserMessagesByRecvUserId(id, page, pageSize)
 
-    override suspend fun getUserMessagesBySendUserId(
+    override  fun getUserMessagesBySendUserId(
         id: Long,
         page: Int,
         pageSize: Int
     ): Flow<List<MessagesEntity>> =
         messagesDao.getUserMessagesBySendUserId(id, page, pageSize)
 
-    override suspend fun getUserMessageLastByRecvUserId(
+    override  fun getUserMessageLastByRecvUserId(
         sendUserId: Long, recvUserId : Long,
     ): Flow<List<MessagesEntity>> = messagesDao.getUserMessageLastByUserId(sendUserId, recvUserId)
 
-    override suspend fun getMessagesSendAndRecvByUser(
+    override  fun getMessagesSendAndRecvByUser(
         sendUserId: Long, recvUserId: Long,
         page: Int,
         pageSize: Int

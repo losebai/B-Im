@@ -1,8 +1,12 @@
 package com.example.myapplication.viewmodel
 
 import android.content.Context
+import android.widget.ListAdapter
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
+import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.database.MessagesDatabase
 import com.example.myapplication.entity.UserMessages
 import com.example.myapplication.entity.MessagesEntity
@@ -13,13 +17,16 @@ import com.example.myapplication.repository.OfflineMessagesRepository
 import com.example.myapplication.repository.OfflineUserRepository
 import com.example.myapplication.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
+import mu.KotlinLogging
 import java.util.stream.Collector
 import java.util.stream.Collectors
 
 
+private val logger = KotlinLogging.logger {}
+
 class MessagesViewModel(context: Context) : ViewModel() {
 
-    val userMessagesList = mutableListOf<UserMessages>()
+    var userMessagesList = mutableListOf<UserMessages>()
 
     class MessageViewModelFactory constructor(private val context: Context) :
         ViewModelProvider.Factory {
@@ -41,28 +48,39 @@ class MessagesViewModel(context: Context) : ViewModel() {
         OfflineUserRepository(MessagesDatabase.getDatabase(context).userDao())
     }
 
-    suspend fun getUserMessageLastByUserId(
-        sendUserId: Long,
-        recvUserId: Long,
+    suspend fun getUserMessageLastByUserId(context: LifecycleOwner,
+                                   sendUserId: Long,
+                                   recvUserId: Long,
     ): List<UserMessages> {
+        logger.info { "getUserMessageLastByUserId..." }
         val userMessages = ArrayList<UserMessages>()
-        itemsRepository.getUserMessageLastByRecvUserId(sendUserId, recvUserId).collect { li ->
+        itemsRepository.getUserMessageLastByRecvUserId(sendUserId, recvUserId).asLiveData().observe(context) { li ->
             val userIds = li.map { it.recvUserId } + li.map { it.sendUserId }
-            userRepository.listByIds(userIds.distinct()).collect { users ->
-                val map = users.stream().collect(Collectors.toMap(UserEntity::id) { it })
-                for (it in li){
-                    val send = map[it.sendUserId]
-                    val recv = map[it.recvUserId]
-                    if (send != null && recv != null){
-                        userMessages.add(it.toUserMessages(send.name, send.imageUrl, recv.name, recv.imageUrl))
+            ThreadPoolManager.getInstance().addTask("getUserMessageLastByUserId"){
+                userRepository.listByIds(userIds.distinct()).let { users ->
+                    val map = users.parallelStream().collect(Collectors.toMap(UserEntity::id) { it })
+                    for (it in li) {
+                        val send = map[it.sendUserId]
+                        val recv = map[it.recvUserId]
+                        if (send != null && recv != null) {
+                            userMessages.add(
+                                it.toUserMessages(
+                                    send.name,
+                                    send.imageUrl,
+                                    recv.name,
+                                    recv.imageUrl
+                                )
+                            )
+                        }
                     }
                 }
             }
         }
+        logger.info { "getUserMessageLastByUserId... ok" }
         return userMessages
     }
 
-    suspend fun getMessagesSendAndRecvByUser(
+    fun getMessagesSendAndRecvByUser(
         sendUserId: Long,
         recvUserId: Long,
         page: Int,

@@ -49,6 +49,8 @@ import com.example.myapplication.common.ui.HeadImage
 import com.example.myapplication.common.ui.MySwipeRefresh
 import com.example.myapplication.common.ui.MySwipeRefreshState
 import com.example.myapplication.common.ui.NORMAL
+import com.example.myapplication.common.ui.REFRESHING
+import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.UserMessages
@@ -74,25 +76,19 @@ fun MessagesList(messagesViewModel: MessagesViewModel, modifier: Modifier) {
     MySwipeRefresh(
         state = state,
         onRefresh = {
-            scope.launch {
-                messagesViewModel.userMessagesList.clear()
-                messagesViewModel.userMessagesList.addAll(
-                    messagesViewModel
-                        .getUserMessageLastByUserId(SystemApp.UserId, SystemApp.UserId)
-                )
+            ThreadPoolManager.getInstance().addTask("MessagesList"){
+                state.loadState = REFRESHING
+
                 logger.info { "正在获取刷新联系人列表" }
+                state.loadState = NORMAL
             }
         },
         onLoadMore = {
+            state.loadState = REFRESHING
         },
         modifier = modifier
     ) {
-        LazyColumn(it) {
-            item {
-                Row(horizontalArrangement = Arrangement.Center) {
-                    Text(text = "消息")
-                }
-            }
+        LazyColumn(it.padding(10.dp)) {
             items(messagesViewModel.userMessagesList) {
                 Row {
                     HeadImage(it.sendUserImageUri, modifier = StyleCommon.HEAD_IMAGE) {

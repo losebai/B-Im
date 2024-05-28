@@ -8,5 +8,7 @@ import kotlinx.coroutines.flow.Flow
 class OfflineUserRepository(private val userDao: UserDao) : UserRepository {
     override fun getDao(): BaseDao<UserEntity>  = userDao
 
-    override fun listByIds(ids: List<Long>) : Flow<List<UserEntity>> = userDao.listByIds(ids.toLongArray())
+    override fun listByIds(ids: List<Long>) : List<UserEntity> = userDao.listByIds(ids.toLongArray())
+
+    override fun all(): Flow<List<UserEntity>> = userDao.all()
 }

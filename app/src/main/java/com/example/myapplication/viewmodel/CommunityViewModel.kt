@@ -14,7 +14,7 @@ class CommunityViewModel: ViewModel() {
 
     var page = 1
 
-    private val size = 10
+    private val size = 100
 
     private val pages = ArrayList<Int>()
 

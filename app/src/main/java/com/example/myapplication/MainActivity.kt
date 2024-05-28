@@ -56,6 +56,7 @@ import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.CommunityEntity
 import com.example.myapplication.entity.FileEntity
+import com.example.myapplication.event.ViewModelEvent
 import com.example.myapplication.remote.entity.AppUserEntity
 import com.example.myapplication.remote.entity.toUserEntity
 import com.example.myapplication.ui.AppTheme
@@ -97,6 +98,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var messagesViewModel: MessagesViewModel;
 
+    private val viewModelEvent : ViewModelEvent = ViewModelEvent.getInstance(this)
+
 
     override fun finish() {
         super.finish()
@@ -107,10 +110,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun init() {
-//
+        logger.info { "init" }
         // 初始化的时候保存和更新
         // 默认账户信息
         ThreadPoolManager.getInstance().addTask("init") {
+            Coil.setImageLoader(ImageLoader(this))
             val appUserEntity = Utils.randomUser()
             appUserEntity.deviceNumber = SystemApp.PRODUCT_DEVICE_NUMBER
             val user = userViewModel.gerUserByNumber(SystemApp.PRODUCT_DEVICE_NUMBER)
@@ -129,16 +133,21 @@ class MainActivity : AppCompatActivity() {
             userViewModel.users = userViewModel.getReferUser(AppUserEntity())
             communityViewModel.nextCommunityPage()
             appBase.imageViewModel.getDay7Images(this)
-            val cs = CoroutineScope(Dispatchers.Default)
-            cs.launch {
-                messagesViewModel.userMessagesList.addAll(
-                    messagesViewModel.getUserMessageLastByUserId(
-                        SystemApp.UserId,
-                        SystemApp.UserId,
-                    )
+        }
+        MainScope().launch {
+            messagesViewModel.getUserMessageLastByUserId(
+                this@MainActivity,
+                SystemApp.UserId,
+                SystemApp.UserId,
                 )
-                logger.info { "一共加载了${messagesViewModel.userMessagesList.size} 条消息" }
+
+            viewModelEvent.onUserMessageLastByUserId(this@MainActivity,
+                SystemApp.UserId,
+                SystemApp.UserId,
+                userViewModel){userMessages ->
+                messagesViewModel.userMessagesList = userMessages
             }
+            viewModelEvent.onUserAll(this@MainActivity, userViewModel)
         }
     }
 
@@ -154,7 +163,6 @@ class MainActivity : AppCompatActivity() {
                     this,
                     UserViewModel.MessageViewModelFactory(this)
                 )[UserViewModel::class.java]
-
                 messagesViewModel =
                     ViewModelProvider(
                         this,
@@ -196,12 +204,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        Coil.setImageLoader(ImageLoader(this))
     }
 
     @SuppressLint("CoroutineCreationDuringComposition")
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-//    @Preview(showBackground = true)
     @Composable
     fun PageHost(
         imageViewModel: ImageViewModel,
@@ -214,10 +220,6 @@ class MainActivity : AppCompatActivity() {
         }
         ModalNavigationDrawer(drawerState = appBase.settingDrawerState, drawerContent = {
             ModalDrawerSheet {
-//                ThreadPoolManager.getInstance().addTask("init") {
-//                    val user = userViewModel.getUserById(userViewModel.userEntity.id)
-//                    userViewModel.userEntity = user.toUserEntity()
-//                }
                 SettingHome(userViewModel.userEntity)
             }
         }) {
@@ -307,8 +309,8 @@ class MainActivity : AppCompatActivity() {
             onRefresh = {
                 scope.launch {
                     state.loadState = REFRESHING
+                    communityViewModel.clearCommunityList()
                     ThreadPoolManager.getInstance().addTask("community") {
-                        communityViewModel.clearCommunityList()
                         list = communityViewModel.nextCommunityPage()
                     }
                     logger.info { "社区下拉刷新" }
@@ -316,14 +318,14 @@ class MainActivity : AppCompatActivity() {
                 }
             },
             onLoadMore = {
-                scope.launch {
-                    state.loadState = LOADING_MORE
-                    ThreadPoolManager.getInstance().addTask("community") {
-                        list = communityViewModel.nextCommunityPage()
-                    }
-                    logger.info { "社区上拉刷新" }
-                    state.loadState = NORMAL
-                }
+//                scope.launch {
+//                    state.loadState = LOADING_MORE
+//                    ThreadPoolManager.getInstance().addTask("community") {
+//                        list = communityViewModel.nextCommunityPage()
+//                    }
+//                    logger.info { "社区上拉刷新" }
+//                    state.loadState = NORMAL
+//                }
             },
             modifier = modifier
         ) { _modifier ->

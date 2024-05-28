@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface  UserRepository : OfflineRepository<UserEntity, UserDao> {
 
-    fun listByIds(ids: List<Long>) : Flow<List<UserEntity>>
+    fun listByIds(ids: List<Long>) : List<UserEntity>
+
+    fun all() : Flow<List<UserEntity>>
 
 }
