@@ -11,5 +11,7 @@ interface UserDao :  BaseDao<UserEntity> {
     @Query("select * from app_users where id = :id")
     fun getItem(id: Int): Flow<UserEntity>
 
+    @Query("select * from app_users where id in (:ids)")
+    fun listByIds(ids :  LongArray) : Flow<List<UserEntity>>
 
 }

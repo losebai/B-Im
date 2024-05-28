@@ -22,15 +22,14 @@ class OfflineMessagesRepository(private val messagesDao: MessagesDao) : Messages
         messagesDao.getUserMessagesBySendUserId(id, page, pageSize)
 
     override suspend fun getUserMessageLastByRecvUserId(
-        id: Long,
+        sendUserId: Long, recvUserId : Long,
+    ): Flow<List<MessagesEntity>> = messagesDao.getUserMessageLastByUserId(sendUserId, recvUserId)
+
+    override suspend fun getMessagesSendAndRecvByUser(
+        sendUserId: Long, recvUserId: Long,
         page: Int,
         pageSize: Int
-    ): Flow<List<MessagesEntity>> = messagesDao.getUserMessageLastByRecvUserId(id, page, pageSize)
+    ) = messagesDao.getMessagesSendAndRecvByUser(sendUserId, recvUserId, page, pageSize)
 
-    override suspend fun insertItem(t: MessagesEntity) = messagesDao.insert(t)
-
-    override suspend fun deleteItem(t: MessagesEntity) = messagesDao.delete(t)
-
-    override suspend fun updateItem(t: MessagesEntity) = messagesDao.update(t)
-    override fun getDao(): BaseDao<MessagesEntity>  = messagesDao
+    override fun getDao(): BaseDao<MessagesEntity> = messagesDao
 }

@@ -57,7 +57,6 @@ class ImageViewModel() : ViewModel() {
             day7List.add(it.toFileEntity().apply {
                 this.index = i
             })
-        }.apply {
             day7.location = day7List[0].location
         }
         groupMap[day7.parentPath] = day7List.toTypedArray()

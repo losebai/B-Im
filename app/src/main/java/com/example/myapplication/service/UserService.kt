@@ -20,7 +20,7 @@ class UserService {
         val res: Response? = HttpUtils.get("${AppAPI.GET_USER}$id")
         if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
-            return json["data"].toObject(AppUserEntity::class.java)
+            return json["data"].toObject<AppUserEntity>(AppUserEntity::class.java)
         }
         return appUserEntity
     }
@@ -32,7 +32,7 @@ class UserService {
             if (!json.contains("data")){
                 return appUserEntity
             }
-            return json["data"].toObject(AppUserEntity::class.java)
+            return json["data"].toObject<AppUserEntity>(AppUserEntity::class.java)
         }
         return appUserEntity
     }

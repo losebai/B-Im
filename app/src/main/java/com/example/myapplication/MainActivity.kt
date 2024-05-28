@@ -72,7 +72,12 @@ import com.example.myapplication.viewmodel.CommunityViewModel
 import com.example.myapplication.viewmodel.ImageViewModel
 import com.example.myapplication.viewmodel.MessagesViewModel
 import com.example.myapplication.viewmodel.UserViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
@@ -92,7 +97,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var messagesViewModel: MessagesViewModel;
 
-    private val searchUserEntity by mutableStateOf(AppUserEntity())
 
     override fun finish() {
         super.finish()
@@ -122,9 +126,19 @@ class MainActivity : AppCompatActivity() {
             }
 
             logger.info { "开始加载联系人" }
-            userViewModel.users = userViewModel.getReferUser(searchUserEntity)
+            userViewModel.users = userViewModel.getReferUser(AppUserEntity())
             communityViewModel.nextCommunityPage()
             appBase.imageViewModel.getDay7Images(this)
+            val cs = CoroutineScope(Dispatchers.Default)
+            cs.launch {
+                messagesViewModel.userMessagesList.addAll(
+                    messagesViewModel.getUserMessageLastByUserId(
+                        SystemApp.UserId,
+                        SystemApp.UserId,
+                    )
+                )
+                logger.info { "一共加载了${messagesViewModel.userMessagesList.size} 条消息" }
+            }
         }
     }
 
@@ -168,14 +182,14 @@ class MainActivity : AppCompatActivity() {
                     }
                     composable(PageRouteConfig.MESSAGE_ROUTE) {
                         MessagesDetail(
-                            userViewModel.sendUserEntity,
+                            userViewModel.recvUserEntity,
                             messagesViewModel,
-                            messagesViewModel.messagesDetail,
                             appBase.navHostController,
+                            Modifier.background(Color.White)
                         )
                     }
-                    composable(PageRouteConfig.IMAGE_SELECTOR){
-                        ImageSelect(appBase.imageViewModel){
+                    composable(PageRouteConfig.IMAGE_SELECTOR) {
+                        ImageSelect(appBase.imageViewModel) {
                             appBase.navHostController.navigateUp()
                         }
                     }
@@ -195,12 +209,15 @@ class MainActivity : AppCompatActivity() {
         mainController: NavHostController
     ) {
         val scope = rememberCoroutineScope()
+        var searchUserName by remember {
+            mutableStateOf("")
+        }
         ModalNavigationDrawer(drawerState = appBase.settingDrawerState, drawerContent = {
             ModalDrawerSheet {
-                ThreadPoolManager.getInstance().addTask("init") {
-                    val user = userViewModel.getUserById(userViewModel.userEntity.id)
-                    userViewModel.userEntity = user.toUserEntity()
-                }
+//                ThreadPoolManager.getInstance().addTask("init") {
+//                    val user = userViewModel.getUserById(userViewModel.userEntity.id)
+//                    userViewModel.userEntity = user.toUserEntity()
+//                }
                 SettingHome(userViewModel.userEntity)
             }
         }) {
@@ -239,7 +256,7 @@ class MainActivity : AppCompatActivity() {
                     MenuRouteConfig.ROUTE_MESSAGE -> {
                         appBase.topVisible = true
                         MessagesList(
-                            messagesViewModel.userMessagesList,
+                            messagesViewModel,
                             modifier = mod.fillMaxWidth()
                         )
                     }
@@ -248,15 +265,15 @@ class MainActivity : AppCompatActivity() {
                         appBase.topVisible = true
                         Column(modifier = mod) {
                             SearchUser(
-                                searchUserEntity.name, onValueChange = {
-                                    searchUserEntity.name = it
+                                searchUserName, onValueChange = {
+                                    searchUserName = it
                                 }, modifier = Modifier
                                     .height(50.dp)
                                     .fillMaxWidth()
                                     .padding(2.dp)
                             )
                             UserList(userViewModel, onClick = {
-                                userViewModel.sendUserEntity = it
+                                userViewModel.recvUserEntity = it
                                 mainController.navigate(PageRouteConfig.MESSAGE_ROUTE)
                             })
                         }

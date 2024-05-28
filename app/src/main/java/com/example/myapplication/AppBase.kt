@@ -185,6 +185,8 @@ class AppBase {
     @Preview(showBackground = true)
     @Composable
     fun GetBottomBar() {
+        val buttonModifier = Modifier.size(70.dp)
+        val IconModifier = Modifier.size(30.dp)
         BottomAppBar(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.primary,
@@ -194,8 +196,6 @@ class AppBase {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val buttonModifier = Modifier.size(70.dp)
-                val IconModifier = Modifier.size(30.dp)
                 IconButton(
                     onClick = { page = MenuRouteConfig.ROUTE_MESSAGE },
                     modifier = buttonModifier

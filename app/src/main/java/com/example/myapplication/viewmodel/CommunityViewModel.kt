@@ -41,6 +41,7 @@ class CommunityViewModel: ViewModel() {
     }
 
     fun clearCommunityList(){
+        page = 1
         this.pages.clear()
         this.communityList.clear()
     }

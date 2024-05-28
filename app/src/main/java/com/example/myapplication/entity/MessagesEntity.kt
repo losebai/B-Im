@@ -24,6 +24,8 @@ data class UserMessages(
     var sendUserName: String,
     var sendUserId: Long,
     var recvUserId: Long,
+    val recvUserName: String,
+    val recvUserImageUri: String,
     var messageData: String,
     var sendDateTime: String,
     var recvDateTime: String?,
@@ -31,12 +33,15 @@ data class UserMessages(
 )
 
 
-fun MessagesEntity.toMessagesDetail(
+fun MessagesEntity.toUserMessages(
     sendUserName: String,
     sendUserImageUri: String,
+    recvUserName: String,
+    recvUserImageUri: String,
 ): UserMessages =
     UserMessages(
         messagesId = messagesId, sendUserId = sendUserId, sendDateTime = sendDateTime,
         recvUserId = recvUserId, messageData = messageData, recvDateTime = recvDateTime,
-        ack = ack, sendUserImageUri = sendUserImageUri, sendUserName = sendUserName
+        ack = ack, sendUserImageUri = sendUserImageUri, sendUserName = sendUserName,
+        recvUserName=recvUserName,recvUserImageUri=recvUserImageUri
     )

@@ -10,5 +10,9 @@ interface MessagesRepository  : OfflineRepository<MessagesEntity, MessagesDao> {
 
     suspend fun getUserMessagesBySendUserId(id : Long, page: Int, pageSize: Int) : Flow<List<MessagesEntity>>
 
-    suspend fun getUserMessageLastByRecvUserId(id : Long, page: Int, pageSize: Int) : Flow<List<MessagesEntity>>
+    suspend fun getUserMessageLastByRecvUserId( sendUserId: Long, recvUserId : Long) : Flow<List<MessagesEntity>>
+
+    suspend fun getMessagesSendAndRecvByUser(sendUserId: Long, recvUserId : Long,
+                                              page: Int,
+                                              pageSize: Int) : Flow<List<MessagesEntity>>
 }

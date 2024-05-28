@@ -11,10 +11,18 @@ interface MessagesDao : BaseDao<MessagesEntity> {
 
     // 参数 onConflict 用于告知 Room 在发生冲突时应该执行的操作。OnConflictStrategy.IGNORE 策略会忽略新商品。
 
+    /**
+     *  读取接收人的消息
+     * @param [id]
+     * @param [page]
+     * @param [pageSize]
+     * @return [Flow<List<MessagesEntity>>]
+     */
     @Query("SELECT * from messages WHERE recvUserId = :id LIMIT (:page * :pageSize), :pageSize")
     fun getUserMessagesByRecvUserId(id: Long, page: Int, pageSize: Int): Flow<List<MessagesEntity>>
 
     /**
+     * 读取发送人的消息
      * @param [id]
      * @return [Flow<List<MessagesEntity>>]
      */
@@ -22,13 +30,31 @@ interface MessagesDao : BaseDao<MessagesEntity> {
     fun getUserMessagesBySendUserId(id: Long, page: Int, pageSize: Int): Flow<List<MessagesEntity>>
 
 
+    /**获取最新的消息，并没有被确认的消息
+     * @param [id]
+     * @param [page]
+     * @param [pageSize]
+     * @return [Flow<List<MessagesEntity>>]
+     */
     @Query(
-        "SELECT m.* from messages m join (select recvUserId, max(sendDateTime) max_time from messages group by recvUserId)" +
-                " m2 on m.recvUserId = m2.recvUserId and m2.max_time = m.sendDateTime where m.recvUserId = :id LIMIT (:page * :pageSize), :pageSize"
+        "SELECT m.* from messages m join ( SELECT sendUserId,recvUserId,max(sendDateTime) max_time from messages GROUP BY sendUserId,recvUserId ) m1 " +
+                "on m.recvUserId = m1.recvUserId and m.sendUserId = m1.sendUserId and m1.max_time = m.sendDateTime WHERE m.sendUserId = :sendUserId or m.recvUserId = :recvUserId "
     )
-    fun getUserMessageLastByRecvUserId(
-        id: Long,
-        page: Int,
-        pageSize: Int
+    fun getUserMessageLastByUserId(
+        sendUserId: Long, recvUserId : Long,
     ): Flow<List<MessagesEntity>>
+
+    /**获取和某个人消息，接收人和发送人
+     * @param [sendUserId]
+     * @param [recvUserId]
+     * @param [page]
+     * @param [pageSize]
+     * @return [Flow<List<MessagesEntity>>]
+     */
+    @Query("select * from messages where sendUserId = :sendUserId and recvUserId = :recvUserId order by sendDateTime desc LIMIT (:page * :pageSize), :pageSize")
+    fun getMessagesSendAndRecvByUser(sendUserId: Long, recvUserId : Long,
+                                     page: Int,
+                                     pageSize: Int) : Flow<List<MessagesEntity>>
+
+
 }

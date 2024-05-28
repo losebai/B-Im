@@ -11,7 +11,8 @@ import com.example.myapplication.entity.UserEntity
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.internal.synchronized
 
-@Database(entities = [MessagesEntity::class, UserEntity::class], version = 1)
+@Database(entities = [MessagesEntity::class, UserEntity::class],
+    version = 2)
 abstract class MessagesDatabase : RoomDatabase() {
 
     abstract fun messagesDao(): MessagesDao

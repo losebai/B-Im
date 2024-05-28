@@ -2,18 +2,14 @@ package com.example.myapplication.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -21,9 +17,6 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,13 +24,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -46,15 +39,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.R
 import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.ui.HeadImage
@@ -66,20 +54,46 @@ import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.UserMessages
 import com.example.myapplication.entity.MessagesEntity
 import com.example.myapplication.entity.UserEntity
-import com.example.myapplication.viewmodel.ImageViewModel
 import com.example.myapplication.viewmodel.MessagesViewModel
 import kotlinx.coroutines.launch
+import mu.KotlinLogging
 import java.time.LocalDateTime
 
 
+
+private val logger = KotlinLogging.logger {}
+/**
+ * 消息列表
+ * @param [messagesViewModel]
+ * @param [modifier]
+ */
 @Composable
-fun MessagesList(messages: List<UserMessages>, modifier: Modifier) {
+fun MessagesList(messagesViewModel: MessagesViewModel, modifier: Modifier) {
     val state = MySwipeRefreshState(NORMAL)
-    MySwipeRefresh(state = state, onRefresh = { /*TODO*/ }, onLoadMore = { /*TODO*/ },
+    val scope = rememberCoroutineScope()
+    MySwipeRefresh(
+        state = state,
+        onRefresh = {
+            scope.launch {
+                messagesViewModel.userMessagesList.clear()
+                messagesViewModel.userMessagesList.addAll(
+                    messagesViewModel
+                        .getUserMessageLastByUserId(SystemApp.UserId, SystemApp.UserId)
+                )
+                logger.info { "正在获取刷新联系人列表" }
+            }
+        },
+        onLoadMore = {
+        },
         modifier = modifier
     ) {
         LazyColumn(it) {
-            items(messages) {
+            item {
+                Row(horizontalArrangement = Arrangement.Center) {
+                    Text(text = "消息")
+                }
+            }
+            items(messagesViewModel.userMessagesList) {
                 Row {
                     HeadImage(it.sendUserImageUri, modifier = StyleCommon.HEAD_IMAGE) {
                     }
@@ -98,13 +112,22 @@ fun MessagesList(messages: List<UserMessages>, modifier: Modifier) {
     }
 }
 
+/**
+ * 和用户对话窗口
+ * @param [recvUserEntity]
+ * @param [messagesViewModel]
+ * @param [mainController]
+ * @param [modifier]
+ */
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "ResourceAsColor")
+@SuppressLint(
+    "UnusedMaterial3ScaffoldPaddingParameter", "ResourceAsColor",
+    "CoroutineCreationDuringComposition"
+)
 @Composable
 fun MessagesDetail(
-    sendUserEntity: UserEntity,
+    recvUserEntity: UserEntity,
     messagesViewModel: MessagesViewModel,
-    messages: MutableList<MessagesEntity>,
     mainController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
@@ -114,6 +137,15 @@ fun MessagesDetail(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var sendData by remember {
         mutableStateOf("")
+    }
+    val messages = remember {
+        mutableListOf<MessagesEntity>()
+    }
+    scope.launch {
+        messagesViewModel.getMessagesSendAndRecvByUser(SystemApp.UserId, recvUserEntity.id, 1, 10)
+            .collect {
+                messages.addAll(it)
+            }
     }
     Scaffold(
         snackbarHost = {
@@ -130,7 +162,7 @@ fun MessagesDetail(
                 ),
                 title = {
                     Text(
-                        sendUserEntity.name,
+                        recvUserEntity.name,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -159,32 +191,29 @@ fun MessagesDetail(
             )
         },
         bottomBar = {
-            var isAdd by remember {
-                mutableStateOf(true)
-            }
-            BottomAppBar(modifier= modifier.background(MaterialTheme.colorScheme.background)){
+            BottomAppBar(modifier = modifier) {
                 Row(
                     modifier = modifier
                         .padding(10.dp)
                         .fillMaxWidth(),
-                    verticalAlignment=Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    TextField(value = sendData, onValueChange = {
-                        sendData = it
-                        if (it.isEmpty()){
-                            isAdd = true
-                        }
-                    }, modifier = Modifier.fillMaxWidth(0.8f))
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                imageVector = Icons.Filled.FavoriteBorder,
-                                contentDescription = "Localized description"
-                            )
-                        }
-                    if (isAdd) {
+                    TextField(
+                        value = sendData, onValueChange = {
+                            sendData = it
+                        }, modifier = Modifier
+                            .fillMaxWidth(0.8f)
+                            .background(Color.White)
+                    )
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            imageVector = Icons.Filled.FavoriteBorder,
+                            contentDescription = "Localized description"
+                        )
+                    }
+                    if (sendData.isEmpty()) {
                         IconButton(
                             onClick = {
-                                isAdd = false
                                 mainController.navigate(PageRouteConfig.IMAGE_SELECTOR)
                             },
                         ) {
@@ -197,22 +226,21 @@ fun MessagesDetail(
                         IconButton(onClick = {
                             // 关闭键盘
                             activity.dismissKeyboardShortcutsHelper()
-                            if (sendData.isNotEmpty()){
+                            if (sendData.isNotEmpty()) {
                                 scope.launch {
                                     messagesViewModel.saveItem(
                                         MessagesEntity(
                                             sendUserId = SystemApp.UserId,
                                             sendDateTime = Utils.localDateTimeToString(LocalDateTime.now()),
-                                            recvUserId = sendUserEntity.id,
+                                            recvUserId = recvUserEntity.id,
                                             messageData = sendData,
                                             recvDateTime = null,
                                             ack = 0
                                         )
                                     )
                                 }
-                            }else{
-                                isAdd = true
                             }
+                            sendData = ""
                         }) {
                             Icon(
                                 imageVector = Icons.Filled.Send,
@@ -227,18 +255,20 @@ fun MessagesDetail(
         modifier = modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .background(MaterialTheme.colorScheme.background),
+            .background(Color.White),
     ) { pandding ->
         MySwipeRefresh(state = state, onRefresh = { /*TODO*/ }, onLoadMore = { /*TODO*/ },
-            modifier = Modifier.padding(pandding)
+            modifier = Modifier
+                .padding(pandding)
+                .background(Color.White)
         ) { refreshModifier ->
-            LazyColumn(refreshModifier) {
+            LazyColumn(refreshModifier, reverseLayout = true) {
                 items(messages) {
                     Row(
                         horizontalArrangement = if (it.sendUserId == SystemApp.UserId) Arrangement.End
                         else Arrangement.Start
                     ) {
-                        HeadImage(sendUserEntity.imageUrl, modifier = StyleCommon.HEAD_IMAGE) {
+                        HeadImage(recvUserEntity.imageUrl, modifier = StyleCommon.HEAD_IMAGE) {
                         }
                         Row {
                             Text(

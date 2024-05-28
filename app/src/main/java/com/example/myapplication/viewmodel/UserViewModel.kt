@@ -19,7 +19,7 @@ class UserViewModel(context: Context): ViewModel() {
 
     var userEntity = UserEntity()
 
-    var sendUserEntity = UserEntity()
+    var recvUserEntity = UserEntity()
 
     var users: List<UserEntity> = mutableListOf()
 

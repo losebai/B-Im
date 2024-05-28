@@ -11,5 +11,6 @@ data class UserEntity (
     var name: String = "",
     var imageUrl: String = "",
     var note: String = "",
+    var createTime: String = "",
 )
 
