@@ -11,4 +11,6 @@ class OfflineUserRepository(private val userDao: UserDao) : UserRepository {
     override fun listByIds(ids: List<Long>) : List<UserEntity> = userDao.listByIds(ids.toLongArray())
 
     override fun all(): Flow<List<UserEntity>> = userDao.all()
+
+    override fun getUser(id: Long): Flow<UserEntity> = userDao.getItem(id)
 }

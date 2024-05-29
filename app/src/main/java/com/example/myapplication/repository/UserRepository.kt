@@ -11,4 +11,6 @@ interface  UserRepository : OfflineRepository<UserEntity, UserDao> {
 
     fun all() : Flow<List<UserEntity>>
 
+    fun getUser(id : Long) : Flow<UserEntity>
+
 }

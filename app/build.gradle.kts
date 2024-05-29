@@ -144,7 +144,9 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.6")
+    implementation("org.slf4j:slf4j-api:2.0.12")
     implementation("org.slf4j:slf4j-simple:1.7.30")
+//    implementation("org.slf4j:slf4j-log4j12:2.0.12")
 
 //    implementation("org.noear:solon:2.7.5")
     implementation("org.noear:snack3:3.2.95")

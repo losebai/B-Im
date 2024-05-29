@@ -26,4 +26,8 @@
 
     <color name="button_click">#C5A64A</color>
     <color name="button_bg">#3684F1</color>
+
+    <color name="message_bg">#EDE8E8</color>
+    <color name="recvMessage">#FFFFFF</color>
+    <color name="sendMessage">#45A0E8</color>
 </resources>

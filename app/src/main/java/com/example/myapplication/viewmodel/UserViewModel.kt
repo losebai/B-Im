@@ -12,6 +12,10 @@ import com.example.myapplication.repository.OfflineMessagesRepository
 import com.example.myapplication.repository.OfflineUserRepository
 import com.example.myapplication.repository.UserRepository
 import com.example.myapplication.service.UserService
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class UserViewModel(context: Context): ViewModel() {
 
@@ -21,7 +25,7 @@ class UserViewModel(context: Context): ViewModel() {
     var userEntity = UserEntity()
 
     // 当前读取用户
-    var recvUserEntity = UserEntity()
+    var recvUserId = 0L
 
     // 联系人列表
     var users: List<UserEntity> = mutableListOf()
@@ -46,6 +50,23 @@ class UserViewModel(context: Context): ViewModel() {
 
     fun getUserById(id: Long) : AppUserEntity{
         return userService.getUser(id)
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    fun getLocalUserById(id :Long): UserEntity {
+        var user: UserEntity = UserEntity()
+        userMap[id].let { _user ->
+            if(_user == null){
+                GlobalScope.launch(Dispatchers.Default){
+                    userRepository.getUser(id).collect(){
+                        user = it
+                    }
+                }
+            }else{
+                user = _user
+            }
+        }
+        return user
     }
 
     fun getReferUser(user : AppUserEntity) : List<UserEntity>{

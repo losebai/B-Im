@@ -78,7 +78,9 @@ open class ViewModelEvent private constructor(context: Context) {
         logger.info { "onUserAll..." }
         userRepository.all().asLiveData().observe(owner) { users ->
             val map = users.parallelStream().collect(Collectors.toMap(UserEntity::id) { it })
-            userViewModel.userMap = map
+            if (map.isNotEmpty()){
+                userViewModel.userMap = map
+            }
         }
     }
 }

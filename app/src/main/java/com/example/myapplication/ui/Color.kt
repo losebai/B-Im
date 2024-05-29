@@ -18,7 +18,7 @@ val secondaryContainerLight = Color(0xFFD8E3F8)
 // 文本和图标对辅助容器
 val onSecondaryContainerLight = Color(0xFF327391)
 // 对表面补充填充、文本和图标
-val tertiaryLight = Color(0xFFC9C5CA)
+val tertiaryLight = Color(0xFFFFFFFF)
 // 文本和图标对第三级
 val onTertiaryLight = Color(0xFFA01717)
 // 对表面的补充容器颜色，用于组件，如输入字段
@@ -30,21 +30,21 @@ val onErrorLight = Color(0xFFFFFFFF)
 val errorContainerLight = Color(0xFFFFDAD6)
 val onErrorContainerLight = Color(0xFF410002)
 
-val backgroundLight = Color(0xFF969292)
+val backgroundLight = Color(0xFFFAFAFA)
 val onBackgroundLight = Color(0xFF000000)
 // 默认的背景颜色
 val surfaceLight = Color(0xFFFFFFFF)
 // 文本和图标反对任何表面颜色
 val onSurfaceLight = Color(0xFF0862DA)
 // 低强调颜色的文本和图标对任何表面颜色
-val surfaceVariantLight = Color(0xFF666666)
+val surfaceVariantLight = Color(0xFFE0DADA)
 
 // 表面变型光
 val onSurfaceVariantLight = Color(0xFF000000)
 val outlineLight = Color(0xFF73777F)
 val outlineVariantLight = Color(0xFF000000)
 val scrimLight = Color(0xFF000000)
-val inverseSurfaceLight = Color(0xFF2E3035)
+val inverseSurfaceLight = Color(0xFFFFFFFF)
 val inverseOnSurfaceLight = Color(0xFFEFF0F7)
 val inversePrimaryLight = Color(0xFFC0C7CF)
 val surfaceDimLight = Color(0xFFD8DAE0)

@@ -17,6 +17,7 @@ import com.example.myapplication.repository.OfflineMessagesRepository
 import com.example.myapplication.repository.OfflineUserRepository
 import com.example.myapplication.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.toList
 import mu.KotlinLogging
 import java.util.stream.Collector
 import java.util.stream.Collectors
@@ -26,7 +27,7 @@ private val logger = KotlinLogging.logger {}
 
 class MessagesViewModel(context: Context) : ViewModel() {
 
-    var userMessagesList = mutableListOf<UserMessages>()
+    var userMessagesList = ArrayList<UserMessages>()
 
     class MessageViewModelFactory constructor(private val context: Context) :
         ViewModelProvider.Factory {
@@ -48,36 +49,38 @@ class MessagesViewModel(context: Context) : ViewModel() {
         OfflineUserRepository(MessagesDatabase.getDatabase(context).userDao())
     }
 
-    suspend fun getUserMessageLastByUserId(context: LifecycleOwner,
+    suspend fun getUserMessageLastByUserId(
                                    sendUserId: Long,
                                    recvUserId: Long,
-    ): List<UserMessages> {
+                                   onChange: (ArrayList<UserMessages>) -> Unit
+    ) {
         logger.info { "getUserMessageLastByUserId..." }
-        val userMessages = ArrayList<UserMessages>()
-        itemsRepository.getUserMessageLastByRecvUserId(sendUserId, recvUserId).asLiveData().observe(context) { li ->
+        itemsRepository.getUserMessageLastByRecvUserId(sendUserId, recvUserId).collect(){ li ->
             val userIds = li.map { it.recvUserId } + li.map { it.sendUserId }
-            ThreadPoolManager.getInstance().addTask("getUserMessageLastByUserId"){
-                userRepository.listByIds(userIds.distinct()).let { users ->
-                    val map = users.parallelStream().collect(Collectors.toMap(UserEntity::id) { it })
-                    for (it in li) {
-                        val send = map[it.sendUserId]
-                        val recv = map[it.recvUserId]
-                        if (send != null && recv != null) {
-                            userMessages.add(
-                                it.toUserMessages(
-                                    send.name,
-                                    send.imageUrl,
-                                    recv.name,
-                                    recv.imageUrl
-                                )
-                            )
-                        }
+            userRepository.listByIds(userIds.distinct()).let { users ->
+                val map = users.parallelStream().collect(Collectors.toMap(UserEntity::id) { it })
+                val userMessages = ArrayList<UserMessages>()
+                val sendRecv = ArrayList<String>()
+                for (it in li) {
+                    val send = map[it.sendUserId]
+                    val recv = map[it.recvUserId]
+                    val key = if (it.sendUserId > it.recvUserId) "${it.sendUserId}_${it.recvUserId}" else "${it.recvUserId}_${it.sendUserId}"
+                    if (sendRecv.contains(key)){
+                        continue
+                    }
+                    sendRecv.add(key)
+                    if (send != null && recv != null) {
+                        userMessages.add(it.toUserMessages(
+                            send.name,
+                            send.imageUrl,
+                            recv.name,
+                            recv.imageUrl
+                        ))
                     }
                 }
+                onChange(userMessages)
             }
         }
-        logger.info { "getUserMessageLastByUserId... ok" }
-        return userMessages
     }
 
     fun getMessagesSendAndRecvByUser(
@@ -86,7 +89,7 @@ class MessagesViewModel(context: Context) : ViewModel() {
         page: Int,
         pageSize: Int
     )
-            : Flow<List<MessagesEntity>> {
+            : List<MessagesEntity> {
         return itemsRepository.getMessagesSendAndRecvByUser(sendUserId, recvUserId, page, pageSize)
     }
 

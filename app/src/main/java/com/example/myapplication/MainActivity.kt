@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.SnackbarDuration
@@ -56,6 +55,7 @@ import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.CommunityEntity
 import com.example.myapplication.entity.FileEntity
+import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.event.ViewModelEvent
 import com.example.myapplication.remote.entity.AppUserEntity
 import com.example.myapplication.remote.entity.toUserEntity
@@ -81,7 +81,9 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
+import java.util.stream.Collectors
 
 
 private val logger = KotlinLogging.logger {}
@@ -94,7 +96,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var userViewModel: UserViewModel;
 
-    private val communityViewModel: CommunityViewModel by viewModels()
+    private lateinit var communityViewModel: CommunityViewModel;
 
     private lateinit var messagesViewModel: MessagesViewModel;
 
@@ -109,17 +111,18 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
     }
 
-    private fun init() {
-        logger.info { "init" }
+    @OptIn(DelicateCoroutinesApi::class)
+    private  fun init() {
+        Coil.setImageLoader(ImageLoader(this))
         // 初始化的时候保存和更新
         // 默认账户信息
         ThreadPoolManager.getInstance().addTask("init") {
-            Coil.setImageLoader(ImageLoader(this))
             val appUserEntity = Utils.randomUser()
             appUserEntity.deviceNumber = SystemApp.PRODUCT_DEVICE_NUMBER
             val user = userViewModel.gerUserByNumber(SystemApp.PRODUCT_DEVICE_NUMBER)
             if (user.id != 0L) {
                 SystemApp.UserId = user.id
+                SystemApp.appUserEntity = user
                 appUserEntity.id = user.id
                 userViewModel.userEntity.id = user.id
                 userViewModel.userEntity.name = user.name
@@ -130,24 +133,33 @@ class MainActivity : AppCompatActivity() {
             }
 
             logger.info { "开始加载联系人" }
-            userViewModel.users = userViewModel.getReferUser(AppUserEntity())
+            val users  = userViewModel.getReferUser(AppUserEntity())
+            val map = users.parallelStream().collect(Collectors.toMap(UserEntity::id) { it })
+            userViewModel.users = users
+            userViewModel.userMap = map
             communityViewModel.nextCommunityPage()
             appBase.imageViewModel.getDay7Images(this)
+            GlobalScope.launch(Dispatchers.Default)  {
+                messagesViewModel.getUserMessageLastByUserId(
+                    SystemApp.UserId,
+                    SystemApp.UserId,
+                ){
+                    messagesViewModel.userMessagesList.clear()
+                    messagesViewModel.userMessagesList.addAll(it)
+                }
+            }
         }
         MainScope().launch {
-            messagesViewModel.getUserMessageLastByUserId(
-                this@MainActivity,
-                SystemApp.UserId,
-                SystemApp.UserId,
-                )
-
-            viewModelEvent.onUserMessageLastByUserId(this@MainActivity,
-                SystemApp.UserId,
-                SystemApp.UserId,
-                userViewModel){userMessages ->
-                messagesViewModel.userMessagesList = userMessages
-            }
+//            viewModelEvent.onUserMessageLastByUserId(this@MainActivity,
+//                SystemApp.UserId,
+//                SystemApp.UserId,
+//                userViewModel){userMessages ->
+//                if (userMessages.isNotEmpty()){
+//                    messagesViewModel.userMessagesList = userMessages
+//                }
+//            }
             viewModelEvent.onUserAll(this@MainActivity, userViewModel)
+            Utils.message(this, "程序初始化完成", SystemApp.snackBarHostState)
         }
     }
 
@@ -155,19 +167,20 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        userViewModel = ViewModelProvider(
+            this,
+            UserViewModel.MessageViewModelFactory(this)
+        )[UserViewModel::class.java]
+        messagesViewModel =
+            ViewModelProvider(
+                this,
+                MessagesViewModel.MessageViewModelFactory(this)
+            )[MessagesViewModel::class.java]
         setContent {
             AppTheme(appBase.darkTheme) {
                 appBase.imageViewModel = viewModel<ImageViewModel>()
+                communityViewModel = viewModel<CommunityViewModel>()
                 appBase.navHostController = rememberNavController()
-                userViewModel = ViewModelProvider(
-                    this,
-                    UserViewModel.MessageViewModelFactory(this)
-                )[UserViewModel::class.java]
-                messagesViewModel =
-                    ViewModelProvider(
-                        this,
-                        MessagesViewModel.MessageViewModelFactory(this)
-                    )[MessagesViewModel::class.java]
                 this.init()
                 NavHost(
                     navController = appBase.navHostController,
@@ -181,7 +194,9 @@ class MainActivity : AppCompatActivity() {
                         PageHost(
                             appBase.imageViewModel,
                             messagesViewModel,
-                            appBase.navHostController
+                            appBase.navHostController,
+                            communityViewModel,
+                            userViewModel
                         )
                     }
                     // 二级页面 相片页
@@ -190,7 +205,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     composable(PageRouteConfig.MESSAGE_ROUTE) {
                         MessagesDetail(
-                            userViewModel.recvUserEntity,
+                            userViewModel.getLocalUserById(userViewModel.recvUserId),
                             messagesViewModel,
                             appBase.navHostController,
                             Modifier.background(Color.White)
@@ -212,7 +227,9 @@ class MainActivity : AppCompatActivity() {
     fun PageHost(
         imageViewModel: ImageViewModel,
         messagesViewModel: MessagesViewModel,
-        mainController: NavHostController
+        mainController: NavHostController,
+        communityViewModel: CommunityViewModel,
+        userViewModel: UserViewModel
     ) {
         val scope = rememberCoroutineScope()
         var searchUserName by remember {
@@ -259,6 +276,8 @@ class MainActivity : AppCompatActivity() {
                         appBase.topVisible = true
                         MessagesList(
                             messagesViewModel,
+                            userViewModel,
+                            mainController,
                             modifier = mod.fillMaxWidth()
                         )
                     }
@@ -275,7 +294,7 @@ class MainActivity : AppCompatActivity() {
                                     .padding(2.dp)
                             )
                             UserList(userViewModel, onClick = {
-                                userViewModel.recvUserEntity = it
+                                userViewModel.recvUserId = it.id
                                 mainController.navigate(PageRouteConfig.MESSAGE_ROUTE)
                             })
                         }

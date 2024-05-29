@@ -2,6 +2,7 @@ package com.example.myapplication.common.consts
 
 import androidx.compose.material3.SnackbarHostState
 import com.example.myapplication.common.util.ImageUtils
+import com.example.myapplication.remote.entity.AppUserEntity
 
 
 object SystemApp {
@@ -11,6 +12,7 @@ object SystemApp {
 
     var UserId =  0L
 
+    var appUserEntity: AppUserEntity? = null
 
     var snackBarHostState = SnackbarHostState()
 

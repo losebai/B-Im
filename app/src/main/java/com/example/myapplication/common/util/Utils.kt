@@ -59,7 +59,7 @@ object Utils {
     }
 
 
-    var formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd HH:mm:ss")
+    var formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
 
     fun localDateTimeToString(time: LocalDateTime) : String{

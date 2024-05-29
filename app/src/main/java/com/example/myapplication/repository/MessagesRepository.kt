@@ -14,5 +14,5 @@ interface MessagesRepository  : OfflineRepository<MessagesEntity, MessagesDao> {
 
      fun getMessagesSendAndRecvByUser(sendUserId: Long, recvUserId : Long,
                                               page: Int,
-                                              pageSize: Int) : Flow<List<MessagesEntity>>
+                                              pageSize: Int) : List<MessagesEntity>
 }

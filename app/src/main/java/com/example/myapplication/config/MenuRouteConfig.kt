@@ -37,7 +37,6 @@ object PageRouteConfig{
     // 菜单主页
     const val MENU_ROUTE = "MENU_ROUTE"
 
-
     // 图片
     const val IMAGE_PAGE_ROUTE = "IMAGE_PAGE_ROUTE"
 

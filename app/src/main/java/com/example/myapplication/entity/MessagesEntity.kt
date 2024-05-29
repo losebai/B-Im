@@ -45,3 +45,11 @@ fun MessagesEntity.toUserMessages(
         ack = ack, sendUserImageUri = sendUserImageUri, sendUserName = sendUserName,
         recvUserName=recvUserName,recvUserImageUri=recvUserImageUri
     )
+
+fun UserMessages.toUserEntity(
+): MessagesEntity =
+    MessagesEntity(
+        messagesId = messagesId, sendUserId = sendUserId, sendDateTime = sendDateTime,
+        recvUserId = recvUserId, messageData = messageData, recvDateTime = recvDateTime,
+        ack = ack
+    )

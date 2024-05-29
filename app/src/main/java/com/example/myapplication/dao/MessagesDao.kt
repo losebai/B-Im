@@ -18,7 +18,7 @@ interface MessagesDao : BaseDao<MessagesEntity> {
      * @param [pageSize]
      * @return [Flow<List<MessagesEntity>>]
      */
-    @Query("SELECT * from messages WHERE recvUserId = :id LIMIT (:page * :pageSize), :pageSize")
+    @Query("SELECT * from messages WHERE recvUserId = :id LIMIT (:page - 1 * :pageSize), :pageSize")
     fun getUserMessagesByRecvUserId(id: Long, page: Int, pageSize: Int): Flow<List<MessagesEntity>>
 
     /**
@@ -26,7 +26,7 @@ interface MessagesDao : BaseDao<MessagesEntity> {
      * @param [id]
      * @return [Flow<List<MessagesEntity>>]
      */
-    @Query("SELECT * from messages WHERE sendUserId = :id LIMIT (:page * :pageSize), :pageSize")
+    @Query("SELECT * from messages WHERE sendUserId = :id LIMIT (:page - 1 * :pageSize), :pageSize")
     fun getUserMessagesBySendUserId(id: Long, page: Int, pageSize: Int): Flow<List<MessagesEntity>>
 
 
@@ -51,10 +51,10 @@ interface MessagesDao : BaseDao<MessagesEntity> {
      * @param [pageSize]
      * @return [Flow<List<MessagesEntity>>]
      */
-    @Query("select * from messages where sendUserId = :sendUserId and recvUserId = :recvUserId order by sendDateTime desc LIMIT (:page * :pageSize), :pageSize")
+    @Query("select * from messages where sendUserId in (:recvUserId, :sendUserId) and recvUserId in (:recvUserId, :sendUserId) LIMIT (:page - 1 * :pageSize), :pageSize")
     fun getMessagesSendAndRecvByUser(sendUserId: Long, recvUserId : Long,
                                      page: Int,
-                                     pageSize: Int) : Flow<List<MessagesEntity>>
+                                     pageSize: Int) : List<MessagesEntity>
 
 
 }
