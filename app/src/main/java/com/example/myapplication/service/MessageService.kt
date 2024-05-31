@@ -6,6 +6,7 @@ import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.entity.MessagesEntity
 import com.example.myapplication.viewmodel.MessagesViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
+import okhttp3.internal.closeQuietly
 import org.noear.snack.ONode
 import org.noear.socketd.SocketD
 import org.noear.socketd.transport.core.entity.FileEntity
@@ -50,4 +51,8 @@ class MessageService(private val messagesViewModel: MessagesViewModel) {
         session.send("/dispatch-app/user/$userId", FileEntity(file))
     }
 
+
+    fun close(){
+        session.close()
+    }
 }

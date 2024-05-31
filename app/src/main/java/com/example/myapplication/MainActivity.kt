@@ -95,13 +95,17 @@ class MainActivity : AppCompatActivity() {
     private val viewModelEvent : ViewModelEvent = ViewModelEvent.getInstance(this)
 
 
-
     override fun finish() {
         super.finish()
     }
 
     override fun onResume() {
         super.onResume()
+    }
+
+    override fun onStop() {
+        messagesViewModel.messageService.close()
+        super.onStop()
     }
 
     private  fun init() {

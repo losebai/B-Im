@@ -30,4 +30,10 @@
     <color name="message_bg">#EDE8E8</color>
     <color name="recvMessage">#FFFFFF</color>
     <color name="sendMessage">#45A0E8</color>
+
+
+    <color name="OFF_LINE">#D51212</color>
+    <color name="ON_LINE">#25CF2C</color>
+    <color name="HiDING">#FF9800</color>
+    <color name="INIT">#00BCD4</color>
 </resources>

@@ -55,6 +55,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,6 +65,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
 import com.example.myapplication.common.consts.SystemApp
+import com.example.myapplication.common.consts.UserStatus
 import com.example.myapplication.common.ui.DialogImageAdd
 import com.example.myapplication.common.ui.HeadImage
 import com.example.myapplication.common.util.ImageUtils
@@ -95,7 +97,7 @@ class AppBase {
     var darkTheme by mutableStateOf(false)
 
 
-    @SuppressLint("CoroutineCreationDuringComposition")
+    @SuppressLint("CoroutineCreationDuringComposition", "ResourceAsColor")
     @Composable
     @Preview(showBackground = true)
     @OptIn(ExperimentalMaterial3Api::class)
@@ -118,12 +120,22 @@ class AppBase {
                                 ) {
                                     settingDrawerState = DrawerState(DrawerValue.Open)
                                 }
-                                TextButton(
-                                    onClick = { /*TODO*/ },
-                                    contentPadding = ZERO_PADDING,
-                                ) {
-                                    Text(text =appUserEntity.name)
+                                Column {
+                                    TextButton(
+                                        onClick = { /*TODO*/ },
+                                        contentPadding = ZERO_PADDING,
+                                    ) {
+                                        Text(text =appUserEntity.name, fontSize = 15.sp)
+                                    }
+                                    Text(text = SystemApp.userStatus.tag, fontSize = 10.sp,
+                                        color = when(SystemApp.userStatus){
+                                            UserStatus.INIT -> colorResource(R.color.INIT)
+                                            UserStatus.OFF_LINE -> colorResource(R.color.OFF_LINE)
+                                            UserStatus.ON_LINE -> colorResource(R.color.ON_LINE)
+                                            UserStatus.HiDING -> colorResource(R.color.HiDING)
+                                        })
                                 }
+
                             }
                             Row(
                                 horizontalArrangement = Arrangement.End,
