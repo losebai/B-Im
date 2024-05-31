@@ -43,6 +43,7 @@ class UserListener(private val messagesViewModel: MessagesViewModel) : EventList
                 val entity: Entity = message.entity()
                 val data = ONode.load(entity.dataAsString())
                 val messageData = data.get("messageData").toString()
+                val ack = data.get("ack").toString().toInt()
                 val userMessage = MessagesEntity(
                     data.get("messagesId").toString().replace("\"",""),
                     data.get("sendUserId").toString().toLong(),
@@ -50,9 +51,11 @@ class UserListener(private val messagesViewModel: MessagesViewModel) : EventList
                     messageData.substring(1, messageData.length - 1),
                     data.get("sendDateTime").toString().toLong(),
                     null,
-                    data.get("ack").toString().toInt()
+                    if (ack == 0) 1 else ack
+//
                 )
                 scope.launch {
+                    logger.info { "message:${data.toJson()}" }
                     messagesViewModel.saveItem(userMessage)
                     session?.send(AppEventConst.USER_MESSAGE, StringEntity(data.toJson()))
                 }

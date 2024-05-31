@@ -129,16 +129,16 @@ class MessagesViewModel(context: Context) : ViewModel() {
     ) {
         itemsRepository.getMessagesSendAndRecvFlowByUser(sendUserId, recvUserId, page, pageSize)
             .collect() {
+                it.forEach { mess ->
+                    mess.ack = 2
+                    itemsRepository.updateItem(mess)
+                }
                 onChange(it)
                 ThreadPoolManager.getInstance().addTask("message") {
                     it.forEach { mess ->
+                        mess.ack = 1
                         messageService.sendMessagesEntity(mess)
                     }
-                }
-                it.forEach { mess ->
-                    val temp = mess.copy()
-                    temp.ack = 2
-                    itemsRepository.updateItem(temp)
                 }
             }
     }

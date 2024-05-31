@@ -148,21 +148,31 @@ fun MessagesBody(
     modifier: Modifier
 ) {
     val state = MySwipeRefreshState(NORMAL)
+    var oldData by remember {
+        mutableStateOf("")
+    }
     GlobalScope.launch(Dispatchers.Default)  {
         val list = messagesViewModel.getMessagesSendAndRecvByUser(
             SystemApp.UserId,
             recvUserEntity.id,
             1,
-            10
+            100
         )
         messages.clear()
         messages.addAll(list)
         logger.info { "一直有多少条消息${SystemApp.UserId}:${ recvUserEntity.id}:${list.size}" }
+
         messagesViewModel.getMessagesSendAndRecvFlowByUserAck(
             recvUserEntity.id,
             SystemApp.UserId, 1, 100
         ) {
-            messages.addAll(it)
+            for(message : MessagesEntity in it){
+                if (message.messagesId == oldData){
+                    continue
+                }
+                oldData = message.messagesId
+                messages.add(0, message)
+            }
             logger.info { "本次接受 ${it.size}" }
         }
     }
@@ -171,7 +181,7 @@ fun MessagesBody(
         modifier = modifier
     ) { refreshModifier ->
         logger.info { "MySwipeRefresh 重组" }
-        LazyColumn(refreshModifier) {
+        LazyColumn(refreshModifier, reverseLayout=true) {
             items(messages) { it ->
                 val isSend = it.sendUserId == SystemApp.UserId
                 Row(
@@ -276,6 +286,7 @@ fun MessagesDetail(
     val messages = remember {
         mutableStateListOf<MessagesEntity>()
     }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -362,7 +373,7 @@ fun MessagesDetail(
                                         messagesViewModel.messageService.sendMessagesEntity(message)
                                     }
                                     sendData = ""
-                                    messages.add(message)
+                                    messages.add(0, message)
                                 }
                             }
                         }) {

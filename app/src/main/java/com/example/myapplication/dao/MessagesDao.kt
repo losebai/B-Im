@@ -57,7 +57,7 @@ interface MessagesDao : BaseDao<MessagesEntity> {
             "union all " +
             "select * from messages where sendUserId  = :recvUserId and recvUserId = :sendUserId " +
             ")" +
-            " LIMIT (:page - 1 * :pageSize), :pageSize")
+            " order by sendDateTime desc LIMIT (:page - 1 * :pageSize), :pageSize")
     fun getMessagesSendAndRecvByUser(sendUserId: Long, recvUserId : Long,
                                      page: Int,
                                      pageSize: Int) : List<MessagesEntity>
