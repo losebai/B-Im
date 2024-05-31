@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import com.example.myapplication.AppBase
 import com.example.myapplication.R
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,

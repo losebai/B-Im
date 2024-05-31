@@ -2,7 +2,6 @@ package com.example.myapplication.common.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
@@ -30,7 +28,7 @@ import com.example.myapplication.R
 import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
 import com.example.myapplication.common.util.Utils
-import com.example.myapplication.entity.FileEntity
+import com.example.myapplication.dto.FileEntity
 import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.remote.entity.toUserEntity
 

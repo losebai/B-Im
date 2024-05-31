@@ -1,5 +1,6 @@
 package com.example.myapplication.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.UUID
@@ -12,8 +13,10 @@ data class MessagesEntity(
     var sendUserId: Long,
     var recvUserId: Long,
     var messageData: String,
-    var sendDateTime: String,
-    var recvDateTime: String?,
+
+    @ColumnInfo(name = "sendDateTime")
+    var sendDateTime: Long,
+    var recvDateTime: Long?,
     var ack: Int
 )
 
@@ -27,8 +30,8 @@ data class UserMessages(
     val recvUserName: String,
     val recvUserImageUri: String,
     var messageData: String,
-    var sendDateTime: String,
-    var recvDateTime: String?,
+    var sendDateTime: Long,
+    var recvDateTime: Long?,
     var ack: Int
 )
 

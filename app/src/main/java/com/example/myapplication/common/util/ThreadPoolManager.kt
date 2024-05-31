@@ -1,6 +1,6 @@
 package com.example.myapplication.common.util
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import okio.Lock
 import java.util.concurrent.*
 

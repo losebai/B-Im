@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
@@ -33,11 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import coil.Coil
 import coil.ImageLoader
 import com.example.myapplication.common.consts.SystemApp
@@ -47,18 +44,14 @@ import com.example.myapplication.common.ui.MySwipeRefresh
 import com.example.myapplication.common.ui.MySwipeRefreshState
 import com.example.myapplication.common.ui.NORMAL
 import com.example.myapplication.common.ui.REFRESHING
-import com.example.myapplication.common.util.MediaStoreUtils
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.common.util.Utils
-import com.example.myapplication.common.util.toFileEntity
 import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
-import com.example.myapplication.entity.CommunityEntity
-import com.example.myapplication.entity.FileEntity
+import com.example.myapplication.dto.CommunityEntity
 import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.event.ViewModelEvent
 import com.example.myapplication.remote.entity.AppUserEntity
-import com.example.myapplication.remote.entity.toUserEntity
 import com.example.myapplication.ui.AppTheme
 import com.example.myapplication.ui.CommunityHome
 import com.example.myapplication.ui.ImageGroupList
@@ -73,20 +66,19 @@ import com.example.myapplication.viewmodel.CommunityViewModel
 import com.example.myapplication.viewmodel.ImageViewModel
 import com.example.myapplication.viewmodel.MessagesViewModel
 import com.example.myapplication.viewmodel.UserViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
+import org.noear.socketd.utils.RunUtils
 import java.util.stream.Collectors
 
 
-private val logger = KotlinLogging.logger {}
+private val logger = KotlinLogging.logger {
+}
 
 
 class MainActivity : AppCompatActivity() {
@@ -103,6 +95,7 @@ class MainActivity : AppCompatActivity() {
     private val viewModelEvent : ViewModelEvent = ViewModelEvent.getInstance(this)
 
 
+
     override fun finish() {
         super.finish()
     }
@@ -111,7 +104,6 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     private  fun init() {
         Coil.setImageLoader(ImageLoader(this))
         // 初始化的时候保存和更新
@@ -119,19 +111,22 @@ class MainActivity : AppCompatActivity() {
         ThreadPoolManager.getInstance().addTask("init") {
             val appUserEntity = Utils.randomUser()
             appUserEntity.deviceNumber = SystemApp.PRODUCT_DEVICE_NUMBER
-            val user = userViewModel.gerUserByNumber(SystemApp.PRODUCT_DEVICE_NUMBER)
-            if (user.id != 0L) {
-                SystemApp.UserId = user.id
-                SystemApp.appUserEntity = user
-                appUserEntity.id = user.id
-                userViewModel.userEntity.id = user.id
-                userViewModel.userEntity.name = user.name
-                userViewModel.userEntity.imageUrl = user.imageUrl
-                userViewModel.userEntity.note = user.note
-            } else {
-                userViewModel.saveUser(appUserEntity)
+            try {
+                val user = userViewModel.gerUserByNumber(SystemApp.PRODUCT_DEVICE_NUMBER)
+                if (user.id != 0L) {
+                    SystemApp.UserId = user.id
+                    SystemApp.appUserEntity = user
+                    appUserEntity.id = user.id
+                    userViewModel.userEntity.id = user.id
+                    userViewModel.userEntity.name = user.name
+                    userViewModel.userEntity.imageUrl = user.imageUrl
+                    userViewModel.userEntity.note = user.note
+                } else {
+                    userViewModel.saveUser(appUserEntity)
+                }
+            }catch (e: Exception){
+                e.printStackTrace()
             }
-
             logger.info { "开始加载联系人" }
             val users  = userViewModel.getReferUser(AppUserEntity())
             val map = users.parallelStream().collect(Collectors.toMap(UserEntity::id) { it })
@@ -139,25 +134,29 @@ class MainActivity : AppCompatActivity() {
             userViewModel.userMap = map
             communityViewModel.nextCommunityPage()
             appBase.imageViewModel.getDay7Images(this)
-            GlobalScope.launch(Dispatchers.Default)  {
-                messagesViewModel.getUserMessageLastByUserId(
-                    SystemApp.UserId,
-                    SystemApp.UserId,
-                ){
-                    messagesViewModel.userMessagesList.clear()
-                    messagesViewModel.userMessagesList.addAll(it)
-                }
-            }
-        }
-        MainScope().launch {
-//            viewModelEvent.onUserMessageLastByUserId(this@MainActivity,
-//                SystemApp.UserId,
-//                SystemApp.UserId,
-//                userViewModel){userMessages ->
-//                if (userMessages.isNotEmpty()){
-//                    messagesViewModel.userMessagesList = userMessages
+            messagesViewModel.messageService.sendText("","")
+//            GlobalScope.launch(Dispatchers.Default)  {
+//                // 监听联系人列表
+//                messagesViewModel.getUserMessageLastByUserId(
+//                    SystemApp.UserId,
+//                    SystemApp.UserId,
+//                ){
+//                    messagesViewModel.userMessagesList.clear()
+//                    messagesViewModel.userMessagesList.addAll(it)
+//                    logger.info { "消息列表:${it.size}" }
 //                }
 //            }
+        }
+        MainScope().launch {
+            viewModelEvent.onUserMessageLastByUserId(this@MainActivity,
+                SystemApp.UserId,
+                SystemApp.UserId,
+                userViewModel){userMessages ->
+                if (userMessages.isNotEmpty()){
+                    messagesViewModel.userMessagesList.clear()
+                    messagesViewModel.userMessagesList.addAll(userMessages)
+                }
+            }
             viewModelEvent.onUserAll(this@MainActivity, userViewModel)
             Utils.message(this, "程序初始化完成", SystemApp.snackBarHostState)
         }
@@ -392,7 +391,7 @@ fun Test() {
             }
         }
     ) { modifier ->
-//注意这里要把modifier设置过来，要不然LazyColumn不会跟随它上下拖动
+        //注意这里要把modifier设置过来，要不然LazyColumn不会跟随它上下拖动
         LazyColumn(modifier) {
             items(items = list, key = { it }) {
                 Text(

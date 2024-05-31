@@ -1,9 +1,8 @@
 package com.example.myapplication.common.consts
 
-enum class UserStatus {
-    INIT,
-    ON_LINE,
-    OFF_LINE,
-    CLOAKING,
-    RETRY_CONNECT
+enum class UserStatus(private val value: Int) {
+    INIT(0),
+    OFF_LINE(-1), // 离线
+    ON_LINE(1), // 在线
+    HiDING(3); // 隐身
 }

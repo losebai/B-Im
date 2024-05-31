@@ -2,6 +2,7 @@ package com.example.myapplication.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Update
 import com.example.myapplication.entity.MessagesEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -30,7 +31,7 @@ interface MessagesDao : BaseDao<MessagesEntity> {
     fun getUserMessagesBySendUserId(id: Long, page: Int, pageSize: Int): Flow<List<MessagesEntity>>
 
 
-    /**获取最新的消息，并没有被确认的消息
+    /**获取最新的消息，并没有被确认的消息，按人进行分组
      * @param [id]
      * @param [page]
      * @param [pageSize]
@@ -51,10 +52,26 @@ interface MessagesDao : BaseDao<MessagesEntity> {
      * @param [pageSize]
      * @return [Flow<List<MessagesEntity>>]
      */
-    @Query("select * from messages where sendUserId in (:recvUserId, :sendUserId) and recvUserId in (:recvUserId, :sendUserId) LIMIT (:page - 1 * :pageSize), :pageSize")
+    @Query("select * from (" +
+            "select * from messages where sendUserId  = :sendUserId and recvUserId = :recvUserId  " +
+            "union all " +
+            "select * from messages where sendUserId  = :recvUserId and recvUserId = :sendUserId " +
+            ")" +
+            " LIMIT (:page - 1 * :pageSize), :pageSize")
     fun getMessagesSendAndRecvByUser(sendUserId: Long, recvUserId : Long,
                                      page: Int,
                                      pageSize: Int) : List<MessagesEntity>
 
+    /**获取和某个人消息，接收人和发送人，未被确认的消息
+     * @param [sendUserId]
+     * @param [recvUserId]
+     * @param [page]
+     * @param [pageSize]
+     * @return [Flow<List<MessagesEntity>>]
+     */
+    @Query("select * from messages where sendUserId = :sendUserId and recvUserId = :recvUserId  and ack = 1 LIMIT (:page - 1 * :pageSize), :pageSize")
+    fun getMessagesSendAndRecvFlowByUser(sendUserId: Long, recvUserId : Long,
+                                     page: Int,
+                                     pageSize: Int) : Flow<List<MessagesEntity>>
 
 }

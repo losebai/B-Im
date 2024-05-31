@@ -1,9 +1,11 @@
 package com.example.myapplication
 
-import mu.KotlinLogging
+import android.util.Log
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.junit.Test
 
 import org.junit.Assert.*
+import org.slf4j.Logger
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -23,6 +25,7 @@ class ExampleUnitTest {
         logger.warn { "warn" }
         logger.debug { "debug" }
         logger.error { "error" }
+        println(123)
     }
     @Test
     fun intest(){

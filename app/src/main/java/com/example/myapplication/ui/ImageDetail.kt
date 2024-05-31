@@ -35,9 +35,9 @@ import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.util.ShareUtil
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.common.ui.FullScreenImage
-import com.example.myapplication.entity.FileEntity
+import com.example.myapplication.dto.FileEntity
 import kotlinx.coroutines.launch
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 
 

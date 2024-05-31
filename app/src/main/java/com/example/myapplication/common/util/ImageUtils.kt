@@ -7,7 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Environment
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.myapplication.entity.FileEntity
+import com.example.myapplication.dto.FileEntity
 import java.io.File
 
 object ImageUtils {

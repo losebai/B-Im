@@ -116,18 +116,18 @@ android {
             manifestPlaceholders["app_channel_value"] = name
             manifestPlaceholders["app_name_value"] = "Android"
             buildConfigField("String", "BASE_URL", "\"http://121.40.62.167:8000\"")
-            buildConfigField("String", "SOCKET_URL", "\"http://121.40.62.167:8002\"")
+            buildConfigField("String", "SOCKET_URL", "\"sd:tcp://192.168.20.119:8002\"")
 //            buildConfigField("String", "BASE_URL", "\"http://192.168.20.119:8082\"")
         }
         create("pro") {
             //应用包名添加后缀
-            applicationIdSuffix = ".free"
+            applicationIdSuffix = ".pro"
             //关联维度
             dimension = "tier"
             manifestPlaceholders["app_channel_value"] = name
             manifestPlaceholders["app_name_value"] = "Android"
-            buildConfigField("String", "SOCKET_URL", "\"http://121.40.62.167:8002\"")
             buildConfigField("String", "BASE_URL", "\"http://121.40.62.167:8000\"")
+            buildConfigField("String", "SOCKET_URL", "\"sd:tcp://121.40.62.167:8002\"")
         }
     }
     applicationVariants.all {
@@ -143,14 +143,12 @@ android {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
-    implementation("io.github.microutils:kotlin-logging-jvm:2.0.6")
-    implementation("org.slf4j:slf4j-api:2.0.12")
-    implementation("org.slf4j:slf4j-simple:1.7.30")
-//    implementation("org.slf4j:slf4j-log4j12:2.0.12")
+    implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
+    implementation("org.slf4j:slf4j-simple:2.0.12")
 
 //    implementation("org.noear:solon:2.7.5")
     implementation("org.noear:snack3:3.2.95")
-    implementation("org.noear:socketd-transport-smartsocket:2.4.18")
+    implementation("org.noear:socketd-transport-smartsocket:2.5.0")
 
     //noinspection GradleDependency
     //noinspection GradleDependency

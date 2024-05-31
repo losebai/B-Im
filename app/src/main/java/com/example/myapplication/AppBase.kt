@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MailOutline
@@ -72,7 +73,7 @@ import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.ui.ImportImages
 import com.example.myapplication.viewmodel.ImageViewModel
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
@@ -242,11 +243,11 @@ class AppBase {
                     ) {
                         Icon(
                             modifier = IconModifier,
-                            imageVector = Icons.Filled.Favorite,
+                            imageVector = Icons.Filled.Build,
                             contentDescription = "Localized description"
                         )
                         Text(
-                            text = "相册",
+                            text = "工具箱",
                             fontSize = 12.sp,
                         )
                     }

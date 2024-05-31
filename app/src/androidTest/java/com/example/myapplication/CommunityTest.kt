@@ -3,7 +3,7 @@ package com.example.myapplication
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.myapplication.common.util.Utils
-import com.example.myapplication.entity.CommunityEntity
+import com.example.myapplication.dto.CommunityEntity
 import com.example.myapplication.remote.entity.toUserEntity
 import com.example.myapplication.ui.CommunityHome
 import com.example.myapplication.ui.DynamicMessage

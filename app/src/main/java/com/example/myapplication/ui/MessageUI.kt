@@ -1,21 +1,17 @@
 package com.example.myapplication.ui
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
+import android.provider.Settings.Global
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -29,8 +25,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -38,20 +32,17 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -68,22 +59,21 @@ import com.example.myapplication.common.ui.REFRESHING
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.config.PageRouteConfig
-import com.example.myapplication.entity.UserMessages
 import com.example.myapplication.entity.MessagesEntity
 import com.example.myapplication.entity.UserEntity
-import com.example.myapplication.entity.toUserEntity
-import com.example.myapplication.viewmodel.CommunityViewModel
 import com.example.myapplication.viewmodel.MessagesViewModel
 import com.example.myapplication.viewmodel.UserViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.launch
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import mu.KotlinLogging
+import org.noear.snack.ONode
 import java.time.LocalDateTime
 
+private val logger = KotlinLogging.logger {
+}
 
-private val logger = KotlinLogging.logger {}
 
 /**
  * 消息列表
@@ -103,7 +93,6 @@ fun MessagesList(
         onRefresh = {
             ThreadPoolManager.getInstance().addTask("MessagesList") {
                 state.loadState = REFRESHING
-
                 logger.info { "正在获取刷新联系人列表" }
                 state.loadState = NORMAL
             }
@@ -149,6 +138,116 @@ fun MessagesList(
     }
 }
 
+@OptIn(DelicateCoroutinesApi::class)
+@SuppressLint("ResourceAsColor", "CoroutineCreationDuringComposition")
+@Composable
+fun MessagesBody(
+    messages: SnapshotStateList<MessagesEntity>,
+    messagesViewModel: MessagesViewModel,
+    recvUserEntity: UserEntity,
+    modifier: Modifier
+) {
+    val state = MySwipeRefreshState(NORMAL)
+    GlobalScope.launch(Dispatchers.Default)  {
+        val list = messagesViewModel.getMessagesSendAndRecvByUser(
+            SystemApp.UserId,
+            recvUserEntity.id,
+            1,
+            10
+        )
+        messages.clear()
+        messages.addAll(list)
+        logger.info { "一直有多少条消息${SystemApp.UserId}:${ recvUserEntity.id}:${list.size}" }
+        messagesViewModel.getMessagesSendAndRecvFlowByUserAck(
+            recvUserEntity.id,
+            SystemApp.UserId, 1, 100
+        ) {
+            messages.addAll(it)
+            logger.info { "本次接受 ${it.size}" }
+        }
+    }
+    logger.info { "MessagesBody 重组" }
+    MySwipeRefresh(state = state, onRefresh = { /*TODO*/ }, onLoadMore = { /*TODO*/ },
+        modifier = modifier
+    ) { refreshModifier ->
+        logger.info { "MySwipeRefresh 重组" }
+        LazyColumn(refreshModifier) {
+            items(messages) { it ->
+                val isSend = it.sendUserId == SystemApp.UserId
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = if (isSend) Arrangement.End
+                    else Arrangement.Start,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    if (isSend) {
+                        Column(
+                            modifier = Modifier.padding(10.dp),
+                            horizontalAlignment = Alignment.End
+                        ) {
+//                                Text(text = it.sendDateTime, fontSize = 10.sp)
+                            Surface(
+                                shape = RectangleShape,
+                                shadowElevation = 1.dp,
+                                tonalElevation = 1.dp,
+                                color = Color(R.color.sendMessage),
+                                modifier = Modifier
+                                    .wrapContentWidth()
+                                    .padding(1.dp)
+                            ) {
+                                Text(
+                                    text = it.messageData.substring(
+                                        0,
+                                        if (it.messageData.length < 20) it.messageData.length else 20
+                                    ),
+                                    textAlign = TextAlign.Right,
+                                    fontSize = 18.sp,
+                                    color = Color.White,
+                                    modifier = Modifier.padding(4.dp),
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
+                        HeadImage(
+                            SystemApp.appUserEntity?.imageUrl,
+                            modifier = StyleCommon.HEAD_IMAGE
+                        ) {
+
+                        }
+                    } else {
+                        HeadImage(recvUserEntity.imageUrl, modifier = StyleCommon.HEAD_IMAGE) {
+                        }
+                        Column(modifier = Modifier.padding(10.dp)) {
+//                                Text(text = it.sendDateTime, fontSize = 10.sp)
+                            Surface(
+                                shape = RectangleShape,
+                                shadowElevation = 1.dp,
+                                tonalElevation = 1.dp,
+                                modifier = Modifier
+                                    .wrapContentWidth()
+                                    .padding(1.dp)
+                            ) {
+                                Text(
+                                    text = it.messageData.substring(
+                                        0,
+                                        if (it.messageData.length < 20) it.messageData.length else 20
+                                    ),
+                                    textAlign = TextAlign.Left,
+                                    fontSize = 18.sp,
+                                    modifier = Modifier.padding(4.dp),
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 /**
  * 和用户对话窗口
  * @param [recvUserEntity]
@@ -168,40 +267,16 @@ fun MessagesDetail(
     mainController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    val activity = LocalContext.current as Activity
-    val state = MySwipeRefreshState(NORMAL)
+//    val activity = LocalContext.current as Activity
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var sendData by remember {
         mutableStateOf("")
     }
-    val messagesTemp = ArrayList<MessagesEntity>()
-    val init by remember {
-        mutableStateOf(false)
-    }
-    // 初始化
-    ThreadPoolManager.getInstance().addTask("MessagesDetail") {
-        messagesTemp.addAll(
-            messagesViewModel.getMessagesSendAndRecvByUser(
-                SystemApp.UserId,
-                recvUserEntity.id,
-                1,
-                10
-            )
-        )
-    }
-    val messages = remember  {
+    val messages = remember {
         mutableStateListOf<MessagesEntity>()
     }
     Scaffold(
-        snackbarHost = {
-            SnackbarHost(
-                hostState = SystemApp.snackBarHostState,
-                modifier = Modifier.padding(0.dp)
-            ) {
-                Snackbar(it, containerColor = Color.Black)
-            }
-        },
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -271,18 +346,21 @@ fun MessagesDetail(
                     } else {
                         IconButton(onClick = {
                             // 关闭键盘
-                            activity.dismissKeyboardShortcutsHelper()
+//                            activity.dismissKeyboardShortcutsHelper()
                             if (sendData.isNotEmpty()) {
                                 scope.launch {
                                     val message = MessagesEntity(
                                         sendUserId = SystemApp.UserId,
-                                        sendDateTime = Utils.localDateTimeToString(LocalDateTime.now().plusHours(8)),
+                                        sendDateTime = System.currentTimeMillis(),
                                         recvUserId = recvUserEntity.id,
                                         messageData = sendData,
                                         recvDateTime = null,
                                         ack = 0
                                     )
                                     messagesViewModel.saveItem(message)
+                                    ThreadPoolManager.getInstance().addTask("message") {
+                                        messagesViewModel.messageService.sendMessagesEntity(message)
+                                    }
                                     sendData = ""
                                     messages.add(message)
                                 }
@@ -296,94 +374,11 @@ fun MessagesDetail(
                     }
                 }
             }
-
         },
         modifier = modifier
             .fillMaxWidth()
             .fillMaxHeight(),
-    ) { pandding ->
-        // 防止多次重组数据重复
-        messages.clear()
-        messages.addAll(messagesTemp)
-
-        MySwipeRefresh(state = state, onRefresh = { /*TODO*/ }, onLoadMore = { /*TODO*/ },
-            modifier = Modifier
-                .padding(pandding)
-                .padding(top = 5.dp)
-        ) { refreshModifier ->
-            LazyColumn(refreshModifier) {
-                items(messages) {it ->
-                    val isSend = it.sendUserId == SystemApp.UserId
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = if (isSend) Arrangement.End
-                        else Arrangement.Start,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp)
-                    ) {
-                        if (isSend) {
-                            Column(
-                                modifier = Modifier.padding(10.dp),
-                                horizontalAlignment=Alignment.End
-                            ) {
-//                                Text(text = it.sendDateTime, fontSize = 10.sp)
-                                Surface(shape = RectangleShape,
-                                    shadowElevation = 1.dp,
-                                    tonalElevation = 1.dp,
-                                    color = Color(R.color.sendMessage),
-                                    modifier = Modifier
-                                        .wrapContentWidth()
-                                        .padding(1.dp)
-                                    ){
-                                    Text(
-                                        text = it.messageData.substring(
-                                            0,
-                                            if (it.messageData.length < 20) it.messageData.length else 20
-                                        ),
-                                        textAlign = TextAlign.Right,
-                                        fontSize = 18.sp,
-                                        color= Color.White,
-                                        modifier=Modifier.padding(4.dp),
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
-                            }
-                            HeadImage(
-                                SystemApp.appUserEntity?.imageUrl,
-                                modifier = StyleCommon.HEAD_IMAGE
-                            ) {
-
-                            }
-                        } else {
-                            HeadImage(recvUserEntity.imageUrl, modifier = StyleCommon.HEAD_IMAGE) {
-                            }
-                            Column(modifier = Modifier.padding(10.dp)) {
-//                                Text(text = it.sendDateTime, fontSize = 10.sp)
-                                Surface(shape = RectangleShape,
-                                    shadowElevation = 1.dp,
-                                    tonalElevation = 1.dp,
-                                    modifier = Modifier
-                                        .wrapContentWidth()
-                                        .padding(1.dp)
-                                ){
-                                    Text(
-                                        text = it.messageData.substring(
-                                            0,
-                                            if (it.messageData.length < 20) it.messageData.length else 20
-                                        ),
-                                        textAlign = TextAlign.Left,
-                                        fontSize = 18.sp,
-                                        modifier=Modifier.padding(4.dp),
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
+    ) { pand ->
+        MessagesBody( messages,messagesViewModel, recvUserEntity, Modifier.padding(pand))
     }
 }

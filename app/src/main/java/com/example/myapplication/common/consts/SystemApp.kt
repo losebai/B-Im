@@ -8,7 +8,7 @@ import com.example.myapplication.remote.entity.AppUserEntity
 object SystemApp {
 
     // 设备唯一识别吗
-    val PRODUCT_DEVICE_NUMBER: String = android.os.Build.FINGERPRINT
+    val PRODUCT_DEVICE_NUMBER: String = android.os.Build.FINGERPRINT ?: ""
 
     var UserId =  0L
 

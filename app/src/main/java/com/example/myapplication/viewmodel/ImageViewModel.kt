@@ -1,14 +1,11 @@
 package com.example.myapplication.viewmodel
 
 import android.content.Context
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.common.util.ImageUtils
 import com.example.myapplication.common.util.MediaStoreUtils
 import com.example.myapplication.common.util.toFileEntity
-import com.example.myapplication.entity.FileEntity
+import com.example.myapplication.dto.FileEntity
 import java.util.Hashtable
 
 private val EMPTY_IMAGES: Array<FileEntity>  = arrayOf()

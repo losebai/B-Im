@@ -28,7 +28,7 @@ import androidx.core.net.toFile
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.common.ui.FullScreenImage
 import com.example.myapplication.common.ui.ImageListView
-import com.example.myapplication.entity.FileEntity
+import com.example.myapplication.dto.FileEntity
 import com.example.myapplication.ui.GetBottomBar
 import com.example.myapplication.ui.ImageDetail
 import java.io.File

@@ -13,7 +13,7 @@ import com.example.myapplication.repository.OfflineMessagesRepository
 import com.example.myapplication.repository.OfflineUserRepository
 import com.example.myapplication.repository.UserRepository
 import com.example.myapplication.viewmodel.UserViewModel
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.stream.Collectors
 
 private val logger = KotlinLogging.logger {}
@@ -53,24 +53,33 @@ open class ViewModelEvent private constructor(context: Context) {
                                           sendUserId: Long,
                                           recvUserId: Long,
                                           userViewModel: UserViewModel,
-                                          onchange: (ArrayList<UserMessages>) -> Unit){
+                                          onChange: (ArrayList<UserMessages>) -> Unit){
         logger.info { "onUserMessageLastByUserId..." }
         itemsRepository.getUserMessageLastByRecvUserId(sendUserId, recvUserId).asLiveData().observe(owner) { li ->
             val map = userViewModel.userMap
             val userMessages = ArrayList<UserMessages>()
+            val sendRecv = ArrayList<String>()
             for (it in li) {
                 val send = map[it.sendUserId]
                 val recv = map[it.recvUserId]
-                if (send != null && recv != null) {
-                    userMessages.add(it.toUserMessages(
-                        send.name,
-                        send.imageUrl,
-                        recv.name,
-                        recv.imageUrl
-                    ))
+                val key =
+                    if (it.sendUserId > it.recvUserId) "${it.sendUserId}_${it.recvUserId}" else "${it.recvUserId}_${it.sendUserId}"
+                if (sendRecv.contains(key)) {
+                    continue
                 }
-                onchange(userMessages)
+                sendRecv.add(key)
+                if (send != null && recv != null) {
+                    userMessages.add(
+                        it.toUserMessages(
+                            send.name,
+                            send.imageUrl,
+                            recv.name,
+                            recv.imageUrl
+                        )
+                    )
+                }
             }
+            onChange(userMessages)
         }
     }
 

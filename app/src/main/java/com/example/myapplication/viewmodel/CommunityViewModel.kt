@@ -1,7 +1,7 @@
 package com.example.myapplication.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.myapplication.entity.CommunityEntity
+import com.example.myapplication.dto.CommunityEntity
 import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.service.MessageDynamicService
 import java.util.stream.Collectors

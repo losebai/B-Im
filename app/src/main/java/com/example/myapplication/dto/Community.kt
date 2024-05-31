@@ -1,4 +1,6 @@
-package com.example.myapplication.entity
+package com.example.myapplication.dto
+
+import com.example.myapplication.entity.UserEntity
 
 data class CommunityEntity(val userEntity: UserEntity,
                            val message: String,

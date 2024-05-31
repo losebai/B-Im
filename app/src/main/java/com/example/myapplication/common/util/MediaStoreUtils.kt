@@ -6,9 +6,8 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
-import com.example.myapplication.entity.FileEntity
+import com.example.myapplication.dto.FileEntity
 import java.io.File
-import java.util.Date
 
 
 data class MediaResource(

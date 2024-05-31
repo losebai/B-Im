@@ -1,7 +1,6 @@
 package com.example.myapplication.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,7 +39,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.R
 import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.common.consts.SystemApp
@@ -48,7 +46,7 @@ import com.example.myapplication.common.ui.MySwipeRefresh
 import com.example.myapplication.common.ui.MySwipeRefreshState
 import com.example.myapplication.common.ui.NORMAL
 import com.example.myapplication.common.util.Utils
-import com.example.myapplication.entity.FileEntity
+import com.example.myapplication.dto.FileEntity
 import com.example.myapplication.viewmodel.ImageViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

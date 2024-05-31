@@ -37,7 +37,7 @@ import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.remote.entity.AppUserEntity
 import com.example.myapplication.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 
 private val logger = KotlinLogging.logger {}

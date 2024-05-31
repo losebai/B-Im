@@ -2,8 +2,8 @@ package com.example.myapplication.service
 
 import com.example.myapplication.common.consts.AppAPI
 import com.example.myapplication.common.util.HttpUtils
-import com.example.myapplication.entity.AppDynamic
-import mu.KotlinLogging
+import com.example.myapplication.dto.AppDynamic
+import io.github.oshai.kotlinlogging.KotlinLogging
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
@@ -14,7 +14,8 @@ private val logger = KotlinLogging.logger {}
 class MessageDynamicService {
 
     companion object {
-        private val appDynamic: AppDynamic = AppDynamic()
+        private val appDynamic: AppDynamic =
+            AppDynamic()
     }
 
 
