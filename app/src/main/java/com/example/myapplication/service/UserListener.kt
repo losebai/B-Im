@@ -66,15 +66,7 @@ class UserListener(private val messagesViewModel: MessagesViewModel) : EventList
     }
 
     override fun onClose(session: Session?) {
-        if (session?.isValid == true) {
-            session.send(
-                "/dispatch-app/close",
-                StringEntity("close")
-                    .metaPut("time", Date().toString())
-                    .metaPut("offLine", UserStatus.OFF_LINE.name)
-            )
-            SystemApp.userStatus = UserStatus.OFF_LINE
-        }
+        SystemApp.userStatus = UserStatus.OFF_LINE
         logger.info { "onClose" }
     }
 

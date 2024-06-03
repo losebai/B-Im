@@ -3,6 +3,7 @@ package com.example.myapplication.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.ripple.rememberRipple
@@ -235,6 +236,7 @@ val unspecified_scheme = ColorFamily(
 
 private val logger = KotlinLogging.logger {}
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @SuppressLint("ResourceAsColor")
 @Composable
 fun AppTheme(
@@ -265,8 +267,16 @@ fun AppTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            // window.statusBarColor = colorScheme.primary.toArgb()
+            // 设置状态栏和导航栏透明
+            window.statusBarColor = Color.Transparent.toArgb()
+            window.navigationBarColor = Color.Transparent.toArgb()
+            window.statusBarColor = Color.Transparent.toArgb()
+            // 让内容可以显示到状态栏和导航栏下面区域
+            WindowCompat.setDecorFitsSystemWindows(window, false)
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            // 导航栏默认会有一层半透明遮罩， 这行代码，去掉默认半透明遮罩
+            window.isNavigationBarContrastEnforced = false
         }
     }
 
@@ -281,6 +291,7 @@ fun AppTheme(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Preview(showBackground = true)
 @Composable
 fun ContrastAwareReplyThemeTest() {

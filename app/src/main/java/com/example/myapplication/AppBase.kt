@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -52,7 +53,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -116,26 +121,35 @@ class AppBase {
                         Row {
                             Row {
                                 HeadImage(appUserEntity,
-                                    modifier = Modifier.size(40.dp),
+                                    modifier = Modifier.size(45.dp),
                                 ) {
                                     settingDrawerState = DrawerState(DrawerValue.Open)
                                 }
-                                Column {
-                                    TextButton(
-                                        onClick = { /*TODO*/ },
-                                        contentPadding = ZERO_PADDING,
-                                    ) {
-                                        Text(text =appUserEntity.name, fontSize = 15.sp)
+                                Column(modifier = Modifier.padding(start = 10.dp)) {
+                                    Text(text =appUserEntity.name, fontSize = 18.sp)
+                                    val colorStatus = when(SystemApp.userStatus){
+                                        UserStatus.INIT -> colorResource(R.color.INIT)
+                                        UserStatus.OFF_LINE -> colorResource(R.color.OFF_LINE)
+                                        UserStatus.ON_LINE -> colorResource(R.color.ON_LINE)
+                                        UserStatus.HiDING -> colorResource(R.color.HiDING)
                                     }
-                                    Text(text = SystemApp.userStatus.tag, fontSize = 10.sp,
-                                        color = when(SystemApp.userStatus){
-                                            UserStatus.INIT -> colorResource(R.color.INIT)
-                                            UserStatus.OFF_LINE -> colorResource(R.color.OFF_LINE)
-                                            UserStatus.ON_LINE -> colorResource(R.color.ON_LINE)
-                                            UserStatus.HiDING -> colorResource(R.color.HiDING)
-                                        })
+                                    Text(text = SystemApp.userStatus.tag,
+                                        modifier = Modifier.drawWithContent {
+                                            drawIntoCanvas {
+                                                val paint = Paint().apply {
+                                                    color = colorStatus
+                                                }
+                                                it.drawCircle(
+                                                    center = Offset(x = 15f, y = size.height / 2),
+                                                    radius = 10f,
+                                                    paint = paint
+                                                )
+                                            }
+                                            drawContent()
+                                        }.padding(start = 15.dp),
+                                        fontSize = 10.sp,
+                                        color = colorStatus)
                                 }
-
                             }
                             Row(
                                 horizontalArrangement = Arrangement.End,
