@@ -46,6 +46,8 @@ object PageRouteConfig{
     const val MESSAGE_ROUTE = "MESSAGE_ROUTE"
 
     const val IMAGE_SELECTOR = "IMAGE_SELECTOR"
+
+    const val USER_INFO = "USER_INFO"
 }
 
 object ParamsConfig {

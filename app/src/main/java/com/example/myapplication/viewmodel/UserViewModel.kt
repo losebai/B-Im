@@ -1,6 +1,9 @@
 package com.example.myapplication.viewmodel
 
 import android.content.Context
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.common.Mapping
@@ -22,7 +25,7 @@ class UserViewModel(context: Context): ViewModel() {
     private val userService: UserService = UserService()
 
     // 当前用户
-    var userEntity = UserEntity()
+    var userEntity by mutableStateOf(UserEntity())
 
     // 当前读取用户
     var recvUserId = 0L

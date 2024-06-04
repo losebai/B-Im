@@ -52,6 +52,10 @@ class MessageService(private val messagesViewModel: MessagesViewModel) {
     }
 
 
+    fun reconnect(){
+        session.reconnect()
+    }
+
     fun close(){
         session.close()
     }

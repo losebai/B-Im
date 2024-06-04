@@ -61,6 +61,7 @@ import com.example.myapplication.ui.MessagesList
 import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.ui.SearchUser
 import com.example.myapplication.ui.SettingHome
+import com.example.myapplication.ui.UserInfoUI.UserInfoEdit
 import com.example.myapplication.ui.UserList
 import com.example.myapplication.viewmodel.CommunityViewModel
 import com.example.myapplication.viewmodel.ImageViewModel
@@ -219,6 +220,9 @@ class MainActivity : AppCompatActivity() {
                             appBase.navHostController.navigateUp()
                         }
                     }
+                    composable(PageRouteConfig.USER_INFO){
+                        UserInfoEdit(userViewModel.userEntity, appBase.navHostController)
+                    }
                 }
             }
         }
@@ -240,7 +244,7 @@ class MainActivity : AppCompatActivity() {
         }
         ModalNavigationDrawer(drawerState = appBase.settingDrawerState, drawerContent = {
             ModalDrawerSheet {
-                SettingHome(userViewModel.userEntity)
+                SettingHome(userViewModel.userEntity, mainController)
             }
         }) {
             appBase.Context(content = { innerPadding ->

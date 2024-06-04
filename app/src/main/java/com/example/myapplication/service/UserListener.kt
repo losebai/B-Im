@@ -52,7 +52,6 @@ class UserListener(private val messagesViewModel: MessagesViewModel) : EventList
                     data.get("sendDateTime").toString().toLong(),
                     null,
                     if (ack == 0) 1 else ack
-//
                 )
                 scope.launch {
                     logger.info { "message:${data.toJson()}" }
@@ -68,6 +67,7 @@ class UserListener(private val messagesViewModel: MessagesViewModel) : EventList
     override fun onClose(session: Session?) {
         SystemApp.userStatus = UserStatus.OFF_LINE
         logger.info { "onClose" }
+        super.onClose(session)
     }
 
     override fun onError(session: Session?, error: Throwable?) {

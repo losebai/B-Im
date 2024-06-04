@@ -47,6 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.R
@@ -55,16 +57,18 @@ import com.example.myapplication.common.util.PermissionsChecker
 import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
 import com.example.myapplication.common.consts.SystemApp.snackBarHostState
 import com.example.myapplication.common.util.Utils
+import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.viewmodel.PermissionViewModel
-
-
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview(showBackground = true)
 @Composable
-fun SettingHome(userEntity: UserEntity = UserEntity()) {
+fun SettingHome(
+    userEntity: UserEntity = UserEntity(),
+    mainController: NavHostController = rememberNavController()
+) {
     val permissionViewModel: PermissionViewModel = viewModel()
     val scope = rememberCoroutineScope()
     val buttonModifier = Modifier.fillMaxWidth()
@@ -83,7 +87,9 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
                     .fillMaxWidth()
             ) {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        mainController.navigate(PageRouteConfig.USER_INFO)
+                    },
                     modifier = Modifier
                         .size(60.dp)
                         .padding(0.dp),
@@ -216,7 +222,7 @@ fun SettingHome(userEntity: UserEntity = UserEntity()) {
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview(showBackground = true)
 @Composable
-fun CheckPermissionDialog(permissionViewModel: PermissionViewModel= viewModel()) {
+fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()) {
     val permissionChecker = PermissionsChecker(LocalContext.current)
     Dialog(onDismissRequest = { permissionViewModel.isCheck = false }) {
         Box(
@@ -368,6 +374,5 @@ fun CheckPermissionDialog(permissionViewModel: PermissionViewModel= viewModel())
                 }
             }
         }
-
     }
 }
