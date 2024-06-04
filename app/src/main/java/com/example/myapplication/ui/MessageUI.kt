@@ -221,7 +221,7 @@ fun MessagesBody(
                             }
                         }
                         HeadImage(
-                            SystemApp.appUserEntity?.imageUrl,
+                            SystemApp.USER_IMAGE,
                             modifier = StyleCommon.HEAD_IMAGE
                         ) {
 
@@ -265,7 +265,7 @@ fun MessagesBody(
  * @param [mainController]
  * @param [modifier]
  */
-@OptIn(ExperimentalMaterial3Api::class, DelicateCoroutinesApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint(
     "UnusedMaterial3ScaffoldPaddingParameter", "ResourceAsColor",
     "CoroutineCreationDuringComposition"

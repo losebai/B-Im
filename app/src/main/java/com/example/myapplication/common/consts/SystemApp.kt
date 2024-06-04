@@ -15,7 +15,7 @@ object SystemApp {
 
     var UserId =  0L
 
-    var appUserEntity: AppUserEntity? = null
+    var USER_IMAGE: String by mutableStateOf("")
 
     var snackBarHostState = SnackbarHostState()
 

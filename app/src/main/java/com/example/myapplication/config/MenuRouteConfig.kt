@@ -48,6 +48,10 @@ object PageRouteConfig{
     const val IMAGE_SELECTOR = "IMAGE_SELECTOR"
 
     const val USER_INFO = "USER_INFO"
+
+    const val USER_INFO_USERNAME = "USER_INFO_USERNAME"
+
+    const val USER_INFO_NOTE = "USER_INFO_NOTE"
 }
 
 object ParamsConfig {

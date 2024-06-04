@@ -50,8 +50,10 @@ import com.example.myapplication.config.MenuRouteConfig
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.dto.CommunityEntity
 import com.example.myapplication.entity.UserEntity
+import com.example.myapplication.entity.toAppUserEntity
 import com.example.myapplication.event.ViewModelEvent
 import com.example.myapplication.remote.entity.AppUserEntity
+import com.example.myapplication.remote.entity.toUserEntity
 import com.example.myapplication.ui.AppTheme
 import com.example.myapplication.ui.CommunityHome
 import com.example.myapplication.ui.ImageGroupList
@@ -61,6 +63,7 @@ import com.example.myapplication.ui.MessagesList
 import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.ui.SearchUser
 import com.example.myapplication.ui.SettingHome
+import com.example.myapplication.ui.UserInfoUI.EditPage
 import com.example.myapplication.ui.UserInfoUI.UserInfoEdit
 import com.example.myapplication.ui.UserList
 import com.example.myapplication.viewmodel.CommunityViewModel
@@ -120,12 +123,9 @@ class MainActivity : AppCompatActivity() {
                 val user = userViewModel.gerUserByNumber(SystemApp.PRODUCT_DEVICE_NUMBER)
                 if (user.id != 0L) {
                     SystemApp.UserId = user.id
-                    SystemApp.appUserEntity = user
+                    SystemApp.USER_IMAGE = user.imageUrl
                     appUserEntity.id = user.id
-                    userViewModel.userEntity.id = user.id
-                    userViewModel.userEntity.name = user.name
-                    userViewModel.userEntity.imageUrl = user.imageUrl
-                    userViewModel.userEntity.note = user.note
+                    userViewModel.userEntity = user.toUserEntity()
                 } else {
                     userViewModel.saveUser(appUserEntity)
                 }
@@ -222,6 +222,26 @@ class MainActivity : AppCompatActivity() {
                     }
                     composable(PageRouteConfig.USER_INFO){
                         UserInfoEdit(userViewModel.userEntity, appBase.navHostController)
+                    }
+                    composable(PageRouteConfig.USER_INFO_USERNAME){
+                        EditPage("修改名称",  appBase.navHostController){
+                            userViewModel.userEntity = userViewModel.userEntity.apply {
+                                name = it
+                            }
+                            ThreadPoolManager.getInstance().addTask("init"){
+                                userViewModel.saveUser(userViewModel.userEntity.toAppUserEntity(SystemApp.PRODUCT_DEVICE_NUMBER))
+                            }
+                        }
+                    }
+                    composable(PageRouteConfig.USER_INFO_NOTE){
+                        EditPage("修改签名",  appBase.navHostController){
+                            userViewModel.userEntity = userViewModel.userEntity.apply {
+                                note = it
+                            }
+                        }
+                        ThreadPoolManager.getInstance().addTask("init"){
+                            userViewModel.saveUser(userViewModel.userEntity.toAppUserEntity(SystemApp.PRODUCT_DEVICE_NUMBER))
+                        }
                     }
                 }
             }

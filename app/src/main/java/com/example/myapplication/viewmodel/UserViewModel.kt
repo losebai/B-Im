@@ -85,4 +85,6 @@ class UserViewModel(context: Context): ViewModel() {
     fun saveUser(user : AppUserEntity){
         userService.save(user)
     }
+
+
 }
