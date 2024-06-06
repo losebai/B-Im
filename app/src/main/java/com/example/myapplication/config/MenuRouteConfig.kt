@@ -40,6 +40,8 @@ object PageRouteConfig{
     // 图片
     const val IMAGE_PAGE_ROUTE = "IMAGE_PAGE_ROUTE"
 
+    const val IMAGE_GROUP_LIST = "IMAGE_GROUP_LIST"
+
     const val IMAGE_DETAIL_ROUTE = "IMAGE_SHOW_ROUTE";
 
     // 消息发送
@@ -47,11 +49,17 @@ object PageRouteConfig{
 
     const val IMAGE_SELECTOR = "IMAGE_SELECTOR"
 
+    // 用户详情
     const val USER_INFO = "USER_INFO"
 
+    // 修改名称
     const val USER_INFO_USERNAME = "USER_INFO_USERNAME"
 
+    // 修改笔记
     const val USER_INFO_NOTE = "USER_INFO_NOTE"
+
+
+    const val TOOLS_MINGCHAO_LOTTERY_DETAIL = "TOOLS_MINGCHAO_LOTTERY_DETAIL"
 }
 
 object ParamsConfig {

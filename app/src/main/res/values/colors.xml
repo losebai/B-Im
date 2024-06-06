@@ -36,4 +36,7 @@
     <color name="ON_LINE">#25CF2C</color>
     <color name="HiDING">#FF9800</color>
     <color name="INIT">#00BCD4</color>
+
+
+    <color name="golden">#FEF590</color>
 </resources>

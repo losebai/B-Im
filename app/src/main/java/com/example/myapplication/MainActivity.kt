@@ -58,17 +58,21 @@ import com.example.myapplication.ui.AppTheme
 import com.example.myapplication.ui.CommunityHome
 import com.example.myapplication.ui.ImageGroupList
 import com.example.myapplication.ui.ImageSelect
+import com.example.myapplication.ui.LotterySimulate
 import com.example.myapplication.ui.MessagesDetail
 import com.example.myapplication.ui.MessagesList
 import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.ui.SearchUser
 import com.example.myapplication.ui.SettingHome
+import com.example.myapplication.ui.ToolsUI
+import com.example.myapplication.ui.ToolsUI.ToolsList
 import com.example.myapplication.ui.UserInfoUI.EditPage
 import com.example.myapplication.ui.UserInfoUI.UserInfoEdit
 import com.example.myapplication.ui.UserList
 import com.example.myapplication.viewmodel.CommunityViewModel
 import com.example.myapplication.viewmodel.ImageViewModel
 import com.example.myapplication.viewmodel.MessagesViewModel
+import com.example.myapplication.viewmodel.ToolsViewModel
 import com.example.myapplication.viewmodel.UserViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -95,6 +99,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var communityViewModel: CommunityViewModel;
 
     private lateinit var messagesViewModel: MessagesViewModel;
+
+    private lateinit var toolsViewModel: ToolsViewModel;
 
     private val viewModelEvent : ViewModelEvent = ViewModelEvent.getInstance(this)
 
@@ -184,6 +190,7 @@ class MainActivity : AppCompatActivity() {
             AppTheme(appBase.darkTheme) {
                 appBase.imageViewModel = viewModel<ImageViewModel>()
                 communityViewModel = viewModel<CommunityViewModel>()
+                toolsViewModel = viewModel()
                 appBase.navHostController = rememberNavController()
                 this.init()
                 NavHost(
@@ -206,6 +213,12 @@ class MainActivity : AppCompatActivity() {
                     // 二级页面 相片页
                     composable(PageRouteConfig.IMAGE_PAGE_ROUTE) {
                         PhotoDataSet(appBase.imageViewModel, appBase.navHostController)
+                    }
+                    composable(PageRouteConfig.IMAGE_GROUP_LIST){
+                        ImageGroupList(
+                            appBase.imageViewModel,
+                            appBase.navHostController
+                        )
                     }
                     composable(PageRouteConfig.MESSAGE_ROUTE) {
                         MessagesDetail(
@@ -243,6 +256,9 @@ class MainActivity : AppCompatActivity() {
                             userViewModel.saveUser(userViewModel.userEntity.toAppUserEntity(SystemApp.PRODUCT_DEVICE_NUMBER))
                         }
                     }
+                    composable(PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL){
+                        LotterySimulate(toolsViewModel.lotteryMap, appBase.navHostController)
+                    }
                 }
             }
         }
@@ -275,20 +291,7 @@ class MainActivity : AppCompatActivity() {
                 when (appBase.page) {
                     MenuRouteConfig.ROUTE_IMAGE -> {
                         appBase.topVisible = true
-                        if (imageViewModel.dirList.isEmpty()) {
-                            scope.launch {
-                                SystemApp.snackBarHostState.showSnackbar(
-                                    getString(R.string.image_empty),
-                                    actionLabel = "关闭",
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        }
-                        ImageGroupList(
-                            imageViewModel,
-                            mod.padding(10.dp),
-                            appBase.navHostController
-                        )
+                        ToolsList(appBase.navHostController)
                     }
 
                     MenuRouteConfig.ROUTE_COMMUNITY -> {
@@ -380,55 +383,6 @@ class MainActivity : AppCompatActivity() {
                 communityList = communityViewModel.getCommunityList(),
                 modifier = _modifier
             )
-        }
-    }
-}
-
-@SuppressLint("UnrememberedMutableState")
-@Preview(showBackground = true)
-@Composable
-fun Test() {
-    val scope = rememberCoroutineScope()
-    val state by mutableStateOf(MySwipeRefreshState(NORMAL))
-
-    var list by remember {
-        mutableStateOf(List(40) { "I'm item $it" })
-    }
-
-    MySwipeRefresh(
-        state = state,
-        indicator = { modifier, s, indicatorHeight ->
-            LoadingIndicator(modifier, s, indicatorHeight)
-        },
-        onRefresh = {
-            scope.launch {
-                state.loadState = REFRESHING
-                //模拟网络请求
-                delay(200)
-                list = List(20) { "I'm item $it" }
-                state.loadState = NORMAL
-            }
-        },
-        onLoadMore = {
-            scope.launch {
-                state.loadState = LOADING_MORE
-                //模拟网络请求
-                delay(200)
-                list = list + List(20) { "I'm item ${it + list.size}" }
-                state.loadState = NORMAL
-            }
-        }
-    ) { modifier ->
-        //注意这里要把modifier设置过来，要不然LazyColumn不会跟随它上下拖动
-        LazyColumn(modifier) {
-            items(items = list, key = { it }) {
-                Text(
-                    text = it,
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                )
-            }
         }
     }
 }

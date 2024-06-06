@@ -117,18 +117,12 @@ fun DynamicMessage(communityEntity: CommunityEntity, modifier: Modifier = Modifi
                     .padding(start = 10.dp, end = 10.dp)
             ) {
                 items(communityEntity.images.size) {
-                    Button(
-                        onClick = { /*TODO*/ },
-                        shape = StyleCommon.ZERO_SHAPE,
-                        modifier = Modifier.padding(1.dp)
-                    ) {
-                        AsyncImage(
-                            communityEntity.images[it],
-                            contentDescription = null,
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier.size(100.dp)
-                        )
-                    }
+                    AsyncImage(
+                        communityEntity.images[it],
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.size(100.dp)
+                    )
                 }
             }
             Row(

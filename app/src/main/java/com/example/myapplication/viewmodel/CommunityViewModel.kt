@@ -29,7 +29,7 @@ class CommunityViewModel: ViewModel() {
         val appDynamicList = messageDynamicService.appDynamicPage(page, size)
         val communityList = appDynamicList.stream().map { item ->
             return@map CommunityEntity(UserEntity(item.userId, item.name, item.imageUrl, "",),
-                item.dynamicBody, item.images, item.createTime)
+                "",item.dynamicBody, item.images, item.createTime)
         }.collect(Collectors.toList())
         this.communityList.addAll(communityList)
         pages.add(page++);

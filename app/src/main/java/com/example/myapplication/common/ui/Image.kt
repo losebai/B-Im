@@ -48,29 +48,30 @@ fun FullScreenImage(
 
 @Composable
 fun ImageGroupButton(message: FileEntity, onClick: (FileEntity) -> Unit) {
-    Button(
-        onClick = {
-            onClick(message)
-        },
-        shape = StyleCommon.IMAGE_BUTTON_SHAPE,
-        modifier = Modifier
-            .height(100.dp)
-            .width(100.dp),
-        contentPadding = ZERO_PADDING,
-    ) {
-        Column {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Button(
+            onClick = {
+                onClick(message)
+            },
+            shape = StyleCommon.IMAGE_BUTTON_SHAPE,
+            modifier = Modifier
+                .height(100.dp)
+                .width(100.dp),
+            contentPadding = ZERO_PADDING,
+        ) {
             AsyncImage(
                 message.location,
                 alignment = Alignment.Center,
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
             )
-            Text(
-                text = message.name,
-                color = Color.Black
-            )
         }
+        Text(
+            text = message.name,
+            color = Color.Black
+        )
     }
+
 }
 
 @Composable

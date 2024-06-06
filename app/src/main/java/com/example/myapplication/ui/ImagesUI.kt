@@ -141,6 +141,7 @@ fun PhotoDataSetBody(
     modifier: Modifier = Modifier,
     onClick: (FileEntity) -> Unit
 ) {
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
         modifier = modifier,
@@ -185,7 +186,9 @@ fun PhotoDataSet(
         }
     }
     val images = imageViewModel.getImageList(path)
-    val pagerState = rememberPagerState { images.size }
+    val pagerState = rememberPagerState {
+        images.size
+    }
     var topVisible by remember {
         mutableStateOf(true)
     }
@@ -271,27 +274,39 @@ fun PhotoDataSet(
 @Composable
 fun ImageGroupList(
     imageViewModel: ImageViewModel,
-    modifier: Modifier,
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    modifier: Modifier = Modifier,
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 96.dp),
-        modifier = modifier
-            .padding(15.dp)
-        ,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(imageViewModel.dirList.size) { photo ->
-            ImageGroupButton(imageViewModel.dirList[photo]) { item ->
-                if (item.isDir) {
-                    imageViewModel.groupName = item.name
-                    imageViewModel.groupPath = item.parentPath
+    Row(horizontalArrangement = Arrangement.SpaceAround) {
+        IconButton(onClick = {
+            navHostController.navigateUp()
+        }) {
+            Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                contentDescription = "返回"
+            )
+        }
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = 96.dp),
+            modifier = modifier
+                .padding(15.dp)
+            ,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(imageViewModel.dirList.size) { photo ->
+                ImageGroupButton(imageViewModel.dirList[photo]) { item ->
+                    if (item.isDir) {
+                        imageViewModel.groupName = item.name
+                        imageViewModel.groupPath = item.parentPath
+                    }
+                    navHostController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
                 }
-                navHostController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
             }
         }
     }
 }
+
+
 
 @Composable
 fun ImportImages(
