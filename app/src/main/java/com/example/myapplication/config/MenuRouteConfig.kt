@@ -30,6 +30,12 @@ object MenuRouteConfig {
      */
     const val ROUTE_USERS = "ROUTE_USERS"
 
+
+    /**
+     * 相册路由
+     */
+    const val TOOLS_ROUTE = "TOOLS_ROUTE"
+
 }
 
 object PageRouteConfig{

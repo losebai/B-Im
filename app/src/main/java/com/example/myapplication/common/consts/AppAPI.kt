@@ -20,4 +20,13 @@ object AppAPI {
 
         const  val GET_DYNAMIC_SAVE: String = "/dispatch-app/appDynamic/save"
     }
+
+    object MingChao{
+
+        const val WUQI = 1106
+
+        const val ROLE = 1105
+
+        const val POST_CATALOGUE: String = "https://api.kurobbs.com/wiki/core/catalogue/item/getPage"
+    }
 }

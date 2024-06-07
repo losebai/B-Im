@@ -1,6 +1,9 @@
 package com.example.myapplication.ui
 
 import android.annotation.SuppressLint
+import android.view.ViewGroup
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -25,12 +28,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,6 +52,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -246,24 +252,27 @@ public object ToolsUI {
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun ToolsList(toolsViewModel: ToolsViewModel ,
-                  mainController: NavHostController = rememberNavController()) {
+    fun ToolsList(
+        toolsViewModel: ToolsViewModel,
+        modifier: Modifier = Modifier,
+        mainController: NavHostController = rememberNavController(),
+    ) {
         val images = toolsViewModel.getImageBar(0)
         val row = Modifier.fillMaxWidth()
         val scope = rememberCoroutineScope()
         val pagerState = rememberPagerState {
             images.size
         }
-        var pageIndex by remember {
-            mutableIntStateOf(0)
-        }
         val pool = arrayOf("鸣潮", "原神", "表情库")
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = modifier
+                .padding(top = 30.dp, bottom = 30.dp)
+                .fillMaxSize()
+        ) {
             LazyVerticalGrid(GridCells.Fixed(4), modifier = Modifier.fillMaxWidth()) {
                 items(pool.size) {
                     Column(
                         modifier = Modifier
-                            .width(50.dp)
                             .clickable {
                                 scope.launch {
                                     pagerState.scrollToPage(it)
@@ -271,7 +280,7 @@ public object ToolsUI {
                             },
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(text = pool[it])
+                        Text(text = pool[it], fontSize = 20.sp)
                         Divider(
                             thickness = 2.dp,
                             color = if (pagerState.currentPage == it) Color.Green else Color.Transparent,
@@ -279,49 +288,66 @@ public object ToolsUI {
                     }
                 }
             }
-            HorizontalPager(pagerState) {
-                pageIndex = it
-                AsyncImage(
-                    model = images[it], contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f)
-                        .height(100.dp)
-                )
-                Row(row) {
-                    Column() {
-                        Row {
-                            IconButton(onClick = { /*TODO*/ }) {
-                                Icon(imageVector = Icons.Outlined.Home, contentDescription = null)
+            HorizontalPager(pagerState, modifier = Modifier.fillMaxWidth()) {
+                Column {
+                    Row {
+                        if (images.size >= it) {
+                            Surface(shape = StyleCommon.ONE_SHAPE) {
+                                AsyncImage(
+                                    model = images[it], contentDescription = null,
+                                    modifier = Modifier
+                                        .height(200.dp),
+                                    contentScale = ContentScale.Crop
+                                )
                             }
                         }
-                        Text(text = "官网")
                     }
-                    Column() {
-                        Row {
-                            IconButton(onClick = { /*TODO*/ }) {
-                                Icon(imageVector = Icons.Outlined.Home, contentDescription = null)
+                    LazyVerticalGrid(GridCells.Fixed(4),
+                        modifier=Modifier.padding(20.dp)) {
+                        item {
+                            Column(  horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Home,
+                                    contentDescription = null
+                                )
+                                Text(text = "官网")
                             }
                         }
-                        Text(text = "我的")
+                        item {
+                            Column(  horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Home,
+                                    contentDescription = null
+                                )
+                                Text(text = "我的")
+
+                            }
+                        }
+                        item() {
+                            Column(  horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Home,
+                                    contentDescription = null
+                                )
+                                Text(text = "三方")
+                            }
+                        }
+                        item() {
+                            Column(  horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Build,
+                                    contentDescription = null
+                                )
+                                Text(text = "工具")
+                            }
+                        }
                     }
-                    Column() {
-                        Row {
-                            IconButton(onClick = { /*TODO*/ }) {
-                                Icon(imageVector = Icons.Outlined.Home, contentDescription = null)
-                            }
+                    when(it){
+                        0 -> {
+                            MingChaoHome(toolsViewModel , mainController)
                         }
-                        Text(text = "三方")
-                    }
-                    Column() {
-                        Row {
-                            IconButton(onClick = { /*TODO*/ }) {
-                                Icon(imageVector = Icons.Outlined.Home, contentDescription = null)
-                            }
-                        }
-                        Text(text = "工具箱")
                     }
                 }
-                MingChaoHome(mainController)
             }
         }
     }

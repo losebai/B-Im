@@ -20,7 +20,7 @@ import com.example.myapplication.common.webview.WebViewNavigator
 
 
 @Composable
-fun WebView(
+fun CustomWebView(
     originalUrl: String,
     navigator: WebViewNavigator,
     modifier: Modifier = Modifier,

@@ -23,6 +23,9 @@ import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -233,7 +236,7 @@ class AppBase {
                     ) {
                         Icon(
                             modifier = IconModifier,
-                            imageVector = Icons.Filled.MailOutline,
+                            imageVector = Icons.Outlined.MailOutline,
                             contentDescription = "Localized description"
                         )
                         Text(
@@ -251,7 +254,7 @@ class AppBase {
                     ) {
                         Icon(
                             modifier = IconModifier,
-                            imageVector = Icons.Filled.AccountCircle,
+                            imageVector = Icons.Outlined.AccountCircle,
                             contentDescription = "Localized description"
                         )
                         Text(
@@ -261,7 +264,7 @@ class AppBase {
                     }
                 }
                 IconButton(
-                    onClick = { page = MenuRouteConfig.ROUTE_IMAGE },
+                    onClick = { page = MenuRouteConfig.TOOLS_ROUTE },
                     modifier = buttonModifier
                 ) {
                     Column(
@@ -269,11 +272,11 @@ class AppBase {
                     ) {
                         Icon(
                             modifier = IconModifier,
-                            imageVector = Icons.Filled.Build,
+                            imageVector = Icons.Outlined.Home,
                             contentDescription = "Localized description"
                         )
                         Text(
-                            text = "工具箱",
+                            text = "主页",
                             fontSize = 12.sp,
                         )
                     }
@@ -287,7 +290,7 @@ class AppBase {
                     ) {
                         Icon(
                             modifier = IconModifier,
-                            imageVector = Icons.Filled.Home,
+                            imageVector = Icons.Outlined.Home,
                             contentDescription = "Localized description"
                         )
                         Text(text = "社区", fontSize = 12.sp)

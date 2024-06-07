@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var toolsViewModel: ToolsViewModel;
 
-    private val viewModelEvent : ViewModelEvent = ViewModelEvent.getInstance(this)
+    private val viewModelEvent: ViewModelEvent = ViewModelEvent.getInstance(this)
 
 
     override fun finish() {
@@ -118,7 +118,7 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
     }
 
-    private  fun init() {
+    private fun init() {
         Coil.setImageLoader(ImageLoader(this))
         // 初始化的时候保存和更新
         // 默认账户信息
@@ -135,17 +135,17 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     userViewModel.saveUser(appUserEntity)
                 }
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
             logger.info { "开始加载联系人" }
-            val users  = userViewModel.getReferUser(AppUserEntity())
+            val users = userViewModel.getReferUser(AppUserEntity())
             val map = users.parallelStream().collect(Collectors.toMap(UserEntity::id) { it })
             userViewModel.users = users
             userViewModel.userMap = map
             communityViewModel.nextCommunityPage()
             appBase.imageViewModel.getDay7Images(this)
-            messagesViewModel.messageService.sendText("","")
+            messagesViewModel.messageService.sendText("", "")
 //            GlobalScope.launch(Dispatchers.Default)  {
 //                // 监听联系人列表
 //                messagesViewModel.getUserMessageLastByUserId(
@@ -159,11 +159,13 @@ class MainActivity : AppCompatActivity() {
 //            }
         }
         MainScope().launch {
-            viewModelEvent.onUserMessageLastByUserId(this@MainActivity,
+            viewModelEvent.onUserMessageLastByUserId(
+                this@MainActivity,
                 SystemApp.UserId,
                 SystemApp.UserId,
-                userViewModel){userMessages ->
-                if (userMessages.isNotEmpty()){
+                userViewModel
+            ) { userMessages ->
+                if (userMessages.isNotEmpty()) {
                     messagesViewModel.userMessagesList.clear()
                     messagesViewModel.userMessagesList.addAll(userMessages)
                 }
@@ -192,7 +194,11 @@ class MainActivity : AppCompatActivity() {
                 communityViewModel = viewModel<CommunityViewModel>()
                 toolsViewModel = viewModel()
                 appBase.navHostController = rememberNavController()
-                this.init()
+                try {
+                    this.init()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
                 NavHost(
                     navController = appBase.navHostController,
                     startDestination = PageRouteConfig.MENU_ROUTE,
@@ -214,7 +220,7 @@ class MainActivity : AppCompatActivity() {
                     composable(PageRouteConfig.IMAGE_PAGE_ROUTE) {
                         PhotoDataSet(appBase.imageViewModel, appBase.navHostController)
                     }
-                    composable(PageRouteConfig.IMAGE_GROUP_LIST){
+                    composable(PageRouteConfig.IMAGE_GROUP_LIST) {
                         ImageGroupList(
                             appBase.imageViewModel,
                             appBase.navHostController
@@ -233,30 +239,38 @@ class MainActivity : AppCompatActivity() {
                             appBase.navHostController.navigateUp()
                         }
                     }
-                    composable(PageRouteConfig.USER_INFO){
+                    composable(PageRouteConfig.USER_INFO) {
                         UserInfoEdit(userViewModel.userEntity, appBase.navHostController)
                     }
-                    composable(PageRouteConfig.USER_INFO_USERNAME){
-                        EditPage("修改名称",  appBase.navHostController){
+                    composable(PageRouteConfig.USER_INFO_USERNAME) {
+                        EditPage("修改名称", appBase.navHostController) {
                             userViewModel.userEntity = userViewModel.userEntity.apply {
                                 name = it
                             }
-                            ThreadPoolManager.getInstance().addTask("init"){
-                                userViewModel.saveUser(userViewModel.userEntity.toAppUserEntity(SystemApp.PRODUCT_DEVICE_NUMBER))
+                            ThreadPoolManager.getInstance().addTask("init") {
+                                userViewModel.saveUser(
+                                    userViewModel.userEntity.toAppUserEntity(
+                                        SystemApp.PRODUCT_DEVICE_NUMBER
+                                    )
+                                )
                             }
                         }
                     }
-                    composable(PageRouteConfig.USER_INFO_NOTE){
-                        EditPage("修改签名",  appBase.navHostController){
+                    composable(PageRouteConfig.USER_INFO_NOTE) {
+                        EditPage("修改签名", appBase.navHostController) {
                             userViewModel.userEntity = userViewModel.userEntity.apply {
                                 note = it
                             }
                         }
-                        ThreadPoolManager.getInstance().addTask("init"){
-                            userViewModel.saveUser(userViewModel.userEntity.toAppUserEntity(SystemApp.PRODUCT_DEVICE_NUMBER))
+                        ThreadPoolManager.getInstance().addTask("init") {
+                            userViewModel.saveUser(
+                                userViewModel.userEntity.toAppUserEntity(
+                                    SystemApp.PRODUCT_DEVICE_NUMBER
+                                )
+                            )
                         }
                     }
-                    composable(PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL){
+                    composable(PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL) {
                         LotterySimulate(toolsViewModel.lotteryMap, appBase.navHostController)
                     }
                 }
@@ -289,9 +303,13 @@ class MainActivity : AppCompatActivity() {
                     .background(Color.White)
                     .fillMaxSize()
                 when (appBase.page) {
-                    MenuRouteConfig.ROUTE_IMAGE -> {
-                        appBase.topVisible = true
-                        ToolsList(appBase.navHostController)
+                    MenuRouteConfig.TOOLS_ROUTE -> {
+                        appBase.topVisible = false
+                        ToolsList(
+                            toolsViewModel,
+                            mod,
+                            appBase.navHostController,
+                        )
                     }
 
                     MenuRouteConfig.ROUTE_COMMUNITY -> {

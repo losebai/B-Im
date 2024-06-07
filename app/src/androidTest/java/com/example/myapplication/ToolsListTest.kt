@@ -5,12 +5,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.myapplication.dto.LotteryCount
 import com.example.myapplication.ui.LotterySimulate
 import com.example.myapplication.ui.ToolsUI.ToolsList
+import com.example.myapplication.viewmodel.ToolsViewModel
 
 
 @Composable
 @Preview(showBackground = true)
 fun ToolsListTest(){
-    ToolsList()
+    ToolsList(ToolsViewModel())
 }
 
 @Composable
