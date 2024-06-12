@@ -42,11 +42,12 @@ class ThreadPoolManager private constructor() {
 
     companion object {
         fun getInstance() = SingleHolder.SINGLE_HOLDER
+
+        val  running  = ArrayList<String>()
     }
 
     object SingleHolder {
         val SINGLE_HOLDER = ThreadPoolManager()
-
     }
 
 
@@ -105,7 +106,27 @@ class ThreadPoolManager private constructor() {
      *  @param runnable 对应的 runnable 任务
      * */
     fun addTask(tag: String, runnable: Runnable) {
-        getThreadPool(tag).execute(runnable)
+        addTask(tag, tag, runnable)
+    }
+
+    /**
+     *  @param tag 针对每个TAG 获取对应的线程池
+     *  @param runnable 对应的 runnable 任务
+     * */
+    fun addTask(tag: String, name: String, runnable: Runnable) {
+        if (running.contains(name)){
+            return
+        }
+        running.add(name)
+        getThreadPool(tag).execute{
+            try {
+                runnable.run()
+            }catch (e: Exception){
+                e.printStackTrace()
+            }finally {
+                running.remove(name)
+            }
+        }
     }
 
     /**

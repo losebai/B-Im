@@ -1,12 +1,18 @@
 package com.example.myapplication.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.example.myapplication.common.consts.AppAPI
 import com.example.myapplication.dto.Handbook
 import com.example.myapplication.dto.LotteryCount
 import com.example.myapplication.dto.RoleBook
+import com.example.myapplication.dto.mingchao.CatalogueDto
 import com.example.myapplication.service.MingChaoService
 
 class ToolsViewModel() : ViewModel() {
+
+    var catalogueName = ""
+
+    var catalogueId = 0;
 
     // 抽奖卡池
     val lotteryMap: MutableMap<Int, List<LotteryCount>> = mutableMapOf()
@@ -26,7 +32,7 @@ class ToolsViewModel() : ViewModel() {
         return listOf()
     }
 
-    fun getRoleBook(): MutableList<RoleBook>{
-        return mingChaoService.getRole()
+    fun getRoleBook(catalogueDto: CatalogueDto = CatalogueDto(AppAPI.MingChao.ROLE)): MutableList<RoleBook>{
+        return mingChaoService.getRole(catalogueDto)
     }
 }

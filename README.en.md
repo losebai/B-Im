@@ -1,36 +1,37 @@
 # fileEntity-android
 
-#### Description
-{**When you're done, you can delete the content in this README and update the file with details for others getting started with your repository**}
+#### 介绍
 
-#### Software Architecture
-Software architecture description
+本项目是一个仿QQ的IM系统，采用了compose实现了基本UI组件，该踩过的雷都踩了，主要功能是社交通讯，及一些系统工具，游戏工具。
+很多功能还在待开发中。
 
-#### Installation
+本项目属于前台项目，后台是dispatch-sdk，rpc中台，后续会分离出dispatch-app-server
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+### 技术栈
 
-#### Instructions
+本项目偏向国产化
+UI: compose material3
+Server: socket.d snack3
+data: room
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## 下面是基本功能与页面，大部分完成，游戏在开发中
 
-#### Contribution
+### 消息
 
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
+<img alt="img_1.png" height="1217" src="img_1.png" width="592"/>
 
+#### 消息详情
 
-#### Gitee Feature
+![img_2.png](img_2.png)
 
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+### 联系人
+
+![img.png](img.png)
+
+### 游戏
+
+![img_3.png](img_3.png)
+
+### 社区
+
+![img_4.png](img_4.png)

@@ -258,7 +258,6 @@ public object ToolsUI {
         mainController: NavHostController = rememberNavController(),
     ) {
         val images = toolsViewModel.getImageBar(0)
-        val row = Modifier.fillMaxWidth()
         val scope = rememberCoroutineScope()
         val pagerState = rememberPagerState {
             images.size
@@ -266,7 +265,7 @@ public object ToolsUI {
         val pool = arrayOf("鸣潮", "原神", "表情库")
         Column(
             modifier = modifier
-                .padding(top = 30.dp, bottom = 30.dp)
+                .padding(top = 100.dp, bottom = 30.dp)
                 .fillMaxSize()
         ) {
             LazyVerticalGrid(GridCells.Fixed(4), modifier = Modifier.fillMaxWidth()) {

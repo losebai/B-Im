@@ -27,6 +27,7 @@ class ExampleUnitTest {
         logger.error { "error" }
         println(123)
     }
+
     @Test
     fun intest(){
         println(Int.MAX_VALUE)

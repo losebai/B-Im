@@ -93,7 +93,7 @@ class AppBase {
 
     lateinit var navHostController: NavHostController;
 
-    var page by mutableStateOf(MenuRouteConfig.ROUTE_IMAGE)
+    var page by mutableStateOf(MenuRouteConfig.TOOLS_ROUTE)
 
     var settingDrawerState by mutableStateOf(DrawerState(DrawerValue.Closed))
 

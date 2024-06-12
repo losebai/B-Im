@@ -19,7 +19,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,9 +27,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,9 +42,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.myapplication.R
+import com.example.myapplication.common.consts.AppAPI
+import com.example.myapplication.common.util.ThreadPoolManager
+import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.dto.LotteryCount
 import com.example.myapplication.dto.RoleBook
+import com.example.myapplication.dto.mingchao.CatalogueDto
 import com.example.myapplication.viewmodel.ToolsViewModel
 import kotlinx.coroutines.launch
 
@@ -139,11 +144,14 @@ fun LotterySimulate(
 }
 
 
-@SuppressLint("MutableCollectionMutableState")
+@SuppressLint("MutableCollectionMutableState", "UnrememberedMutableState")
 @Composable
-fun MingChaoHome(toolsViewModel: ToolsViewModel,
-                 mainController: NavHostController = rememberNavController()) {
-    val roles = mutableListOf<RoleBook>()
+fun MingChaoHome(
+    toolsViewModel: ToolsViewModel,
+    mainController: NavHostController = rememberNavController()
+) {
+    val row = Modifier
+        .size(100.dp)
     Column(verticalArrangement = Arrangement.Center) {
         Box {
             LazyVerticalGrid(
@@ -164,8 +172,10 @@ fun MingChaoHome(toolsViewModel: ToolsViewModel,
                 }
 
                 item {
-                    Column(modifier = Modifier.size(100.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        modifier = Modifier.size(100.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         AsyncImage(
                             model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",
                             contentDescription = "抽卡模拟",
@@ -175,8 +185,16 @@ fun MingChaoHome(toolsViewModel: ToolsViewModel,
                     }
                 }
                 item {
-                    Column(modifier = Modifier.size(100.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clickable {
+                                toolsViewModel.catalogueId = 1105;
+                                toolsViewModel.catalogueName = "角色图鉴"
+                                mainController.navigate(MingChaoRoute.BOOK_LIST)
+                            },
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         AsyncImage(
                             model = "https://prod-alicdn-community.kurobbs.com/forum/5e5bb6eaa1de43e6bcb66eb8d780e92c20240509.png",
                             contentDescription = "角色图鉴",
@@ -186,8 +204,14 @@ fun MingChaoHome(toolsViewModel: ToolsViewModel,
                     }
                 }
                 item {
-                    Column(modifier = Modifier.size(100.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        modifier = row.clickable {
+                            toolsViewModel.catalogueId = 1106;
+                            toolsViewModel.catalogueName = "武器图鉴"
+                            mainController.navigate(MingChaoRoute.BOOK_LIST)
+                        },
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         AsyncImage(
                             model = "https://prod-alicdn-community.kurobbs.com/forum/f92b449640374599ae7326e2b46f40b620240509.png",
                             contentDescription = "角色图鉴",
@@ -197,19 +221,14 @@ fun MingChaoHome(toolsViewModel: ToolsViewModel,
                     }
                 }
                 item {
-                    Column(modifier = Modifier.size(100.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally) {
-                        AsyncImage(
-                            model = "https://prod-alicdn-community.kurobbs.com/forum/f92b449640374599ae7326e2b46f40b620240509.png",
-                            contentDescription = "角色图鉴",
-                            modifier = Modifier.size(40.dp)
-                        )
-                        Text(text = "武器图鉴")
-                    }
-                }
-                item {
-                    Column(modifier = Modifier.size(100.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        modifier = row.clickable {
+                            toolsViewModel.catalogueId = 1107;
+                            toolsViewModel.catalogueName = "声骸图鉴"
+                            mainController.navigate(MingChaoRoute.BOOK_LIST)
+                        },
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         AsyncImage(
                             model = "https://prod-alicdn-community.kurobbs.com/forum/6bcb87fced844da1a4e90989101751ab20240509.png",
                             contentDescription = "声骸图鉴",
@@ -219,19 +238,31 @@ fun MingChaoHome(toolsViewModel: ToolsViewModel,
                     }
                 }
                 item {
-                    Column(modifier = Modifier.size(100.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        modifier = row.clickable {
+                            toolsViewModel.catalogueId = 1158;
+                            toolsViewModel.catalogueName = "敌人"
+                            mainController.navigate(MingChaoRoute.BOOK_LIST)
+                        },
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         AsyncImage(
                             model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",
                             contentDescription = "声骸图鉴",
                             modifier = Modifier.size(40.dp)
                         )
-                        Text(text = "资源")
+                        Text(text = "敌人")
                     }
                 }
                 item {
-                    Column(modifier = Modifier.size(100.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        modifier = row.clickable {
+                            toolsViewModel.catalogueId = 1218;
+                            toolsViewModel.catalogueName = "素材"
+                            mainController.navigate(MingChaoRoute.BOOK_LIST)
+                        },
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         AsyncImage(
                             model = "https://prod-alicdn-community.kurobbs.com/forum/dd77cd02945040c2a86201649e5cf95c20240509.png",
                             contentDescription = "声骸图鉴",
@@ -241,8 +272,10 @@ fun MingChaoHome(toolsViewModel: ToolsViewModel,
                     }
                 }
                 item {
-                    Column(modifier = Modifier.size(100.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        modifier = Modifier.size(100.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         AsyncImage(
                             model = "https://prod-alicdn-community.kurobbs.com/forum/661cd42d12a74cacafc35aa0ba53148720240509.png",
                             contentDescription = "声骸图鉴",
@@ -254,25 +287,60 @@ fun MingChaoHome(toolsViewModel: ToolsViewModel,
             }
         }
 
+
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState")
+@Composable
+fun HookList(toolsViewModel: ToolsViewModel,
+             mainController: NavHostController) {
+    var roles by remember {
+        mutableStateOf(listOf<RoleBook>())
+    }
+    ThreadPoolManager.getInstance().addTask("games", "role") {
+        roles = toolsViewModel.getRoleBook(CatalogueDto(toolsViewModel.catalogueId))
+    }
+    Column(Modifier.fillMaxWidth()) {
+        TopAppBar(title = { /*TODO*/ }, navigationIcon = {
+            IconButton(onClick = {
+                mainController.navigateUp()
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "返回"
+                )
+            }
+        })
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
-        ){
-            items(roles.size){
-                Column(modifier = Modifier.padding(5.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally){
-                    AsyncImage(model = roles[it].imageUri,
-                        contentDescription = null, modifier = Modifier.background(if (roles[it].star == 5)
-                            colorResource(R.color.star5) else  colorResource(id = R.color.purple_500)))
-                    Text(text = roles[it].name)
-                    Row(verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.background(
-                            colorResource(R.color.bg_black))) {
-                        Text(text = roles[it].name,
-                            modifier = Modifier.background(Color.White))
+        ) {
+            items(roles.size) {
+                Column(
+                    modifier = Modifier.padding(5.dp).background(Color.Black),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AsyncImage(
+                        model = roles[it].imageUri,
+                        contentDescription = null, modifier = Modifier.background(
+                            when(roles[it].star){
+                                5 -> colorResource(R.color.star5)
+                                4 -> colorResource(R.color.star4)
+                                else -> colorResource(R.color.star0)
+                            }
+                        )
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = roles[it].name,
+                            color= Color.White
+                        )
                     }
                 }
             }
         }
     }
-
 }

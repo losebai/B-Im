@@ -47,6 +47,7 @@ import com.example.myapplication.common.ui.REFRESHING
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.config.MenuRouteConfig
+import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.dto.CommunityEntity
 import com.example.myapplication.entity.UserEntity
@@ -56,11 +57,13 @@ import com.example.myapplication.remote.entity.AppUserEntity
 import com.example.myapplication.remote.entity.toUserEntity
 import com.example.myapplication.ui.AppTheme
 import com.example.myapplication.ui.CommunityHome
+import com.example.myapplication.ui.HookList
 import com.example.myapplication.ui.ImageGroupList
 import com.example.myapplication.ui.ImageSelect
 import com.example.myapplication.ui.LotterySimulate
 import com.example.myapplication.ui.MessagesDetail
 import com.example.myapplication.ui.MessagesList
+import com.example.myapplication.ui.MingChaoHome
 import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.ui.SearchUser
 import com.example.myapplication.ui.SettingHome
@@ -273,6 +276,10 @@ class MainActivity : AppCompatActivity() {
                     composable(PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL) {
                         LotterySimulate(toolsViewModel.lotteryMap, appBase.navHostController)
                     }
+
+                    composable(MingChaoRoute.BOOK_LIST){
+                        HookList(toolsViewModel, appBase.navHostController)
+                    }
                 }
             }
         }
@@ -288,7 +295,6 @@ class MainActivity : AppCompatActivity() {
         communityViewModel: CommunityViewModel,
         userViewModel: UserViewModel
     ) {
-        val scope = rememberCoroutineScope()
         var searchUserName by remember {
             mutableStateOf("")
         }
