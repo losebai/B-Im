@@ -43,6 +43,7 @@ import coil.compose.AsyncImage
 import com.example.myapplication.R
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.dto.LotteryCount
+import com.example.myapplication.dto.RoleBook
 import com.example.myapplication.viewmodel.ToolsViewModel
 import kotlinx.coroutines.launch
 
@@ -142,9 +143,7 @@ fun LotterySimulate(
 @Composable
 fun MingChaoHome(toolsViewModel: ToolsViewModel,
                  mainController: NavHostController = rememberNavController()) {
-    val roles by remember {
-        mutableStateOf(toolsViewModel.getRoleBook())
-    }
+    val roles = mutableListOf<RoleBook>()
     Column(verticalArrangement = Arrangement.Center) {
         Box {
             LazyVerticalGrid(
