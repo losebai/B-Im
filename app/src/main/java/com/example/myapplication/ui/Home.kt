@@ -84,7 +84,7 @@ fun PageHost(
                 MenuRouteConfig.ROUTE_COMMUNITY -> {
                     appBase.topVisible = false
                     Community(
-                       modifier = Modifier
+                        modifier = Modifier
                             .padding(innerPadding),
                         userViewModel,
                         communityViewModel,

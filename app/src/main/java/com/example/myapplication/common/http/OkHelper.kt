@@ -1,6 +1,8 @@
-package com.example.miaow.base.http
+package com.example.myapplication.common.http
 
 import android.content.Context
+import com.example.miaow.base.http.CookieJar
+import com.example.miaow.base.http.HttpsHelper
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
