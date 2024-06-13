@@ -8,17 +8,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.myapplication.common.ui.web.WebScreen
 import com.example.myapplication.common.consts.AppAPI
 import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
+import com.example.myapplication.config.WEB_ROUTE
 import com.example.myapplication.entity.toAppUserEntity
+import com.example.myapplication.ui.EditPage
 import com.example.myapplication.ui.HookList
 import com.example.myapplication.ui.ImageGroupList
 import com.example.myapplication.ui.ImageSelect
@@ -27,7 +29,7 @@ import com.example.myapplication.ui.MCWIKI
 import com.example.myapplication.ui.MessagesDetail
 import com.example.myapplication.ui.PageHost
 import com.example.myapplication.ui.PhotoDataSet
-import com.example.myapplication.ui.UserInfoUI
+import com.example.myapplication.ui.UserInfoEdit
 import com.example.myapplication.viewmodel.CommunityViewModel
 import com.example.myapplication.viewmodel.ImageViewModel
 import com.example.myapplication.viewmodel.MessagesViewModel
@@ -94,10 +96,10 @@ fun MainNavGraph(appBase: AppBase,
             }
         }
         composable(PageRouteConfig.USER_INFO) {
-            UserInfoUI.UserInfoEdit(userViewModel.userEntity, navHostController)
+            UserInfoEdit(userViewModel.userEntity, navHostController)
         }
         composable(PageRouteConfig.USER_INFO_USERNAME) {
-            UserInfoUI.EditPage("修改名称", navHostController) {
+            EditPage("修改名称", navHostController) {
                 userViewModel.userEntity = userViewModel.userEntity.apply {
                     name = it
                 }
@@ -111,7 +113,7 @@ fun MainNavGraph(appBase: AppBase,
             }
         }
         composable(PageRouteConfig.USER_INFO_NOTE) {
-            UserInfoUI.EditPage("修改签名", navHostController) {
+            EditPage("修改签名", navHostController) {
                 userViewModel.userEntity = userViewModel.userEntity.apply {
                     note = it
                 }
@@ -133,6 +135,16 @@ fun MainNavGraph(appBase: AppBase,
         }
         composable(MingChaoRoute.WIKI){
             MCWIKI(AppAPI.MingChao.WIKI_URL)
+        }
+        composable("${WEB_ROUTE.WEB_ROUTE}/{url}") { backStackEntry ->
+            WebScreen(
+                originalUrl = backStackEntry.arguments?.getString("url") ?: "",
+                webBookmarkData = listOf(),
+                onWebBookmark = { isAdd, text ->  },
+                onWebHistory = { isAdd, text ->  },
+                onNavigateToBookmarkHistory = {  },
+                onNavigateUp = {  navHostController.navigateUp()}
+            )
         }
     }
 }

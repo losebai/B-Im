@@ -66,6 +66,13 @@ object PageRouteConfig{
     const val TOOLS_MINGCHAO_LOTTERY_DETAIL = "TOOLS_MINGCHAO_LOTTERY_DETAIL"
 }
 
+object WEB_ROUTE{
+
+    const val WEB_ROUTE = "web_route"
+
+}
+
+
 object ParamsConfig {
 
     /**

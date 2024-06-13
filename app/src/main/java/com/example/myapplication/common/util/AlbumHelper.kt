@@ -13,7 +13,6 @@ import android.provider.MediaStore.MediaColumns.DISPLAY_NAME
 import android.provider.MediaStore.MediaColumns.MIME_TYPE
 import android.provider.MediaStore.MediaColumns.RELATIVE_PATH
 import android.util.Log
-import com.example.miaow.base.http.download
 import com.example.miaow.base.utils.getBitmapPathFromUri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,9 +28,9 @@ fun Context.saveImagesToAlbum(url: String, onFinish: (String, Uri) -> Unit) {
     val savePath = CacheUtils.getDirPath(this, Environment.DIRECTORY_PICTURES)
     val fileName = url.encodeUtf8().md5().hex()
     CoroutineScope(Dispatchers.Main).launch {
-        download(savePath, fileName) {
-            setUrl(url)
-        }
+//        download(savePath, fileName) {
+//            setUrl(url)
+//        }
         withContext(Dispatchers.IO) {
             val file = File(savePath, fileName)
             if (file.exists() && file.isFile) {

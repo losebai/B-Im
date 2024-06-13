@@ -1,4 +1,4 @@
-package com.example.fragment.project.ui.web
+package com.example.myapplication.common.ui.web
 
 import android.content.Intent
 import android.net.Uri
@@ -31,8 +31,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.fragment.project.ui.web.rememberWebViewNavigator
 import com.example.myapplication.R
-import com.example.myapplication.common.ui.web.WebViewNavGraph
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -292,13 +292,5 @@ fun WebScreen(
             },
             onNavigateUp = onNavigateUp
         )
-//        AnimatedVisibility(visible = (navigator.progress > 0f && navigator.progress < 1f)) {
-//            LinearProgressIndicator(
-//                progress = { navigator.progress },
-//                modifier = Modifier.fillMaxWidth(),
-//                color = colorResource(R.color.theme_orange),
-//                trackColor = colorResource(R.color.white)
-//            )
-//        }
     }
 }

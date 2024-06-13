@@ -18,7 +18,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
-import com.example.miaow.base.http.download
+import com.example.myapplication.common.http.download
 import com.example.myapplication.common.util.CacheUtils
 import com.example.myapplication.common.util.saveImagesToAlbum
 import kotlinx.coroutines.runBlocking
