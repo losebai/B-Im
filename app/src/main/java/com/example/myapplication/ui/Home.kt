@@ -74,7 +74,7 @@ fun PageHost(
             when (appBase.page) {
                 MenuRouteConfig.TOOLS_ROUTE -> {
                     appBase.topVisible = false
-                    ToolsUI.ToolsList(
+                    ToolsList(
                         toolsViewModel,
                         mod,
                         appBase.navHostController,
