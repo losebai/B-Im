@@ -98,7 +98,7 @@ class AppBase {
     var settingDrawerState by mutableStateOf(DrawerState(DrawerValue.Closed))
 
 
-    var isLoadImage by mutableStateOf(false)
+    private var isLoadImage by mutableStateOf(false)
 
     var topVisible  by mutableStateOf(false)
 
@@ -107,7 +107,6 @@ class AppBase {
 
     @SuppressLint("CoroutineCreationDuringComposition", "ResourceAsColor")
     @Composable
-    @Preview(showBackground = true)
     @OptIn(ExperimentalMaterial3Api::class)
     fun GetTopAppBar(appUserEntity: UserEntity = UserEntity()) {
         var expanded by remember { mutableStateOf(false) }
@@ -276,7 +275,7 @@ class AppBase {
                             contentDescription = "Localized description"
                         )
                         Text(
-                            text = "主页",
+                            text = "游戏",
                             fontSize = 12.sp,
                         )
                     }

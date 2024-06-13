@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -337,17 +338,17 @@ fun MessagesDetail(
                             sendData = it
                         }, colors = TextFieldDefaults.colors(Color.White)
                     )
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Filled.FavoriteBorder,
-                            contentDescription = "Localized description"
-                        )
-                    }
+//                    IconButton(onClick = { /*TODO*/ }) {
+//                        Icon(
+//                            imageVector = Icons.Filled.FavoriteBorder,
+//                            contentDescription = "Localized description"
+//                        )
+//                    }
                     if (sendData.isEmpty()) {
                         IconButton(
                             onClick = {
                                 mainController.navigate(PageRouteConfig.IMAGE_SELECTOR)
-                            },
+                            }, modifier = Modifier.size(50.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Add,
@@ -376,7 +377,7 @@ fun MessagesDetail(
                                     messages.add(0, message)
                                 }
                             }
-                        }) {
+                        },modifier = Modifier.size(50.dp)) {
                             Icon(
                                 imageVector = Icons.Filled.Send,
                                 contentDescription = "Localized description"

@@ -10,6 +10,8 @@ import com.example.myapplication.service.MingChaoService
 
 class ToolsViewModel() : ViewModel() {
 
+    val linkUri = ""
+
     var catalogueName = ""
 
     var catalogueId = 0;

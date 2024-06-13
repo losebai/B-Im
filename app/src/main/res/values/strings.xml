@@ -26,4 +26,5 @@
     <string name="checkout_permission">权限检查</string>
 
     <string name="checkout_permission_close">点击任意空白处关闭......</string>
-</resources>
+
+    </resources>

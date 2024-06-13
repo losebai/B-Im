@@ -1,14 +1,20 @@
 package com.example.myapplication.ui
 
 import android.annotation.SuppressLint
+import android.view.ViewGroup
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -17,6 +23,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Divider
@@ -34,15 +42,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.myapplication.R
 import com.example.myapplication.common.consts.AppAPI
+import com.example.myapplication.common.consts.StyleCommon
+import com.example.myapplication.common.util.ImageUtils
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
@@ -52,6 +66,11 @@ import com.example.myapplication.dto.mingchao.CatalogueDto
 import com.example.myapplication.viewmodel.ToolsViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * 抽卡模拟
+ * @param [lotteryMap] 彩票地图
+ * @param [mainController] 主控制器
+ */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LotterySimulate(
@@ -61,7 +80,10 @@ fun LotterySimulate(
     val pagerState = rememberPagerState { 4 }
     val pool = arrayOf("角色", "武器", "常驻", "混合")
     val scope = rememberCoroutineScope()
-    Column(Modifier.fillMaxWidth()) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+         ) {
         TopAppBar(title = { /*TODO*/ }, navigationIcon = {
             IconButton(onClick = {
                 mainController.navigateUp()
@@ -165,7 +187,7 @@ fun MingChaoHome(
                         AsyncImage(
                             model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",
                             contentDescription = "抽卡分析",
-                            modifier = Modifier.size(40.dp)
+                            modifier = StyleCommon.ICON_SIZE
                         )
                         Text(text = "抽卡分析")
                     }
@@ -173,21 +195,20 @@ fun MingChaoHome(
 
                 item {
                     Column(
-                        modifier = Modifier.size(100.dp),
+                        modifier = row,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         AsyncImage(
                             model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",
                             contentDescription = "抽卡模拟",
-                            modifier = Modifier.size(40.dp)
+                            modifier = StyleCommon.ICON_SIZE
                         )
                         Text(text = "抽卡模拟")
                     }
                 }
                 item {
                     Column(
-                        modifier = Modifier
-                            .size(100.dp)
+                        modifier = row
                             .clickable {
                                 toolsViewModel.catalogueId = 1105;
                                 toolsViewModel.catalogueName = "角色图鉴"
@@ -198,7 +219,7 @@ fun MingChaoHome(
                         AsyncImage(
                             model = "https://prod-alicdn-community.kurobbs.com/forum/5e5bb6eaa1de43e6bcb66eb8d780e92c20240509.png",
                             contentDescription = "角色图鉴",
-                            modifier = Modifier.size(40.dp)
+                            modifier = StyleCommon.ICON_SIZE
                         )
                         Text(text = "角色图鉴")
                     }
@@ -215,7 +236,7 @@ fun MingChaoHome(
                         AsyncImage(
                             model = "https://prod-alicdn-community.kurobbs.com/forum/f92b449640374599ae7326e2b46f40b620240509.png",
                             contentDescription = "角色图鉴",
-                            modifier = Modifier.size(40.dp)
+                            modifier = StyleCommon.ICON_SIZE
                         )
                         Text(text = "武器图鉴")
                     }
@@ -232,7 +253,7 @@ fun MingChaoHome(
                         AsyncImage(
                             model = "https://prod-alicdn-community.kurobbs.com/forum/6bcb87fced844da1a4e90989101751ab20240509.png",
                             contentDescription = "声骸图鉴",
-                            modifier = Modifier.size(40.dp)
+                            modifier = StyleCommon.ICON_SIZE
                         )
                         Text(text = "声骸图鉴")
                     }
@@ -249,7 +270,7 @@ fun MingChaoHome(
                         AsyncImage(
                             model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",
                             contentDescription = "声骸图鉴",
-                            modifier = Modifier.size(40.dp)
+                            modifier = StyleCommon.ICON_SIZE
                         )
                         Text(text = "敌人")
                     }
@@ -265,20 +286,24 @@ fun MingChaoHome(
                     ) {
                         AsyncImage(
                             model = "https://prod-alicdn-community.kurobbs.com/forum/dd77cd02945040c2a86201649e5cf95c20240509.png",
-                            contentDescription = "声骸图鉴",
-                            modifier = Modifier.size(40.dp)
+                            contentDescription = "素材",
+                            modifier = StyleCommon.ICON_SIZE
                         )
                         Text(text = "素材")
                     }
                 }
                 item {
                     Column(
-                        modifier = Modifier.size(100.dp),
+                        modifier = row.clickable {
+                            toolsViewModel.catalogueId = 1217;
+                            toolsViewModel.catalogueName = "补给"
+                            mainController.navigate(MingChaoRoute.BOOK_LIST)
+                        },
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         AsyncImage(
                             model = "https://prod-alicdn-community.kurobbs.com/forum/661cd42d12a74cacafc35aa0ba53148720240509.png",
-                            contentDescription = "声骸图鉴",
+                            contentDescription = "补给",
                             modifier = Modifier.size(40.dp)
                         )
                         Text(text = "补给")
@@ -291,6 +316,11 @@ fun MingChaoHome(
     }
 }
 
+/**
+ * 图鉴列表
+ * @param [toolsViewModel] 工具视图模型
+ * @param [mainController] 主控制器
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState")
 @Composable
@@ -303,7 +333,10 @@ fun HookList(toolsViewModel: ToolsViewModel,
         roles = toolsViewModel.getRoleBook(CatalogueDto(toolsViewModel.catalogueId))
     }
     Column(Modifier.fillMaxWidth()) {
-        TopAppBar(title = { /*TODO*/ }, navigationIcon = {
+        TopAppBar(title = { 
+            Text(text = toolsViewModel.catalogueName,
+                color = Color.Black)
+        }, navigationIcon = {
             IconButton(onClick = {
                 mainController.navigateUp()
             }) {
@@ -314,23 +347,53 @@ fun HookList(toolsViewModel: ToolsViewModel,
             }
         })
         LazyVerticalGrid(
-            columns = GridCells.Fixed(4),
+            columns = GridCells.Fixed(3),
         ) {
             items(roles.size) {
                 Column(
-                    modifier = Modifier.padding(5.dp).background(Color.Black),
+                    modifier =  StyleCommon.HOOK_LIST,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AsyncImage(
                         model = roles[it].imageUri,
-                        contentDescription = null, modifier = Modifier.background(
-                            when(roles[it].star){
-                                5 -> colorResource(R.color.star5)
-                                4 -> colorResource(R.color.star4)
-                                else -> colorResource(R.color.star0)
-                            }
-                        )
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                when (roles[it].star) {
+                                    5 -> colorResource(R.color.star5)
+                                    4 -> colorResource(R.color.star4)
+                                    else -> colorResource(R.color.star0)
+                                }
+                            )
                     )
+                    Row(modifier = Modifier.height(20.dp),
+                        ) {
+                        if (roles[it].star == 5){
+                            Image(
+                                bitmap = StyleCommon.startVitmap.asImageBitmap(),
+                                contentDescription = null,
+                                alignment = Alignment.CenterStart,
+                                modifier = Modifier.padding(start = 8.dp),
+                                contentScale= ContentScale.FillHeight
+                            )
+                        }else if (roles[it].star == 4){
+                            Image(
+                                bitmap = StyleCommon.startVitmap.asImageBitmap(),
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxWidth(0.8f),
+                                contentScale= ContentScale.FillHeight
+                            )
+                        }else if (roles[it].star == 3){
+                            Image(
+                                bitmap = StyleCommon.startVitmap.asImageBitmap(),
+                                contentDescription = null,
+                                alignment = Alignment.CenterStart,
+                                modifier = Modifier.fillMaxWidth(0.5f),
+                                contentScale= ContentScale.FillHeight
+                            )
+                        }
+                    }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -343,4 +406,18 @@ fun HookList(toolsViewModel: ToolsViewModel,
             }
         }
     }
+}
+
+@Composable
+fun MCWIKI(url : String){
+    AndroidView(factory = { context ->
+        WebView(context).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            webViewClient = WebViewClient()
+            loadUrl(url)
+        }
+    })
 }

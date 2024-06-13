@@ -4,7 +4,10 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Environment
+import android.util.Base64
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.myapplication.dto.FileEntity
@@ -186,5 +189,11 @@ object ImageUtils {
                 1
             )
         }
+    }
+
+    fun base64ToBitMap(data: String): Bitmap {
+        val dec = Base64.decode(data.split(",")[1], Base64.DEFAULT)
+        // 将ByteArray转Bitmap
+        return BitmapFactory.decodeByteArray(dec, 0, dec.size)
     }
 }

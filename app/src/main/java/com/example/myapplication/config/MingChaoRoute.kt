@@ -8,6 +8,8 @@ package com.example.myapplication.config
  */
 object MingChaoRoute{
 
+    const val WIKI = "MC_WIKI"
+
     /** 图书列表 */
     const val BOOK_LIST = "MC_BOOK_LIST"
 

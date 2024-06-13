@@ -156,6 +156,7 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("androidx.navigation:navigation-dynamic-features-fragment:2.7.7")
+    implementation("androidx.webkit:webkit:1.11.0")
 
 
     val room_version = "2.6.1"
@@ -171,7 +172,7 @@ dependencies {
     implementation("androidx.room:room-paging:$room_version")
 
     //noinspection GradlePluginVersion
-//    implementation("com.android.tools.build:gradle:8.2.2")
+    implementation("com.android.tools.build:gradle:8.2.2")
 //    implementation("com.google.accompanist:accompanist-permissions:0.31.0-alpha")
 //    implementation("com.google.accompanist:accompanist-placeholder-material:0.31.0-alpha")
     implementation("io.coil-kt:coil-compose:2.6.0")

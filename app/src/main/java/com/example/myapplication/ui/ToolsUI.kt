@@ -1,9 +1,6 @@
 package com.example.myapplication.ui
 
 import android.annotation.SuppressLint
-import android.view.ViewGroup
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -30,17 +27,14 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -49,10 +43,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -61,7 +53,7 @@ import com.example.myapplication.common.ui.HeadImage
 import com.example.myapplication.common.ui.MySwipeRefresh
 import com.example.myapplication.common.ui.MySwipeRefreshState
 import com.example.myapplication.common.ui.NORMAL
-import com.example.myapplication.config.PageRouteConfig
+import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.dto.CommunityEntity
 import com.example.myapplication.viewmodel.ToolsViewModel
 import kotlinx.coroutines.launch
@@ -301,10 +293,14 @@ public object ToolsUI {
                             }
                         }
                     }
-                    LazyVerticalGrid(GridCells.Fixed(4),
-                        modifier=Modifier.padding(20.dp)) {
+                    LazyVerticalGrid(
+                        GridCells.Fixed(4),
+                        modifier = Modifier.padding(20.dp)
+                    ) {
                         item {
-                            Column(  horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(modifier = Modifier.clickable {
+                                mainController.navigate(MingChaoRoute.WIKI)
+                            }, horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(
                                     imageVector = Icons.Outlined.Home,
                                     contentDescription = null
@@ -313,7 +309,7 @@ public object ToolsUI {
                             }
                         }
                         item {
-                            Column(  horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(
                                     imageVector = Icons.Outlined.Home,
                                     contentDescription = null
@@ -323,16 +319,18 @@ public object ToolsUI {
                             }
                         }
                         item() {
-                            Column(  horizontalAlignment = Alignment.CenterHorizontally) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Home,
-                                    contentDescription = null
-                                )
-                                Text(text = "三方")
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                IconButton(onClick = { mainController.navigate(MingChaoRoute.WIKI) }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Home,
+                                        contentDescription = null
+                                    )
+                                }
+                                Text(text = "WIKI")
                             }
                         }
                         item() {
-                            Column(  horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(
                                     imageVector = Icons.Outlined.Build,
                                     contentDescription = null
@@ -341,9 +339,9 @@ public object ToolsUI {
                             }
                         }
                     }
-                    when(it){
+                    when (it) {
                         0 -> {
-                            MingChaoHome(toolsViewModel , mainController)
+                            MingChaoHome(toolsViewModel, mainController)
                         }
                     }
                 }
