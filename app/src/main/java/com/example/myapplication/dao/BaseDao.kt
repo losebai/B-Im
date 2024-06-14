@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.Flow
 interface BaseDao<T> {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(item: T)
+    suspend fun insert(item: T) : Long
 
     @Update
-    suspend fun update(item: T)
+    suspend fun update(item: T) : Int
 
     @Delete
     suspend fun delete(item: T)

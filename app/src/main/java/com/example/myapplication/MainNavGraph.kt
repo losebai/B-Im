@@ -6,8 +6,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,10 +18,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.common.ui.web.WebScreen
 import com.example.myapplication.common.consts.AppAPI
 import com.example.myapplication.common.consts.SystemApp
+import com.example.myapplication.common.ui.web.WanNavActions
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
-import com.example.myapplication.config.WEB_ROUTE
+import com.example.myapplication.config.WEB_API_ROURE
 import com.example.myapplication.entity.toAppUserEntity
 import com.example.myapplication.ui.EditPage
 import com.example.myapplication.ui.HookList
@@ -35,6 +39,7 @@ import com.example.myapplication.viewmodel.ImageViewModel
 import com.example.myapplication.viewmodel.MessagesViewModel
 import com.example.myapplication.viewmodel.ToolsViewModel
 import com.example.myapplication.viewmodel.UserViewModel
+import com.example.myapplication.viewmodel.WebVIewModel
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -47,6 +52,9 @@ fun MainNavGraph(appBase: AppBase,
     val communityViewModel = viewModel<CommunityViewModel>()
     val toolsViewModel = viewModel<ToolsViewModel>()
     val navHostController = rememberNavController()
+    val webViewModel = viewModel<WebVIewModel>()
+    val wanUiState by webViewModel.uiState.collectAsStateWithLifecycle()
+    val webNavActions = remember(navHostController) { WanNavActions(navHostController) }
     try {
         init()
     } catch (e: Exception) {
@@ -86,7 +94,7 @@ fun MainNavGraph(appBase: AppBase,
             MessagesDetail(
                 userViewModel.getLocalUserById(userViewModel.recvUserId),
                 messagesViewModel,
-                appBase.navHostController,
+                navHostController,
                 Modifier.background(Color.White)
             )
         }
@@ -136,14 +144,14 @@ fun MainNavGraph(appBase: AppBase,
         composable(MingChaoRoute.WIKI){
             MCWIKI(AppAPI.MingChao.WIKI_URL)
         }
-        composable("${WEB_ROUTE.WEB_ROUTE}/{url}") { backStackEntry ->
+        composable("${WEB_API_ROURE.WEB_ROUTE}/{url}") { backStackEntry ->
             WebScreen(
                 originalUrl = backStackEntry.arguments?.getString("url") ?: "",
-                webBookmarkData = listOf(),
-                onWebBookmark = { isAdd, text ->  },
-                onWebHistory = { isAdd, text ->  },
-                onNavigateToBookmarkHistory = {  },
-                onNavigateUp = {  navHostController.navigateUp()}
+                webBookmarkData = wanUiState.webBookmarkResult,
+                onWebBookmark = { isAdd, text -> webViewModel.onWebBookmark(isAdd, text) },
+                onWebHistory = { isAdd, text -> webViewModel.onWebHistory(isAdd, text) },
+                onNavigateToBookmarkHistory = { webNavActions.navigateToBookmarkHistory() },
+                onNavigateUp = { webNavActions.navigateUp() }
             )
         }
     }

@@ -7,11 +7,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.common.Mapping
-import com.example.myapplication.database.MessagesDatabase
+import com.example.myapplication.database.AppDatabase
 import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.remote.entity.AppUserEntity
-import com.example.myapplication.repository.MessagesRepository
-import com.example.myapplication.repository.OfflineMessagesRepository
 import com.example.myapplication.repository.OfflineUserRepository
 import com.example.myapplication.repository.UserRepository
 import com.example.myapplication.service.UserService
@@ -48,7 +46,7 @@ class UserViewModel(context: Context): ViewModel() {
     }
 
     private val userRepository: UserRepository by lazy {
-        OfflineUserRepository(MessagesDatabase.getDatabase(context).userDao())
+        OfflineUserRepository(AppDatabase.getDatabase(context).userDao())
     }
 
     fun getUserById(id: Long) : AppUserEntity{

@@ -19,10 +19,12 @@ class MessageService(private val messagesViewModel: MessagesViewModel) {
 
     private val logger = KotlinLogging.logger {}
 
-    val session =
-        SocketD.createClient("${BuildConfig.SOCKET_URL}?@=${SystemApp.UserId}")
+    val session by lazy {
+        SocketD.createClient("${BuildConfig.SOCKET_URL}?@=${SystemApp.UserId}&id=${SystemApp.UserId}")
             .listen(UserListener(messagesViewModel))
             .open();
+    }
+
 
 
     fun sendFile(filePath: String) = sendFile(File(filePath))

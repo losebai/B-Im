@@ -56,7 +56,7 @@ fun PageHost(
     mainController: NavHostController,
     communityViewModel: CommunityViewModel,
     userViewModel: UserViewModel,
-    toolsViewModel: ToolsViewModel
+    toolsViewModel: ToolsViewModel,
 ) {
     var searchUserName by remember {
         mutableStateOf("")
@@ -77,7 +77,7 @@ fun PageHost(
                     ToolsList(
                         toolsViewModel,
                         mod,
-                        appBase.navHostController,
+                        mainController,
                     )
                 }
 
@@ -132,12 +132,15 @@ fun PageHost(
 fun Community(
     modifier: Modifier = Modifier,
     userViewModel: UserViewModel,
-    communityViewModel: CommunityViewModel = viewModel(),
+    communityViewModel: CommunityViewModel,
 ) {
     val state = MySwipeRefreshState(NORMAL)
     val scope = rememberCoroutineScope()
     var list: List<CommunityEntity> by remember {
         mutableStateOf(communityViewModel.getCommunityList())
+    }
+    ThreadPoolManager.getInstance().addTask("community", "communityList"){
+        list = communityViewModel.nextCommunityPage()
     }
     MySwipeRefresh(
         state = state,
@@ -148,7 +151,7 @@ fun Community(
             scope.launch {
                 state.loadState = REFRESHING
                 communityViewModel.clearCommunityList()
-                ThreadPoolManager.getInstance().addTask("community") {
+                ThreadPoolManager.getInstance().addTask("community", "communityList") {
                     list = communityViewModel.nextCommunityPage()
                 }
                 logger.info { "社区下拉刷新" }

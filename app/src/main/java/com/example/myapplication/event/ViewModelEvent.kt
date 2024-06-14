@@ -3,8 +3,7 @@ package com.example.myapplication.event
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.asLiveData
-import com.example.myapplication.common.util.ThreadPoolManager
-import com.example.myapplication.database.MessagesDatabase
+import com.example.myapplication.database.AppDatabase
 import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.entity.UserMessages
 import com.example.myapplication.entity.toUserMessages
@@ -40,11 +39,11 @@ open class ViewModelEvent private constructor(context: Context) {
 
 
     private val itemsRepository: MessagesRepository by lazy {
-        OfflineMessagesRepository(MessagesDatabase.getDatabase(context).messagesDao())
+        OfflineMessagesRepository(AppDatabase.getDatabase(context).messagesDao())
     }
 
     private val userRepository: UserRepository by lazy {
-        OfflineUserRepository(MessagesDatabase.getDatabase(context).userDao())
+        OfflineUserRepository(AppDatabase.getDatabase(context).userDao())
     }
 
 

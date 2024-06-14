@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.entity.UserEntity
-import com.example.myapplication.ui.UserInfoUI.EditPage
-import com.example.myapplication.ui.UserInfoUI.UserInfoEdit
+import com.example.myapplication.ui.EditPage
+import com.example.myapplication.ui.UserInfoEdit
 
 
 @Composable

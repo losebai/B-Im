@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.common.util.ThreadPoolManager
-import com.example.myapplication.database.MessagesDatabase
+import com.example.myapplication.database.AppDatabase
 import com.example.myapplication.entity.UserMessages
 import com.example.myapplication.entity.MessagesEntity
 import com.example.myapplication.entity.UserEntity
@@ -14,7 +14,6 @@ import com.example.myapplication.repository.OfflineMessagesRepository
 import com.example.myapplication.repository.OfflineUserRepository
 import com.example.myapplication.repository.UserRepository
 import com.example.myapplication.service.MessageService
-import kotlinx.coroutines.flow.Flow
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.stream.Collectors
 
@@ -46,11 +45,11 @@ class MessagesViewModel(context: Context) : ViewModel() {
     }
 
     private val itemsRepository: MessagesRepository by lazy {
-        OfflineMessagesRepository(MessagesDatabase.getDatabase(context).messagesDao())
+        OfflineMessagesRepository(AppDatabase.getDatabase(context).messagesDao())
     }
 
     private val userRepository: UserRepository by lazy {
-        OfflineUserRepository(MessagesDatabase.getDatabase(context).userDao())
+        OfflineUserRepository(AppDatabase.getDatabase(context).userDao())
     }
 
     /**

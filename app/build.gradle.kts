@@ -6,7 +6,9 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
-    id ("org.jetbrains.kotlin.kapt" )
+    id("org.jetbrains.kotlin.kapt" )
+//    id("org.jetbrains.kotlin.plugin.parcelize")
+    id("kotlin-parcelize")
 //    kotlin("jvm")
 }
 
@@ -24,7 +26,7 @@ android {
         minSdk = 27
         targetSdk = 34
         versionCode = 1
-        versionName = "1.1.1"
+        versionName = "1.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -172,12 +174,15 @@ dependencies {
     implementation("androidx.room:room-paging:$room_version")
 
     //noinspection GradlePluginVersion
-    implementation("com.android.tools.build:gradle:8.2.2")
+//    implementation("com.android.tools.build:gradle:8.2.2")
 //    implementation("com.google.accompanist:accompanist-permissions:0.31.0-alpha")
 //    implementation("com.google.accompanist:accompanist-placeholder-material:0.31.0-alpha")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("androidx.core:core-ktx:1.12.0")
+
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+
     implementation("androidx.activity:activity-compose:1.8.0")
 
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))

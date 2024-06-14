@@ -1,8 +1,10 @@
 package com.example.myapplication.ui
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -43,17 +45,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.example.myapplication.R
+import com.example.myapplication.common.consts.AppAPI
+import com.example.myapplication.common.consts.ICons
 import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.common.ui.HeadImage
 import com.example.myapplication.common.ui.MySwipeRefresh
 import com.example.myapplication.common.ui.MySwipeRefreshState
 import com.example.myapplication.common.ui.NORMAL
 import com.example.myapplication.config.MingChaoRoute
+import com.example.myapplication.config.WEB_API_ROURE
+import com.example.myapplication.config.WEB_API_ROURE.WEB_ROUTE
 import com.example.myapplication.dto.CommunityEntity
 import com.example.myapplication.viewmodel.ToolsViewModel
 import kotlinx.coroutines.launch
@@ -255,7 +263,7 @@ fun ToolsList(
     val pool = arrayOf("鸣潮", "原神", "表情库")
     Column(
         modifier = modifier
-            .padding(top = 100.dp, bottom = 30.dp)
+            .padding(top = 20.dp)
             .fillMaxSize()
     ) {
         LazyVerticalGrid(GridCells.Fixed(4), modifier = Modifier.fillMaxWidth()) {
@@ -296,32 +304,43 @@ fun ToolsList(
                     modifier = Modifier.padding(20.dp)
                 ) {
                     item {
-                        Column(modifier = Modifier.clickable {
-                            mainController.navigate(MingChaoRoute.WIKI)
-                        }, horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Outlined.Home,
-                                contentDescription = null
-                            )
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            IconButton(onClick = {
+                                mainController.navigate(WEB_API_ROURE.WEB_ROUTE+ "/${Uri.encode(AppAPI.MingChao.MAIN_URL)}")
+                            }) {
+                                AsyncImage(
+                                    model = ICons.FAVICON,
+                                    contentDescription = null,
+                                    modifier = StyleCommon.ICON_SIZE
+                                )
+                            }
                             Text(text = "官网")
                         }
                     }
                     item {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Outlined.Home,
-                                contentDescription = null
-                            )
+                            IconButton(onClick = {
+                                mainController.navigate(WEB_API_ROURE.WEB_ROUTE+ "/${Uri.encode(AppAPI.MingChao.WIKI_URL)}")
+                            }) {
+                                AsyncImage(
+                                    model = ICons.USER,
+                                    contentDescription = "角色",
+                                    modifier = StyleCommon.ICON_SIZE
+                                )
+                            }
                             Text(text = "我的")
 
                         }
                     }
                     item() {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            IconButton(onClick = { mainController.navigate(MingChaoRoute.WIKI) }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Home,
-                                    contentDescription = null
+                            IconButton(onClick = {
+                                mainController.navigate(WEB_API_ROURE.WEB_ROUTE+ "/${Uri.encode(AppAPI.MingChao.WIKI_URL)}")
+                            }) {
+                                AsyncImage(
+                                    model = ICons.WIKI,
+                                    contentDescription = "声骸图鉴",
+                                    modifier = StyleCommon.ICON_SIZE
                                 )
                             }
                             Text(text = "WIKI")
@@ -329,10 +348,15 @@ fun ToolsList(
                     }
                     item() {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Outlined.Build,
-                                contentDescription = null
-                            )
+                            IconButton(onClick = {
+                                mainController.navigate(WEB_API_ROURE.WEB_ROUTE+ "/${Uri.encode(AppAPI.MingChao.WIKI_URL)}")
+                            }) {
+                                AsyncImage(
+                                    model = ICons.WIKI,
+                                    contentDescription = null,
+                                    modifier = StyleCommon.ICON_SIZE
+                                )
+                            }
                             Text(text = "工具")
                         }
                     }

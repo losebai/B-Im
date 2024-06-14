@@ -36,8 +36,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var userViewModel: UserViewModel;
 
-    private lateinit var communityViewModel: CommunityViewModel;
-
     private lateinit var messagesViewModel: MessagesViewModel;
 
 
@@ -48,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
     }
 
-    private fun init() {
+    private fun initLoad() {
         Coil.setImageLoader(ImageLoader(this))
         // 初始化的时候保存和更新
         // 默认账户信息
@@ -73,7 +71,6 @@ class MainActivity : AppCompatActivity() {
             val map = users.parallelStream().collect(Collectors.toMap(UserEntity::id) { it })
             userViewModel.users = users
             userViewModel.userMap = map
-            communityViewModel.nextCommunityPage()
             appBase.imageViewModel.getDay7Images(this)
             messagesViewModel.messageService.sendText("", "")
         }
@@ -109,7 +106,7 @@ class MainActivity : AppCompatActivity() {
             )[MessagesViewModel::class.java]
         setContent {
             AppTheme(appBase.darkTheme) {
-                MainNavGraph(appBase, userViewModel, messagesViewModel, init = { init() })
+                MainNavGraph(appBase, userViewModel, messagesViewModel, init = { this.initLoad() })
             }
         }
     }

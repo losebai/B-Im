@@ -83,7 +83,7 @@ fun LotterySimulate(
     Column(
         Modifier
             .fillMaxWidth()
-         ) {
+    ) {
         TopAppBar(title = { /*TODO*/ }, navigationIcon = {
             IconButton(onClick = {
                 mainController.navigateUp()
@@ -175,145 +175,174 @@ fun MingChaoHome(
     val row = Modifier
         .size(100.dp)
     Column(verticalArrangement = Arrangement.Center) {
-        Box {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(4),
-                reverseLayout = false
-            ) {
-                item {
-                    Column(modifier = Modifier.clickable {
-                        mainController.navigate(PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL)
-                    }, horizontalAlignment = Alignment.CenterHorizontally) {
-                        AsyncImage(
-                            model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",
-                            contentDescription = "抽卡分析",
-                            modifier = StyleCommon.ICON_SIZE
-                        )
-                        Text(text = "抽卡分析")
-                    }
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(4),
+            reverseLayout = false
+        ) {
+            item {
+                Column(modifier = Modifier.clickable {
+                    mainController.navigate(PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL)
+                }, horizontalAlignment = Alignment.CenterHorizontally) {
+                    AsyncImage(
+                        model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",
+                        contentDescription = "排行榜",
+                        modifier = StyleCommon.ICON_SIZE
+                    )
+                    Text(text = "排行榜")
                 }
+            }
+            item {
+                Column(modifier = Modifier.clickable {
+                    mainController.navigate(PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL)
+                }, horizontalAlignment = Alignment.CenterHorizontally) {
+                    AsyncImage(
+                        model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",
+                        contentDescription = "抽卡分析",
+                        modifier = StyleCommon.ICON_SIZE
+                    )
+                    Text(text = "抽卡分析")
+                }
+            }
+            item {
+                Column(
+                    modifier = row,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AsyncImage(
+                        model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",
+                        contentDescription = "抽卡模拟",
+                        modifier = StyleCommon.ICON_SIZE
+                    )
+                    Text(text = "抽卡模拟")
+                }
+            }
+            item {
+                Column(
+                    modifier = row,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AsyncImage(
+                        model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",
+                        contentDescription = "抽卡模拟",
+                        modifier = StyleCommon.ICON_SIZE
+                    )
+                    Text(text = "练度统计")
+                }
+            }
+        }
 
-                item {
-                    Column(
-                        modifier = row,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        AsyncImage(
-                            model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",
-                            contentDescription = "抽卡模拟",
-                            modifier = StyleCommon.ICON_SIZE
-                        )
-                        Text(text = "抽卡模拟")
-                    }
-                }
-                item {
-                    Column(
-                        modifier = row
-                            .clickable {
-                                toolsViewModel.catalogueId = 1105;
-                                toolsViewModel.catalogueName = "角色图鉴"
-                                mainController.navigate(MingChaoRoute.BOOK_LIST)
-                            },
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        AsyncImage(
-                            model = "https://prod-alicdn-community.kurobbs.com/forum/5e5bb6eaa1de43e6bcb66eb8d780e92c20240509.png",
-                            contentDescription = "角色图鉴",
-                            modifier = StyleCommon.ICON_SIZE
-                        )
-                        Text(text = "角色图鉴")
-                    }
-                }
-                item {
-                    Column(
-                        modifier = row.clickable {
-                            toolsViewModel.catalogueId = 1106;
-                            toolsViewModel.catalogueName = "武器图鉴"
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(4),
+            reverseLayout = false
+        ){
+        item {
+                Column(
+                    modifier = row
+                        .clickable {
+                            toolsViewModel.catalogueId = 1105;
+                            toolsViewModel.catalogueName = "角色图鉴"
                             mainController.navigate(MingChaoRoute.BOOK_LIST)
                         },
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        AsyncImage(
-                            model = "https://prod-alicdn-community.kurobbs.com/forum/f92b449640374599ae7326e2b46f40b620240509.png",
-                            contentDescription = "角色图鉴",
-                            modifier = StyleCommon.ICON_SIZE
-                        )
-                        Text(text = "武器图鉴")
-                    }
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AsyncImage(
+                        model = "https://prod-alicdn-community.kurobbs.com/forum/5e5bb6eaa1de43e6bcb66eb8d780e92c20240509.png",
+                        contentDescription = "角色图鉴",
+                        modifier = StyleCommon.ICON_SIZE
+                    )
+                    Text(text = "角色图鉴")
                 }
-                item {
-                    Column(
-                        modifier = row.clickable {
-                            toolsViewModel.catalogueId = 1107;
-                            toolsViewModel.catalogueName = "声骸图鉴"
-                            mainController.navigate(MingChaoRoute.BOOK_LIST)
-                        },
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        AsyncImage(
-                            model = "https://prod-alicdn-community.kurobbs.com/forum/6bcb87fced844da1a4e90989101751ab20240509.png",
-                            contentDescription = "声骸图鉴",
-                            modifier = StyleCommon.ICON_SIZE
-                        )
-                        Text(text = "声骸图鉴")
-                    }
+            }
+            item {
+                Column(
+                    modifier = row.clickable {
+                        toolsViewModel.catalogueId = 1106;
+                        toolsViewModel.catalogueName = "武器图鉴"
+                        mainController.navigate(MingChaoRoute.BOOK_LIST)
+                    },
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AsyncImage(
+                        model = "https://prod-alicdn-community.kurobbs.com/forum/f92b449640374599ae7326e2b46f40b620240509.png",
+                        contentDescription = "角色图鉴",
+                        modifier = StyleCommon.ICON_SIZE
+                    )
+                    Text(text = "武器图鉴")
                 }
-                item {
-                    Column(
-                        modifier = row.clickable {
-                            toolsViewModel.catalogueId = 1158;
-                            toolsViewModel.catalogueName = "敌人"
-                            mainController.navigate(MingChaoRoute.BOOK_LIST)
-                        },
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        AsyncImage(
-                            model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",
-                            contentDescription = "声骸图鉴",
-                            modifier = StyleCommon.ICON_SIZE
-                        )
-                        Text(text = "敌人")
-                    }
+            }
+            item {
+                Column(
+                    modifier = row.clickable {
+                        toolsViewModel.catalogueId = 1107;
+                        toolsViewModel.catalogueName = "声骸图鉴"
+                        mainController.navigate(MingChaoRoute.BOOK_LIST)
+                    },
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AsyncImage(
+                        model = "https://prod-alicdn-community.kurobbs.com/forum/6bcb87fced844da1a4e90989101751ab20240509.png",
+                        contentDescription = "声骸图鉴",
+                        modifier = StyleCommon.ICON_SIZE
+                    )
+                    Text(text = "声骸图鉴")
                 }
-                item {
-                    Column(
-                        modifier = row.clickable {
-                            toolsViewModel.catalogueId = 1218;
-                            toolsViewModel.catalogueName = "素材"
-                            mainController.navigate(MingChaoRoute.BOOK_LIST)
-                        },
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        AsyncImage(
-                            model = "https://prod-alicdn-community.kurobbs.com/forum/dd77cd02945040c2a86201649e5cf95c20240509.png",
-                            contentDescription = "素材",
-                            modifier = StyleCommon.ICON_SIZE
-                        )
-                        Text(text = "素材")
-                    }
+            }
+            item {
+                Column(
+                    modifier = row.clickable {
+                        toolsViewModel.catalogueId = 1158;
+                        toolsViewModel.catalogueName = "敌人"
+                        mainController.navigate(MingChaoRoute.BOOK_LIST)
+                    },
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AsyncImage(
+                        model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",
+                        contentDescription = "声骸图鉴",
+                        modifier = StyleCommon.ICON_SIZE
+                    )
+                    Text(text = "敌人")
                 }
-                item {
-                    Column(
-                        modifier = row.clickable {
-                            toolsViewModel.catalogueId = 1217;
-                            toolsViewModel.catalogueName = "补给"
-                            mainController.navigate(MingChaoRoute.BOOK_LIST)
-                        },
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        AsyncImage(
-                            model = "https://prod-alicdn-community.kurobbs.com/forum/661cd42d12a74cacafc35aa0ba53148720240509.png",
-                            contentDescription = "补给",
-                            modifier = Modifier.size(40.dp)
-                        )
-                        Text(text = "补给")
-                    }
+            }
+            item {
+                Column(
+                    modifier = row.clickable {
+                        toolsViewModel.catalogueId = 1218;
+                        toolsViewModel.catalogueName = "素材"
+                        mainController.navigate(MingChaoRoute.BOOK_LIST)
+                    },
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AsyncImage(
+                        model = "https://prod-alicdn-community.kurobbs.com/forum/dd77cd02945040c2a86201649e5cf95c20240509.png",
+                        contentDescription = "素材",
+                        modifier = StyleCommon.ICON_SIZE
+                    )
+                    Text(text = "素材")
+                }
+            }
+            item {
+                Column(
+                    modifier = row.clickable {
+                        toolsViewModel.catalogueId = 1217;
+                        toolsViewModel.catalogueName = "补给"
+                        mainController.navigate(MingChaoRoute.BOOK_LIST)
+                    },
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AsyncImage(
+                        model = "https://prod-alicdn-community.kurobbs.com/forum/661cd42d12a74cacafc35aa0ba53148720240509.png",
+                        contentDescription = "补给",
+                        modifier = Modifier.size(40.dp)
+                    )
+                    Text(text = "补给")
                 }
             }
         }
 
 
     }
+
 }
 
 /**
@@ -324,8 +353,10 @@ fun MingChaoHome(
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState")
 @Composable
-fun HookList(toolsViewModel: ToolsViewModel,
-             mainController: NavHostController) {
+fun HookList(
+    toolsViewModel: ToolsViewModel,
+    mainController: NavHostController
+) {
     var roles by remember {
         mutableStateOf(listOf<RoleBook>())
     }
@@ -333,9 +364,11 @@ fun HookList(toolsViewModel: ToolsViewModel,
         roles = toolsViewModel.getRoleBook(CatalogueDto(toolsViewModel.catalogueId))
     }
     Column(Modifier.fillMaxWidth()) {
-        TopAppBar(title = { 
-            Text(text = toolsViewModel.catalogueName,
-                color = Color.Black)
+        TopAppBar(title = {
+            Text(
+                text = toolsViewModel.catalogueName,
+                color = Color.Black
+            )
         }, navigationIcon = {
             IconButton(onClick = {
                 mainController.navigateUp()
@@ -351,7 +384,7 @@ fun HookList(toolsViewModel: ToolsViewModel,
         ) {
             items(roles.size) {
                 Column(
-                    modifier =  StyleCommon.HOOK_LIST,
+                    modifier = StyleCommon.HOOK_LIST,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AsyncImage(
@@ -367,30 +400,31 @@ fun HookList(toolsViewModel: ToolsViewModel,
                                 }
                             )
                     )
-                    Row(modifier = Modifier.height(20.dp),
-                        ) {
-                        if (roles[it].star == 5){
+                    Row(
+                        modifier = Modifier.height(20.dp),
+                    ) {
+                        if (roles[it].star == 5) {
                             Image(
                                 bitmap = StyleCommon.startVitmap.asImageBitmap(),
                                 contentDescription = null,
                                 alignment = Alignment.CenterStart,
                                 modifier = Modifier.padding(start = 8.dp),
-                                contentScale= ContentScale.FillHeight
+                                contentScale = ContentScale.FillHeight
                             )
-                        }else if (roles[it].star == 4){
+                        } else if (roles[it].star == 4) {
                             Image(
                                 bitmap = StyleCommon.startVitmap.asImageBitmap(),
                                 contentDescription = null,
                                 modifier = Modifier.fillMaxWidth(0.8f),
-                                contentScale= ContentScale.FillHeight
+                                contentScale = ContentScale.FillHeight
                             )
-                        }else if (roles[it].star == 3){
+                        } else if (roles[it].star == 3) {
                             Image(
                                 bitmap = StyleCommon.startVitmap.asImageBitmap(),
                                 contentDescription = null,
                                 alignment = Alignment.CenterStart,
                                 modifier = Modifier.fillMaxWidth(0.5f),
-                                contentScale= ContentScale.FillHeight
+                                contentScale = ContentScale.FillHeight
                             )
                         }
                     }
@@ -399,7 +433,7 @@ fun HookList(toolsViewModel: ToolsViewModel,
                     ) {
                         Text(
                             text = roles[it].name,
-                            color= Color.White
+                            color = Color.White
                         )
                     }
                 }
@@ -409,7 +443,7 @@ fun HookList(toolsViewModel: ToolsViewModel,
 }
 
 @Composable
-fun MCWIKI(url : String){
+fun MCWIKI(url: String) {
     AndroidView(factory = { context ->
         WebView(context).apply {
             layoutParams = ViewGroup.LayoutParams(

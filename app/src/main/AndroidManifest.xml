@@ -35,6 +35,10 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="34">
         <!--        主文件 android.intent.action.MAI -->
+        <provider
+            android:name="com.example.myapplication.common.provider.BaseContentProvider"
+            android:authorities="${applicationId}.BaseProvider"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

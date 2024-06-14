@@ -10,7 +10,7 @@ interface BaseRepository<T> {
     /**
      * Insert T in the data source
      */
-    suspend fun insertItem(t: T)
+    suspend fun insertItem(t: T) : Long
 
     /**
      * Delete T from the data source
@@ -20,5 +20,5 @@ interface BaseRepository<T> {
     /**
      * Update T in the data source
      */
-    suspend fun updateItem(t: T)
+    suspend fun updateItem(t: T) : Int
 }
