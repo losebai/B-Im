@@ -10,6 +10,8 @@ object MingChaoRoute{
 
     const val WIKI = "MC_WIKI"
 
+    const val GET_LINK_URI = "GET_LINK_URI"
+
     /** 图书列表 */
     const val BOOK_LIST = "MC_BOOK_LIST"
 

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -24,17 +23,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material.icons.outlined.Build
-import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,13 +45,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import com.example.myapplication.R
 import com.example.myapplication.common.consts.AppAPI
 import com.example.myapplication.common.consts.ICons
 import com.example.myapplication.common.consts.StyleCommon
@@ -59,9 +57,8 @@ import com.example.myapplication.common.ui.HeadImage
 import com.example.myapplication.common.ui.MySwipeRefresh
 import com.example.myapplication.common.ui.MySwipeRefreshState
 import com.example.myapplication.common.ui.NORMAL
-import com.example.myapplication.config.MingChaoRoute
+import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.config.WEB_API_ROURE
-import com.example.myapplication.config.WEB_API_ROURE.WEB_ROUTE
 import com.example.myapplication.dto.CommunityEntity
 import com.example.myapplication.viewmodel.ToolsViewModel
 import kotlinx.coroutines.launch
@@ -248,7 +245,7 @@ fun ImageText(list: List<CommunityEntity>, modifier: Modifier = Modifier) {
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ToolsList(
     toolsViewModel: ToolsViewModel,
@@ -263,28 +260,40 @@ fun ToolsList(
     val pool = arrayOf("鸣潮", "原神", "表情库")
     Column(
         modifier = modifier
-            .padding(top = 20.dp)
             .fillMaxSize()
     ) {
-        LazyVerticalGrid(GridCells.Fixed(4), modifier = Modifier.fillMaxWidth()) {
-            items(pool.size) {
-                Column(
-                    modifier = Modifier
-                        .clickable {
-                            scope.launch {
-                                pagerState.scrollToPage(it)
-                            }
-                        },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = pool[it], fontSize = 20.sp)
-                    Divider(
-                        thickness = 2.dp,
-                        color = if (pagerState.currentPage == it) Color.Green else Color.Transparent,
-                    )
+        TopAppBar(title = {
+            LazyVerticalGrid(GridCells.Fixed(4), modifier = Modifier.fillMaxWidth()) {
+                items(pool.size) {
+                    Column(
+                        modifier = Modifier
+                            .clickable {
+                                scope.launch {
+                                    pagerState.scrollToPage(it)
+                                }
+                            },
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = pool[it], fontSize = 20.sp, color= Color.Black)
+                        Divider(
+                            thickness = 2.dp,
+                            color = if (pagerState.currentPage == it) Color.Green else Color.Transparent,
+                        )
+                    }
                 }
             }
-        }
+        },
+            actions = {
+                IconButton(onClick = {
+                    mainController.navigateUp()
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = "返回"
+                    )
+                }
+            })
+
         HorizontalPager(pagerState, modifier = Modifier.fillMaxWidth()) {
             Column {
                 Row {
@@ -306,7 +315,13 @@ fun ToolsList(
                     item {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             IconButton(onClick = {
-                                mainController.navigate(WEB_API_ROURE.WEB_ROUTE+ "/${Uri.encode(AppAPI.MingChao.MAIN_URL)}")
+                                mainController.navigate(
+                                    WEB_API_ROURE.WEB_ROUTE + "/${
+                                        Uri.encode(
+                                            AppAPI.MingChao.MAIN_URL
+                                        )
+                                    }"
+                                )
                             }) {
                                 AsyncImage(
                                     model = ICons.FAVICON,
@@ -320,7 +335,13 @@ fun ToolsList(
                     item {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             IconButton(onClick = {
-                                mainController.navigate(WEB_API_ROURE.WEB_ROUTE+ "/${Uri.encode(AppAPI.MingChao.WIKI_URL)}")
+                                mainController.navigate(
+                                    WEB_API_ROURE.WEB_ROUTE + "/${
+                                        Uri.encode(
+                                            AppAPI.MingChao.WIKI_URL
+                                        )
+                                    }"
+                                )
                             }) {
                                 AsyncImage(
                                     model = ICons.USER,
@@ -335,7 +356,13 @@ fun ToolsList(
                     item() {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             IconButton(onClick = {
-                                mainController.navigate(WEB_API_ROURE.WEB_ROUTE+ "/${Uri.encode(AppAPI.MingChao.WIKI_URL)}")
+                                mainController.navigate(
+                                    WEB_API_ROURE.WEB_ROUTE + "/${
+                                        Uri.encode(
+                                            AppAPI.MingChao.WIKI_URL
+                                        )
+                                    }"
+                                )
                             }) {
                                 AsyncImage(
                                     model = ICons.WIKI,
@@ -349,7 +376,29 @@ fun ToolsList(
                     item() {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             IconButton(onClick = {
-                                mainController.navigate(WEB_API_ROURE.WEB_ROUTE+ "/${Uri.encode(AppAPI.MingChao.WIKI_URL)}")
+                                mainController.navigate(
+                                    PageRouteConfig.TOOLS_IMAGE_LIST
+                                )
+                            }) {
+                                AsyncImage(
+                                    model = ICons.WIKI,
+                                    contentDescription = null,
+                                    modifier = StyleCommon.ICON_SIZE
+                                )
+                            }
+                            Text(text = "图片集合")
+                        }
+                    }
+                    item() {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            IconButton(onClick = {
+                                mainController.navigate(
+                                    WEB_API_ROURE.WEB_ROUTE + "/${
+                                        Uri.encode(
+                                            AppAPI.MingChao.WIKI_URL
+                                        )
+                                    }"
+                                )
                             }) {
                                 AsyncImage(
                                     model = ICons.WIKI,

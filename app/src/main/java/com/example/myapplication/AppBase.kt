@@ -67,6 +67,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
@@ -89,7 +90,7 @@ private val logger = KotlinLogging.logger {}
 
 class AppBase {
 
-    lateinit var imageViewModel: ImageViewModel;
+    var imageViewModel: ImageViewModel = ImageViewModel()
 
     var page by mutableStateOf(MenuRouteConfig.TOOLS_ROUTE)
 
@@ -133,19 +134,24 @@ class AppBase {
                                         UserStatus.HiDING -> colorResource(R.color.HiDING)
                                     }
                                     Text(text = SystemApp.userStatus.tag,
-                                        modifier = Modifier.drawWithContent {
-                                            drawIntoCanvas {
-                                                val paint = Paint().apply {
-                                                    color = colorStatus
+                                        modifier = Modifier
+                                            .drawWithContent {
+                                                drawIntoCanvas {
+                                                    val paint = Paint().apply {
+                                                        color = colorStatus
+                                                    }
+                                                    it.drawCircle(
+                                                        center = Offset(
+                                                            x = 15f,
+                                                            y = size.height / 2
+                                                        ),
+                                                        radius = 10f,
+                                                        paint = paint
+                                                    )
                                                 }
-                                                it.drawCircle(
-                                                    center = Offset(x = 15f, y = size.height / 2),
-                                                    radius = 10f,
-                                                    paint = paint
-                                                )
+                                                drawContent()
                                             }
-                                            drawContent()
-                                        }.padding(start = 15.dp),
+                                            .padding(start = 15.dp),
                                         fontSize = 10.sp,
                                         color = colorStatus)
                                 }

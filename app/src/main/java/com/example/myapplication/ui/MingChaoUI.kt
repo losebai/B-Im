@@ -27,11 +27,14 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,6 +50,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -56,6 +60,7 @@ import coil.compose.AsyncImage
 import com.example.myapplication.R
 import com.example.myapplication.common.consts.AppAPI
 import com.example.myapplication.common.consts.StyleCommon
+import com.example.myapplication.common.ui.TopAppBarBack
 import com.example.myapplication.common.util.ImageUtils
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.config.MingChaoRoute
@@ -162,6 +167,46 @@ fun LotterySimulate(
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GetCookiesUri(modifier: Modifier = Modifier, toolsViewModel: ToolsViewModel,
+                  mainController: NavHostController = rememberNavController()){
+    var uri by remember {
+        mutableStateOf("")
+    }
+    Column(
+        modifier,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(text = "如何获取")
+        Row {
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    painter = painterResource(R.mipmap.ic_web_refresh),
+                    contentDescription = null,
+                    tint = colorResource(R.color.theme)
+                )
+            }
+            Text(text = "同步云端")
+        }
+        TopAppBar(title = { /*TODO*/ }, navigationIcon = {
+            IconButton(onClick = {
+                mainController.navigateUp()
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "返回"
+                )
+            }
+        })
+        OutlinedTextField(value = uri, onValueChange = {uri = it} )
+        Button(onClick = { /*TODO*/ }) {
+            Text(text = "开始获取")
+        }
+        Text(text = "正在获取xx,第几页")
     }
 }
 

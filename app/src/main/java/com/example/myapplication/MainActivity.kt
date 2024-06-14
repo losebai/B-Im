@@ -16,7 +16,6 @@ import com.example.myapplication.event.ViewModelEvent
 import com.example.myapplication.remote.entity.AppUserEntity
 import com.example.myapplication.remote.entity.toUserEntity
 import com.example.myapplication.ui.AppTheme
-import com.example.myapplication.viewmodel.CommunityViewModel
 import com.example.myapplication.viewmodel.MessagesViewModel
 import com.example.myapplication.viewmodel.UserViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -106,7 +105,12 @@ class MainActivity : AppCompatActivity() {
             )[MessagesViewModel::class.java]
         setContent {
             AppTheme(appBase.darkTheme) {
-                MainNavGraph(appBase, userViewModel, messagesViewModel, init = { this.initLoad() })
+                MainNavGraph(
+                    appBase,
+                    userViewModel,
+                    messagesViewModel,
+                    appBase.imageViewModel,
+                    init = { this.initLoad() })
             }
         }
     }

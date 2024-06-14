@@ -37,6 +37,7 @@ private val rowModifier = Modifier
     .fillMaxWidth()
     .padding(10.dp)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditPage(
     title: String,
@@ -47,7 +48,7 @@ fun EditPage(
         mutableStateOf("")
     }
     Column(horizontalAlignment = Alignment.Start) {
-        Row(horizontalArrangement = Arrangement.SpaceAround) {
+        TopAppBar(title = { Text(text = title) }, navigationIcon = {
             IconButton(onClick = {
                 mainController.navigateUp()
             }) {
@@ -56,14 +57,14 @@ fun EditPage(
                     contentDescription = "返回"
                 )
             }
-            Text(text = title)
+        },actions={
             Button(onClick = {
                 mainController.navigateUp()
                 onChangedCallback(dateString)
             }) {
                 Text(text = "完成")
             }
-        }
+        })
         TextField(value = dateString, onValueChange = { dateString = it })
     }
 }

@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +26,7 @@ import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.config.WEB_API_ROURE
 import com.example.myapplication.entity.toAppUserEntity
 import com.example.myapplication.ui.EditPage
+import com.example.myapplication.ui.GetCookiesUri
 import com.example.myapplication.ui.HookList
 import com.example.myapplication.ui.ImageGroupList
 import com.example.myapplication.ui.ImageSelect
@@ -47,8 +49,8 @@ import com.example.myapplication.viewmodel.WebVIewModel
 fun MainNavGraph(appBase: AppBase,
     userViewModel: UserViewModel,
                  messagesViewModel: MessagesViewModel,
+                 imageViewModel: ImageViewModel,
                  init : ()-> Unit){
-    val imageViewModel = viewModel<ImageViewModel>()
     val communityViewModel = viewModel<CommunityViewModel>()
     val toolsViewModel = viewModel<ToolsViewModel>()
     val navHostController = rememberNavController()
@@ -153,6 +155,13 @@ fun MainNavGraph(appBase: AppBase,
                 onNavigateToBookmarkHistory = { webNavActions.navigateToBookmarkHistory() },
                 onNavigateUp = { webNavActions.navigateUp() }
             )
+        }
+        composable(MingChaoRoute.GET_LINK_URI){
+            GetCookiesUri(Modifier.fillMaxSize(),
+                toolsViewModel)
+        }
+        composable(PageRouteConfig.TOOLS_IMAGE_LIST){
+
         }
     }
 }

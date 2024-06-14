@@ -64,6 +64,9 @@ object PageRouteConfig{
 
 
     const val TOOLS_MINGCHAO_LOTTERY_DETAIL = "TOOLS_MINGCHAO_LOTTERY_DETAIL"
+
+
+    const val TOOLS_IMAGE_LIST = "TOOLS_IMAGE_LIST"
 }
 
 object WEB_API_ROURE{

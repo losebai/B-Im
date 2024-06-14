@@ -299,6 +299,6 @@ fun ContrastAwareReplyThemeTest() {
         val appBase: AppBase = AppBase()
         appBase.Context(content = {
             Text(text = "test")
-        })
+        },{})
     }
 }
