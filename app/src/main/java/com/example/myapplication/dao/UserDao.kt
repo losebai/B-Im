@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface UserDao :  BaseDao<UserEntity> {
 
     @Query("select * from app_users where id = :id")
-    fun getItem(id: Long): Flow<UserEntity>
+    fun getItem(id: Long): UserEntity
 
     @Query("select * from app_users where id in (:ids)")
     fun listByIds(ids :  LongArray) : List<UserEntity>

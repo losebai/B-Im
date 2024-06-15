@@ -55,11 +55,11 @@ class UserViewModel(context: Context): ViewModel() {
 
     @OptIn(DelicateCoroutinesApi::class)
     fun getLocalUserById(id :Long): UserEntity {
-        var user: UserEntity = UserEntity()
+        var user = UserEntity()
         userMap[id].let { _user ->
             if(_user == null){
                 GlobalScope.launch(Dispatchers.Default){
-                    userRepository.getUser(id).collect(){
+                    userRepository.getUser(id).also{
                         user = it
                     }
                 }
@@ -71,7 +71,7 @@ class UserViewModel(context: Context): ViewModel() {
     }
 
     fun getReferUser(user : AppUserEntity) : List<UserEntity>{
-        val userTemp = Mapping.toUserEntityList(userService.getList(user))
+        val userTemp = userService.getList(user)
         users = userTemp
         return userTemp
     }

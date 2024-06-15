@@ -13,8 +13,6 @@ import org.noear.socketd.transport.core.entity.FileEntity
 import org.noear.socketd.transport.core.entity.StringEntity
 import java.io.File
 
-
-
 class MessageService(private val messagesViewModel: MessagesViewModel) {
 
     private val logger = KotlinLogging.logger {}
@@ -24,8 +22,6 @@ class MessageService(private val messagesViewModel: MessagesViewModel) {
             .listen(UserListener(messagesViewModel))
             .open();
     }
-
-
 
     fun sendFile(filePath: String) = sendFile(File(filePath))
 
@@ -42,7 +38,6 @@ class MessageService(private val messagesViewModel: MessagesViewModel) {
         val messageStr = ONode.load(messagesEntity)
         session.send(AppEventConst.USER_MESSAGE, StringEntity(messageStr.toJson()).at(messagesEntity.recvUserId.toString()))
         logger.info {  "${AppEventConst.USER_MESSAGE}::${messagesEntity}"}
-
     }
 
     fun sendUserText(userId: Long, text: String){

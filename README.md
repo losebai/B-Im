@@ -8,30 +8,31 @@
 本项目属于前台项目，后台是dispatch-sdk，rpc中台，后续会分离出dispatch-app-server
 
 ### 技术栈
-
 本项目偏向国产化
+```
 UI: compose material3
 Server: socket.d snack3
 data: room
+```
 
 ## 下面是基本功能与页面，大部分完成，游戏在开发中
 
 ### 消息
 
-<img alt="img_1.png" height="1217" src="img_1.png" width="592"/>
+<img alt="img_1.png" height="400" src="img_1.png" width="200"/>
 
 #### 消息详情
 
-![img_2.png](img_2.png)
+<img alt="img_2png" height="400" src="img_2.png" width="200"/>
 
 ### 联系人
 
-![img.png](img.png)
+<img alt="img_png" height="400" src="img.png" width="200"/>
 
 ### 游戏
+<img alt="img_png" height="400" src="img3.png" width="200"/>
+<img alt="img5_png" height="400" src="img5.png" width="200"/>
 
-![img_3.png](img_3.png)
 
 ### 社区
-
-![img_4.png](img_4.png)
+<img alt="img_png" height="400" src="img4.png" width="200"/>

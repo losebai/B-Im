@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.myapplication.common.provider.BaseContentProvider
 import com.example.myapplication.dao.KVMapDao
 import com.example.myapplication.dao.MessagesDao
@@ -16,7 +18,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.internal.synchronized
 
 @Database(entities = [MessagesEntity::class, UserEntity::class, KVMapEntity::class],
-    version = 2)
+    version = 4)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun messagesDao(): MessagesDao
@@ -39,7 +41,8 @@ abstract class AppDatabase : RoomDatabase() {
                 context,
                 AppDatabase::class.java,
                 "app-database"
-            ).build().also {
+            ).addMigrations(MIGRATION_2_3)
+                .addMigrations(MIGRATION_3_4).build().also {
                 instance = it
             }
         }
@@ -61,9 +64,21 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
 
-
         fun closeDB() {
             getInstance().close()
+        }
+
+        val MIGRATION_2_3: Migration = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.i("Room_StudentDatabase", "数据库版本 2 升级到 版本 3")
+                database.execSQL("alter table app_users add column userStatus integer not null default 0")
+            }
+        }
+        val MIGRATION_3_4 : Migration =object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.i("Room_StudentDatabase", "数据库版本 2 升级到 版本 3")
+                database.execSQL("alter table app_users RENAME  column userStatus to status")
+            }
         }
     }
 

@@ -120,11 +120,14 @@ fun UserList(
                                     .fillMaxWidth(),
                                 color = Color.Black, fontSize = 20.sp
                             )
-                            Text(
-                                text = Utils.stringOrNull(list[it].note),
-                                fontSize = 14.sp,
-                                color = Color.Black
-                            )
+                            Row {
+                                Text(text = "[${list[it].status.name}]")
+                                Text(
+                                    text = Utils.stringOrNull(list[it].note),
+                                    fontSize = 14.sp,
+                                    color = Color.Black
+                                )
+                            }
                         }
                     }
                 }

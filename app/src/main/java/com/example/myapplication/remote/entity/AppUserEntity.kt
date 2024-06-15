@@ -1,5 +1,6 @@
 package com.example.myapplication.remote.entity
 
+import com.example.myapplication.common.consts.UserStatus
 import com.example.myapplication.entity.UserEntity
 
 data class AppUserEntity(
@@ -7,8 +8,9 @@ data class AppUserEntity(
     var name: String = "",
     var imageUrl: String = "",
     var note: String = "",
-    var deviceNumber: String? = null
+    var deviceNumber: String? = null,
+    val userStatus: UserStatus = UserStatus.INIT
 )
 
-fun AppUserEntity.toUserEntity() = UserEntity(id, name, imageUrl, note)
+fun AppUserEntity.toUserEntity() = UserEntity(id, name, imageUrl, note, status=userStatus)
 

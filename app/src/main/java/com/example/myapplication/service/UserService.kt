@@ -3,6 +3,7 @@ package com.example.myapplication.service
 import com.example.myapplication.common.consts.AppAPI
 import com.example.myapplication.common.util.HttpUtils
 import com.example.myapplication.common.util.HttpUtils.MEDIA_TYPE_JSON
+import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.remote.entity.AppUserEntity
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -47,12 +48,12 @@ class UserService {
         return false
     }
 
-    fun getList(user: AppUserEntity): List<AppUserEntity> {
+    fun getList(user: AppUserEntity): List<UserEntity> {
         val requestBody: RequestBody = ONode.serialize(user).toRequestBody(MEDIA_TYPE_JSON)
         val res: Response? = HttpUtils.post(AppAPI.POST_USER_LIST, requestBody)
         if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
-            return json["data"].toObjectList(AppUserEntity::class.java)
+            return json["data"].toObjectList(UserEntity::class.java)
         }
         return Collections.emptyList()
     }
