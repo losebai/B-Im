@@ -38,8 +38,8 @@ interface MessagesDao : BaseDao<MessagesEntity> {
      * @return [Flow<List<MessagesEntity>>]
      */
     @Query(
-        "SELECT m.* from messages m join ( SELECT sendUserId,recvUserId,max(sendDateTime) max_time from messages GROUP BY sendUserId,recvUserId ) m1 " +
-                "on m.recvUserId = m1.recvUserId and m.sendUserId = m1.sendUserId and m1.max_time = m.sendDateTime WHERE m.sendUserId = :sendUserId or m.recvUserId = :recvUserId "
+        "SELECT m.* from messages m join ( SELECT sendUserId,recvUserId,max(sendDateTime) max_time from messages where sendUserId in (:sendUserId, :recvUserId) or recvUserId in (:sendUserId, :recvUserId) group by sendUserId,recvUserId) m1 " +
+                "on m1.max_time = m.sendDateTime  "
     )
     fun getUserMessageLastByUserId(
         sendUserId: Long, recvUserId : Long,

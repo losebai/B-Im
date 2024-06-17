@@ -2,6 +2,7 @@ package com.example.myapplication.common.consts
 
 import org.noear.snack.annotation.ONodeAttr
 
+
 enum class UserStatus(@ONodeAttr val value: Int, val tag: String) {
     INIT(0, "未知"),
     OFF_LINE(1,"离线"), // 离线

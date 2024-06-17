@@ -1,6 +1,5 @@
 package com.example.myapplication.ui
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -121,7 +120,7 @@ fun UserList(
                                 color = Color.Black, fontSize = 20.sp
                             )
                             Row {
-                                Text(text = "[${list[it].status.name}]")
+                                Text(text = "[${list[it].status.tag}] ")
                                 Text(
                                     text = Utils.stringOrNull(list[it].note),
                                     fontSize = 14.sp,

@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import android.os.Build
 import android.os.Bundle
+import android.view.ActionMode
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -40,9 +41,19 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModelEvent: ViewModelEvent = ViewModelEvent.getInstance(this)
 
-    override fun onStop() {
+    override fun onRestart() {
+        super.onRestart()
+        messagesViewModel.messageService.reconnect()
+    }
+
+//    override fun onStop() {
+//        messagesViewModel.messageService.close()
+//        super.onStop()
+//    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         messagesViewModel.messageService.close()
-        super.onStop()
     }
 
     private fun initLoad() {
