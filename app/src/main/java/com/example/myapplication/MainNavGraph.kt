@@ -109,7 +109,7 @@ fun MainNavGraph(appBase: AppBase,
             UserInfoEdit(userViewModel.userEntity, navHostController)
         }
         composable(PageRouteConfig.USER_INFO_USERNAME) {
-            EditPage("修改名称", navHostController) {
+            EditPage("修改名称", userViewModel.userEntity.name, navHostController) {
                 userViewModel.userEntity = userViewModel.userEntity.apply {
                     name = it
                 }
@@ -123,7 +123,7 @@ fun MainNavGraph(appBase: AppBase,
             }
         }
         composable(PageRouteConfig.USER_INFO_NOTE) {
-            EditPage("修改签名", navHostController) {
+            EditPage("修改签名", userViewModel.userEntity.note, navHostController) {
                 userViewModel.userEntity = userViewModel.userEntity.apply {
                     note = it
                 }

@@ -7,6 +7,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import org.noear.snack.ONode
 import java.util.concurrent.TimeUnit
@@ -30,14 +31,8 @@ object HttpUtils {
         return builder.build()
     }
 
-    fun requestBody(data: Any) : FormBody {
-        val builder = FormBody.Builder()
-        val oNode = ONode.load(data)
-        oNode.nodeData().`object`().forEach(){
-            builder.add(it.key, it.value.toString())
-        }
-        return builder.build()
-
+    fun requestBody(data: Any) : RequestBody {
+       return ONode.serialize(data).toRequestBody(MEDIA_TYPE_JSON)
     }
 
     private fun url(url: String?, params: Map<String, Any>?): String {
@@ -77,7 +72,7 @@ object HttpUtils {
     fun post(url: String, body: Any, params: Map<String, String> = hashMapOf()): Response? {
         val request: Request = Request.Builder()
             .url(url(url, params))
-            .post(requestBody(ONode.load(body)))
+            .post(requestBody(body))
             .build()
         return execute(request);
     }

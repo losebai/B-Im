@@ -1,7 +1,6 @@
 package com.example.myapplication.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +22,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -44,7 +42,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.R
-import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.common.ui.HeadImage
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.dto.CommunityEntity
@@ -59,9 +56,6 @@ import com.example.myapplication.remote.entity.toUserEntity
 fun DynamicMessage(communityEntity: CommunityEntity, modifier: Modifier = Modifier) {
     var pingLun by remember {
         mutableStateOf("")
-    }
-    var messageSend by remember {
-        mutableStateOf(false)
     }
     Column(
         modifier = modifier
@@ -113,15 +107,16 @@ fun DynamicMessage(communityEntity: CommunityEntity, modifier: Modifier = Modifi
                         else -> 3
                     }
                 ),
+                horizontalArrangement = Arrangement.Start,
                 modifier = Modifier
-                    .padding(start = 10.dp, end = 10.dp)
+                    .padding(start = 10.dp, end = 10.dp).fillMaxWidth()
             ) {
                 items(communityEntity.images.size) {
                     AsyncImage(
                         communityEntity.images[it],
                         contentDescription = null,
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier.size(100.dp)
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.padding(1.dp).fillMaxSize()
                     )
                 }
             }
@@ -143,17 +138,6 @@ fun DynamicMessage(communityEntity: CommunityEntity, modifier: Modifier = Modifi
                     )
                 }
                 IconButton(
-                    onClick = { messageSend = !messageSend },
-                    modifier = Modifier
-                        .size(50.dp)
-                        .padding(5.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Send,
-                        contentDescription = "评论"
-                    )
-                }
-                IconButton(
                     onClick = { /*TODO*/ },
                     modifier = Modifier
                         .size(50.dp)
@@ -165,37 +149,35 @@ fun DynamicMessage(communityEntity: CommunityEntity, modifier: Modifier = Modifi
                     )
                 }
             }
-            AnimatedVisibility(visible = messageSend) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
 
-                    HeadImage(
-                        onClick = {},
-                        userEntity = communityEntity.userEntity,
-                        modifier = Modifier
-                            .height(40.dp)
-                            .width(60.dp)
-                            .padding(start = 10.dp, end = 10.dp)
+                HeadImage(
+                    onClick = {},
+                    userEntity = communityEntity.userEntity,
+                    modifier = Modifier
+                        .height(40.dp)
+                        .width(60.dp)
+                        .padding(start = 10.dp, end = 10.dp)
+                )
+                OutlinedTextField(value = pingLun, modifier = Modifier
+                    .width(300.dp)
+                    .height(40.dp),
+                    onValueChange = {
+                        pingLun = it
+                    })
+                IconButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .height(40.dp)
+                        .width(50.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Send,
+                        contentDescription = "发送"
                     )
-                    OutlinedTextField(value = pingLun, modifier = Modifier
-                        .width(300.dp)
-                        .height(40.dp),
-                        onValueChange = {
-                            pingLun = it
-                        })
-                    IconButton(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier
-                            .height(40.dp)
-                            .width(50.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Send,
-                            contentDescription = "发送"
-                        )
-                    }
                 }
             }
         }
@@ -218,7 +200,8 @@ fun CommunityHome(
                     .paint(
                         if (background == null) painterResource(id = R.drawable.test)
                         else rememberAsyncImagePainter(background)
-                    ).padding(10.dp)
+                    )
+                    .padding(10.dp)
             ) {
                 HeadImage(
                     onClick = {}, userEntity = userEntity,
@@ -229,14 +212,8 @@ fun CommunityHome(
         items(communityList) {
             DynamicMessage(
                 it, modifier = Modifier
-                    .height(
-                        when (it.images.size) {
-                            1 -> 100.dp
-                            2 -> 400.dp
-                            else -> 500.dp
-                        }
-                    )
-                    .padding(top = 10.dp)
+                    .height(450.dp)
+                    .padding(1.dp)
             )
         }
     }

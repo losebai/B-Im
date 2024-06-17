@@ -37,9 +37,7 @@ class MessageDynamicService {
         size: Int,
         appDynamic: AppDynamic = MessageDynamicService.appDynamic
     ): List<AppDynamic> {
-        val requestBody: RequestBody =
-            ONode.serialize(appDynamic).toRequestBody(HttpUtils.MEDIA_TYPE_JSON)
-        val res: Response? = HttpUtils.post("${AppAPI.Community.GET_DYNAMIC_PAGE}?page=$page&size=$size", requestBody)
+        val res: Response? = HttpUtils.post("${AppAPI.Community.GET_DYNAMIC_PAGE}?page=$page&size=$size", appDynamic)
         if (res?.isSuccessful == true) {
             val json = ONode.load(res.body?.string())
             if (!json["code"].equals(200)){
@@ -51,8 +49,7 @@ class MessageDynamicService {
     }
 
     fun save(appDynamic: AppDynamic): Boolean {
-        val requestBody: RequestBody = ONode.serialize(appDynamic).toRequestBody(HttpUtils.MEDIA_TYPE_JSON)
-        val res: Response? = HttpUtils.post(AppAPI.Community.GET_DYNAMIC_SAVE, requestBody)
+        val res: Response? = HttpUtils.post(AppAPI.Community.GET_DYNAMIC_SAVE, appDynamic)
         if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
             if (!json["code"].equals(200)){

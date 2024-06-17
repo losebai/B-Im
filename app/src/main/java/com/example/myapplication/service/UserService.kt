@@ -54,8 +54,7 @@ class UserService {
     }
 
     fun save(user: AppUserEntity): Boolean {
-        val requestBody: RequestBody = ONode.serialize(user).toRequestBody(MEDIA_TYPE_JSON)
-        val res: Response? = HttpUtils.post(AppAPI.POST_USER_SAVE, requestBody)
+        val res: Response? = HttpUtils.post(AppAPI.POST_USER_SAVE, user)
         if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
             return json["data"].toObject(Boolean.Companion::class.java)
@@ -64,8 +63,7 @@ class UserService {
     }
 
     fun getList(user: AppUserEntity): List<UserEntity> {
-        val requestBody: RequestBody = ONode.serialize(user).toRequestBody(MEDIA_TYPE_JSON)
-        val res: Response? = HttpUtils.post(AppAPI.POST_USER_LIST, requestBody)
+        val res: Response? = HttpUtils.post(AppAPI.POST_USER_LIST, user)
         if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
             return json["data"].toObjectList(UserEntity::class.java)

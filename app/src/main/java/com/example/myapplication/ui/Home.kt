@@ -172,7 +172,7 @@ fun Community(
     ) { _modifier ->
         CommunityHome(
             userViewModel.userEntity,
-            communityList = communityViewModel.getCommunityList(),
+            communityList = list,
             modifier = _modifier
         )
     }
