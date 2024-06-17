@@ -1,10 +1,7 @@
 package com.example.myapplication
 
-import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.os.Build
-import android.view.WindowManager
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -32,7 +28,6 @@ import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.config.WEB_API_ROURE
 import com.example.myapplication.entity.toAppUserEntity
-import com.example.myapplication.ui.ComposeTestTheme
 import com.example.myapplication.ui.EditPage
 import com.example.myapplication.ui.GetCookiesUri
 import com.example.myapplication.ui.HookList
@@ -47,6 +42,7 @@ import com.example.myapplication.ui.PhotoDataSet
 import com.example.myapplication.ui.UserInfoEdit
 import com.example.myapplication.viewmodel.CommunityViewModel
 import com.example.myapplication.viewmodel.ImageViewModel
+import com.example.myapplication.viewmodel.LotteryViewModel
 import com.example.myapplication.viewmodel.MessagesViewModel
 import com.example.myapplication.viewmodel.ToolsViewModel
 import com.example.myapplication.viewmodel.UserViewModel
@@ -63,6 +59,7 @@ fun MainNavGraph(activity: AppCompatActivity, appBase: AppBase,
     val communityViewModel = viewModel<CommunityViewModel>()
     val toolsViewModel = viewModel<ToolsViewModel>()
     val navHostController = rememberNavController()
+    val lotteryViewModel = viewModel<LotteryViewModel>()
     val webViewModel = viewModel<WebVIewModel>()
     val wanUiState by webViewModel.uiState.collectAsStateWithLifecycle()
     val webNavActions = remember(navHostController) { WanNavActions(navHostController) }
@@ -179,7 +176,7 @@ fun MainNavGraph(activity: AppCompatActivity, appBase: AppBase,
 //            activity.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
 //            WindowCompat.setDecorFitsSystemWindows(activity.window, false)
             activity.enableEdgeToEdge()
-            MCRoleLotteryHome(onDispatch = {
+            MCRoleLotteryHome(lotteryViewModel, onDispatch = {
                 activity.enableEdgeToEdge()
                 activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
                 navHostController.navigateUp()
