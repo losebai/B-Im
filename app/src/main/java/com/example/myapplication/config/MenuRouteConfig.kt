@@ -1,5 +1,7 @@
 package com.example.myapplication.config
 
+import com.example.myapplication.dto.LotteryCount
+
 object MenuRouteConfig {
 
     /**
@@ -67,6 +69,8 @@ object PageRouteConfig{
 
 
     const val TOOLS_IMAGE_LIST = "TOOLS_IMAGE_LIST"
+
+
 }
 
 object WEB_API_ROURE{

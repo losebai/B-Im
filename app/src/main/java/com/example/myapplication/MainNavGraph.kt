@@ -1,7 +1,13 @@
 package com.example.myapplication
 
+import android.app.Activity
+import android.content.pm.ActivityInfo
 import android.os.Build
+import android.view.WindowManager
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -25,12 +32,14 @@ import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.config.WEB_API_ROURE
 import com.example.myapplication.entity.toAppUserEntity
+import com.example.myapplication.ui.ComposeTestTheme
 import com.example.myapplication.ui.EditPage
 import com.example.myapplication.ui.GetCookiesUri
 import com.example.myapplication.ui.HookList
 import com.example.myapplication.ui.ImageGroupList
 import com.example.myapplication.ui.ImageSelect
 import com.example.myapplication.ui.LotterySimulate
+import com.example.myapplication.ui.MCRoleLotteryHome
 import com.example.myapplication.ui.MCWIKI
 import com.example.myapplication.ui.MessagesDetail
 import com.example.myapplication.ui.PageHost
@@ -46,8 +55,8 @@ import com.example.myapplication.viewmodel.WebVIewModel
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun MainNavGraph(appBase: AppBase,
-    userViewModel: UserViewModel,
+fun MainNavGraph(activity: AppCompatActivity, appBase: AppBase,
+                 userViewModel: UserViewModel,
                  messagesViewModel: MessagesViewModel,
                  imageViewModel: ImageViewModel,
                  init : ()-> Unit){
@@ -162,6 +171,19 @@ fun MainNavGraph(appBase: AppBase,
         }
         composable(PageRouteConfig.TOOLS_IMAGE_LIST){
 
+        }
+        composable(MingChaoRoute.LOTTERY_ROUTE){
+            // 强制横屏
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            // 全屏并隐藏状态栏
+//            activity.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+//            WindowCompat.setDecorFitsSystemWindows(activity.window, false)
+            activity.enableEdgeToEdge()
+            MCRoleLotteryHome(onDispatch = {
+                activity.enableEdgeToEdge()
+                activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                navHostController.navigateUp()
+            })
         }
     }
 }

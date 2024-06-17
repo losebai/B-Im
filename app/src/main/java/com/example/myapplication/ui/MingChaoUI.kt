@@ -1,6 +1,8 @@
 package com.example.myapplication.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -49,17 +51,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.example.myapplication.MainActivity
 import com.example.myapplication.R
+import com.example.myapplication.activity.LotteryActivity
 import com.example.myapplication.common.consts.AppAPI
 import com.example.myapplication.common.consts.StyleCommon
+import com.example.myapplication.common.provider.BaseContentProvider
 import com.example.myapplication.common.ui.TopAppBarBack
 import com.example.myapplication.common.util.ImageUtils
 import com.example.myapplication.common.util.ThreadPoolManager
@@ -215,11 +222,13 @@ fun GetCookiesUri(modifier: Modifier = Modifier, toolsViewModel: ToolsViewModel,
 @Composable
 fun MingChaoHome(
     toolsViewModel: ToolsViewModel,
-    mainController: NavHostController = rememberNavController()
+    mainController: NavHostController = rememberNavController(),
+    modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     val row = Modifier
         .size(100.dp)
-    Column(verticalArrangement = Arrangement.Center) {
+    Column(modifier,verticalArrangement = Arrangement.Center) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
             reverseLayout = false
@@ -256,7 +265,11 @@ fun MingChaoHome(
                     AsyncImage(
                         model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",
                         contentDescription = "抽卡模拟",
-                        modifier = StyleCommon.ICON_SIZE
+                        modifier = StyleCommon.ICON_SIZE.clickable {
+//                            mainController.navigate(MingChaoRoute.LOTTERY_ROUTE)
+                            val intent = Intent(BaseContentProvider.context(), LotteryActivity::class.java)
+                            context.startActivity(intent)
+                        }
                     )
                     Text(text = "抽卡模拟")
                 }

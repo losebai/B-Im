@@ -310,7 +310,7 @@ fun ToolsList(
                 }
                 LazyVerticalGrid(
                     GridCells.Fixed(4),
-                    modifier = Modifier.padding(20.dp)
+                    modifier = Modifier.padding(5.dp)
                 ) {
                     item {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -389,26 +389,26 @@ fun ToolsList(
                             Text(text = "图片集合")
                         }
                     }
-                    item() {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            IconButton(onClick = {
-                                mainController.navigate(
-                                    WEB_API_ROURE.WEB_ROUTE + "/${
-                                        Uri.encode(
-                                            AppAPI.MingChao.WIKI_URL
-                                        )
-                                    }"
-                                )
-                            }) {
-                                AsyncImage(
-                                    model = ICons.WIKI,
-                                    contentDescription = null,
-                                    modifier = StyleCommon.ICON_SIZE
-                                )
-                            }
-                            Text(text = "工具")
-                        }
-                    }
+//                    item() {
+//                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+//                            IconButton(onClick = {
+//                                mainController.navigate(
+//                                    WEB_API_ROURE.WEB_ROUTE + "/${
+//                                        Uri.encode(
+//                                            AppAPI.MingChao.WIKI_URL
+//                                        )
+//                                    }"
+//                                )
+//                            }) {
+//                                AsyncImage(
+//                                    model = ICons.WIKI,
+//                                    contentDescription = null,
+//                                    modifier = StyleCommon.ICON_SIZE
+//                                )
+//                            }
+//                            Text(text = "工具")
+//                        }
+//                    }
                 }
                 when (it) {
                     0 -> {

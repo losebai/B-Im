@@ -22,7 +22,7 @@ fun UserInfoTest(){
 @Preview(showBackground = true)
 fun EditPageTest(){
     val mainController = rememberNavController()
-    EditPage("123", mainController){
+    EditPage("123", mainController=mainController){
 
     }
 }

@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.ActionMode
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -116,7 +117,7 @@ class MainActivity : AppCompatActivity() {
             )[MessagesViewModel::class.java]
         setContent {
             AppTheme(appBase.darkTheme) {
-                MainNavGraph(
+                MainNavGraph(this,
                     appBase,
                     userViewModel,
                     messagesViewModel,

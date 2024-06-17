@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import com.example.myapplication.AppBase
 import com.example.myapplication.R
@@ -301,4 +302,28 @@ fun ContrastAwareReplyThemeTest() {
             Text(text = "test")
         },{})
     }
+}
+
+
+@Composable
+fun ComposeTestTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    // Dynamic color is available on Android 12+
+    dynamicColor: Boolean = true,
+    content: @Composable () -> Unit
+) {
+    val colorScheme = lightScheme
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            (view.context as Activity).window.statusBarColor = Color.Transparent.toArgb() //透明
+            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
+        }
+    }
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = AppTypography,
+        content = content
+    )
 }
