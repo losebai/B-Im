@@ -4,8 +4,6 @@ import com.example.myapplication.common.consts.AppAPI
 import com.example.myapplication.common.util.HttpUtils
 import com.example.myapplication.dto.AppDynamic
 import io.github.oshai.kotlinlogging.KotlinLogging
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import org.noear.snack.ONode
 import java.util.Collections
@@ -20,7 +18,7 @@ class MessageDynamicService {
 
 
     fun getAppDynamic(id: Long): AppDynamic {
-        val res: Response? = HttpUtils.get("${AppAPI.Community.GET_DYNAMIC}$id")
+        val res: Response? = HttpUtils.get("${AppAPI.CommunityAPI.GET_DYNAMIC}$id")
         if (res?.isSuccessful == true) {
             val json = ONode.load(res.body?.string())
             if (!json["code"].equals(200)){
@@ -37,7 +35,7 @@ class MessageDynamicService {
         size: Int,
         appDynamic: AppDynamic = MessageDynamicService.appDynamic
     ): List<AppDynamic> {
-        val res: Response? = HttpUtils.post("${AppAPI.Community.GET_DYNAMIC_PAGE}?page=$page&size=$size", appDynamic)
+        val res: Response? = HttpUtils.post("${AppAPI.CommunityAPI.GET_DYNAMIC_PAGE}?page=$page&size=$size", appDynamic)
         if (res?.isSuccessful == true) {
             val json = ONode.load(res.body?.string())
             if (!json["code"].equals(200)){
@@ -49,7 +47,7 @@ class MessageDynamicService {
     }
 
     fun save(appDynamic: AppDynamic): Boolean {
-        val res: Response? = HttpUtils.post(AppAPI.Community.GET_DYNAMIC_SAVE, appDynamic)
+        val res: Response? = HttpUtils.post(AppAPI.CommunityAPI.GET_DYNAMIC_SAVE, appDynamic)
         if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
             if (!json["code"].equals(200)){

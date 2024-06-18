@@ -1,18 +1,23 @@
 package com.example.myapplication.ui
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,46 +27,70 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.myapplication.R
 import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.viewmodel.LotteryViewModel
 
 
 @Composable
-fun MCRoleLotteryHome(lotteryViewModel: LotteryViewModel,onDispatch: ()-> Unit = {}) {
+fun MCRoleLotteryHome(lotteryViewModel: LotteryViewModel, onDispatch: () -> Unit = {}) {
     var poolIndex by remember {
         mutableIntStateOf(0)
     }
     Box(
         modifier = Modifier
-            .padding(0.dp)
-            .fillMaxWidth()
-        ,
-    ){
+            .fillMaxSize(),
+    ) {
         AsyncImage(
             lotteryViewModel.pools[poolIndex].poolBg,
             contentDescription = null,
-            modifier = Modifier.fillMaxWidth(),
-            contentScale =  ContentScale.FillBounds
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillBounds
         )
-        Row(modifier = Modifier.padding(20.dp)) {
-            IconButton(onClick =onDispatch) {
-                Icon(Icons.Filled.ArrowBack , contentDescription = null)
-            }
-            LazyColumn(modifier = Modifier.padding(10.dp)) {
-                items(lotteryViewModel.pools.size){
-                    AsyncImage(
-                        model = lotteryViewModel.pools[it].poolImageUri,
-                        contentDescription = null,
-                        modifier = Modifier.clickable {
-                            poolIndex = it
-                        }
-                    )
+//        IconButton(onClick =onDispatch) {
+//            Icon(Icons.Filled.ArrowBack , contentDescription = null, modifier = Modifier.background(Color.White))
+//        }
+        Row(modifier = Modifier.padding(start = 0.dp, top = 20.dp, bottom = 20.dp, end = 60.dp)) {
+            Column(
+                Modifier
+                    .padding(top = 20.dp)
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                LazyColumn(
+                    horizontalAlignment=Alignment.CenterHorizontally) {
+                    items(lotteryViewModel.pools.size) {
+                        AsyncImage(
+                            model = lotteryViewModel.pools[it].poolImageUri,
+                            contentDescription = null,
+                            contentScale = ContentScale.Inside,
+                            modifier = Modifier
+                                .height(60.dp)
+                                .width(180.dp)
+                                .padding(5.dp)
+                                .clickable {
+                                    poolIndex = it
+                                }
+                        )
+                    }
+                }
+                Column(modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.Bottom) {
+                    Text(text = "意见反馈", color = Color.White, fontSize = 10.sp,
+                        modifier = Modifier.padding(bottom = 10.dp))
+                    Text(text = "免责声明", color = Color.White, fontSize = 10.sp)
                 }
             }
             Divider(
@@ -71,34 +100,89 @@ fun MCRoleLotteryHome(lotteryViewModel: LotteryViewModel,onDispatch: ()-> Unit =
                     .fillMaxHeight()
                     .width(1.dp)
             )
-            Column(modifier = Modifier
-                .padding(start = 10.dp, top = 40.dp, bottom = 40.dp)
-                .fillMaxHeight(),
-                verticalArrangement=Arrangement.SpaceBetween) {
+            Column(
+                modifier = Modifier
+                    .padding(start = 10.dp, top = 40.dp, bottom = 40.dp)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
                 Column {
-                    Text(text = "角色活动唤取", color= Color.Yellow, fontSize = 10.sp)
-                    Text(text = "角色活动唤取", color= Color.White, fontSize = 20.sp)
+                    Text(text = "角色活动唤取", color = Color.Yellow, fontSize = 10.sp)
+                    Text(
+                        text = lotteryViewModel.pools[poolIndex].poolName,
+                        color = Color.White,
+                        fontSize = 20.sp
+                    )
                 }
-                LazyColumn {
-                    item {
-                        Text(text = "以下四星概率提升", color= Color.White, fontSize = 10.sp)
-                    }
-                    items(lotteryViewModel.pools[poolIndex].array.size){
-                        AsyncImage(
-                            model = lotteryViewModel.pools[poolIndex].array[it],
-                            contentDescription = null,
-                            modifier = StyleCommon.ICON_SIZE
-                        )
+                Column {
+                    Text(text = "以下四星概率提升", color = Color.White, fontSize = 10.sp)
+                    LazyRow {
+                        items(lotteryViewModel.pools[poolIndex].array.size) {
+                            Column(modifier = Modifier
+                                .padding(5.dp)
+                                .border(1.dp, Color.Gray, StyleCommon.ONE_SHAPE)) {
+                                AsyncImage(
+                                    model = lotteryViewModel.pools[poolIndex].array[it],
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .background(
+                                            brush = Brush.verticalGradient(
+                                                colors = listOf(
+                                                    Color.Black,
+                                                    colorResource(id = R.color.star4)
+                                                ),
+                                                startY = 50f,
+                                                endY = 150f,
+                                                tileMode = TileMode.Clamp
+                                            )
+                                        )
+                                )
+                                Divider(
+                                    color = colorResource(id = R.color.star4),
+                                    thickness = 3.dp,
+                                    modifier = Modifier
+                                        .width(40.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }
-            Row(modifier = Modifier) {
-                Button(onClick = { /*TODO*/ }) {
-                    Text(text = "唤取一次")
+            Row(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(0.9f),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Box(contentAlignment= Alignment.CenterStart){
+                    Image(
+                        painter = painterResource(id = R.drawable.mc_icons), null,
+                        modifier = Modifier.padding(start = 0.dp)
+                    )
+                    AsyncImage(model = stringResource(id = R.string.mc_role_tick),
+                        modifier=Modifier.size(20.dp).offset(x=20.dp),
+                        contentDescription = null)
                 }
-                Button(onClick = { /*TODO*/ }) {
-                    Text(text = "唤取十次")
+                Box(contentAlignment= Alignment.CenterStart){
+                    Image(
+                        painter = painterResource(id = R.drawable.hhobfg3k), null,
+                        modifier = Modifier.padding(start = 20.dp)
+                    )
+                    AsyncImage(model = stringResource(id = R.string.mc_role_tick),
+                        modifier=Modifier.size(20.dp).offset(x=35.dp),
+                        contentDescription = null)
                 }
+            }
+            IconButton(onClick = onDispatch,
+                modifier = Modifier
+                    .width(100.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.mc_08o2pbcd), null,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
         }
     }

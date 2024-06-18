@@ -3,8 +3,8 @@ package com.example.myapplication.dto
 import org.noear.snack.annotation.ONodeAttr
 
 enum class LotteryPollEnum(@ONodeAttr val value: Int) {
-    INIT_ROLE(0),
-    INIT_WEAPON(1),
+    INIT_ROLE(1),
+    INIT_WEAPON(2),
     UP_ROLE(5),
     UP_WEAPON(6),
     C_ROLE(7),
@@ -20,11 +20,16 @@ data class LotteryCount(
 )
 
 data class LotteryPool(
-    val group: String,
-    val poolId: Int,
-    val poolName: String,
-    val poolBg: String,
-    val poolImageUri: String,
-    val poolType: LotteryPollEnum,
-    val array: List<String>,
+    var poolId: Int = 0,
+    var poolName: String = "",
+    var poolBg: String = "",
+    var poolImageUri: String = "",
+    var poolType: LotteryPollEnum = LotteryPollEnum.INIT_WEAPON,
+    var group: String = "",
+    var array: ArrayList<String> = ArrayList(),
+    var maxCount: Int = 80,
+    var probability4: Double = 0.0,
+    var probability5: Double = 0.0,
+    var startTime: String = "",
+    var endTime: String = ""
 )

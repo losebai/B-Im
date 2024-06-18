@@ -6,6 +6,7 @@ import com.example.myapplication.dto.Handbook
 import com.example.myapplication.dto.LotteryCount
 import com.example.myapplication.dto.RoleBook
 import com.example.myapplication.dto.mingchao.CatalogueDto
+import com.example.myapplication.service.AppLotteryPoolService
 import com.example.myapplication.service.MingChaoService
 
 class ToolsViewModel() : ViewModel() {
@@ -21,7 +22,8 @@ class ToolsViewModel() : ViewModel() {
 
     val roleBooks : List<RoleBook> = mutableListOf()
 
-    val mingChaoService = MingChaoService()
+    private val mingChaoService = MingChaoService()
+
 
 
     fun getImageBar(int: Int) :List<String>{
@@ -37,4 +39,5 @@ class ToolsViewModel() : ViewModel() {
     fun getRoleBook(catalogueDto: CatalogueDto = CatalogueDto(AppAPI.MingChao.ROLE)): MutableList<RoleBook>{
         return mingChaoService.getRole(catalogueDto)
     }
+
 }

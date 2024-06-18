@@ -13,12 +13,16 @@ object AppAPI {
 
 
 
-    object Community{
+    object CommunityAPI{
         const  val GET_DYNAMIC: String = "/dispatch-app/appDynamic/"
 
         const  val GET_DYNAMIC_PAGE: String = "/dispatch-app/appDynamic/page"
 
         const  val GET_DYNAMIC_SAVE: String = "/dispatch-app/appDynamic/save"
+    }
+
+    object AppLotteryPoolAPI{
+        const val CURRENT_POOLS = "/dispatch-app/AppLotteryPool/currentPools"
     }
 
     object MingChao {

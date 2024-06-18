@@ -34,6 +34,16 @@ android {
         }
     }
 
+    sourceSets {
+        getByName("main") {
+            res.srcDirs("src/main/res")
+        }
+        getByName("debug") {
+            res.srcDirs("res/mc")
+        }
+
+    }
+
 
     signingConfigs {
         create("config") {

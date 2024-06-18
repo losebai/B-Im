@@ -27,6 +27,8 @@ object StyleCommon {
 
     val ONE_SHAPE = RoundedCornerShape(1)
 
+    val FOUR_SHAPE = RoundedCornerShape(5)
+
 
     val HEAD_IMAGE = Modifier.height(50.dp).width(50.dp)
 

@@ -27,4 +27,7 @@
 
     <string name="checkout_permission_close">点击任意空白处关闭......</string>
 
+    <string name="mc_role_tick">https://prod-alicdn-community.kurobbs.com/forum/ab4d00e54528486996c4ed72fc8ab5b220240520.png</string>
+    <string name="mc_c_tick">https://prod-alicdn-community.kurobbs.com/forum/99811fae02b74fdcb456068524f9d06a20240520.png</string>
+    <string name="mc_weapon">https://prod-alicdn-community.kurobbs.com/forum/5c0165a40a1840009e45af79c8f9a90020240520.png</string>
     </resources>
