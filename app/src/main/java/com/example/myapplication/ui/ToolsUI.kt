@@ -60,6 +60,7 @@ import com.example.myapplication.common.ui.NORMAL
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.config.WEB_API_ROURE
 import com.example.myapplication.dto.CommunityEntity
+import com.example.myapplication.mc.consts.MingChaoAPI
 import com.example.myapplication.viewmodel.ToolsViewModel
 import kotlinx.coroutines.launch
 
@@ -318,7 +319,7 @@ fun ToolsList(
                                 mainController.navigate(
                                     WEB_API_ROURE.WEB_ROUTE + "/${
                                         Uri.encode(
-                                            AppAPI.MingChao.MAIN_URL
+                                            MingChaoAPI.MAIN_URL
                                         )
                                     }"
                                 )
@@ -338,7 +339,7 @@ fun ToolsList(
                                 mainController.navigate(
                                     WEB_API_ROURE.WEB_ROUTE + "/${
                                         Uri.encode(
-                                            AppAPI.MingChao.WIKI_URL
+                                            MingChaoAPI.WIKI_URL
                                         )
                                     }"
                                 )
@@ -359,7 +360,7 @@ fun ToolsList(
                                 mainController.navigate(
                                     WEB_API_ROURE.WEB_ROUTE + "/${
                                         Uri.encode(
-                                            AppAPI.MingChao.WIKI_URL
+                                            MingChaoAPI.WIKI_URL
                                         )
                                     }"
                                 )

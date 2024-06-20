@@ -1,6 +1,6 @@
 package com.example.myapplication
 
-import com.example.myapplication.service.MingChaoService
+import com.example.myapplication.mc.service.MingChaoService
 import org.junit.Test
 
 class ToolsTest {

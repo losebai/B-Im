@@ -1,15 +1,21 @@
 package com.example.myapplication.viewmodel
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.common.util.ThreadPoolManager
+import com.example.myapplication.dto.Award
 import com.example.myapplication.dto.LotteryPollEnum
 import com.example.myapplication.dto.LotteryPool
 import com.example.myapplication.service.AppLotteryPoolService
 
 class LotteryViewModel() : ViewModel() {
+
+    var award by mutableStateOf(listOf<Award>())
+
+    var poolIndex by  mutableIntStateOf(0)
 
     private val appLotteryPoolService = AppLotteryPoolService()
 
@@ -30,5 +36,9 @@ class LotteryViewModel() : ViewModel() {
             }
         }
         return pools
+    }
+
+    fun randomAward(catalogueId: Int,poolId: Int, num: Int=1, isUp :Boolean = false) : List<Award>{
+        return appLotteryPoolService.randomAppAward(catalogueId, poolId, num, isUp)
     }
 }

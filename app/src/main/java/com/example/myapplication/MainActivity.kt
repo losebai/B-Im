@@ -5,12 +5,16 @@ import android.os.Bundle
 import android.view.ActionMode
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.OptIn
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.common.util.Util
 import coil.Coil
 import coil.ImageLoader
 import com.example.myapplication.common.consts.SystemApp
+import com.example.myapplication.common.provider.PlayerProvider
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.entity.UserEntity
@@ -46,11 +50,6 @@ class MainActivity : AppCompatActivity() {
         super.onRestart()
         messagesViewModel.messageService.reconnect()
     }
-
-//    override fun onStop() {
-//        messagesViewModel.messageService.close()
-//        super.onStop()
-//    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -126,4 +125,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 }

@@ -1,5 +1,6 @@
 package com.example.myapplication.dto
 
+import com.example.myapplication.mc.dto.MCAwardCart
 import org.noear.snack.annotation.ONodeAttr
 
 enum class LotteryPollEnum(@ONodeAttr val value: Int) {
@@ -31,5 +32,14 @@ data class LotteryPool(
     var probability4: Double = 0.0,
     var probability5: Double = 0.0,
     var startTime: String = "",
-    var endTime: String = ""
+    var endTime: String = "",
+    var awardCart: MCAwardCart = MCAwardCart()
+)
+
+
+data class Award(
+    var id : Int = 0,
+    var name: String = "",
+    var star: Int = 0,
+    var imageUri : String = "",
 )

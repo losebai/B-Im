@@ -28,6 +28,8 @@ import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.config.WEB_API_ROURE
 import com.example.myapplication.entity.toAppUserEntity
+import com.example.myapplication.mc.consts.MingChaoAPI
+import com.example.myapplication.ui.AwardList
 import com.example.myapplication.ui.EditPage
 import com.example.myapplication.ui.GetCookiesUri
 import com.example.myapplication.ui.HookList
@@ -150,7 +152,7 @@ fun MainNavGraph(activity: AppCompatActivity, appBase: AppBase,
             HookList(toolsViewModel, navHostController)
         }
         composable(MingChaoRoute.WIKI){
-            MCWIKI(AppAPI.MingChao.WIKI_URL)
+            MCWIKI(MingChaoAPI.WIKI_URL)
         }
         composable("${WEB_API_ROURE.WEB_ROUTE}/{url}") { backStackEntry ->
             WebScreen(

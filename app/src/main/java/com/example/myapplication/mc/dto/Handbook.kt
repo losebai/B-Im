@@ -1,4 +1,4 @@
-package com.example.myapplication.dto
+package com.example.myapplication.mc.dto
 
 /**
  * 手册

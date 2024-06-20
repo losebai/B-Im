@@ -1,10 +1,10 @@
-package com.example.myapplication.service
+package com.example.myapplication.mc.service
 
-import com.example.myapplication.common.consts.AppAPI
 import com.example.myapplication.common.util.HttpReqDto
 import com.example.myapplication.common.util.HttpUtils
-import com.example.myapplication.dto.RoleBook
-import com.example.myapplication.dto.mingchao.CatalogueDto
+import com.example.myapplication.mc.consts.MingChaoAPI
+import com.example.myapplication.mc.dto.RoleBook
+import com.example.myapplication.mc.dto.CatalogueDto
 import okhttp3.Response
 import org.noear.snack.ONode
 import java.util.Collections
@@ -23,7 +23,7 @@ class MingChaoService {
 
     private fun getCataloguePage(catalogueDto: CatalogueDto): MutableList<RoleBook> {
         val res: Response? = HttpUtils.post(
-            HttpReqDto.Build().setUrl(AppAPI.MingChao.POST_CATALOGUE).body(catalogueDto)
+            HttpReqDto.Build().setUrl(MingChaoAPI.POST_CATALOGUE).body(catalogueDto)
                 .addHeaders("Wiki_type", "9")
                 .build()
         )

@@ -25,4 +25,6 @@ object MingChaoRoute{
     const val WEAPON_LIST = "MC_WEAPON_LIST"
 
     const val LOTTERY_ROUTE = "LOTTERY_ROUTE"
+
+    const val AWARD_LIST = "AWARD_LIST"
 }

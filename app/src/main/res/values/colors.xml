@@ -48,6 +48,7 @@
 
     <color name="golden">#FEF590</color>
     <color name="star0">#090909</color>
-    <color name="star5">#FFFF9800</color>
+    <color name="star5">#DFFFEA61</color>
     <color name="star4">#ee67ff</color>
+    <color name="star3">#00BCD4</color>
 </resources>

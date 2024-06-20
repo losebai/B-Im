@@ -1,4 +1,4 @@
-package com.example.myapplication.dto.mingchao
+package com.example.myapplication.mc.dto
 
 data class CatalogueDto(
     val catalogueId: Int,
