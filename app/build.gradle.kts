@@ -32,6 +32,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        ndk {
+            abiFilters.add( "x86_64")
+        }
+
     }
 
     sourceSets {

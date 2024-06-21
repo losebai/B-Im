@@ -17,6 +17,7 @@ data class LotteryCount(
     val roleImageUri: String,
     val count: Int,
     val poolId: Int,
+    val isUp: Boolean,
     val isOk: Boolean
 )
 

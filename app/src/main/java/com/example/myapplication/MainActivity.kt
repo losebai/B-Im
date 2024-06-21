@@ -28,6 +28,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import java.util.stream.Collectors
+import kotlin.concurrent.thread
 
 
 private val logger = KotlinLogging.logger {
@@ -56,25 +57,20 @@ class MainActivity : AppCompatActivity() {
         messagesViewModel.messageService.close()
     }
 
-    private fun initLoad() {
+    private fun initLoad(){
         Coil.setImageLoader(ImageLoader(this))
-        // 初始化的时候保存和更新
         // 默认账户信息
         ThreadPoolManager.getInstance().addTask("init") {
             val appUserEntity = Utils.randomUser()
             appUserEntity.deviceNumber = SystemApp.PRODUCT_DEVICE_NUMBER
-            try {
-                val user = userViewModel.gerUserByNumber(SystemApp.PRODUCT_DEVICE_NUMBER)
-                if (user.id != 0L) {
-                    SystemApp.UserId = user.id
-                    SystemApp.USER_IMAGE = user.imageUrl
-                    appUserEntity.id = user.id
-                    userViewModel.userEntity = user.toUserEntity()
-                } else {
-                    userViewModel.saveUser(appUserEntity)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            val user = userViewModel.gerUserByNumber(SystemApp.PRODUCT_DEVICE_NUMBER)
+            if (user.id != 0L) {
+                SystemApp.UserId = user.id
+                SystemApp.USER_IMAGE = user.imageUrl
+                appUserEntity.id = user.id
+                userViewModel.userEntity = user.toUserEntity()
+            } else {
+                userViewModel.saveUser(appUserEntity)
             }
             logger.info { "开始加载联系人" }
             val users = userViewModel.getReferUser(AppUserEntity())
@@ -114,14 +110,14 @@ class MainActivity : AppCompatActivity() {
                 this,
                 MessagesViewModel.MessageViewModelFactory(this)
             )[MessagesViewModel::class.java]
+        this.initLoad()
         setContent {
             AppTheme(appBase.darkTheme) {
                 MainNavGraph(this,
                     appBase,
                     userViewModel,
                     messagesViewModel,
-                    appBase.imageViewModel,
-                    init = { this.initLoad() })
+                    appBase.imageViewModel)
             }
         }
     }

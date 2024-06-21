@@ -17,8 +17,6 @@ class ToolsViewModel() : ViewModel() {
 
     var catalogueId = 0;
 
-    // 抽奖卡池
-    val lotteryMap: MutableMap<Int, List<LotteryCount>> = mutableMapOf()
 
     val roleBooks : List<RoleBook> = mutableListOf()
 

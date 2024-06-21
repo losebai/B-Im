@@ -26,8 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -47,8 +45,6 @@ import com.example.myapplication.R
 import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.common.provider.PlayerProvider
 import com.example.myapplication.common.ui.VideScreen
-import com.example.myapplication.common.util.ThreadPoolManager
-import com.example.myapplication.dto.Award
 import com.example.myapplication.dto.LotteryPool
 import com.example.myapplication.viewmodel.LotteryViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -83,21 +79,26 @@ fun MCRoleLotteryHome(
             Column(
                 Modifier
                     .padding(top = 20.dp)
+                    .fillMaxWidth(0.15f)
                     .fillMaxHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
                 LazyColumn(
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    Modifier,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     items(lotteryViewModel.pools.size) {
                         AsyncImage(
                             model = lotteryViewModel.pools[it].poolImageUri,
                             contentDescription = null,
-                            contentScale = ContentScale.Inside,
+                            contentScale = ContentScale.Crop,
                             modifier = Modifier
-                                .height(60.dp)
-                                .width(180.dp)
-                                .padding(5.dp)
+//                                .fillMaxSize()
+                                .height(if (poolIndex == it) 50.dp else 40.dp)
+                                .width(if (poolIndex == it) 100.dp else 90.dp)
+                                .padding(top = 5.dp)
+                                .border(1.dp, Color.White)
                                 .clickable {
                                     poolIndex = it
                                 }
@@ -105,7 +106,7 @@ fun MCRoleLotteryHome(
                     }
                 }
                 Column(
-                    modifier = Modifier.fillMaxHeight(),
+                    modifier = Modifier,
                     verticalArrangement = Arrangement.Bottom
                 ) {
                     Text(
@@ -241,19 +242,21 @@ fun LotteryVideo(videoUri: String, onClose: () -> Unit) {
 @Composable
 fun AwardList(
     modifier: Modifier = Modifier, lotteryViewModel: LotteryViewModel,
-    onDispatch: ()->Unit = {}
+    onDispatch: () -> Unit = {}
 ) {
 
     val list = lotteryViewModel.award
-    Box(contentAlignment= Alignment.Center) {
+    Box(contentAlignment = Alignment.Center) {
         Image(
             painter = painterResource(id = R.drawable.mc_lottery_bg),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
-        Row(Modifier,
-            verticalAlignment=Alignment.CenterVertically) {
+        Row(
+            Modifier,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(5),
                 horizontalArrangement = Arrangement.Center,
@@ -264,58 +267,49 @@ fun AwardList(
                     .padding(start = 40.dp, top = 20.dp, bottom = 20.dp, end = 20.dp)
             ) {
                 items(list.size) {
+                    val color = colorResource(
+                        id = when (list[it].star) {
+                            4 -> R.color.star4
+                            5 -> R.color.star5
+                            else -> {
+                                R.color.star3
+                            }
+                        }
+                    )
                     Column(
                         modifier =
                         Modifier
                             .padding(top = 20.dp, bottom = 10.dp, start = 5.dp, end = 5.dp)
-                            .paint(
-                                painterResource(
-                                    id = when (list[it].star) {
-                                        4 -> R.drawable.mc_start4_bg
-                                        5 -> R.drawable.mc_start5_bg
-                                        else -> {
-                                            R.drawable.mc_start3_bg
-                                        }
+                            .border(if (list[it].star == 5) 2.dp else 0.dp, color)
+                            .paint(painterResource(
+                                id = when (list[it].star) {
+                                    4 -> R.drawable.mc_start4_bg
+                                    5 -> R.drawable.mc_start5_bg
+                                    else -> {
+                                        R.drawable.mc_start3_bg
                                     }
-                                ), contentScale = ContentScale.FillBounds
-                            ),
-                        verticalArrangement=Arrangement.Bottom
+                                }
+                            ),contentScale = ContentScale.FillBounds),
                     ) {
                         AsyncImage(
                             model = list[it].imageUri,
                             contentDescription = null,
                             modifier = Modifier
-                                .size(120.dp)
-//                                .background(
-//                                    brush = Brush.verticalGradient(
-//                                        colors = listOf(
-//                                            Color.Black,
-//                                            colorResource(
-//                                                id = when (list[it].star) {
-//                                                    4 -> R.color.star4
-//                                                    5 -> R.color.star5
-//                                                    else -> {
-//                                                        R.color.star3
-//                                                    }
-//                                                }
-//                                            )
-//                                        ),
-//                                        startY = 120f,
-//                                        endY = 150f,
-//                                        tileMode = TileMode.Decal
-//                                    )
-//                                )
+                                .size(150.dp).background(
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.Transparent,
+                                            Color.Black,
+                                            color
+                                        ),
+                                        startY = 250f,
+                                        endY = 400f,
+                                        tileMode = TileMode.Clamp
+                                    )
+                                )
                         )
                         Divider(
-                            color = colorResource(
-                                id = when (list[it].star) {
-                                    4 -> R.color.star4
-                                    5 -> R.color.star5
-                                    else -> {
-                                        R.color.star3
-                                    }
-                                }
-                            ),
+                            color = color,
                             thickness = 3.dp,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -330,7 +324,7 @@ fun AwardList(
                     .fillMaxHeight(0.8f)
                     .width(1.dp)
             )
-            Column(modifier=Modifier.fillMaxHeight()) {
+            Column(modifier = Modifier.fillMaxHeight()) {
                 IconButton(
                     onClick = onDispatch,
                     modifier = Modifier
@@ -345,5 +339,4 @@ fun AwardList(
             }
         }
     }
-
 }

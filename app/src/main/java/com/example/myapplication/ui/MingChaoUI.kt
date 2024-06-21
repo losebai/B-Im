@@ -8,6 +8,7 @@ import android.webkit.WebViewClient
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,6 +42,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -60,9 +62,9 @@ import com.example.myapplication.common.provider.BaseContentProvider
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
-import com.example.myapplication.dto.LotteryCount
-import com.example.myapplication.mc.dto.RoleBook
 import com.example.myapplication.mc.dto.CatalogueDto
+import com.example.myapplication.mc.dto.RoleBook
+import com.example.myapplication.viewmodel.LotteryViewModel
 import com.example.myapplication.viewmodel.ToolsViewModel
 import kotlinx.coroutines.launch
 
@@ -74,15 +76,20 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LotterySimulate(
-    lotteryMap: Map<Int, List<LotteryCount>>,
+    lotteryViewModel: LotteryViewModel,
     mainController: NavHostController = rememberNavController()
 ) {
     val pagerState = rememberPagerState { 4 }
     val pool = arrayOf("角色", "武器", "常驻", "混合")
     val scope = rememberCoroutineScope()
+    val color = colorResource(id = R.color.golden)
     Column(
         Modifier
             .fillMaxWidth()
+            .paint(
+                painterResource(id = R.drawable.mc_lottery_bg),
+                contentScale = ContentScale.FillBounds
+            )
     ) {
         TopAppBar(title = { /*TODO*/ }, navigationIcon = {
             IconButton(onClick = {
@@ -94,29 +101,58 @@ fun LotterySimulate(
                 )
             }
         })
-        Column {
+        Column(
+            modifier = Modifier
+                .padding(20.dp)
+                .border(1.dp, Color.White)
+        ) {
             Text(text = "UID:12323213")
-            Text(text = "欧皇度为")
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "超级无敌欧皇",
+                    color = color,
                     fontSize = 25.sp,
-                    modifier = Modifier.background(colorResource(id = R.color.golden))
                 )
             }
             Row() {
-                Text(text = "小保底不歪概率: ")
-                Text(text = "1%")
+                Text(text = "总次数: ")
+                Text(text = "10000", color = color)
             }
             Row() {
-                Text(text = "总次数")
-                Text(text = "10000")
+                Text(text = "平均出金: ")
+                Text(text = "1抽", color = color)
+            }
+            Row {
+                Column {
+                    Text(text = "五星数量: ")
+                    Text(text = "1", color = color)
+                }
+                Column {
+                    Text(text = "四星数量: ")
+                    Text(text = "1", color = color)
+                }
+                Column {
+                    Text(text = "小保底不歪: ")
+                    Text(text = "1", color = color)
+                }
+                Column {
+                    Text(text = "每UP角色: ")
+                    Text(text = "1", color = color)
+                }
+                Column {
+                    Text(text = "每UP武器: ")
+                    Text(text = "1", color = color)
+                }
             }
         }
-        Column {
+        Column(
+            modifier = Modifier
+                .padding(20.dp)
+                .border(1.dp, Color.White)
+        ) {
             LazyVerticalGrid(GridCells.Fixed(4), modifier = Modifier.fillMaxWidth()) {
                 items(pool.size) {
                     Column(
@@ -137,9 +173,14 @@ fun LotterySimulate(
                     }
                 }
             }
+            Row {
+                Button(onClick = { /*TODO*/ }) {
+                    Text(text = "全部卡池")
+                }
+            }
             HorizontalPager(pagerState) {
                 LazyColumn {
-                    lotteryMap[it]?.let { lotteryCountList ->
+                    lotteryViewModel.lotteryMap[it]?.let { lotteryCountList ->
                         items(lotteryCountList.size) {
                             Row(modifier = Modifier.padding(2.dp)) {
                                 AsyncImage(
@@ -167,8 +208,10 @@ fun LotterySimulate(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GetCookiesUri(modifier: Modifier = Modifier, toolsViewModel: ToolsViewModel,
-                  mainController: NavHostController = rememberNavController()){
+fun GetCookiesUri(
+    modifier: Modifier = Modifier, toolsViewModel: ToolsViewModel,
+    mainController: NavHostController = rememberNavController()
+) {
     var uri by remember {
         mutableStateOf("")
     }
@@ -197,7 +240,7 @@ fun GetCookiesUri(modifier: Modifier = Modifier, toolsViewModel: ToolsViewModel,
                 )
             }
         })
-        OutlinedTextField(value = uri, onValueChange = {uri = it} )
+        OutlinedTextField(value = uri, onValueChange = { uri = it })
         Button(onClick = { /*TODO*/ }) {
             Text(text = "开始获取")
         }
@@ -216,7 +259,7 @@ fun MingChaoHome(
     val context = LocalContext.current
     val row = Modifier
         .size(100.dp)
-    Column(modifier,verticalArrangement = Arrangement.Center) {
+    Column(modifier, verticalArrangement = Arrangement.Center) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
             reverseLayout = false
@@ -255,7 +298,8 @@ fun MingChaoHome(
                         contentDescription = "抽卡模拟",
                         modifier = StyleCommon.ICON_SIZE.clickable {
 //                            mainController.navigate(MingChaoRoute.LOTTERY_ROUTE)
-                            val intent = Intent(BaseContentProvider.context(), LotteryActivity::class.java)
+                            val intent =
+                                Intent(BaseContentProvider.context(), LotteryActivity::class.java)
                             context.startActivity(intent)
                         }
                     )
@@ -280,8 +324,8 @@ fun MingChaoHome(
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
             reverseLayout = false
-        ){
-        item {
+        ) {
+            item {
                 Column(
                     modifier = row
                         .clickable {

@@ -56,8 +56,7 @@ import com.example.myapplication.viewmodel.WebVIewModel
 fun MainNavGraph(activity: AppCompatActivity, appBase: AppBase,
                  userViewModel: UserViewModel,
                  messagesViewModel: MessagesViewModel,
-                 imageViewModel: ImageViewModel,
-                 init : ()-> Unit){
+                 imageViewModel: ImageViewModel){
     val communityViewModel = viewModel<CommunityViewModel>()
     val toolsViewModel = viewModel<ToolsViewModel>()
     val navHostController = rememberNavController()
@@ -65,11 +64,6 @@ fun MainNavGraph(activity: AppCompatActivity, appBase: AppBase,
     val webViewModel = viewModel<WebVIewModel>()
     val wanUiState by webViewModel.uiState.collectAsStateWithLifecycle()
     val webNavActions = remember(navHostController) { WanNavActions(navHostController) }
-    try {
-        init()
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
     NavHost(
         navController = navHostController,
         startDestination = PageRouteConfig.MENU_ROUTE,
@@ -145,7 +139,7 @@ fun MainNavGraph(activity: AppCompatActivity, appBase: AppBase,
             }
         }
         composable(PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL) {
-            LotterySimulate(toolsViewModel.lotteryMap, navHostController)
+            LotterySimulate(lotteryViewModel, navHostController)
         }
 
         composable(MingChaoRoute.BOOK_LIST){
