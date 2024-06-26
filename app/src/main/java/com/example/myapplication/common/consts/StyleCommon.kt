@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.myapplication.common.util.ImageUtils
 
 object StyleCommon {
@@ -33,7 +34,7 @@ object StyleCommon {
     val FOUR_SHAPE = RoundedCornerShape(5)
 
 
-    val HEAD_IMAGE = Modifier.height(50.dp).width(50.dp)
+    val HEAD_IMAGE = Modifier.size(40.dp)
 
     val IMAGE_SIZE =  Modifier.height(100.dp).width(100.dp);
 
@@ -47,6 +48,7 @@ object StyleCommon {
 
     val FONT_MODIFIER = Modifier.wrapContentSize(Alignment.Center)
 
+    val NAME_FONT_SIZE = 18.sp
 
 }
 

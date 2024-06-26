@@ -251,7 +251,6 @@ fun ImageText(list: List<CommunityEntity>, modifier: Modifier = Modifier) {
 @Composable
 fun ToolsList(
     toolsViewModel: ToolsViewModel,
-    lotteryViewModel: LotteryViewModel,
     modifier: Modifier = Modifier,
     mainController: NavHostController = rememberNavController(),
 ) {
@@ -287,16 +286,15 @@ fun ToolsList(
             }
         },
             actions = {
-                IconButton(onClick = {
-                    mainController.navigateUp()
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = "返回"
-                    )
-                }
+//                IconButton(onClick = {
+//                    mainController.navigateUp()
+//                }) {
+//                    Icon(
+//                        imageVector = Icons.Filled.Search,
+//                        contentDescription = "返回"
+//                    )
+//                }
             })
-
         HorizontalPager(pagerState, modifier = Modifier.fillMaxWidth()) {
             Column {
                 Row {
@@ -313,7 +311,7 @@ fun ToolsList(
                 }
                 LazyVerticalGrid(
                     GridCells.Fixed(4),
-                    modifier = Modifier.padding(5.dp)
+                    modifier = Modifier.padding(start = 5.dp)
                 ) {
                     item {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -415,7 +413,7 @@ fun ToolsList(
                 }
                 when (it) {
                     0 -> {
-                        MingChaoHome(toolsViewModel, lotteryViewModel, mainController)
+                        MingChaoHome(toolsViewModel, mainController)
                     }
                 }
             }

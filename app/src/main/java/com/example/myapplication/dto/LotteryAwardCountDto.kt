@@ -21,8 +21,11 @@ data class LotteryAwardCountDto (
 
 data class PoolLotteryAward (
     var poolType: Int? = null,
-    var count : Int= 0,
-    var avgCount : Double= 0.0,
+    var count: Long = 0,
+    var okCount: Long = 0,
+    var upCount: Long = 0,
+    var avgCount: Double = 0.0,
+    var avgUpCount: Double = 0.0,
     var up : Double= 0.0,
     var tag: String? = null,
     var hookAwards: List<HookAward> = ArrayList()
@@ -32,9 +35,11 @@ data class UserPoolLotteryAward (
     val imageUri: String? = null,
     var poolId: Int? = null,
     var poolName: String? = null,
-    var count: Int = 0,
+    var count: Long = 0,
+    var okCount: Long = 0,
+    var upCount: Long = 0,
     var avgCount: Double = 0.0,
-    var up: Double = 0.0,
+    var avgUpCount: Double = 0.0,
     var tag: String? = null,
     var hookAwards: List<HookAward> = ArrayList()
 )

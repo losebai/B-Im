@@ -63,7 +63,9 @@ fun PageHost(
     var searchUserName by remember {
         mutableStateOf("")
     }
-    ModalNavigationDrawer(drawerState = settingDrawerState, drawerContent = {
+    ModalNavigationDrawer(drawerState = settingDrawerState,
+        modifier = Modifier.padding(0.dp),
+        drawerContent = {
         ModalDrawerSheet {
             SettingHome(userViewModel.userEntity, mainController)
         }
@@ -78,7 +80,6 @@ fun PageHost(
                     appBase.topVisible = false
                     ToolsList(
                         toolsViewModel,
-                        lotteryViewModel,
                         mod,
                         mainController,
                     )

@@ -27,5 +27,7 @@ object AppAPI {
         const val RANDOM_AWARD = "/dispatch-app/AppLotteryAward/randomAppAward"
 
         const val LOTTERY_AWARD_COUNT = "/dispatch-app/AppLotteryAward/lotteryAwayCount"
+
+        const val LOTTERY_AWARD_COUNT_PROD = "/dispatch-app/AppLotteryAward/lotteryAwayCountPro"
     }
 }

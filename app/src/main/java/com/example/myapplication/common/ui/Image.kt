@@ -122,9 +122,11 @@ fun HeadImage(
 ) {
     AsyncImage(
         ImageRequest.Builder(LocalContext.current)
+            .placeholder(R.drawable.test)
             .data(userEntity.imageUrl)
             .crossfade(true)
-            .build(), contentDescription = null,
+            .build()
+        , contentDescription = null,
         contentScale = ContentScale.Crop
     )
 }

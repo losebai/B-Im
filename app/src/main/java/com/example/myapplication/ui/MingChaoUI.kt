@@ -114,7 +114,7 @@ fun LotterySimulate(
     val rowModifier = Modifier.fillMaxWidth()
     val columModifier = Modifier.height(50.dp)
     val state = MySwipeRefreshState(NORMAL)
-    var isTest by remember {
+    var isProd by remember {
         mutableStateOf(false)
     }
     MySwipeRefresh(
@@ -131,7 +131,7 @@ fun LotterySimulate(
             it
         ) {
             item {
-                Row {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                     IconButton(onClick = {
                         mainController.navigateUp()
                     }, modifier = Modifier.padding(top = 30.dp, start = 10.dp)) {
@@ -143,23 +143,24 @@ fun LotterySimulate(
                     }
                     Button(
                         onClick = {
-                            isTest = !isTest
-                            lotteryViewModel.lotteryAwardCount()
+                            isProd = !isProd
+                            lotteryViewModel.lotteryAwardCount(isProd)
                         }, modifier = Modifier.padding(top = 30.dp, start = 10.dp),
-                        colors = ButtonDefaults.buttonColors(Color.Blue)
+                        shape=StyleCommon.ONE_SHAPE,
+                        colors = ButtonDefaults.buttonColors(Color.Transparent)
                     ) {
-                        Text(text = if (isTest) "切到到真实" else "切到到模拟")
+                        Text(text = if (!isProd) "切到到真实" else "切到到模拟", color=textColor)
                     }
                     Button(
                         onClick = {
                             mainController.navigate(MingChaoRoute.SET_COOKIES)
                         }, modifier = Modifier.padding(top = 30.dp, start = 10.dp),
-                        colors = ButtonDefaults.buttonColors(Color.Blue)
+                        shape=StyleCommon.ONE_SHAPE,
+                        colors = ButtonDefaults.buttonColors(Color.Transparent)
                     ) {
-                        Text(text = "设置")
+                        Text(text = "设置", color=textColor)
                     }
                 }
-
             }
             item {
                 Column(
@@ -292,7 +293,7 @@ fun LotterySimulate(
                     }
                     HorizontalPager(
                         pagerState,
-                        modifier = Modifier
+                        modifier = Modifier.padding(top=10.dp)
                     ) {
                         LazyColumn(
                             Modifier.wrapContentHeight(),
@@ -348,7 +349,6 @@ fun LotterySimulate(
                     }
                 }
             }
-
             items(lotteryAwardCountDto.userPoolLotteryAwards.size) {
                 val userPoolLotteryAward = lotteryAwardCountDto.userPoolLotteryAwards[it]
                 Column(
@@ -360,17 +360,25 @@ fun LotterySimulate(
                         .border(1.dp, Color.White)
                         .padding(20.dp)
                 ) {
-                    Text(
-                        text = userPoolLotteryAward.poolName.toString(),
-                        color = color,
-                        fontSize = 20.sp
-                    )
+                    Row(modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text(
+                            text = userPoolLotteryAward.poolName.toString(),
+                            color = color,
+                            fontSize = 12.sp
+                        )
+                        Text(
+                            text = userPoolLotteryAward.tag ?: "",
+                            color = color,
+                            fontSize = 18.sp
+                        )
+                    }
                     Row(
                         modifier = rowModifier,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = "总抽卡次数:", color = textColor)
+                            Text(text = "总抽卡", color = textColor)
                             Text(
                                 text = userPoolLotteryAward.count.toString(),
                                 color = color,
@@ -378,7 +386,15 @@ fun LotterySimulate(
                             )
                         }
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = "平常出金: ", color = textColor)
+                            Text(text = "总出金", color = textColor)
+                            Text(
+                                text = userPoolLotteryAward.okCount.toString(),
+                                color = color,
+                                fontSize = 20.sp
+                            )
+                        }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "平均出金", color = textColor)
                             Text(
                                 text = userPoolLotteryAward.avgCount.toString(),
                                 color = color,
@@ -386,9 +402,9 @@ fun LotterySimulate(
                             )
                         }
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = "每Up概率: ", color = textColor)
+                            Text(text = "平均UP出金", color = textColor)
                             Text(
-                                text = userPoolLotteryAward.up.toString(),
+                                text = userPoolLotteryAward.avgUpCount.toString(),
                                 color = color,
                                 fontSize = 20.sp
                             )
@@ -442,21 +458,16 @@ fun GetCookiesUri(
     var uri by remember {
         mutableStateOf("")
     }
+    val textColor = Color.White
     Column(
-        modifier,
-        verticalArrangement = Arrangement.Center
+        modifier
+            .fillMaxSize()
+            .paint(
+                painterResource(id = R.drawable.mc_lottery_bg),
+                contentScale = ContentScale.Crop
+            )
+            .padding(20.dp),
     ) {
-        Text(text = "如何获取")
-        Row {
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    painter = painterResource(R.mipmap.ic_web_refresh),
-                    contentDescription = null,
-                    tint = colorResource(R.color.theme)
-                )
-            }
-            Text(text = "同步云端")
-        }
         TopAppBar(title = { /*TODO*/ }, navigationIcon = {
             IconButton(onClick = {
                 mainController.navigateUp()
@@ -467,11 +478,25 @@ fun GetCookiesUri(
                 )
             }
         })
-        OutlinedTextField(value = uri, onValueChange = { uri = it })
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "开始获取")
+        Text(text = "如何获取", color = textColor)
+        Row {
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    painter = painterResource(R.mipmap.ic_web_refresh),
+                    contentDescription = null,
+                    tint = colorResource(R.color.theme)
+                )
+            }
+            Text(text = "同步云端", color = textColor)
         }
-        Text(text = "正在获取xx,第几页")
+        OutlinedTextField(value = uri, onValueChange = { uri = it })
+        Button(onClick = { /*TODO*/ }, 
+            shape = StyleCommon.ONE_SHAPE,
+            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.button_bg))
+            ) {
+            Text(text = "开始获取", color = textColor)
+        }
+        Text(text = "正在获取xx,第几页", color = textColor)
     }
 }
 
@@ -480,7 +505,6 @@ fun GetCookiesUri(
 @Composable
 fun MingChaoHome(
     toolsViewModel: ToolsViewModel,
-    lotteryViewModel: LotteryViewModel,
     mainController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier,
 ) {
@@ -494,7 +518,7 @@ fun MingChaoHome(
         ) {
             item {
                 Column(modifier = Modifier.clickable {
-                    mainController.navigate(PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL)
+//                    mainController.navigate(PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL)
                 }, horizontalAlignment = Alignment.CenterHorizontally) {
                     AsyncImage(
                         model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",

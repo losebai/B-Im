@@ -159,8 +159,8 @@ fun MainNavGraph(activity: AppCompatActivity, appBase: AppBase,
                 onNavigateUp = { webNavActions.navigateUp() }
             )
         }
-        composable(MingChaoRoute.GET_LINK_URI){
-            GetCookiesUri(Modifier.fillMaxSize(),
+        composable(MingChaoRoute.SET_COOKIES){
+            GetCookiesUri(Modifier,
                 toolsViewModel)
         }
         composable(PageRouteConfig.TOOLS_IMAGE_LIST){

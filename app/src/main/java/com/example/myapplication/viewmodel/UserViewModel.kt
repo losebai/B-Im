@@ -7,9 +7,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.common.Mapping
+import com.example.myapplication.common.util.Utils
 import com.example.myapplication.database.AppDatabase
 import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.remote.entity.AppUserEntity
+import com.example.myapplication.remote.entity.toUserEntity
 import com.example.myapplication.repository.OfflineUserRepository
 import com.example.myapplication.repository.UserRepository
 import com.example.myapplication.service.UserService
@@ -23,7 +25,7 @@ class UserViewModel(context: Context): ViewModel() {
     private val userService: UserService = UserService()
 
     // 当前用户
-    var userEntity by mutableStateOf(UserEntity())
+    var userEntity by mutableStateOf(Utils.randomUser().toUserEntity())
 
     // 当前读取用户
     var recvUserId = 0L

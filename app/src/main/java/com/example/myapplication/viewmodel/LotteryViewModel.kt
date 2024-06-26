@@ -51,7 +51,7 @@ class LotteryViewModel() : ViewModel() {
         return appLotteryPoolService.randomAppAward(SystemApp.UserId, catalogueId, poolId, num, isUp)
     }
 
-    fun lotteryAwardCount() = thread {
-        lotteryAwardCountDto.value = appLotteryPoolService.lotteryAwardCount(SystemApp.UserId);
+    fun lotteryAwardCount(isProd: Boolean = false) = thread {
+        lotteryAwardCountDto.value = appLotteryPoolService.lotteryAwardCount(SystemApp.UserId, isProd);
     }
 }

@@ -117,13 +117,13 @@ fun UserList(
                             Text(
                                 text = list[it].name, modifier = Modifier
                                     .fillMaxWidth(),
-                                color = Color.Black, fontSize = 20.sp
+                                color = Color.Black, fontSize = StyleCommon.NAME_FONT_SIZE
                             )
                             Row {
-                                Text(text = "[${list[it].status.tag}] ")
+                                Text(text = "[${list[it].status.tag}] ", fontSize = 12.sp,)
                                 Text(
                                     text = Utils.stringOrNull(list[it].note),
-                                    fontSize = 14.sp,
+                                    fontSize = 12.sp,
                                     color = Color.Black
                                 )
                             }

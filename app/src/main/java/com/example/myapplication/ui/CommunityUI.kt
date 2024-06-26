@@ -209,9 +209,9 @@ fun CommunityHome(
                 )
             }
         }
-        items(communityList) {
+        items(communityList.size) {
             DynamicMessage(
-                it, modifier = Modifier
+                communityList[it], modifier = Modifier
                     .height(450.dp)
                     .padding(1.dp)
             )
