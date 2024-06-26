@@ -1,9 +1,9 @@
 package com.example.myapplication.service
 
 import com.example.myapplication.common.consts.AppAPI
-import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.util.HttpUtils
 import com.example.myapplication.dto.Award
+import com.example.myapplication.dto.LotteryAwardCountDto
 import com.example.myapplication.dto.LotteryPool
 import okhttp3.Response
 import org.noear.snack.ONode
@@ -22,9 +22,9 @@ class AppLotteryPoolService() {
         return Collections.emptyList()
     }
 
-    fun randomAppAward(catalogueId: Int,poolId: Int, num: Int=1,isUp :Boolean = false): List<Award> {
+    fun randomAppAward(userId :Long, catalogueId: Int,poolId: Int, num: Int=1,isUp :Boolean = false): List<Award> {
         val params: HashMap<String, Any> = hashMapOf()
-        params["UserId"] = SystemApp.UserId
+        params["userId"] = userId
         params["catalogueId"] = catalogueId
         params["num"] = num
         params["isUp"] = if (isUp) "ture" else "false"
@@ -37,4 +37,15 @@ class AppLotteryPoolService() {
         return Collections.emptyList()
     }
 
+    fun lotteryAwardCount(userId: Long) : LotteryAwardCountDto {
+        val params: HashMap<String, Any> = hashMapOf()
+        params["userId"] = userId
+        val res: Response? = HttpUtils.get(AppAPI.AppLotteryPoolAPI.LOTTERY_AWARD_COUNT, params)
+        if (res?.isSuccessful == true){
+            val str = res.body?.string()
+            val json = ONode.load(str)
+            return json["data"].toObject(LotteryAwardCountDto::class.java)
+        }
+        return LotteryAwardCountDto()
+    }
 }

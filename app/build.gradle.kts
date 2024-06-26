@@ -131,7 +131,7 @@ android {
             dimension = "tier"
             manifestPlaceholders["app_channel_value"] = name
             manifestPlaceholders["app_name_value"] = "Android"
-            buildConfigField("String", "BASE_URL", "\"http://121.40.62.167:8000\"")
+            buildConfigField("String", "BASE_URL", "\"http://192.168.20.119:8050\"")
             buildConfigField("String", "SOCKET_URL", "\"sd:tcp://192.168.20.119:8002\"")
 //            buildConfigField("String", "BASE_URL", "\"http://192.168.20.119:8082\"")
         }

@@ -81,7 +81,8 @@ fun MainNavGraph(activity: AppCompatActivity, appBase: AppBase,
                 navHostController,
                 communityViewModel,
                 userViewModel,
-                toolsViewModel
+                toolsViewModel,
+                lotteryViewModel
             )
         }
         // 二级页面 相片页

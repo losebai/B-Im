@@ -16,17 +16,23 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -49,24 +55,31 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.R
 import com.example.myapplication.activity.LotteryActivity
 import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.common.provider.BaseContentProvider
+import com.example.myapplication.common.ui.MySwipeRefresh
+import com.example.myapplication.common.ui.MySwipeRefreshState
+import com.example.myapplication.common.ui.NORMAL
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
+import com.example.myapplication.dto.LotteryPollEnum
 import com.example.myapplication.mc.dto.CatalogueDto
 import com.example.myapplication.mc.dto.RoleBook
 import com.example.myapplication.viewmodel.LotteryViewModel
 import com.example.myapplication.viewmodel.ToolsViewModel
 import kotlinx.coroutines.launch
+
 
 /**
  * 抽卡模拟
@@ -79,123 +92,336 @@ fun LotterySimulate(
     lotteryViewModel: LotteryViewModel,
     mainController: NavHostController = rememberNavController()
 ) {
-    val pagerState = rememberPagerState { 4 }
-    val pool = arrayOf("角色", "武器", "常驻", "混合")
+    var pagerState = rememberPagerState { 0 }
+    var pools by remember {
+        mutableStateOf(LotteryPollEnum.entries.toList())
+    }
     val scope = rememberCoroutineScope()
     val color = colorResource(id = R.color.golden)
-    Column(
-        Modifier
-            .fillMaxWidth()
+    val lotteryAwardCountDto by remember {
+        lotteryViewModel.lotteryAwardCount()
+        lotteryViewModel.lotteryAwardCountDto
+    }.also {
+        val lis = mutableListOf<LotteryPollEnum>()
+        it.value.poolLotteryAwardMap.forEach { (k, _) ->
+            lis += LotteryPollEnum.toUserStatus(k)
+        }
+        pools = lis
+        pagerState = rememberPagerState { lis.size }
+    }
+    val upColor = colorResource(id = R.color.star5)
+    val textColor = Color.White
+    val rowModifier = Modifier.fillMaxWidth()
+    val columModifier = Modifier.height(50.dp)
+    val state = MySwipeRefreshState(NORMAL)
+    var isTest by remember {
+        mutableStateOf(false)
+    }
+    MySwipeRefresh(
+        state, onLoadMore = {},
+        onRefresh = {},
+        modifier = Modifier
+            .fillMaxSize()
             .paint(
                 painterResource(id = R.drawable.mc_lottery_bg),
-                contentScale = ContentScale.FillBounds
+                contentScale = ContentScale.Crop
             )
-    ) {
-        TopAppBar(title = { /*TODO*/ }, navigationIcon = {
-            IconButton(onClick = {
-                mainController.navigateUp()
-            }) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "返回"
-                )
-            }
-        })
-        Column(
-            modifier = Modifier
-                .padding(20.dp)
-                .border(1.dp, Color.White)
+    ) { it ->
+        LazyColumn(
+            it
         ) {
-            Text(text = "UID:12323213")
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "超级无敌欧皇",
-                    color = color,
-                    fontSize = 25.sp,
-                )
-            }
-            Row() {
-                Text(text = "总次数: ")
-                Text(text = "10000", color = color)
-            }
-            Row() {
-                Text(text = "平均出金: ")
-                Text(text = "1抽", color = color)
-            }
-            Row {
-                Column {
-                    Text(text = "五星数量: ")
-                    Text(text = "1", color = color)
-                }
-                Column {
-                    Text(text = "四星数量: ")
-                    Text(text = "1", color = color)
-                }
-                Column {
-                    Text(text = "小保底不歪: ")
-                    Text(text = "1", color = color)
-                }
-                Column {
-                    Text(text = "每UP角色: ")
-                    Text(text = "1", color = color)
-                }
-                Column {
-                    Text(text = "每UP武器: ")
-                    Text(text = "1", color = color)
-                }
-            }
-        }
-        Column(
-            modifier = Modifier
-                .padding(20.dp)
-                .border(1.dp, Color.White)
-        ) {
-            LazyVerticalGrid(GridCells.Fixed(4), modifier = Modifier.fillMaxWidth()) {
-                items(pool.size) {
-                    Column(
-                        modifier = Modifier
-                            .width(50.dp)
-                            .clickable {
-                                scope.launch {
-                                    pagerState.scrollToPage(it)
-                                }
-                            },
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(text = pool[it])
-                        Divider(
-                            thickness = 2.dp,
-                            color = if (pagerState.currentPage == it) Color.Green else Color.Transparent,
+            item {
+                Row {
+                    IconButton(onClick = {
+                        mainController.navigateUp()
+                    }, modifier = Modifier.padding(top = 30.dp, start = 10.dp)) {
+                        Icon(
+                            imageVector = Icons.Outlined.ArrowBack,
+                            contentDescription = "返回",
+                            tint = Color.White
                         )
+                    }
+                    Button(
+                        onClick = {
+                            isTest = !isTest
+                            lotteryViewModel.lotteryAwardCount()
+                        }, modifier = Modifier.padding(top = 30.dp, start = 10.dp),
+                        colors = ButtonDefaults.buttonColors(Color.Blue)
+                    ) {
+                        Text(text = if (isTest) "切到到真实" else "切到到模拟")
+                    }
+                    Button(
+                        onClick = {
+                            mainController.navigate(MingChaoRoute.SET_COOKIES)
+                        }, modifier = Modifier.padding(top = 30.dp, start = 10.dp),
+                        colors = ButtonDefaults.buttonColors(Color.Blue)
+                    ) {
+                        Text(text = "设置")
+                    }
+                }
+
+            }
+            item {
+                Column(
+                    modifier = Modifier
+                        .heightIn(350.dp, 500.dp)
+                        .padding(20.dp)
+                        .border(1.dp, Color.White)
+                        .padding(20.dp)
+                ) {
+                    Text(text = "UID: ${lotteryAwardCountDto.id}", color = textColor)
+                    Text(text = "名称: ${lotteryAwardCountDto.name}", color = textColor)
+                    Row(
+                        modifier = rowModifier,
+                    ) {
+                        Text(
+                            text = lotteryAwardCountDto.tag ?: "兄弟，你不行诶",
+                            color = color,
+                            fontSize = 25.sp,
+                        )
+                    }
+                    Row(
+                        modifier = rowModifier,
+                    ) {
+                        Text(text = "总次数: ", color = textColor)
+                        Text(
+                            text = lotteryAwardCountDto.sumCount.toString(),
+                            color = color,
+                            fontSize = 20.sp
+                        )
+                    }
+                    Row(
+                        modifier = rowModifier,
+                    ) {
+                        Text(text = "平均出金: ", color = textColor)
+                        Text(
+                            text = lotteryAwardCountDto.avgCount.toString(),
+                            color = color,
+                            fontSize = 20.sp
+                        )
+                    }
+                    Row(modifier = rowModifier, horizontalArrangement = Arrangement.SpaceBetween) {
+                        Column(columModifier, horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "Up数量: ", color = textColor)
+                            Text(
+                                text = lotteryAwardCountDto.upCount.toString(),
+                                color = color,
+                                fontSize = 20.sp
+                            )
+                        }
+                        Column(columModifier, horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "五星数量: ", color = textColor)
+                            Text(
+                                text = lotteryAwardCountDto.star5Count.toString(),
+                                color = color,
+                                fontSize = 20.sp
+                            )
+                        }
+                        Column(columModifier, horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "四星数量: ", color = textColor)
+                            Text(
+                                text = lotteryAwardCountDto.star4Count.toString(),
+                                color = color,
+                                fontSize = 20.sp
+                            )
+                        }
+                    }
+                    Row(
+                        modifier = rowModifier,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(columModifier, horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "小保底不歪: ", color = textColor)
+                            Text(
+                                text = lotteryAwardCountDto.up.toString(),
+                                color = color,
+                                fontSize = 20.sp
+                            )
+                        }
+                        Column(columModifier, horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "每UP角色: ", color = textColor)
+                            Text(
+                                text = lotteryAwardCountDto.avgRoleCount.toString(),
+                                color = color,
+                                fontSize = 20.sp
+                            )
+                        }
+                        Column(columModifier, horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "每UP武器: ", color = textColor)
+                            Text(
+                                text = lotteryAwardCountDto.avgWeaponCount.toString(),
+                                color = color,
+                                fontSize = 20.sp
+                            )
+                        }
                     }
                 }
             }
-            Row {
-                Button(onClick = { /*TODO*/ }) {
-                    Text(text = "全部卡池")
+
+            item {
+                Column(
+                    modifier = Modifier
+                        .heightIn(200.dp, 500.dp)
+                        .padding(20.dp)
+                        .border(1.dp, Color.White)
+                        .padding(20.dp)
+                ) {
+                    LazyVerticalGrid(
+                        GridCells.Fixed(5),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(pools.size) {
+                            Column(
+                                modifier = Modifier
+                                    .width(50.dp)
+                                    .height(20.dp)
+                                    .clickable {
+                                        scope.launch {
+                                            pagerState.scrollToPage(it)
+                                        }
+                                    },
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = pools[it].poolName, color = textColor)
+                                Divider(
+                                    thickness = 4.dp,
+                                    color = if (pagerState.currentPage == it) Color.Green else Color.White,
+                                )
+                            }
+                        }
+                    }
+                    HorizontalPager(
+                        pagerState,
+                        modifier = Modifier
+                    ) {
+                        LazyColumn(
+                            Modifier.wrapContentHeight(),
+                            reverseLayout = true,
+                        ) {
+                            lotteryAwardCountDto.poolLotteryAwardMap[pools[it].value]?.let { poolLotteryAward ->
+                                items(poolLotteryAward.hookAwards.size) {
+                                    Row(
+                                        modifier = Modifier
+                                            .padding(2.dp)
+                                            .height(50.dp)
+                                            .fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        if (poolLotteryAward.hookAwards[it].imageUri.isNullOrEmpty()) {
+                                            Text(
+                                                "?", color = Color.White,
+                                                fontSize = 18.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                modifier = Modifier
+                                                    .size(50.dp)
+                                                    .background(upColor)
+                                                    .wrapContentSize(Alignment.Center)
+                                            )
+                                        } else {
+                                            AsyncImage(
+                                                model = poolLotteryAward.hookAwards[it].imageUri,
+                                                contentDescription = null,
+                                                modifier = StyleCommon.FONT_MODIFIER
+                                                    .size(50.dp)
+                                                    .background(upColor)
+                                            )
+                                        }
+                                        Divider(
+                                            thickness = 50.dp, color = Color.Green,
+                                            modifier = Modifier
+                                                .background(if (poolLotteryAward.hookAwards[it].isUp) Color.Red else Color.Green)
+                                                .fillMaxWidth(poolLotteryAward.hookAwards[it].count / 100f)
+                                        )
+                                        Text(
+                                            text = poolLotteryAward.hookAwards[it].count.toString(),
+                                            color = Color.White,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = StyleCommon.FONT_MODIFIER
+                                        )
+//                                if (!poolLotteryAward.hookAwards[it].isUp){
+//                                    Text(text = "歪", color= Color.Red)
+//                                }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
-            HorizontalPager(pagerState) {
-                LazyColumn {
-                    lotteryViewModel.lotteryMap[it]?.let { lotteryCountList ->
-                        items(lotteryCountList.size) {
-                            Row(modifier = Modifier.padding(2.dp)) {
-                                AsyncImage(
-                                    model = lotteryCountList[it].roleImageUri,
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(30.dp)
-                                        .background(Color(0xFFFF9800))
-                                        .padding(2.dp)
-                                )
-                                Divider(
-                                    thickness = 30.dp, color = Color.Green,
-                                    modifier = Modifier
-                                        .background(if (lotteryCountList[it].isOk) Color.Red else Color.Green)
-                                        .fillMaxWidth(lotteryCountList[it].count / 100f)
+
+            items(lotteryAwardCountDto.userPoolLotteryAwards.size) {
+                val userPoolLotteryAward = lotteryAwardCountDto.userPoolLotteryAwards[it]
+                Column(
+                    modifier =
+                    Modifier
+                        .wrapContentHeight()
+                        .paint(rememberAsyncImagePainter(userPoolLotteryAward.imageUri))
+                        .padding(20.dp)
+                        .border(1.dp, Color.White)
+                        .padding(20.dp)
+                ) {
+                    Text(
+                        text = userPoolLotteryAward.poolName.toString(),
+                        color = color,
+                        fontSize = 20.sp
+                    )
+                    Row(
+                        modifier = rowModifier,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "总抽卡次数:", color = textColor)
+                            Text(
+                                text = userPoolLotteryAward.count.toString(),
+                                color = color,
+                                fontSize = 20.sp
+                            )
+                        }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "平常出金: ", color = textColor)
+                            Text(
+                                text = userPoolLotteryAward.avgCount.toString(),
+                                color = color,
+                                fontSize = 20.sp
+                            )
+                        }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "每Up概率: ", color = textColor)
+                            Text(
+                                text = userPoolLotteryAward.up.toString(),
+                                color = color,
+                                fontSize = 20.sp
+                            )
+                        }
+                    }
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(5),
+                        modifier = Modifier.heightIn(60.dp, 180.dp),
+                    ) {
+                        items(userPoolLotteryAward.hookAwards) { h ->
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                if (h.imageUri.isNullOrEmpty()) {
+                                    Text(
+                                        "?", color = Color.White,
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .background(upColor)
+                                            .wrapContentSize(Alignment.Center)
+                                    )
+                                } else {
+                                    AsyncImage(
+                                        model = h.imageUri,
+                                        contentDescription = null,
+                                        modifier = StyleCommon.FONT_MODIFIER
+                                            .size(50.dp)
+                                            .background(upColor)
+                                    )
+                                }
+                                Text(
+                                    text = h.count.toString(), color = textColor,
+                                    modifier = StyleCommon.FONT_MODIFIER
                                 )
                             }
                         }
@@ -204,6 +430,7 @@ fun LotterySimulate(
             }
         }
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -253,6 +480,7 @@ fun GetCookiesUri(
 @Composable
 fun MingChaoHome(
     toolsViewModel: ToolsViewModel,
+    lotteryViewModel: LotteryViewModel,
     mainController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier,
 ) {
@@ -298,6 +526,7 @@ fun MingChaoHome(
                         contentDescription = "抽卡模拟",
                         modifier = StyleCommon.ICON_SIZE.clickable {
 //                            mainController.navigate(MingChaoRoute.LOTTERY_ROUTE)
+//                            lotteryViewModel.lotteryAwardCount()
                             val intent =
                                 Intent(BaseContentProvider.context(), LotteryActivity::class.java)
                             context.startActivity(intent)

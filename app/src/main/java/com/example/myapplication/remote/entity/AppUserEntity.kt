@@ -9,7 +9,7 @@ data class AppUserEntity(
     var imageUrl: String = "",
     var note: String = "",
     var deviceNumber: String? = null,
-    val status: UserStatus = UserStatus.INIT
+    var status: UserStatus = UserStatus.INIT
 )
 
 fun AppUserEntity.toUserEntity() = UserEntity(id, name, imageUrl, note, status=status)

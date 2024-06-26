@@ -61,6 +61,7 @@ import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.config.WEB_API_ROURE
 import com.example.myapplication.dto.CommunityEntity
 import com.example.myapplication.mc.consts.MingChaoAPI
+import com.example.myapplication.viewmodel.LotteryViewModel
 import com.example.myapplication.viewmodel.ToolsViewModel
 import kotlinx.coroutines.launch
 
@@ -250,6 +251,7 @@ fun ImageText(list: List<CommunityEntity>, modifier: Modifier = Modifier) {
 @Composable
 fun ToolsList(
     toolsViewModel: ToolsViewModel,
+    lotteryViewModel: LotteryViewModel,
     modifier: Modifier = Modifier,
     mainController: NavHostController = rememberNavController(),
 ) {
@@ -413,7 +415,7 @@ fun ToolsList(
                 }
                 when (it) {
                     0 -> {
-                        MingChaoHome(toolsViewModel, mainController)
+                        MingChaoHome(toolsViewModel, lotteryViewModel, mainController)
                     }
                 }
             }

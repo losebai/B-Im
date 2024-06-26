@@ -55,10 +55,11 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         messagesViewModel.messageService.close()
+        ThreadPoolManager.getInstance().exitThreadPool("init")
+        ThreadPoolManager.getInstance().exitThreadPool("message")
     }
 
     private fun initLoad(){
-        Coil.setImageLoader(ImageLoader(this))
         // 默认账户信息
         ThreadPoolManager.getInstance().addTask("init") {
             val appUserEntity = Utils.randomUser()
@@ -72,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 userViewModel.saveUser(appUserEntity)
             }
-            logger.info { "开始加载联系人" }
+            logger.info { "${SystemApp.PRODUCT_DEVICE_NUMBER} 当前UserID: ${SystemApp.UserId}开始加载联系人" }
             val users = userViewModel.getReferUser(AppUserEntity())
             val map = users.parallelStream().collect(Collectors.toMap(UserEntity::id) { it })
             userViewModel.users = users

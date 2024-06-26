@@ -35,6 +35,7 @@ import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.dto.CommunityEntity
 import com.example.myapplication.viewmodel.CommunityViewModel
 import com.example.myapplication.viewmodel.ImageViewModel
+import com.example.myapplication.viewmodel.LotteryViewModel
 import com.example.myapplication.viewmodel.MessagesViewModel
 import com.example.myapplication.viewmodel.ToolsViewModel
 import com.example.myapplication.viewmodel.UserViewModel
@@ -57,6 +58,7 @@ fun PageHost(
     communityViewModel: CommunityViewModel,
     userViewModel: UserViewModel,
     toolsViewModel: ToolsViewModel,
+    lotteryViewModel: LotteryViewModel,
 ) {
     var searchUserName by remember {
         mutableStateOf("")
@@ -76,6 +78,7 @@ fun PageHost(
                     appBase.topVisible = false
                     ToolsList(
                         toolsViewModel,
+                        lotteryViewModel,
                         mod,
                         mainController,
                     )

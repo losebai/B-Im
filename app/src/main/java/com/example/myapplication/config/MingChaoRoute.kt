@@ -27,4 +27,6 @@ object MingChaoRoute{
     const val LOTTERY_ROUTE = "LOTTERY_ROUTE"
 
     const val AWARD_LIST = "AWARD_LIST"
+
+    const val SET_COOKIES = "SET_COOKIES"
 }

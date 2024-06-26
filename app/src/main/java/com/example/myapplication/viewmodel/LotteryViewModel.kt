@@ -5,22 +5,28 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.dto.Award
+import com.example.myapplication.dto.LotteryAwardCountDto
 import com.example.myapplication.dto.LotteryCount
 import com.example.myapplication.dto.LotteryPollEnum
 import com.example.myapplication.dto.LotteryPool
 import com.example.myapplication.service.AppLotteryPoolService
+import kotlin.concurrent.thread
 
 class LotteryViewModel() : ViewModel() {
 
+
+    // 模拟
     var award by mutableStateOf(listOf<Award>())
 
     var poolIndex by  mutableIntStateOf(0)
 
-    var lotteryMap: MutableMap<Int, List<LotteryCount>> = mutableMapOf()
 
     private val appLotteryPoolService = AppLotteryPoolService()
+
+    var lotteryAwardCountDto = mutableStateOf(LotteryAwardCountDto())
 
     // 池子列表
     var pools = listOf<LotteryPool>(
@@ -41,8 +47,11 @@ class LotteryViewModel() : ViewModel() {
         return pools
     }
 
-    fun randomAward(catalogueId: Int,poolId: Int, num: Int=1, isUp :Boolean = false) : List<Award>{
-        return appLotteryPoolService.randomAppAward(catalogueId, poolId, num, isUp)
+    fun randomAward(catalogueId: Int,poolId: Int, num: Int=1, isUp :Boolean = false) : List<Award> {
+        return appLotteryPoolService.randomAppAward(SystemApp.UserId, catalogueId, poolId, num, isUp)
     }
 
+    fun lotteryAwardCount() = thread {
+        lotteryAwardCountDto.value = appLotteryPoolService.lotteryAwardCount(SystemApp.UserId);
+    }
 }
