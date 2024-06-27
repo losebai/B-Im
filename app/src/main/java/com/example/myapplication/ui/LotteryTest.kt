@@ -72,9 +72,6 @@ fun MCRoleLotteryHome(
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.FillBounds
         )
-//        IconButton(onClick =onDispatch) {
-//            Icon(Icons.Filled.ArrowBack , contentDescription = null, modifier = Modifier.background(Color.White))
-//        }
         Row(modifier = Modifier.padding(start = 0.dp, top = 20.dp, bottom = 20.dp, end = 60.dp)) {
             Column(
                 Modifier

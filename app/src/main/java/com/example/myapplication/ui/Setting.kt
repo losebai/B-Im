@@ -56,6 +56,7 @@ import com.example.myapplication.common.util.PermissionUtils
 import com.example.myapplication.common.util.PermissionsChecker
 import com.example.myapplication.common.consts.StyleCommon.ZERO_PADDING
 import com.example.myapplication.common.consts.SystemApp.snackBarHostState
+import com.example.myapplication.common.util.QQUtils
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.entity.UserEntity
@@ -163,7 +164,7 @@ fun SettingHome(
                 }
             }
             TextButton(
-                onClick = { Utils.message(scope, message, snackBarHostState) },
+                onClick = { QQUtils.joinQQGroup("966922403" ) },
                 modifier = buttonModifier
             ) {
                 Row(
@@ -184,7 +185,7 @@ fun SettingHome(
             }
 
             TextButton(
-                onClick = { Utils.message(scope, message, snackBarHostState) },
+                onClick = { QQUtils.joinQQGroup("966922403" ) },
                 modifier = buttonModifier
             ) {
                 Row(

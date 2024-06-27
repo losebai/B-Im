@@ -30,9 +30,12 @@ data: room
 <img alt="img_png" height="400" src="img.png" width="200"/>
 
 ### 游戏
-<img alt="img_png" height="400" src="img3.png" width="200"/>
-<img alt="img5_png" height="400" src="img5.png" width="200"/>
+<img alt="img_png" height="400" src="img_3.png" width="200"/>
+<img alt="img5_png" height="400" src="img_5.png" width="200"/>
 
+#### 抽卡模拟
+<img alt="img5_png" height="400" src="image_lottery.png" width="200"/>
+<img alt="img5_png" height="400" src="image_award.png" width="200"/>
 
 ### 社区
-<img alt="img_png" height="400" src="img4.png" width="200"/>
+<img alt="img_png" height="400" src="img_4.png" width="200"/>
