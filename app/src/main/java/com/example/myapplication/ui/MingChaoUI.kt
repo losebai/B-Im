@@ -86,7 +86,7 @@ import kotlinx.coroutines.launch
  * @param [lotteryMap] 彩票地图
  * @param [mainController] 主控制器
  */
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LotterySimulate(
     lotteryViewModel: LotteryViewModel,
@@ -574,114 +574,114 @@ fun MingChaoHome(
             }
         }
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(4),
-            reverseLayout = false
-        ) {
-            item {
-                Column(
-                    modifier = row
-                        .clickable {
-                            toolsViewModel.catalogueId = 1105;
-                            toolsViewModel.catalogueName = "角色图鉴"
-                            mainController.navigate(MingChaoRoute.BOOK_LIST)
-                        },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    AsyncImage(
-                        model = "https://prod-alicdn-community.kurobbs.com/forum/5e5bb6eaa1de43e6bcb66eb8d780e92c20240509.png",
-                        contentDescription = "角色图鉴",
-                        modifier = StyleCommon.ICON_SIZE
-                    )
-                    Text(text = "角色图鉴")
-                }
-            }
-            item {
-                Column(
-                    modifier = row.clickable {
-                        toolsViewModel.catalogueId = 1106;
-                        toolsViewModel.catalogueName = "武器图鉴"
-                        mainController.navigate(MingChaoRoute.BOOK_LIST)
-                    },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    AsyncImage(
-                        model = "https://prod-alicdn-community.kurobbs.com/forum/f92b449640374599ae7326e2b46f40b620240509.png",
-                        contentDescription = "角色图鉴",
-                        modifier = StyleCommon.ICON_SIZE
-                    )
-                    Text(text = "武器图鉴")
-                }
-            }
-            item {
-                Column(
-                    modifier = row.clickable {
-                        toolsViewModel.catalogueId = 1107;
-                        toolsViewModel.catalogueName = "声骸图鉴"
-                        mainController.navigate(MingChaoRoute.BOOK_LIST)
-                    },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    AsyncImage(
-                        model = "https://prod-alicdn-community.kurobbs.com/forum/6bcb87fced844da1a4e90989101751ab20240509.png",
-                        contentDescription = "声骸图鉴",
-                        modifier = StyleCommon.ICON_SIZE
-                    )
-                    Text(text = "声骸图鉴")
-                }
-            }
-            item {
-                Column(
-                    modifier = row.clickable {
-                        toolsViewModel.catalogueId = 1158;
-                        toolsViewModel.catalogueName = "敌人"
-                        mainController.navigate(MingChaoRoute.BOOK_LIST)
-                    },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    AsyncImage(
-                        model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",
-                        contentDescription = "声骸图鉴",
-                        modifier = StyleCommon.ICON_SIZE
-                    )
-                    Text(text = "敌人")
-                }
-            }
-            item {
-                Column(
-                    modifier = row.clickable {
-                        toolsViewModel.catalogueId = 1218;
-                        toolsViewModel.catalogueName = "素材"
-                        mainController.navigate(MingChaoRoute.BOOK_LIST)
-                    },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    AsyncImage(
-                        model = "https://prod-alicdn-community.kurobbs.com/forum/dd77cd02945040c2a86201649e5cf95c20240509.png",
-                        contentDescription = "素材",
-                        modifier = StyleCommon.ICON_SIZE
-                    )
-                    Text(text = "素材")
-                }
-            }
-            item {
-                Column(
-                    modifier = row.clickable {
-                        toolsViewModel.catalogueId = 1217;
-                        toolsViewModel.catalogueName = "补给"
-                        mainController.navigate(MingChaoRoute.BOOK_LIST)
-                    },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    AsyncImage(
-                        model = "https://prod-alicdn-community.kurobbs.com/forum/661cd42d12a74cacafc35aa0ba53148720240509.png",
-                        contentDescription = "补给",
-                        modifier = Modifier.size(40.dp)
-                    )
-                    Text(text = "补给")
-                }
-            }
-        }
+//        LazyVerticalGrid(
+//            columns = GridCells.Fixed(4),
+//            reverseLayout = false
+//        ) {
+//            item {
+//                Column(
+//                    modifier = row
+//                        .clickable {
+//                            toolsViewModel.catalogueId = 1105;
+//                            toolsViewModel.catalogueName = "角色图鉴"
+//                            mainController.navigate(MingChaoRoute.BOOK_LIST)
+//                        },
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    AsyncImage(
+//                        model = "https://prod-alicdn-community.kurobbs.com/forum/5e5bb6eaa1de43e6bcb66eb8d780e92c20240509.png",
+//                        contentDescription = "角色图鉴",
+//                        modifier = StyleCommon.ICON_SIZE
+//                    )
+//                    Text(text = "角色图鉴")
+//                }
+//            }
+//            item {
+//                Column(
+//                    modifier = row.clickable {
+//                        toolsViewModel.catalogueId = 1106;
+//                        toolsViewModel.catalogueName = "武器图鉴"
+//                        mainController.navigate(MingChaoRoute.BOOK_LIST)
+//                    },
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    AsyncImage(
+//                        model = "https://prod-alicdn-community.kurobbs.com/forum/f92b449640374599ae7326e2b46f40b620240509.png",
+//                        contentDescription = "角色图鉴",
+//                        modifier = StyleCommon.ICON_SIZE
+//                    )
+//                    Text(text = "武器图鉴")
+//                }
+//            }
+//            item {
+//                Column(
+//                    modifier = row.clickable {
+//                        toolsViewModel.catalogueId = 1107;
+//                        toolsViewModel.catalogueName = "声骸图鉴"
+//                        mainController.navigate(MingChaoRoute.BOOK_LIST)
+//                    },
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    AsyncImage(
+//                        model = "https://prod-alicdn-community.kurobbs.com/forum/6bcb87fced844da1a4e90989101751ab20240509.png",
+//                        contentDescription = "声骸图鉴",
+//                        modifier = StyleCommon.ICON_SIZE
+//                    )
+//                    Text(text = "声骸图鉴")
+//                }
+//            }
+//            item {
+//                Column(
+//                    modifier = row.clickable {
+//                        toolsViewModel.catalogueId = 1158;
+//                        toolsViewModel.catalogueName = "敌人"
+//                        mainController.navigate(MingChaoRoute.BOOK_LIST)
+//                    },
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    AsyncImage(
+//                        model = "https://prod-alicdn-community.kurobbs.com/forum/c530b90c692e491ab832ac475cd8784f20240509.png",
+//                        contentDescription = "声骸图鉴",
+//                        modifier = StyleCommon.ICON_SIZE
+//                    )
+//                    Text(text = "敌人")
+//                }
+//            }
+//            item {
+//                Column(
+//                    modifier = row.clickable {
+//                        toolsViewModel.catalogueId = 1218;
+//                        toolsViewModel.catalogueName = "素材"
+//                        mainController.navigate(MingChaoRoute.BOOK_LIST)
+//                    },
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    AsyncImage(
+//                        model = "https://prod-alicdn-community.kurobbs.com/forum/dd77cd02945040c2a86201649e5cf95c20240509.png",
+//                        contentDescription = "素材",
+//                        modifier = StyleCommon.ICON_SIZE
+//                    )
+//                    Text(text = "素材")
+//                }
+//            }
+//            item {
+//                Column(
+//                    modifier = row.clickable {
+//                        toolsViewModel.catalogueId = 1217;
+//                        toolsViewModel.catalogueName = "补给"
+//                        mainController.navigate(MingChaoRoute.BOOK_LIST)
+//                    },
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    AsyncImage(
+//                        model = "https://prod-alicdn-community.kurobbs.com/forum/661cd42d12a74cacafc35aa0ba53148720240509.png",
+//                        contentDescription = "补给",
+//                        modifier = Modifier.size(40.dp)
+//                    )
+//                    Text(text = "补给")
+//                }
+//            }
+//        }
 
 
     }

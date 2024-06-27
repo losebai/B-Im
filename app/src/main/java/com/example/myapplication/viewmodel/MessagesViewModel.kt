@@ -9,6 +9,7 @@ import com.example.myapplication.entity.UserMessages
 import com.example.myapplication.entity.MessagesEntity
 import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.entity.toUserMessages
+import com.example.myapplication.event.GlobalInitEvent
 import com.example.myapplication.repository.MessagesRepository
 import com.example.myapplication.repository.OfflineMessagesRepository
 import com.example.myapplication.repository.OfflineUserRepository
@@ -50,6 +51,12 @@ class MessagesViewModel(context: Context) : ViewModel() {
 
     private val userRepository: UserRepository by lazy {
         OfflineUserRepository(AppDatabase.getDatabase(context).userDao())
+    }
+
+    init {
+        GlobalInitEvent.addUnit{
+            messageService.sendText("", "")
+        }
     }
 
     /**

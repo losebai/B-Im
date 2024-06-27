@@ -376,7 +376,6 @@ fun ImportImages(
                             enabled = false
                             loading = true
                             ThreadPoolManager.getInstance().addTask("imageLoad") {
-                                imageViewModel.getDay7Images(activity)
                                 for ((i, path) in SystemApp.IMAGE_PATHS.withIndex()) {
                                     currentProgress =
                                         ((i + 1) / SystemApp.IMAGE_PATHS.size).toFloat()

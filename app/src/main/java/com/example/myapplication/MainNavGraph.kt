@@ -28,6 +28,7 @@ import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.config.WEB_API_ROURE
 import com.example.myapplication.entity.toAppUserEntity
+import com.example.myapplication.event.GlobalInitEvent
 import com.example.myapplication.mc.consts.MingChaoAPI
 import com.example.myapplication.ui.AwardList
 import com.example.myapplication.ui.EditPage
@@ -64,6 +65,7 @@ fun MainNavGraph(activity: AppCompatActivity, appBase: AppBase,
     val webViewModel = viewModel<WebVIewModel>()
     val wanUiState by webViewModel.uiState.collectAsStateWithLifecycle()
     val webNavActions = remember(navHostController) { WanNavActions(navHostController) }
+    GlobalInitEvent.run()
     NavHost(
         navController = navHostController,
         startDestination = PageRouteConfig.MENU_ROUTE,

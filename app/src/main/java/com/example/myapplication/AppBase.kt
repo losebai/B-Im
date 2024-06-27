@@ -64,7 +64,7 @@ class AppBase {
 
     var imageViewModel: ImageViewModel = ImageViewModel()
 
-    var page by mutableStateOf(MenuRouteConfig.TOOLS_ROUTE)
+    var page by mutableStateOf(MenuRouteConfig.ROUTE_MESSAGE)
 
     var settingDrawerState by mutableStateOf(DrawerState(DrawerValue.Closed))
 

@@ -19,6 +19,7 @@ import com.example.myapplication.MainActivity
 import com.example.myapplication.common.provider.PlayerProvider
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.config.MingChaoRoute
+import com.example.myapplication.event.GlobalInitEvent
 import com.example.myapplication.ui.AwardList
 import com.example.myapplication.ui.ComposeTestTheme
 import com.example.myapplication.ui.MCRoleLotteryHome
@@ -43,6 +44,7 @@ class LotteryActivity : AppCompatActivity() {
             ComposeTestTheme {
                 val navHostController = rememberNavController()
                 val lotteryViewModel = viewModel<LotteryViewModel>()
+                GlobalInitEvent.run()
                 NavHost(
                     navController = navHostController,
                     startDestination = MingChaoRoute.LOTTERY_ROUTE,

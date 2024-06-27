@@ -1,33 +1,60 @@
 package com.example.myapplication.viewmodel
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.common.consts.AppAPI
 import com.example.myapplication.mc.dto.Handbook
 import com.example.myapplication.dto.LotteryCount
+import com.example.myapplication.event.GlobalInitEvent
 import com.example.myapplication.mc.consts.MingChaoAPI
+import com.example.myapplication.mc.dto.BannerDto
 import com.example.myapplication.mc.dto.RoleBook
 import com.example.myapplication.mc.dto.CatalogueDto
+import com.example.myapplication.mc.dto.HomeDto
+import com.example.myapplication.mc.dto.ToolHomeDto
 import com.example.myapplication.mc.service.MingChaoService
+import com.example.myapplication.service.AbsToolService
+import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlin.concurrent.thread
 
 class ToolsViewModel() : ViewModel() {
 
-    val linkUri = ""
-
-    var catalogueName = ""
-
-    var catalogueId = 0;
-
-
-    val roleBooks : List<RoleBook> = mutableListOf()
-
     private val mingChaoService = MingChaoService()
 
+    var catalogueName = ""
+    var catalogueId = 0;
+    val pool = arrayOf("鸣潮")
 
+    private val logger = KotlinLogging.logger {
+    }
 
-    fun getImageBar(int: Int) :List<String>{
-        return listOf("https://prod-alicdn-community.kurobbs.com/forum/db6e35e29de04d7b842e69a917bfb36d20240522.jpg",
-            "https://bbs-static.miyoushe.com/static/2024/06/03/d83ea7f72a54e4db39dfd12f10d08eb3_8340800214612498828.jpg"
-            )
+    private var bannerMap = hashMapOf<String, List<BannerDto>>()
+
+    init {
+        GlobalInitEvent.addUnit{
+            pool.forEach {
+                bannerMap[it] = getToolService(it).getBannerList()
+                logger.info { "一共获取了  ${bannerMap[it]?.size}" }
+            }
+        }
+    }
+
+    private fun getToolService(name: String) : AbsToolService{
+        return when(name) {
+            pool[0] -> mingChaoService
+            else -> {
+                mingChaoService
+            }
+        }
+    }
+
+    fun getBannerList(name: String) : List<BannerDto>{
+        return bannerMap[name] ?: listOf()
     }
 
     fun getHandbook(type :Int) : List<Handbook>{

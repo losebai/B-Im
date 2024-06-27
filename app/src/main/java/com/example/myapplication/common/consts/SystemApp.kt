@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.myapplication.common.util.ImageUtils
 import com.example.myapplication.remote.entity.AppUserEntity
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 
 object SystemApp {
@@ -30,4 +31,6 @@ object SystemApp {
 //val names = arrayOf("本机相册","相机","QQ","微信" )
 
 }
+
+
 

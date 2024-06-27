@@ -78,9 +78,7 @@ fun UserList(
 ) {
     val state = MySwipeRefreshState(NORMAL)
     val scope = rememberCoroutineScope()
-    var list by remember {
-        mutableStateOf(userViewModel.users)
-    }
+    var list = userViewModel.users
     val user = AppUserEntity()
     MySwipeRefresh(
         state = state,

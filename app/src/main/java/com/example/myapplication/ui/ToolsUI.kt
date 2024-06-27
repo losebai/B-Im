@@ -36,7 +36,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -61,10 +63,16 @@ import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.config.WEB_API_ROURE
 import com.example.myapplication.dto.CommunityEntity
 import com.example.myapplication.mc.consts.MingChaoAPI
+import com.example.myapplication.mc.dto.BannerDto
 import com.example.myapplication.viewmodel.LotteryViewModel
 import com.example.myapplication.viewmodel.ToolsViewModel
+import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 
+private val logger = KotlinLogging.logger {
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -254,12 +262,17 @@ fun ToolsList(
     modifier: Modifier = Modifier,
     mainController: NavHostController = rememberNavController(),
 ) {
-    val images = toolsViewModel.getImageBar(0)
     val scope = rememberCoroutineScope()
+    val pool = toolsViewModel.pool
     val pagerState = rememberPagerState {
-        images.size
+        pool.size
     }
-    val pool = arrayOf("鸣潮", "原神", "表情库")
+    var bannerIndex by remember {
+        mutableIntStateOf(0)
+    }
+    var images by remember {
+        mutableStateOf(listOf<BannerDto>())
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -286,24 +299,36 @@ fun ToolsList(
             }
         },
             actions = {
-//                IconButton(onClick = {
-//                    mainController.navigateUp()
-//                }) {
-//                    Icon(
-//                        imageVector = Icons.Filled.Search,
-//                        contentDescription = "返回"
-//                    )
-//                }
             })
         HorizontalPager(pagerState, modifier = Modifier.fillMaxWidth()) {
+            images = toolsViewModel.getBannerList(pool[it])
+            logger.info { "开始加载images:${pool[it]}:${images.size}" }
+            LaunchedEffect(this) {
+                while(true) {
+                    delay(5.seconds)
+                    if (bannerIndex >= images.size){
+                        bannerIndex = 0
+                    } else{
+                        bannerIndex++
+                    }
+                }
+            }
             Column {
                 Row {
                     if (images.size >= it) {
                         Surface(shape = StyleCommon.ONE_SHAPE) {
                             AsyncImage(
-                                model = images[it], contentDescription = null,
+                                model = images[bannerIndex].url, contentDescription = null,
                                 modifier = Modifier
-                                    .height(200.dp),
+                                    .padding(10.dp).height(200.dp).clickable {
+                                        mainController.navigate(
+                                            WEB_API_ROURE.WEB_ROUTE + "/${
+                                                Uri.encode(
+                                                    images[bannerIndex].linkUri
+                                                )
+                                            }"
+                                        )
+                                    },
                                 contentScale = ContentScale.Crop
                             )
                         }
@@ -416,7 +441,9 @@ fun ToolsList(
                         MingChaoHome(toolsViewModel, mainController)
                     }
                 }
+
             }
         }
     }
 }
+

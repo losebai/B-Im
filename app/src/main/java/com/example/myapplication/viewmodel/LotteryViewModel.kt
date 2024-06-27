@@ -12,16 +12,19 @@ import com.example.myapplication.dto.LotteryAwardCountDto
 import com.example.myapplication.dto.LotteryCount
 import com.example.myapplication.dto.LotteryPollEnum
 import com.example.myapplication.dto.LotteryPool
+import com.example.myapplication.event.GlobalInitEvent
 import com.example.myapplication.service.AppLotteryPoolService
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.concurrent.thread
 
 class LotteryViewModel() : ViewModel() {
 
 
+    private val logger = KotlinLogging.logger {
+    }
+
     // 模拟
     var award by mutableStateOf(listOf<Award>())
-
-    var poolIndex by  mutableIntStateOf(0)
 
 
     private val appLotteryPoolService = AppLotteryPoolService()
@@ -36,9 +39,12 @@ class LotteryViewModel() : ViewModel() {
     )
 
     init {
-        this.currentPools()
+        GlobalInitEvent.addUnit{
+            currentPools()
+        }
     }
-    fun currentPools(): List<LotteryPool> {
+
+    private fun currentPools(): List<LotteryPool> {
         if (pools.size < 2){
             ThreadPoolManager.getInstance().addTask("lottery", "lottery"){
                 pools = appLotteryPoolService.currentPools()

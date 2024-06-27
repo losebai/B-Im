@@ -2,10 +2,12 @@ package com.example.myapplication.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import com.example.myapplication.common.provider.BaseContentProvider
 import com.example.myapplication.common.util.ImageUtils
 import com.example.myapplication.common.util.MediaStoreUtils
 import com.example.myapplication.common.util.toFileEntity
 import com.example.myapplication.dto.FileEntity
+import com.example.myapplication.event.GlobalInitEvent
 import java.util.Hashtable
 
 private val EMPTY_IMAGES: Array<FileEntity>  = arrayOf()
@@ -20,6 +22,12 @@ class ImageViewModel() : ViewModel() {
 
     // 本机目录图片集合
     var dirList = mutableListOf<FileEntity>()
+
+    init {
+        GlobalInitEvent.addUnit{
+            getDay7Images(BaseContentProvider.context())
+        }
+    }
 
 
     fun loadPath(path: String){

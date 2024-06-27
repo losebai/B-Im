@@ -106,7 +106,7 @@ class ThreadPoolManager private constructor() {
      *  @param runnable 对应的 runnable 任务
      * */
     fun addTask(tag: String, runnable: Runnable) {
-        addTask(tag, tag, runnable)
+        addTask(tag, runnable.toString(), runnable)
     }
 
     /**

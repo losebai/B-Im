@@ -18,6 +18,7 @@ import com.example.myapplication.common.provider.PlayerProvider
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.entity.UserEntity
+import com.example.myapplication.event.GlobalInitEvent
 import com.example.myapplication.event.ViewModelEvent
 import com.example.myapplication.remote.entity.AppUserEntity
 import com.example.myapplication.remote.entity.toUserEntity
@@ -60,27 +61,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initLoad(){
-        // 默认账户信息
-        ThreadPoolManager.getInstance().addTask("init") {
-            val appUserEntity = Utils.randomUser()
-            appUserEntity.deviceNumber = SystemApp.PRODUCT_DEVICE_NUMBER
-            val user = userViewModel.gerUserByNumber(SystemApp.PRODUCT_DEVICE_NUMBER)
-            if (user.id != 0L) {
-                SystemApp.UserId = user.id
-                SystemApp.USER_IMAGE = user.imageUrl
-                appUserEntity.id = user.id
-                userViewModel.userEntity = user.toUserEntity()
-            } else {
-                userViewModel.saveUser(appUserEntity)
-            }
-            logger.info { "${SystemApp.PRODUCT_DEVICE_NUMBER} 当前UserID: ${SystemApp.UserId}开始加载联系人" }
-            val users = userViewModel.getReferUser(AppUserEntity())
-            val map = users.parallelStream().collect(Collectors.toMap(UserEntity::id) { it })
-            userViewModel.users = users
-            userViewModel.userMap = map
-            appBase.imageViewModel.getDay7Images(this)
-            messagesViewModel.messageService.sendText("", "")
-        }
         MainScope().launch {
             viewModelEvent.onUserMessageLastByUserId(
                 this@MainActivity,
