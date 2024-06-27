@@ -48,7 +48,7 @@ object StyleCommon {
 
     val FONT_MODIFIER = Modifier.wrapContentSize(Alignment.Center)
 
-    val NAME_FONT_SIZE = 16.sp
+    val NAME_FONT_SIZE = 14.sp
 
 }
 

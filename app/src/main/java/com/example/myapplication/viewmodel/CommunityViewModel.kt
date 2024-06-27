@@ -3,6 +3,7 @@ package com.example.myapplication.viewmodel
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.dto.CommunityEntity
 import com.example.myapplication.entity.UserEntity
+import com.example.myapplication.event.GlobalInitEvent
 import com.example.myapplication.service.MessageDynamicService
 import java.util.stream.Collectors
 
@@ -17,6 +18,13 @@ class CommunityViewModel: ViewModel() {
     private val size = 100
 
     private val pages = ArrayList<Int>()
+
+
+    init {
+        GlobalInitEvent.addUnit{
+            this.nextCommunityPage()
+        }
+    }
 
     /**
      * 获取下一页动态

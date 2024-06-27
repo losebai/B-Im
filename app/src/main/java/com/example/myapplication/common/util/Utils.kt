@@ -42,6 +42,10 @@ object Utils {
         return if (StringUtil.isEmpty(str)) "" else str
     }
 
+    fun stringLen(str: String, len: Int = 15): String {
+        return if (str.length > len) str.substring(0, 15) else str
+    }
+
     private val names = arrayOf("白白的小迷妹","一个孤儿","牛逼的我","神人")
     fun randomName(): String {
         val index = Random.nextInt(names.size)

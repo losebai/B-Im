@@ -38,7 +38,7 @@ class UserViewModel(context: Context): ViewModel() {
     var recvUserId = 0L
 
     // 联系人列表
-    var users: List<UserEntity> by mutableStateOf(listOf())
+    var users: List<UserEntity> = listOf()
 
     // id对应
     var userMap: MutableMap<Long, UserEntity> = mutableMapOf()

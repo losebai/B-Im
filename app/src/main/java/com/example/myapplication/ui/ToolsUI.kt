@@ -206,7 +206,6 @@ fun ImageTextList(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-
                         HeadImage(
                             onClick = {},
                             userEntity = communityEntity.userEntity,

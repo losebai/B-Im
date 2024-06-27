@@ -3,12 +3,15 @@ package com.example.myapplication.ui
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -84,7 +87,6 @@ fun PageHost(
                         mainController,
                     )
                 }
-
                 MenuRouteConfig.ROUTE_COMMUNITY -> {
                     appBase.topVisible = false
                     Community(
@@ -94,7 +96,6 @@ fun PageHost(
                         communityViewModel,
                     )
                 }
-
                 MenuRouteConfig.ROUTE_MESSAGE -> {
                     appBase.topVisible = true
                     MessagesList(
@@ -104,7 +105,6 @@ fun PageHost(
                         modifier = mod.fillMaxWidth()
                     )
                 }
-
                 MenuRouteConfig.ROUTE_USERS -> {
                     appBase.topVisible = true
                     Column(modifier = mod) {

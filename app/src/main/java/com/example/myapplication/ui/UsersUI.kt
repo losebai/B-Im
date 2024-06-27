@@ -1,5 +1,6 @@
 package com.example.myapplication.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -63,13 +65,8 @@ fun SearchUser(
     )
 
 
-@Composable
-fun AddUser() {
 
-
-}
-
-
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun UserList(
     userViewModel: UserViewModel,
@@ -78,7 +75,9 @@ fun UserList(
 ) {
     val state = MySwipeRefreshState(NORMAL)
     val scope = rememberCoroutineScope()
-    var list = userViewModel.users
+    var list by remember {
+        mutableStateOf(userViewModel.users)
+    }
     val user = AppUserEntity()
     MySwipeRefresh(
         state = state,
@@ -88,7 +87,7 @@ fun UserList(
         onRefresh = {
             scope.launch {
                 state.loadState = REFRESHING
-                ThreadPoolManager.getInstance().addTask("user"){
+                ThreadPoolManager.getInstance().addTask("user", "UserList"){
                     list = userViewModel.getReferUser(user)
                 }
                 logger.info { "用户下拉刷新" }
@@ -120,7 +119,7 @@ fun UserList(
                             Row {
                                 Text(text = "[${list[it].status.tag}] ", fontSize = 12.sp,)
                                 Text(
-                                    text = Utils.stringOrNull(list[it].note),
+                                    text = Utils.stringLen(list[it].note),
                                     fontSize = 12.sp,
                                     color = Color.Black
                                 )

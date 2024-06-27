@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
@@ -59,126 +58,118 @@ fun DynamicMessage(communityEntity: CommunityEntity, modifier: Modifier = Modifi
     }
     Column(
         modifier = modifier
-            .fillMaxSize()
             .border(1.dp, Color.Black)
+            .padding(10.dp)
             .background(Color.White),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Column {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 10.dp)
-            ) {
-                HeadImage(
-                    onClick = {},
-                    userEntity = communityEntity.userEntity,
-                    modifier = Modifier.size(50.dp)
-                )
-                Column(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .height(100.dp),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(text = communityEntity.userEntity.name, fontSize = 18.sp)
-                    Text(text = communityEntity.createTime, fontSize = 14.sp)
-                }
-            }
-            Text(
-                text = communityEntity.message, modifier = Modifier
-                    .padding(start = 10.dp), fontSize = 24.sp
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 10.dp)
+        ) {
+            HeadImage(
+                onClick = {},
+                userEntity = communityEntity.userEntity,
+                modifier = Modifier.size(50.dp)
             )
-            LazyVerticalGrid(
-//                columns = GridCells.FixedSize(
-//                    when {
-//                        communityEntity.images.size == 1 -> 240.dp
-//                        communityEntity.images.size == 2 -> 190.dp
-//                        communityEntity.images.size in 3..8 -> 120.dp
-//                        communityEntity.images.size >= 9 -> 90.dp
-//                        else -> 100.dp
-//                    }
-//                ),
-                columns = GridCells.Fixed(
-                    when {
-                        communityEntity.images.size == 1 -> 1
-                        communityEntity.images.size == 2 -> 2
-                        communityEntity.images.size >= 9 -> 3
-                        else -> 3
-                    }
-                ),
-                horizontalArrangement = Arrangement.Start,
+            Column(
                 modifier = Modifier
-                    .padding(start = 10.dp, end = 10.dp).fillMaxWidth()
+                    .padding(start = 10.dp)
+                    .height(100.dp),
+                verticalArrangement = Arrangement.Center
             ) {
-                items(communityEntity.images.size) {
-                    AsyncImage(
-                        communityEntity.images[it],
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.padding(1.dp).fillMaxSize()
-                    )
-                }
+                Text(text = communityEntity.userEntity.name, fontSize = 18.sp)
+                Text(text = communityEntity.createTime, fontSize = 14.sp)
             }
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp)
-            ) {
-                IconButton(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .size(50.dp)
-                        .padding(5.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ThumbUp,
-                        contentDescription = "点赞"
-                    )
+        }
+        Text(
+            text = communityEntity.message, modifier = Modifier
+                .padding(start = 10.dp), fontSize = 24.sp
+        )
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(
+                when {
+                    communityEntity.images.size == 1 -> 1
+                    communityEntity.images.size == 2 -> 2
+                    communityEntity.images.size >= 9 -> 3
+                    else -> 3
                 }
-                IconButton(
-                    onClick = { /*TODO*/ },
+            ),
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxWidth()
+        ) {
+            items(communityEntity.images.size) {
+                AsyncImage(
+                    communityEntity.images[it],
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(50.dp)
-                        .padding(5.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Share,
-                        contentDescription = "分享"
-                    )
-                }
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-
-                HeadImage(
-                    onClick = {},
-                    userEntity = communityEntity.userEntity,
-                    modifier = Modifier
-                        .height(40.dp)
-                        .width(60.dp)
-                        .padding(start = 10.dp, end = 10.dp)
+                        .padding(1.dp)
                 )
-                OutlinedTextField(value = pingLun, modifier = Modifier
-                    .width(300.dp)
-                    .height(40.dp),
-                    onValueChange = {
-                        pingLun = it
-                    })
-                IconButton(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .height(40.dp)
-                        .width(50.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Send,
-                        contentDescription = "发送"
-                    )
-                }
+            }
+        }
+        Row(
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(5.dp)
+        ) {
+            IconButton(
+                onClick = { /*TODO*/ },
+                modifier = Modifier
+                    .size(50.dp)
+                    .padding(start = 5.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ThumbUp,
+                    contentDescription = "点赞"
+                )
+            }
+            IconButton(
+                onClick = { /*TODO*/ },
+                modifier = Modifier
+                    .size(50.dp)
+                    .padding(start = 5.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Share,
+                    contentDescription = "分享"
+                )
+            }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+
+            HeadImage(
+                onClick = {},
+                userEntity = communityEntity.userEntity,
+                modifier = Modifier
+                    .height(40.dp)
+                    .width(60.dp)
+                    .padding(start = 10.dp, end = 10.dp)
+            )
+            OutlinedTextField(value = pingLun, modifier = Modifier
+                .width(250.dp)
+                .height(40.dp),
+                onValueChange = {
+                    pingLun = it
+                })
+            IconButton(
+                onClick = { /*TODO*/ },
+                modifier = Modifier
+                    .height(40.dp)
+                    .width(50.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Send,
+                    contentDescription = "发送"
+                )
             }
         }
     }
@@ -212,7 +203,7 @@ fun CommunityHome(
         items(communityList.size) {
             DynamicMessage(
                 communityList[it], modifier = Modifier
-                    .height(450.dp)
+                    .height(500.dp)
                     .padding(1.dp)
             )
         }
