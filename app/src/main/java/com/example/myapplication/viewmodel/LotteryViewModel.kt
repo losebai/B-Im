@@ -40,6 +40,7 @@ class LotteryViewModel() : ViewModel() {
 
     init {
         GlobalInitEvent.addUnit{
+            lotteryAwardCountDto.value = appLotteryPoolService.lotteryAwardCount(SystemApp.UserId, false);
             currentPools()
         }
     }

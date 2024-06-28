@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.fragment.project.ui.web.rememberWebViewNavigator
 import com.example.myapplication.R
 import kotlinx.coroutines.launch
 

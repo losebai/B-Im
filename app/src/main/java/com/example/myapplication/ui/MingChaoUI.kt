@@ -100,7 +100,6 @@ fun LotterySimulate(
     val scope = rememberCoroutineScope()
     val color = colorResource(id = R.color.golden)
     val lotteryAwardCountDto by remember {
-        lotteryViewModel.lotteryAwardCount()
         lotteryViewModel.lotteryAwardCountDto
     }.also {
         val lis = mutableListOf<LotteryPollEnum>()
@@ -168,7 +167,7 @@ fun LotterySimulate(
             item {
                 Column(
                     modifier = Modifier
-                        .heightIn(350.dp, 500.dp)
+                        .height(310.dp)
                         .padding(20.dp)
                         .border(1.dp, Color.White)
                         .padding(20.dp)
@@ -262,7 +261,8 @@ fun LotterySimulate(
                 }
             }
 
-            if (pools.isEmpty()){
+            if (pools.isEmpty() || pools.size <= pagerState.pageCount ||
+                lotteryAwardCountDto.poolLotteryAwardMap.isEmpty()){
             } else{
                 item {
                     Column(
@@ -455,11 +455,10 @@ fun LotterySimulate(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GetCookiesUri(
     modifier: Modifier = Modifier, toolsViewModel: ToolsViewModel,
-    mainController: NavHostController = rememberNavController()
+    onBack : () -> Unit = {}
 ) {
     var uri by remember {
         mutableStateOf("")
@@ -476,7 +475,7 @@ fun GetCookiesUri(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         IconButton(onClick = {
-            mainController.navigateUp()
+            onBack()
         }, modifier = Modifier.padding(top = 30.dp, start = 10.dp)) {
             Icon(
                 imageVector = Icons.Outlined.ArrowBack,

@@ -305,7 +305,7 @@ fun ToolsList(
             LaunchedEffect(this) {
                 while(true) {
                     delay(5.seconds)
-                    if (bannerIndex >= images.size){
+                    if (bannerIndex + 1 >= images.size){
                         bannerIndex = 0
                     } else{
                         bannerIndex++
@@ -314,7 +314,7 @@ fun ToolsList(
             }
             Column {
                 Row {
-                    if (images.size >= it) {
+                    if (images.size > it) {
                         Surface(shape = StyleCommon.ONE_SHAPE) {
                             AsyncImage(
                                 model = images[bannerIndex].url, contentDescription = null,

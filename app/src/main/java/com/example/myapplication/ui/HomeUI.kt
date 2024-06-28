@@ -15,7 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
-import com.example.fragment.project.ui.web.WebViewNavigator
+import com.example.myapplication.common.ui.web.WebViewNavigator
 import com.example.myapplication.common.ui.web.WebViewManager
 
 

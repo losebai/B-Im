@@ -149,7 +149,7 @@ android {
     applicationVariants.all {
         outputs.all {
             if (this is BaseVariantOutputImpl) {
-                val name = "wan-${buildType.name}-${versionName}-${productFlavors.first().name}.apk"
+                val name = "B-Im-${buildType.name}-${versionName}-${productFlavors.first().name}.apk"
                 outputFileName = name
             }
         }

@@ -1,11 +1,23 @@
-# fileEntity-android
+# B-Im
+
 
 #### 介绍
 
 本项目是一个仿QQ的IM系统，采用了compose实现了基本UI组件，该踩过的雷都踩了，主要功能是社交通讯，及一些系统工具，游戏工具。
+抽卡模拟，分析，统计
 很多功能还在待开发中。
 
-本项目属于前台项目，后台是dispatch-sdk，rpc中台，后续会分离出dispatch-app-server
+本项目属于客户端项目，后台是dispatch-sdk，rpc中台，后续会分离出dispatch-app-server
+
+<img src="https://img.shields.io/badge/Java-8~22-green.svg" alt="Java-8~22" />
+<img src="https://img.shields.io/badge/Kotlin-8+-green.svg" alt="Kotlin-8+" />
+<img src="https://img.shields.io/badge/material-3-green" alt="material-3-green" />
+<img src="https://img.shields.io/badge/SDK->24-green" alt="material-3-green" />
+
+如何有任何建议和能技术支持的同学欢迎加群
+
+<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=u5b9H-KYtVZ1AkWNj4a_QVhzaGpxZxAn&jump_from=webapi&authKey=1FnsQITgER4fNmkupjQ2SOmHwJkxO7ePsSfBbmr6AzRTWRkxi3dKUbNCQQRYTeFE"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="BIM" title="BIM"></a>
+
 
 ### 技术栈
 本项目偏向国产化
@@ -15,7 +27,24 @@ Server: socket.d snack3
 data: room
 ```
 
-## 下面是基本功能与页面，大部分完成，游戏在开发中
+## 下面是基本功能与页面，完成功能中大部分属于基础功能完成，细节待优化
+- 基础功能
+- - 个人资料 （完成）
+- - 联系人 （完成）
+- - 实时通讯 （完成）
+- - 动态 （进行中）
+- 鸣潮
+- - 抽卡模拟器（已完成）
+- - 抽奖分析 （进行中）
+- - 练度统计 （未开始）
+- 原神
+- - 抽卡模拟器（未开始）
+- - 抽奖分析 （未开始）
+- - 练度统计 （未开始）
+- 铁道
+- - 抽卡模拟器（未开始）
+- - 抽奖分析 （未开始）
+- - 练度统计 （未开始）
 
 ### 消息
 

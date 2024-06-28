@@ -1,4 +1,4 @@
-package com.example.fragment.project.ui.web
+package com.example.myapplication.common.ui.web
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -31,13 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
-import com.example.myapplication.common.ui.web.WebViewManager
-import com.example.myapplication.common.ui.web.assetsResourceRequest
-import com.example.myapplication.common.ui.web.cacheResourceRequest
-import com.example.myapplication.common.ui.web.isAssetsResource
-import com.example.myapplication.common.ui.web.isCacheResource
-import com.example.myapplication.common.ui.web.setDownloadListener
-import com.example.myapplication.common.ui.web.setOnLongClickListener
 import com.example.myapplication.common.util.injectVConsoleJs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -67,6 +60,20 @@ fun WebView(
         navigator.navigateBack()
     }
     webView?.let {
+//        val settings = it.getSettings();
+//        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+//        //支持js
+//        settings.setJavaScriptEnabled(true);
+//
+//        settings.setUserAgentString("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36");
+////自适应屏幕
+//        settings.setUseWideViewPort(true);
+//        settings.setLoadWithOverviewMode(true);
+////自动缩放
+//        settings.setBuiltInZoomControls(true);
+//        settings.setSupportZoom(true);
+////支持获取手势焦点
+//        it.requestFocusFromTouch();
         LaunchedEffect(it, navigator) {
             navigator.lastLoadedUrl = it.url
             with(navigator) {

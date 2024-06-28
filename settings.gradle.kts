@@ -17,5 +17,5 @@ dependencyResolutionManagement {
 }
 
 
-rootProject.name = "My Application"
+rootProject.name = "B-Im"
 include(":app")

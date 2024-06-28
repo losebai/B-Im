@@ -163,7 +163,9 @@ fun MainNavGraph(activity: AppCompatActivity, appBase: AppBase,
         }
         composable(MingChaoRoute.SET_COOKIES){
             GetCookiesUri(Modifier,
-                toolsViewModel)
+                toolsViewModel, onBack = {
+                    navHostController.navigateUp()
+                })
         }
         composable(PageRouteConfig.TOOLS_IMAGE_LIST){
 
