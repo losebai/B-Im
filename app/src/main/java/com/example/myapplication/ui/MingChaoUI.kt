@@ -19,20 +19,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -71,6 +71,7 @@ import com.example.myapplication.common.provider.BaseContentProvider
 import com.example.myapplication.common.ui.MySwipeRefresh
 import com.example.myapplication.common.ui.MySwipeRefreshState
 import com.example.myapplication.common.ui.NORMAL
+import com.example.myapplication.common.ui.PagerList
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
@@ -79,7 +80,6 @@ import com.example.myapplication.mc.dto.CatalogueDto
 import com.example.myapplication.mc.dto.RoleBook
 import com.example.myapplication.viewmodel.LotteryViewModel
 import com.example.myapplication.viewmodel.ToolsViewModel
-import kotlinx.coroutines.launch
 
 
 /**
@@ -99,11 +99,11 @@ fun LotterySimulate(
     }
     val scope = rememberCoroutineScope()
     val color = colorResource(id = R.color.golden)
-    val lotteryAwardCountDto by remember {
+    val lotteryAwardCountDto =
         lotteryViewModel.lotteryAwardCountDto
-    }.also {
+    .also {
         val lis = mutableListOf<LotteryPollEnum>()
-        it.value.poolLotteryAwardMap.forEach { (k, _) ->
+        it.poolLotteryAwardMap.forEach { (k, _) ->
             lis += LotteryPollEnum.toUserStatus(k)
         }
         pools = lis
@@ -148,158 +148,158 @@ fun LotterySimulate(
                             isProd = !isProd
                             lotteryViewModel.lotteryAwardCount(isProd)
                         }, modifier = Modifier.padding(top = 30.dp, start = 10.dp),
-                        shape=StyleCommon.ONE_SHAPE,
+                        shape = StyleCommon.ONE_SHAPE,
                         colors = ButtonDefaults.buttonColors(Color.Transparent)
                     ) {
-                        Text(text = if (!isProd) "切到到真实" else "切到到模拟", color=textColor)
+                        Text(text = if (!isProd) "切到到真实" else "切到到模拟", color = textColor)
                     }
                     Button(
                         onClick = {
                             mainController.navigate(MingChaoRoute.SET_COOKIES)
                         }, modifier = Modifier.padding(top = 30.dp, start = 10.dp),
-                        shape=StyleCommon.ONE_SHAPE,
+                        shape = StyleCommon.ONE_SHAPE,
                         colors = ButtonDefaults.buttonColors(Color.Transparent)
                     ) {
-                        Text(text = "设置", color=textColor)
+                        Text(text = "设置", color = textColor)
                     }
                 }
             }
             item {
-                Column(
-                    modifier = Modifier
+                Card(
+                    Modifier
                         .height(310.dp)
                         .padding(20.dp)
-                        .border(1.dp, Color.White)
-                        .padding(20.dp)
+                        .border(1.dp, Color.White),
+                    colors = CardDefaults.cardColors(Color.Transparent)
                 ) {
-                    Text(text = "UID: ${lotteryAwardCountDto.id}", color = textColor)
-                    Text(text = "名称: ${lotteryAwardCountDto.name}", color = textColor)
-                    Row(
-                        modifier = rowModifier,
+                    Column(
+                        modifier = Modifier
+                            .padding(20.dp)
                     ) {
-                        Text(
-                            text = lotteryAwardCountDto.tag ?: "兄弟，你不行诶",
-                            color = color,
-                            fontSize = 25.sp,
-                        )
-                    }
-                    Row(
-                        modifier = rowModifier,
-                    ) {
-                        Text(text = "总次数: ", color = textColor)
-                        Text(
-                            text = lotteryAwardCountDto.sumCount.toString(),
-                            color = color,
-                            fontSize = 20.sp
-                        )
-                    }
-                    Row(
-                        modifier = rowModifier,
-                    ) {
-                        Text(text = "平均出金: ", color = textColor)
-                        Text(
-                            text = lotteryAwardCountDto.avgCount.toString(),
-                            color = color,
-                            fontSize = 20.sp
-                        )
-                    }
-                    Row(modifier = rowModifier, horizontalArrangement = Arrangement.SpaceBetween) {
-                        Column(columModifier, horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = "Up数量: ", color = textColor)
+                        Text(text = "UID: ${lotteryAwardCountDto.id}", color = textColor)
+                        Text(text = "名称: ${lotteryAwardCountDto.name}", color = textColor)
+                        Row(
+                            modifier = rowModifier,
+                        ) {
                             Text(
-                                text = lotteryAwardCountDto.upCount.toString(),
+                                text = lotteryAwardCountDto.tag ?: "兄弟，你不行诶",
+                                color = color,
+                                fontSize = 25.sp,
+                            )
+                        }
+                        Row(
+                            modifier = rowModifier,
+                        ) {
+                            Text(text = "总次数: ", color = textColor)
+                            Text(
+                                text = lotteryAwardCountDto.sumCount.toString(),
                                 color = color,
                                 fontSize = 20.sp
                             )
                         }
-                        Column(columModifier, horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = "五星数量: ", color = textColor)
+                        Row(
+                            modifier = rowModifier,
+                        ) {
+                            Text(text = "平均出金: ", color = textColor)
                             Text(
-                                text = lotteryAwardCountDto.star5Count.toString(),
+                                text = lotteryAwardCountDto.avgCount.toString(),
                                 color = color,
                                 fontSize = 20.sp
                             )
                         }
-                        Column(columModifier, horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = "四星数量: ", color = textColor)
-                            Text(
-                                text = lotteryAwardCountDto.star4Count.toString(),
-                                color = color,
-                                fontSize = 20.sp
-                            )
+                        Row(
+                            modifier = rowModifier,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column(
+                                columModifier,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = "Up数量: ", color = textColor)
+                                Text(
+                                    text = lotteryAwardCountDto.upCount.toString(),
+                                    color = color,
+                                    fontSize = 20.sp
+                                )
+                            }
+                            Column(
+                                columModifier,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = "五星数量: ", color = textColor)
+                                Text(
+                                    text = lotteryAwardCountDto.star5Count.toString(),
+                                    color = color,
+                                    fontSize = 20.sp
+                                )
+                            }
+                            Column(
+                                columModifier,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = "四星数量: ", color = textColor)
+                                Text(
+                                    text = lotteryAwardCountDto.star4Count.toString(),
+                                    color = color,
+                                    fontSize = 20.sp
+                                )
+                            }
                         }
-                    }
-                    Row(
-                        modifier = rowModifier,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column(columModifier, horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = "小保底不歪: ", color = textColor)
-                            Text(
-                                text = lotteryAwardCountDto.up.toString(),
-                                color = color,
-                                fontSize = 20.sp
-                            )
-                        }
-                        Column(columModifier, horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = "每UP角色: ", color = textColor)
-                            Text(
-                                text = lotteryAwardCountDto.avgRoleCount.toString(),
-                                color = color,
-                                fontSize = 20.sp
-                            )
-                        }
-                        Column(columModifier, horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = "每UP武器: ", color = textColor)
-                            Text(
-                                text = lotteryAwardCountDto.avgWeaponCount.toString(),
-                                color = color,
-                                fontSize = 20.sp
-                            )
+                        Row(
+                            modifier = rowModifier,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column(
+                                columModifier,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = "小保底不歪: ", color = textColor)
+                                Text(
+                                    text = lotteryAwardCountDto.up.toString(),
+                                    color = color,
+                                    fontSize = 20.sp
+                                )
+                            }
+                            Column(
+                                columModifier,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = "每UP角色: ", color = textColor)
+                                Text(
+                                    text = lotteryAwardCountDto.avgRoleCount.toString(),
+                                    color = color,
+                                    fontSize = 20.sp
+                                )
+                            }
+                            Column(
+                                columModifier,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = "每UP武器: ", color = textColor)
+                                Text(
+                                    text = lotteryAwardCountDto.avgWeaponCount.toString(),
+                                    color = color,
+                                    fontSize = 20.sp
+                                )
+                            }
                         }
                     }
                 }
             }
 
-            if (pools.isEmpty() || pools.size <= pagerState.pageCount ||
-                lotteryAwardCountDto.poolLotteryAwardMap.isEmpty()){
-            } else{
+            if (pools.isEmpty() || pools.size <  pagerState.pageCount - 1 ||
+                lotteryAwardCountDto.poolLotteryAwardMap.isEmpty()
+            ) {
+            } else {
                 item {
                     Column(
                         modifier = Modifier
-                            .heightIn(200.dp, 500.dp)
+                            .height(310.dp)
                             .padding(20.dp)
                             .border(1.dp, Color.White)
                             .padding(20.dp)
                     ) {
-                        LazyVerticalGrid(
-                            GridCells.Fixed(5),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            items(pools.size) {
-                                Column(
-                                    modifier = Modifier
-                                        .width(50.dp)
-                                        .height(20.dp)
-                                        .clickable {
-                                            scope.launch {
-                                                pagerState.scrollToPage(it)
-                                            }
-                                        },
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(text = pools[it].poolName, color = textColor)
-                                    Divider(
-                                        thickness = 4.dp,
-                                        color = if (pagerState.currentPage == it) Color.Green else Color.White,
-                                    )
-                                }
-                            }
-                        }
-                        HorizontalPager(
-                            pagerState,
-                            modifier = Modifier.padding(top=10.dp)
-                        ) {
+                        PagerList(pools.map { it.poolName }.toList(), textColor) {
                             LazyColumn(
                                 Modifier.wrapContentHeight(),
                                 reverseLayout = true,
@@ -366,8 +366,10 @@ fun LotterySimulate(
                         .border(1.dp, Color.White)
                         .padding(20.dp)
                 ) {
-                    Row(modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
                         Text(
                             text = userPoolLotteryAward.poolName.toString(),
                             color = color,
@@ -458,7 +460,7 @@ fun LotterySimulate(
 @Composable
 fun GetCookiesUri(
     modifier: Modifier = Modifier, toolsViewModel: ToolsViewModel,
-    onBack : () -> Unit = {}
+    onBack: () -> Unit = {}
 ) {
     var uri by remember {
         mutableStateOf("")
@@ -485,10 +487,11 @@ fun GetCookiesUri(
         }
         Text(text = "如何获取", color = textColor)
         OutlinedTextField(value = uri, onValueChange = { uri = it })
-        Button(onClick = { /*TODO*/ }, 
+        Button(
+            onClick = { /*TODO*/ },
             shape = StyleCommon.ONE_SHAPE,
             colors = ButtonDefaults.buttonColors(colorResource(id = R.color.button_bg))
-            ) {
+        ) {
             Text(text = "开始获取", color = textColor)
         }
         Text(text = "正在获取xx,第几页", color = textColor)

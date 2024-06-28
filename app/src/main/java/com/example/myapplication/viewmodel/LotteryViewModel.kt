@@ -19,33 +19,34 @@ import kotlin.concurrent.thread
 
 class LotteryViewModel() : ViewModel() {
 
+    companion object {
+
+        // 池子列表
+        var pools by mutableStateOf(listOf<LotteryPool>(
+            LotteryPool(0,"暂无",
+                "https://mc.kurogames.com/static4.0/assets/news-bg-5e0dc97a.jpg",""
+            ))
+        )
+    }
+
 
     private val logger = KotlinLogging.logger {
     }
 
     // 模拟
     var award by mutableStateOf(listOf<Award>())
-
-
     private val appLotteryPoolService = AppLotteryPoolService()
+    var lotteryAwardCountDto by mutableStateOf(LotteryAwardCountDto())
 
-    var lotteryAwardCountDto = mutableStateOf(LotteryAwardCountDto())
-
-    // 池子列表
-    var pools = listOf<LotteryPool>(
-        LotteryPool(0,"暂无",
-                "https://web-static.kurobbs.com/resource/wiki/prod/assets/home-mc-bg-mobile-b993c3d5.png",""
-        )
-    )
 
     init {
         GlobalInitEvent.addUnit{
-            lotteryAwardCountDto.value = appLotteryPoolService.lotteryAwardCount(SystemApp.UserId, false);
-            currentPools()
+            lotteryAwardCountDto = appLotteryPoolService.lotteryAwardCount(SystemApp.UserId, false);
+            pools = appLotteryPoolService.currentPools()
         }
     }
 
-    private fun currentPools(): List<LotteryPool> {
+    fun currentPools(): List<LotteryPool> {
         if (pools.size < 2){
             ThreadPoolManager.getInstance().addTask("lottery", "lottery"){
                 pools = appLotteryPoolService.currentPools()
@@ -59,6 +60,6 @@ class LotteryViewModel() : ViewModel() {
     }
 
     fun lotteryAwardCount(isProd: Boolean = false) = thread {
-        lotteryAwardCountDto.value = appLotteryPoolService.lotteryAwardCount(SystemApp.UserId, isProd);
+        lotteryAwardCountDto = appLotteryPoolService.lotteryAwardCount(SystemApp.UserId, isProd);
     }
 }

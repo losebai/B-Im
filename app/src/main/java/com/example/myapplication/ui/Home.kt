@@ -125,7 +125,7 @@ fun PageHost(
             }
         },
             topBar = {
-                appBase.GetTopAppBar(userViewModel.userEntity)
+                appBase.GetTopAppBar(userViewModel.userEntity, mainController)
             }, floatingActionButton = {
             })
     }

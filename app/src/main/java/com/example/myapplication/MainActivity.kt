@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         messagesViewModel.messageService.close()
         ThreadPoolManager.getInstance().exitThreadPool("init")
+        ThreadPoolManager.getInstance().exitThreadPool("lottery")
         ThreadPoolManager.getInstance().exitThreadPool("message")
     }
 

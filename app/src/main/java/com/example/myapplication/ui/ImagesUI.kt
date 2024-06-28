@@ -35,6 +35,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -69,8 +70,8 @@ import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.dto.FileEntity
 import com.example.myapplication.viewmodel.ImageViewModel
-import kotlinx.coroutines.launch
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.launch
 
 
 val ImageModifier: Modifier = Modifier
@@ -82,7 +83,7 @@ private val logger = KotlinLogging.logger {}
 private val TEXT_ROW_MODIFIER = Modifier.fillMaxWidth(0.8f)
 
 class ImagesUI {
-    companion object{
+    companion object {
         var isDetail by mutableStateOf(false)
     }
 }
@@ -152,15 +153,14 @@ fun PhotoDataSetBody(
                 ImageRequest.Builder(LocalContext.current)
                     .data(list[photo].location)
                     .crossfade(true)
-                    .build()
-                ,
+                    .build(),
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
                 modifier = ImageModifier
                     .clip(RoundedCornerShape(1))
                     .clickable {
-                    onClick(list[photo])
-                },
+                        onClick(list[photo])
+                    },
             )
         }
     }
@@ -192,7 +192,7 @@ fun PhotoDataSet(
     var topVisible by remember {
         mutableStateOf(true)
     }
-    var imageDetail by remember{
+    var imageDetail by remember {
         mutableStateOf(FileEntity())
     }
 
@@ -239,9 +239,10 @@ fun PhotoDataSet(
                 Button(
                     onClick = {
                         topVisible = !topVisible
-                        if(imageDetail.index != it){
+                        if (imageDetail.index != it) {
                             imageDetail = images[it]
-                        } },
+                        }
+                    },
                     shape = StyleCommon.ZERO_SHAPE,
                     colors = ButtonDefaults.buttonColors(Color.White),
                 ) {
@@ -271,41 +272,44 @@ fun PhotoDataSet(
  * @param [modifier]
  * @param [navHostController]
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ImageGroupList(
     imageViewModel: ImageViewModel,
     navHostController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    Row(horizontalArrangement = Arrangement.SpaceAround) {
-        IconButton(onClick = {
-            navHostController.navigateUp()
-        }) {
-            Icon(
-                imageVector = Icons.Filled.ArrowBack,
-                contentDescription = "返回"
-            )
-        }
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 96.dp),
-            modifier = modifier
-                .padding(15.dp)
-            ,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(imageViewModel.dirList.size) { photo ->
-                ImageGroupButton(imageViewModel.dirList[photo]) { item ->
-                    if (item.isDir) {
-                        imageViewModel.groupName = item.name
-                        imageViewModel.groupPath = item.parentPath
+    Column {
+        TopAppBar(title = { }, navigationIcon = {
+            IconButton(onClick = {
+                navHostController.navigateUp()
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "返回"
+                )
+            }
+        })
+        Row(horizontalArrangement = Arrangement.SpaceAround) {
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 96.dp),
+                modifier = modifier
+                    .padding(15.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(imageViewModel.dirList.size) { photo ->
+                    ImageGroupButton(imageViewModel.dirList[photo]) { item ->
+                        if (item.isDir) {
+                            imageViewModel.groupName = item.name
+                            imageViewModel.groupPath = item.parentPath
+                        }
+                        navHostController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
                     }
-                    navHostController.navigate(PageRouteConfig.IMAGE_PAGE_ROUTE)
                 }
             }
         }
     }
 }
-
 
 
 @Composable
@@ -319,7 +323,6 @@ fun ImportImages(
     var enabled by remember {
         mutableStateOf(true)
     }
-    val activity = LocalContext.current as Activity
     Dialog(onDismissRequest = onDismissRequest) {
         Box(modifier = Modifier.background(Color.White)) {
             Column(

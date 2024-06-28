@@ -11,9 +11,8 @@ object GlobalInitEvent {
     }
 
     fun run(){
-        initUnit.forEach { it ->
-            ThreadPoolManager.getInstance().addTask("init", it)
+        while (initUnit.isNotEmpty()){
+            ThreadPoolManager.getInstance().addTask("init", initUnit.removeAt(0))
         }
     }
-
 }

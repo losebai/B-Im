@@ -64,15 +64,19 @@ fun MCRoleLotteryHome(
     }
     Box(
         modifier = Modifier
+            .background(Color.Black)
             .fillMaxSize(),
     ) {
         AsyncImage(
-            lotteryViewModel.pools[poolIndex].poolBg,
+            LotteryViewModel.pools[poolIndex].poolBg,
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.FillWidth
         )
-        Row(modifier = Modifier.padding(start = 0.dp, top = 20.dp, bottom = 20.dp, end = 60.dp)) {
+        Row(
+            modifier =
+            Modifier.padding(start = 0.dp, top = 20.dp, bottom = 20.dp, end = 60.dp)
+        ) {
             Column(
                 Modifier
                     .padding(top = 20.dp)
@@ -85,9 +89,9 @@ fun MCRoleLotteryHome(
                     Modifier,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    items(lotteryViewModel.pools.size) {
+                    items(LotteryViewModel.pools.size) {
                         AsyncImage(
-                            model = lotteryViewModel.pools[it].poolImageUri,
+                            model = LotteryViewModel.pools[it].poolImageUri,
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
@@ -129,7 +133,7 @@ fun MCRoleLotteryHome(
                 Column {
                     Text(text = "角色活动唤取", color = Color.Yellow, fontSize = 10.sp)
                     Text(
-                        text = lotteryViewModel.pools[poolIndex].poolName,
+                        text = LotteryViewModel.pools[poolIndex].poolName,
                         color = Color.White,
                         fontSize = 20.sp
                     )
@@ -137,14 +141,14 @@ fun MCRoleLotteryHome(
                 Column {
                     Text(text = "以下四星概率提升", color = Color.White, fontSize = 10.sp)
                     LazyRow {
-                        items(lotteryViewModel.pools[poolIndex].array.size) {
+                        items(LotteryViewModel.pools[poolIndex].array.size) {
                             Column(
                                 modifier = Modifier
                                     .padding(5.dp)
                                     .border(1.dp, Color.Gray, StyleCommon.ONE_SHAPE)
                             ) {
                                 AsyncImage(
-                                    model = lotteryViewModel.pools[poolIndex].array[it],
+                                    model = LotteryViewModel.pools[poolIndex].array[it],
                                     contentDescription = null,
                                     modifier = Modifier
                                         .size(40.dp)
@@ -179,7 +183,7 @@ fun MCRoleLotteryHome(
                 verticalAlignment = Alignment.Bottom
             ) {
                 Box(modifier = Modifier.clickable {
-                    onLottery(lotteryViewModel.pools[poolIndex], 1)
+                    onLottery(LotteryViewModel.pools[poolIndex], 1)
                 }, contentAlignment = Alignment.CenterStart) {
                     Image(
                         painter = painterResource(id = R.drawable.mc_icons), null,
@@ -194,7 +198,7 @@ fun MCRoleLotteryHome(
                     )
                 }
                 Box(modifier = Modifier.clickable {
-                    onLottery(lotteryViewModel.pools[poolIndex], 10)
+                    onLottery(LotteryViewModel.pools[poolIndex], 10)
                 }, contentAlignment = Alignment.CenterStart) {
                     Image(
                         painter = painterResource(id = R.drawable.hhobfg3k), null,
@@ -244,10 +248,10 @@ fun AwardList(
 
     val list = lotteryViewModel.award
     Box(contentAlignment = Alignment.Center) {
-        Image(
-            painter = painterResource(id = R.drawable.mc_lottery_bg),
+        AsyncImage(
+            model = "https://mc.kurogames.com/static4.0/assets/news-bg-5e0dc97a.jpg",
             contentDescription = null,
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.FillWidth,
             modifier = Modifier.fillMaxSize()
         )
         Row(
@@ -278,21 +282,24 @@ fun AwardList(
                         Modifier
                             .padding(top = 20.dp, bottom = 10.dp, start = 5.dp, end = 5.dp)
                             .border(if (list[it].star == 5) 2.dp else 0.dp, color)
-                            .paint(painterResource(
-                                id = when (list[it].star) {
-                                    4 -> R.drawable.mc_start4_bg
-                                    5 -> R.drawable.mc_start5_bg
-                                    else -> {
-                                        R.drawable.mc_start3_bg
+                            .paint(
+                                painterResource(
+                                    id = when (list[it].star) {
+                                        4 -> R.drawable.mc_start4_bg
+                                        5 -> R.drawable.mc_start5_bg
+                                        else -> {
+                                            R.drawable.mc_start3_bg
+                                        }
                                     }
-                                }
-                            ),contentScale = ContentScale.FillBounds),
+                                ), contentScale = ContentScale.FillBounds
+                            ),
                     ) {
                         AsyncImage(
                             model = list[it].imageUri,
                             contentDescription = null,
                             modifier = Modifier
-                                .size(150.dp).background(
+                                .size(150.dp)
+                                .background(
                                     brush = Brush.verticalGradient(
                                         colors = listOf(
                                             Color.Transparent,

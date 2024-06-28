@@ -6,10 +6,15 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -33,22 +38,19 @@ private val logger = KotlinLogging.logger {
 class LotteryActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val lotteryViewModel by viewModels<LotteryViewModel>();
+        GlobalInitEvent.run()
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
         this.enableEdgeToEdge()
         setContent {
             ComposeTestTheme {
                 val navHostController = rememberNavController()
-                val lotteryViewModel = viewModel<LotteryViewModel>()
-                GlobalInitEvent.run()
                 NavHost(
                     navController = navHostController,
                     startDestination = MingChaoRoute.LOTTERY_ROUTE,
-                    modifier = Modifier.padding(0.dp).fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                 ) {
                     composable(MingChaoRoute.LOTTERY_ROUTE) {
                         MCRoleLotteryHome(lotteryViewModel, onLottery = { pool, num ->
