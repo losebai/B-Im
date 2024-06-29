@@ -44,7 +44,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,7 +74,7 @@ import com.example.myapplication.common.ui.PagerList
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
-import com.example.myapplication.dto.LotteryPollEnum
+import com.example.myapplication.mc.consts.LotteryPollEnum
 import com.example.myapplication.mc.dto.CatalogueDto
 import com.example.myapplication.mc.dto.RoleBook
 import com.example.myapplication.viewmodel.LotteryViewModel
@@ -97,18 +96,17 @@ fun LotterySimulate(
     var pools by remember {
         mutableStateOf(LotteryPollEnum.entries.toList())
     }
-    val scope = rememberCoroutineScope()
     val color = colorResource(id = R.color.golden)
     val lotteryAwardCountDto =
         lotteryViewModel.lotteryAwardCountDto
-    .also {
-        val lis = mutableListOf<LotteryPollEnum>()
-        it.poolLotteryAwardMap.forEach { (k, _) ->
-            lis += LotteryPollEnum.toUserStatus(k)
-        }
-        pools = lis
-        pagerState = rememberPagerState { lis.size }
-    }
+            .also {
+                val lis = mutableListOf<LotteryPollEnum>()
+                it.poolLotteryAwardMap.forEach { (k, _) ->
+                    lis += LotteryPollEnum.toUserStatus(k)
+                }
+                pools = lis
+                pagerState = rememberPagerState { lis.size }
+            }
     val upColor = colorResource(id = R.color.star5)
     val textColor = Color.White
     val rowModifier = Modifier.fillMaxWidth()
@@ -287,7 +285,7 @@ fun LotterySimulate(
                 }
             }
 
-            if (pools.isEmpty() || pools.size <  pagerState.pageCount - 1 ||
+            if (pools.isEmpty() || pools.size < pagerState.pageCount - 1 ||
                 lotteryAwardCountDto.poolLotteryAwardMap.isEmpty()
             ) {
             } else {
@@ -474,27 +472,37 @@ fun GetCookiesUri(
                 contentScale = ContentScale.Crop
             )
             .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         IconButton(onClick = {
             onBack()
-        }, modifier = Modifier.padding(top = 30.dp, start = 10.dp)) {
+        }, modifier = Modifier.padding(30.dp)) {
             Icon(
                 imageVector = Icons.Outlined.ArrowBack,
                 contentDescription = "返回",
                 tint = Color.White
             )
         }
-        Text(text = "如何获取", color = textColor)
-        OutlinedTextField(value = uri, onValueChange = { uri = it })
-        Button(
-            onClick = { /*TODO*/ },
-            shape = StyleCommon.ONE_SHAPE,
-            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.button_bg))
+        Text(text = "抽卡分析")
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "开始获取", color = textColor)
+            Button(onClick = { /*TODO*/ }) {
+                Text(text = "如何获取", color = textColor)
+            }
+            OutlinedTextField(modifier = Modifier.fillMaxWidth(0.8f),
+                value = uri,
+                onValueChange = { uri = it })
+            Button(
+                onClick = {
+                    toolsViewModel.changeRecords(uri)
+                    onBack()
+                          },
+                shape = StyleCommon.ONE_SHAPE,
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.button_bg))
+            ) {
+                Text(text = "开始获取", color = textColor)
+            }
         }
-        Text(text = "正在获取xx,第几页", color = textColor)
     }
 }
 

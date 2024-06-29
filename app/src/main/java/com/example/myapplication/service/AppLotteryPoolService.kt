@@ -48,4 +48,5 @@ class AppLotteryPoolService() {
         }
         return LotteryAwardCountDto()
     }
+
 }

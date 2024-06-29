@@ -97,4 +97,42 @@ object HttpUtils {
         }
     }
 
+    /**
+     * 解析cookie
+     *
+     * @param cookie 饼干
+     * @return [Map]<[String], [String]>
+     */
+    fun parseParams(uri: String): Map<String, String> {
+        val values = uri.substring(uri.indexOf("?") + 1).split("&").dropLastWhile { it.isEmpty() }
+            .toTypedArray()
+        val map: MutableMap<String, String> = LinkedHashMap(values.size)
+        for (value in values) {
+            val i = value.lastIndexOf("=")
+            if (i > -1) {
+                map[value.substring(0, i).replace(" ", "")] = value.substring(i + 1)
+            }
+        }
+        return map
+    }
+
+    /**
+     * 解析cookie
+     *
+     * @param cookie 饼干
+     * @return [Map]<[String], [String]>
+     */
+    fun parseCookie(cookie: String): Map<String, String> {
+        val values = cookie.split(";".toRegex()).dropLastWhile { it.isEmpty() }
+            .toTypedArray()
+        val map: MutableMap<String, String> = LinkedHashMap(values.size)
+        for (value in values) {
+            val i = value.lastIndexOf("=")
+            if (i > -1) {
+                map[value.substring(0, i).replace(" ", "")] = value.substring(i + 1)
+            }
+        }
+        return map
+    }
+
 }

@@ -1,8 +1,9 @@
-package com.example.myapplication.repository
+package com.example.myapplication.repository.impl
 
 import com.example.myapplication.dao.BaseDao
 import com.example.myapplication.dao.MessagesDao
 import com.example.myapplication.entity.MessagesEntity
+import com.example.myapplication.repository.MessagesRepository
 import kotlinx.coroutines.flow.Flow
 
 class OfflineMessagesRepository(private val messagesDao: MessagesDao) : MessagesRepository {

@@ -1,8 +1,9 @@
-package com.example.myapplication.repository
+package com.example.myapplication.repository.impl
 
 import com.example.myapplication.dao.BaseDao
 import com.example.myapplication.dao.UserDao
 import com.example.myapplication.entity.UserEntity
+import com.example.myapplication.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 
 class OfflineUserRepository(private val userDao: UserDao) : UserRepository {

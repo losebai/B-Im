@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.myapplication.common.Mapping
 import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.database.AppDatabase
@@ -14,7 +13,7 @@ import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.event.GlobalInitEvent
 import com.example.myapplication.remote.entity.AppUserEntity
 import com.example.myapplication.remote.entity.toUserEntity
-import com.example.myapplication.repository.OfflineUserRepository
+import com.example.myapplication.repository.impl.OfflineUserRepository
 import com.example.myapplication.repository.UserRepository
 import com.example.myapplication.service.UserService
 import io.github.oshai.kotlinlogging.KotlinLogging

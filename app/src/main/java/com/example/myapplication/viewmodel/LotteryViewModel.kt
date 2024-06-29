@@ -1,7 +1,6 @@
 package com.example.myapplication.viewmodel
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -9,8 +8,6 @@ import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.dto.Award
 import com.example.myapplication.dto.LotteryAwardCountDto
-import com.example.myapplication.dto.LotteryCount
-import com.example.myapplication.dto.LotteryPollEnum
 import com.example.myapplication.dto.LotteryPool
 import com.example.myapplication.event.GlobalInitEvent
 import com.example.myapplication.service.AppLotteryPoolService

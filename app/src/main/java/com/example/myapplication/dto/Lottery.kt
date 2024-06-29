@@ -1,27 +1,8 @@
 package com.example.myapplication.dto
 
+import com.example.myapplication.mc.consts.LotteryPollEnum
 import com.example.myapplication.mc.dto.MCAwardCart
-import org.noear.snack.annotation.ONodeAttr
 
-enum class LotteryPollEnum(@ONodeAttr val value: Int, val poolName: String) {
-    INIT_ROLE(1, "角色新手"),
-//    INIT_WEAPON(2, "武器新手"),
-    UP_ROLE(5, "角色UP"),
-    UP_WEAPON(6, "武器Up"),
-    C_ROLE(7, "角色常驻"),
-    C_WEAPON(8, "武器常驻");
-
-    companion object {
-        fun toUserStatus(int: Int): LotteryPollEnum {
-            for (user: LotteryPollEnum in LotteryPollEnum.entries){
-                if (user.value == int){
-                    return user
-                }
-            }
-            return LotteryPollEnum.INIT_ROLE
-        }
-    }
-}
 
 data class LotteryCount(
     val roleId: Long,

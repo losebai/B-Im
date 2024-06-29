@@ -9,6 +9,7 @@ import com.example.myapplication.mc.dto.BannerDto
 import com.example.myapplication.mc.dto.RoleBook
 import com.example.myapplication.mc.dto.CatalogueDto
 import com.example.myapplication.mc.dto.HomeDto
+import com.example.myapplication.entity.McRecordEntity
 import com.example.myapplication.service.AbsToolService
 import okhttp3.Response
 import org.noear.snack.ONode
@@ -85,6 +86,30 @@ class MingChaoService : AbsToolService() {
                 )
             }
             return roles
+        }
+        return Collections.emptyList()
+    }
+
+
+
+    fun getGaChaRecord(uri: String, cardPoolType: Int, cardPoolId: Int = 1) : List<McRecordEntity> {
+        val body = hashMapOf<String,String?>()
+        body["cardPoolType"] = cardPoolType.toString()
+        body["cardPoolId"] = cardPoolId.toString()
+        body["languageCode"] = "zh-Hans"
+        if (uri.startsWith("https://aki-gm-resources.aki-game.com/")){
+            val tmp = HttpUtils.parseParams(uri)
+            body["playerId"] = tmp["player_id"]
+            body["serverId"] = tmp["svr_id"]
+            body["recordId"] = tmp["record_id"]
+        } else if (uri.startsWith("https://gmserver-api.aki-game2.net/")){
+            body.putAll(HttpUtils.parseParams(uri))
+        }
+        val res: Response? = HttpUtils.post(MingChaoAPI.POST_RACORD, body)
+        if (res?.isSuccessful == true){
+            val str = res.body?.string()
+            val json = ONode.load(str)
+            return json["data"].toObjectList(McRecordEntity::class.java)
         }
         return Collections.emptyList()
     }

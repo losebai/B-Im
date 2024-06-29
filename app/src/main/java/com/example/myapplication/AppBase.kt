@@ -190,7 +190,6 @@ class AppBase {
 
     @Composable
     fun GetBottomBar() {
-        val buttonModifier = Modifier
         val IconModifier = Modifier
         BottomAppBar(
             modifier = Modifier.height(100.dp),

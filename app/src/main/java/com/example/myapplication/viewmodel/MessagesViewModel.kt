@@ -11,8 +11,8 @@ import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.entity.toUserMessages
 import com.example.myapplication.event.GlobalInitEvent
 import com.example.myapplication.repository.MessagesRepository
-import com.example.myapplication.repository.OfflineMessagesRepository
-import com.example.myapplication.repository.OfflineUserRepository
+import com.example.myapplication.repository.impl.OfflineMessagesRepository
+import com.example.myapplication.repository.impl.OfflineUserRepository
 import com.example.myapplication.repository.UserRepository
 import com.example.myapplication.service.MessageService
 import io.github.oshai.kotlinlogging.KotlinLogging

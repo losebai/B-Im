@@ -9,16 +9,19 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.myapplication.common.provider.BaseContentProvider
 import com.example.myapplication.dao.KVMapDao
+import com.example.myapplication.dao.McRecordDao
 import com.example.myapplication.dao.MessagesDao
 import com.example.myapplication.dao.UserDao
 import com.example.myapplication.entity.KVMapEntity
+import com.example.myapplication.entity.McRecordEntity
 import com.example.myapplication.entity.MessagesEntity
 import com.example.myapplication.entity.UserEntity
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.internal.synchronized
 
-@Database(entities = [MessagesEntity::class, UserEntity::class, KVMapEntity::class],
-    version = 4)
+@Database(
+    entities = [MessagesEntity::class, UserEntity::class,
+        KVMapEntity::class, McRecordEntity::class],
+    version = 5
+)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun messagesDao(): MessagesDao
@@ -28,11 +31,13 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun kvDao(): KVMapDao
 
+    abstract fun McRecordDao(): McRecordDao
+
     companion object {
         @Volatile
         private var instance: AppDatabase? = null
 
-        private fun getInstance() = instance ?: kotlin.synchronized(AppDatabase::class.java) {
+        fun getInstance() = instance ?: kotlin.synchronized(AppDatabase::class.java) {
             instance ?: buildDatabase(BaseContentProvider.context())
         }
 
@@ -42,9 +47,11 @@ abstract class AppDatabase : RoomDatabase() {
                 AppDatabase::class.java,
                 "app-database"
             ).addMigrations(MIGRATION_2_3)
-                .addMigrations(MIGRATION_3_4).build().also {
-                instance = it
-            }
+                .addMigrations(MIGRATION_3_4)
+                .build()
+                .also {
+                    instance = it
+                }
         }
 
         fun getDatabase(context: Context): AppDatabase {
@@ -74,7 +81,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("alter table app_users add column userStatus integer not null default 0")
             }
         }
-        val MIGRATION_3_4 : Migration =object : Migration(3, 4) {
+        val MIGRATION_3_4: Migration = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 Log.i("Room_StudentDatabase", "数据库版本 2 升级到 版本 3")
                 database.execSQL("alter table app_users RENAME  column userStatus to status")
