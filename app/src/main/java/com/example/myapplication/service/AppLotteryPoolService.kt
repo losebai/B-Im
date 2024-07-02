@@ -49,4 +49,20 @@ class AppLotteryPoolService() {
         return LotteryAwardCountDto()
     }
 
+    fun asyncMcRecord(userId: Long, uri: String) : Map<String, Int> {
+        val params: HashMap<String, Any> = hashMapOf()
+        params["userId"] = userId
+        params["uri"] = uri
+        val res: Response? = HttpUtils.get(
+            AppAPI.AppLotteryPoolAPI.AWARD_ASYNC_RECORD,
+            params,
+        )
+        if (res?.isSuccessful == true){
+            val str = res.body?.string()
+            val json = ONode.load(str)
+            return json["data"].toObject(HashMap::class.java)
+        }
+        return mapOf()
+    }
+
 }

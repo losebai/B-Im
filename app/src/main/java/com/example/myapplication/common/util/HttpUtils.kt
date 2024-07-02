@@ -86,6 +86,14 @@ object HttpUtils {
         return execute(request);
     }
 
+    fun get(dto: HttpReqDto): Response? {
+        val request: Request = Request.Builder()
+            .url(url(dto.url, dto.params))
+            .headers(headers(dto.headers))
+            .build()
+        return execute(request);
+    }
+
 
     private fun execute(request: Request) : Response? {
 

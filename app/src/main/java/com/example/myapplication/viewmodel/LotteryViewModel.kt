@@ -16,16 +16,11 @@ import kotlin.concurrent.thread
 
 class LotteryViewModel() : ViewModel() {
 
-    companion object {
 
-        // 池子列表
-        var pools by mutableStateOf(listOf<LotteryPool>(
-            LotteryPool(0,"暂无",
-                "https://mc.kurogames.com/static4.0/assets/news-bg-5e0dc97a.jpg",""
-            ))
-        )
-    }
-
+    var pools  = listOf<LotteryPool>(
+        LotteryPool(0,"暂无",
+            "https://mc.kurogames.com/static4.0/assets/news-bg-5e0dc97a.jpg",""
+        ))
 
     private val logger = KotlinLogging.logger {
     }
@@ -33,7 +28,7 @@ class LotteryViewModel() : ViewModel() {
     // 模拟
     var award by mutableStateOf(listOf<Award>())
     private val appLotteryPoolService = AppLotteryPoolService()
-    var lotteryAwardCountDto by mutableStateOf(LotteryAwardCountDto())
+    lateinit var lotteryAwardCountDto : LotteryAwardCountDto
 
 
     init {
@@ -58,5 +53,9 @@ class LotteryViewModel() : ViewModel() {
 
     fun lotteryAwardCount(isProd: Boolean = false) = thread {
         lotteryAwardCountDto = appLotteryPoolService.lotteryAwardCount(SystemApp.UserId, isProd);
+    }
+
+    fun asyncMcRecord(uri: String) : Map<String, Int> {
+        return appLotteryPoolService.asyncMcRecord(SystemApp.UserId, uri);
     }
 }

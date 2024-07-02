@@ -262,9 +262,8 @@ fun ToolsList(
     mainController: NavHostController = rememberNavController(),
 ) {
     val scope = rememberCoroutineScope()
-    val pool = toolsViewModel.pool
     val pagerState = rememberPagerState {
-        pool.size
+        toolsViewModel.pool.size
     }
     var bannerIndex by remember {
         mutableIntStateOf(0)
@@ -272,13 +271,23 @@ fun ToolsList(
     var images by remember {
         mutableStateOf(listOf<BannerDto>())
     }
+    LaunchedEffect(images) {
+        while(true) {
+            delay(5.seconds)
+            if (bannerIndex + 1 >= images.size){
+                bannerIndex = 0
+            } else{
+                bannerIndex++
+            }
+        }
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
     ) {
         TopAppBar(title = {
             LazyVerticalGrid(GridCells.Fixed(4), modifier = Modifier.fillMaxWidth()) {
-                items(pool.size) {
+                items(toolsViewModel.pool.size) {
                     Column(
                         modifier = Modifier
                             .clickable {
@@ -288,7 +297,7 @@ fun ToolsList(
                             },
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(text = pool[it], fontSize = 20.sp, color= Color.Black)
+                        Text(text = toolsViewModel.pool[it], fontSize = 20.sp, color= Color.Black)
                         Divider(
                             thickness = 2.dp,
                             color = if (pagerState.currentPage == it) Color.Green else Color.Transparent,
@@ -300,26 +309,19 @@ fun ToolsList(
             actions = {
             })
         HorizontalPager(pagerState, modifier = Modifier.fillMaxWidth()) {
-            images = toolsViewModel.getBannerList(pool[it])
-            logger.info { "开始加载images:${pool[it]}:${images.size}" }
-            LaunchedEffect(this) {
-                while(true) {
-                    delay(5.seconds)
-                    if (bannerIndex + 1 >= images.size){
-                        bannerIndex = 0
-                    } else{
-                        bannerIndex++
-                    }
-                }
-            }
+            images = toolsViewModel.getBannerList(toolsViewModel.pool[it])
+            logger.info { "开始加载images:${toolsViewModel.pool[it]}:${images.size}" }
             Column {
                 Row {
-                    if (images.size > it) {
+                    if (images.size > bannerIndex) {
                         Surface(shape = StyleCommon.ONE_SHAPE) {
+                            logger.info { "开始加载banner:$bannerIndex:${toolsViewModel.pool[it]}:${images.size}" }
                             AsyncImage(
                                 model = images[bannerIndex].url, contentDescription = null,
                                 modifier = Modifier
-                                    .padding(10.dp).height(200.dp).clickable {
+                                    .padding(10.dp)
+                                    .height(200.dp)
+                                    .clickable {
                                         mainController.navigate(
                                             WEB_API_ROURE.WEB_ROUTE + "/${
                                                 Uri.encode(

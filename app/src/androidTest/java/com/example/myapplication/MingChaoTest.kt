@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.ui.GetCookiesUri
 import com.example.myapplication.ui.HookList
+import com.example.myapplication.viewmodel.LotteryViewModel
 import com.example.myapplication.viewmodel.ToolsViewModel
 
 
@@ -29,7 +30,9 @@ fun HookListTest(){
 //@Preview
 fun GetCookiesUriTest(){
     GetCookiesUri(Modifier.fillMaxSize(),
-        ToolsViewModel())
+        ToolsViewModel(),
+        LotteryViewModel()
+    )
 }
 
 @Composable

@@ -4,6 +4,9 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import okio.Lock
 import java.util.concurrent.*
 
+
+private val logger = KotlinLogging.logger {
+}
 /***
  *      Created by LiangJingJie on 2019/5/16.
  *      线程池封装类
@@ -123,6 +126,7 @@ class ThreadPoolManager private constructor() {
                 runnable.run()
             }catch (e: Exception){
                 e.printStackTrace()
+                logger.error { e }
             }finally {
                 running.remove(name)
             }

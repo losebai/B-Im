@@ -49,8 +49,6 @@ import com.example.myapplication.dto.LotteryPool
 import com.example.myapplication.viewmodel.LotteryViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
 
-private val logger = KotlinLogging.logger {
-}
 
 
 @Composable
@@ -68,7 +66,7 @@ fun MCRoleLotteryHome(
             .fillMaxSize(),
     ) {
         AsyncImage(
-            LotteryViewModel.pools[poolIndex].poolBg,
+            lotteryViewModel.pools[poolIndex].poolBg,
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.FillWidth
@@ -89,9 +87,9 @@ fun MCRoleLotteryHome(
                     Modifier,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    items(LotteryViewModel.pools.size) {
+                    items(lotteryViewModel.pools.size) {
                         AsyncImage(
-                            model = LotteryViewModel.pools[it].poolImageUri,
+                            model = lotteryViewModel.pools[it].poolImageUri,
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
@@ -133,7 +131,7 @@ fun MCRoleLotteryHome(
                 Column {
                     Text(text = "角色活动唤取", color = Color.Yellow, fontSize = 10.sp)
                     Text(
-                        text = LotteryViewModel.pools[poolIndex].poolName,
+                        text = lotteryViewModel.pools[poolIndex].poolName,
                         color = Color.White,
                         fontSize = 20.sp
                     )
@@ -141,14 +139,14 @@ fun MCRoleLotteryHome(
                 Column {
                     Text(text = "以下四星概率提升", color = Color.White, fontSize = 10.sp)
                     LazyRow {
-                        items(LotteryViewModel.pools[poolIndex].array.size) {
+                        items(lotteryViewModel.pools[poolIndex].array.size) {
                             Column(
                                 modifier = Modifier
                                     .padding(5.dp)
                                     .border(1.dp, Color.Gray, StyleCommon.ONE_SHAPE)
                             ) {
                                 AsyncImage(
-                                    model = LotteryViewModel.pools[poolIndex].array[it],
+                                    model = lotteryViewModel.pools[poolIndex].array[it],
                                     contentDescription = null,
                                     modifier = Modifier
                                         .size(40.dp)
@@ -183,7 +181,7 @@ fun MCRoleLotteryHome(
                 verticalAlignment = Alignment.Bottom
             ) {
                 Box(modifier = Modifier.clickable {
-                    onLottery(LotteryViewModel.pools[poolIndex], 1)
+                    onLottery(lotteryViewModel.pools[poolIndex], 1)
                 }, contentAlignment = Alignment.CenterStart) {
                     Image(
                         painter = painterResource(id = R.drawable.mc_icons), null,
@@ -198,7 +196,7 @@ fun MCRoleLotteryHome(
                     )
                 }
                 Box(modifier = Modifier.clickable {
-                    onLottery(LotteryViewModel.pools[poolIndex], 10)
+                    onLottery(lotteryViewModel.pools[poolIndex], 10)
                 }, contentAlignment = Alignment.CenterStart) {
                     Image(
                         painter = painterResource(id = R.drawable.hhobfg3k), null,

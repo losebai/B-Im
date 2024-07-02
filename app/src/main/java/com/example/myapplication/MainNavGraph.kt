@@ -7,7 +7,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,10 +18,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.common.ui.web.WebScreen
-import com.example.myapplication.common.consts.AppAPI
 import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.ui.web.WanNavActions
+import com.example.myapplication.common.ui.web.WebScreen
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
@@ -30,7 +28,6 @@ import com.example.myapplication.config.WEB_API_ROURE
 import com.example.myapplication.entity.toAppUserEntity
 import com.example.myapplication.event.GlobalInitEvent
 import com.example.myapplication.mc.consts.MingChaoAPI
-import com.example.myapplication.ui.AwardList
 import com.example.myapplication.ui.EditPage
 import com.example.myapplication.ui.GetCookiesUri
 import com.example.myapplication.ui.HookList
@@ -54,10 +51,12 @@ import com.example.myapplication.viewmodel.WebVIewModel
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun MainNavGraph(activity: AppCompatActivity, appBase: AppBase,
-                 userViewModel: UserViewModel,
-                 messagesViewModel: MessagesViewModel,
-                 imageViewModel: ImageViewModel){
+fun MainNavGraph(
+    activity: AppCompatActivity, appBase: AppBase,
+    userViewModel: UserViewModel,
+    messagesViewModel: MessagesViewModel,
+    imageViewModel: ImageViewModel
+) {
     val communityViewModel = viewModel<CommunityViewModel>()
     val toolsViewModel = viewModel<ToolsViewModel>()
     val navHostController = rememberNavController()
@@ -145,10 +144,10 @@ fun MainNavGraph(activity: AppCompatActivity, appBase: AppBase,
             LotterySimulate(lotteryViewModel, navHostController)
         }
 
-        composable(MingChaoRoute.BOOK_LIST){
+        composable(MingChaoRoute.BOOK_LIST) {
             HookList(toolsViewModel, navHostController)
         }
-        composable(MingChaoRoute.WIKI){
+        composable(MingChaoRoute.WIKI) {
             MCWIKI(MingChaoAPI.WIKI_URL)
         }
         composable("${WEB_API_ROURE.WEB_ROUTE}/{url}") { backStackEntry ->
@@ -161,16 +160,18 @@ fun MainNavGraph(activity: AppCompatActivity, appBase: AppBase,
                 onNavigateUp = { webNavActions.navigateUp() }
             )
         }
-        composable(MingChaoRoute.SET_COOKIES){
+        composable(MingChaoRoute.SET_COOKIES) {
             GetCookiesUri(Modifier,
-                toolsViewModel, onBack = {
+                toolsViewModel,
+                lotteryViewModel,
+                onBack = {
                     navHostController.navigateUp()
                 })
         }
-        composable(PageRouteConfig.TOOLS_IMAGE_LIST){
+        composable(PageRouteConfig.TOOLS_IMAGE_LIST) {
 
         }
-        composable(MingChaoRoute.LOTTERY_ROUTE){
+        composable(MingChaoRoute.LOTTERY_ROUTE) {
             // 强制横屏
             activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             // 全屏并隐藏状态栏

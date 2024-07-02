@@ -457,7 +457,9 @@ fun LotterySimulate(
 
 @Composable
 fun GetCookiesUri(
-    modifier: Modifier = Modifier, toolsViewModel: ToolsViewModel,
+    modifier: Modifier = Modifier,
+    toolsViewModel: ToolsViewModel,
+    lotteryViewModel: LotteryViewModel,
     onBack: () -> Unit = {}
 ) {
     var uri by remember {
@@ -494,7 +496,8 @@ fun GetCookiesUri(
                 onValueChange = { uri = it })
             Button(
                 onClick = {
-                    toolsViewModel.changeRecords(uri)
+                    // toolsViewModel.changeRecords(uri)
+                    lotteryViewModel.asyncMcRecord(uri)
                     onBack()
                           },
                 shape = StyleCommon.ONE_SHAPE,

@@ -21,6 +21,12 @@ object AppAPI {
         const  val GET_DYNAMIC_SAVE: String = "/dispatch-app/appDynamic/save"
     }
 
+    object DictAPI{
+        const  val GET_DICT_BY_KEYS: String = "/dispatch-app/dict/getDictByKeys"
+
+
+    }
+
     object AppLotteryPoolAPI{
         const val CURRENT_POOLS = "/dispatch-app/AppLotteryPool/currentPools"
 
@@ -29,5 +35,7 @@ object AppAPI {
         const val LOTTERY_AWARD_COUNT = "/dispatch-app/AppLotteryAward/lotteryAwayCount"
 
         const val LOTTERY_AWARD_COUNT_PROD = "/dispatch-app/AppLotteryAward/lotteryAwayCountPro"
+
+        const val AWARD_ASYNC_RECORD = "/dispatch-app/AppLotteryAward/asyncMcRecord"
     }
 }

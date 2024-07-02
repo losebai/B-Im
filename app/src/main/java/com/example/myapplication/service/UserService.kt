@@ -1,18 +1,13 @@
 package com.example.myapplication.service
 
-import android.R.attr.data
 import com.example.myapplication.common.consts.AppAPI
 import com.example.myapplication.common.consts.UserStatus
 import com.example.myapplication.common.util.HttpUtils
-import com.example.myapplication.common.util.HttpUtils.MEDIA_TYPE_JSON
 import com.example.myapplication.entity.UserEntity
 import com.example.myapplication.remote.entity.AppUserEntity
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import org.noear.snack.ONode
 import org.noear.snack.core.Options
-import org.noear.snack.core.utils.DateUtil
 import java.util.Collections
 
 
