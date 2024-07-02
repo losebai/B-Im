@@ -13,7 +13,7 @@ data class LotteryAwardCountDto (
     var avgCount: Double = 0.0,
     var tag: String? = null,
     // 池子类型
-    var poolLotteryAwardMap: Map<Int, PoolLotteryAward> = hashMapOf(),
+    var poolLotteryAwards: List<PoolLotteryAward> = arrayListOf(),
 
     // 池子
     var userPoolLotteryAwards: List<UserPoolLotteryAward> = arrayListOf(),
@@ -21,6 +21,7 @@ data class LotteryAwardCountDto (
 
 data class PoolLotteryAward (
     var poolType: Int? = null,
+    var poolName: String = "",
     var count: Long = 0,
     var okCount: Long = 0,
     var upCount: Long = 0,

@@ -40,7 +40,8 @@ class AppLotteryPoolService() {
     fun lotteryAwardCount(userId: Long, isProd: Boolean) : LotteryAwardCountDto {
         val params: HashMap<String, Any> = hashMapOf()
         params["userId"] = userId
-        val res: Response? = HttpUtils.get(if (isProd) AppAPI.AppLotteryPoolAPI.LOTTERY_AWARD_COUNT_PROD else AppAPI.AppLotteryPoolAPI.LOTTERY_AWARD_COUNT, params)
+        params["isProd"] = isProd
+        val res: Response? = HttpUtils.get( AppAPI.AppLotteryPoolAPI.LOTTERY_AWARD_COUNT, params)
         if (res?.isSuccessful == true){
             val str = res.body?.string()
             val json = ONode.load(str)
