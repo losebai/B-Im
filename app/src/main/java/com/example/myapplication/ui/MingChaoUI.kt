@@ -25,7 +25,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.ArrowBack
@@ -42,6 +41,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,6 +75,7 @@ import com.example.myapplication.common.ui.PagerList
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
+import com.example.myapplication.dto.LotteryAwardCountDto
 import com.example.myapplication.mc.dto.CatalogueDto
 import com.example.myapplication.mc.dto.RoleBook
 import com.example.myapplication.viewmodel.LotteryViewModel
@@ -96,10 +97,9 @@ fun LotterySimulate(
     lotteryViewModel: LotteryViewModel,
     mainController: NavHostController = rememberNavController()
 ) {
-
     val color = colorResource(id = R.color.golden)
     var lotteryAwardCountDto by remember {
-        mutableStateOf(lotteryViewModel.lotteryAwardCountDto)
+        mutableStateOf(LotteryAwardCountDto())
     }
     val upColor = colorResource(id = R.color.star5)
     val textColor = Color.White
@@ -107,10 +107,13 @@ fun LotterySimulate(
     val columModifier = Modifier.height(50.dp)
     val state = MySwipeRefreshState(NORMAL)
     var isProd by remember {
-        mutableStateOf(false)
+        mutableStateOf(true)
     }
-    ThreadPoolManager.getInstance().addTask("init", "lotteryAwardCountDto") {
-        lotteryAwardCountDto = lotteryViewModel.lotteryAwardCount(isProd)
+    LaunchedEffect(isProd) {
+        ThreadPoolManager.getInstance().addTask("init", "lotteryAwardCountDto") {
+            lotteryAwardCountDto = lotteryViewModel.lotteryAwardCount(isProd)
+            logger.info { "LaunchedEffect 开始加载抽卡分析 ： $isProd" }
+        }
     }
     logger.info { "加载抽卡分析" }
     MySwipeRefresh(
@@ -142,11 +145,6 @@ fun LotterySimulate(
                     Button(
                         onClick = {
                             isProd = !isProd
-                            ThreadPoolManager.getInstance()
-                                .addTask("init", "lotteryAwardCountDto") {
-                                    lotteryAwardCountDto =
-                                        lotteryViewModel.lotteryAwardCount(isProd)
-                                }
                         }, modifier = Modifier.padding(top = 30.dp, start = 10.dp),
                         shape = StyleCommon.ONE_SHAPE,
                         colors = ButtonDefaults.buttonColors(Color.Transparent)
@@ -167,7 +165,7 @@ fun LotterySimulate(
             item {
                 Card(
                     Modifier
-                        .height(310.dp)
+                        .height(340.dp)
                         .padding(20.dp)
                         .border(1.dp, Color.White)
                         .padding(20.dp),
@@ -181,7 +179,6 @@ fun LotterySimulate(
                         )
                     }
                     Text(text = "UID: ${lotteryAwardCountDto.id}", color = textColor)
-                    Text(text = "名称: ${lotteryAwardCountDto.name}", color = textColor)
                     Row(
                         modifier = rowModifier,
                     ) {
@@ -300,14 +297,14 @@ fun LotterySimulate(
                             .border(1.dp, Color.White)
                             .padding(20.dp)
                     ) {
-                        PagerList(lotteryAwardCountDto.poolLotteryAwards.filter { it.poolName.isNotEmpty() }
-                            .map { it.poolName }.toList(), textColor) {
+                        val poolList =
+                            lotteryAwardCountDto.poolLotteryAwards.filter { it.poolName.isNotEmpty() }
+                        PagerList(poolList.map { it.poolName }.toList(), textColor) {
                             LazyColumn(
                                 Modifier.wrapContentHeight(),
                                 reverseLayout = true,
                             ) {
-                                val poolLotteryAward =
-                                    lotteryAwardCountDto.poolLotteryAwards[it]
+                                val poolLotteryAward = poolList[it]
                                 items(poolLotteryAward.hookAwards.size) {
                                     Row(
                                         modifier = Modifier
@@ -518,7 +515,9 @@ fun GetCookiesUri(
                 Button(
                     onClick = {
                         // toolsViewModel.changeRecords(uri)
-                        lotteryViewModel.asyncMcRecord(uri)
+                        ThreadPoolManager.getInstance().addTask("init") {
+                            lotteryViewModel.asyncMcRecord(uri)
+                        }
                         onBack()
                     },
                     shape = StyleCommon.ONE_SHAPE,

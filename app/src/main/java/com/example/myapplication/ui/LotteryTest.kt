@@ -226,11 +226,6 @@ fun MCRoleLotteryHome(
     }
 }
 
-val playerProvider = PlayerProvider.getInstance().let {
-    it.onClose = {
-
-    }
-}
 
 @Composable
 fun LotteryVideo(videoUri: String, onClose: () -> Unit) {

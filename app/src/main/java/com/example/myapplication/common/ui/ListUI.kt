@@ -3,6 +3,7 @@ package com.example.myapplication.common.ui
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -41,8 +42,6 @@ fun PagerList(pools: List<String>, textColor: Color,
         items(pools.size) {
             Column(
                 modifier = Modifier
-                    .width(50.dp)
-                    .height(20.dp)
                     .clickable {
                         scope.launch {
                             pagerState.scrollToPage(it)
@@ -53,14 +52,16 @@ fun PagerList(pools: List<String>, textColor: Color,
                 Text(text = pools[it], color = textColor)
                 Divider(
                     thickness = 4.dp,
-                    color = if (pagerState.currentPage == it) Color.Green else Color.White,
+                    color = if (pagerState.currentPage == it) Color.Green else Color.Transparent,
                 )
             }
         }
     }
     HorizontalPager(
         pagerState,
-        modifier = Modifier.padding(top = 10.dp),
+        modifier = Modifier
+            .padding(top = 10.dp)
+            .fillMaxHeight(),
         pageContent=pageContent
     )
 }

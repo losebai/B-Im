@@ -25,14 +25,7 @@ class LotteryViewModel() : ViewModel() {
     // 模拟
     var award by mutableStateOf(listOf<Award>())
     private val appLotteryPoolService = AppLotteryPoolService()
-    var lotteryAwardCountDto : LotteryAwardCountDto  = LotteryAwardCountDto()
 
-
-    init {
-        GlobalInitEvent.addUnit{
-            pools = appLotteryPoolService.currentPools()
-        }
-    }
 
     fun currentPools(): List<LotteryPool> {
         if (pools.size < 2){
