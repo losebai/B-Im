@@ -8,8 +8,11 @@ import com.example.myapplication.database.AppDatabase
 import com.example.myapplication.dto.UserPoolRakingDto
 import com.example.myapplication.entity.McRecordEntity
 import com.example.myapplication.event.GlobalInitEvent
+import com.example.myapplication.mc.consts.BaseAPI
+import com.example.myapplication.mc.consts.JueQuZeroAPI
 import com.example.myapplication.mc.consts.LotteryPollEnum
 import com.example.myapplication.mc.consts.MingChaoAPI
+import com.example.myapplication.mc.consts.YuanShenAPI
 import com.example.myapplication.mc.dto.BannerDto
 import com.example.myapplication.mc.dto.CatalogueDto
 import com.example.myapplication.mc.dto.Handbook
@@ -28,10 +31,22 @@ import kotlinx.coroutines.launch
 
 class ToolsViewModel() : ViewModel() {
 
-    private val mingChaoService = MingChaoService()
-    private val yuanShenService = YuanShenService()
-    private val jueQuZeroService = JueQuZeroService()
+    private val jueQuZeroAPI = JueQuZeroAPI()
+    private val yuanShenAPI = YuanShenAPI()
+    private val mingChaoAPI = MingChaoAPI()
+
+    private val mingChaoService by  lazy {
+        MingChaoService(mingChaoAPI)
+    }
+    private val yuanShenService by lazy {
+        YuanShenService(yuanShenAPI)
+    }
+    private val jueQuZeroService by lazy {
+        JueQuZeroService(jueQuZeroAPI)
+    }
+
     private val rakingService = RakingService()
+
 
     val dictService = DictService()
 
@@ -71,6 +86,18 @@ class ToolsViewModel() : ViewModel() {
             }
         }
     }
+
+    fun getBaseAPI(name: String): BaseAPI {
+        return when (name) {
+            "鸣潮" -> mingChaoService.mingChaoAPI
+            "原神" -> yuanShenService.yuanShenAPI
+            "绝区零" -> jueQuZeroService.jueQuZeroAPI
+            else -> {
+                mingChaoService.mingChaoAPI
+            }
+        }
+    }
+
 
     fun getBannerList(name: String): List<BannerDto> {
         return bannerMap[name] ?: listOf()

@@ -21,7 +21,7 @@ import java.util.Collections
  * @date 2024/06/12
  * @constructor 创建[MingChaoService]
  */
-class MingChaoService : AbsToolService() {
+class MingChaoService(val mingChaoAPI: MingChaoAPI) : AbsToolService() {
 
     fun homePage() : HomeDto {
         val res: Response? = HttpUtils.post(

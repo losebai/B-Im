@@ -10,11 +10,11 @@ import org.noear.snack.ONode
 import java.util.Collections
 import java.util.stream.Collectors
 
-class JueQuZeroService: AbsToolService() {
+class JueQuZeroService(val jueQuZeroAPI: JueQuZeroAPI): AbsToolService() {
 
     override fun getBannerList() : List<BannerDto> {
         val res: Response? = HttpUtils.get(
-            HttpReqDto.Build().setUrl(JueQuZeroAPI.GET_WEB_HOME)
+            HttpReqDto.Build().setUrl(jueQuZeroAPI.GET_WEB_HOME)
                 .addHeaders("X-Rpc-App_version", "2.71.0")
                 .addHeaders("X-Rpc-Client_type", "4")
                 .build()

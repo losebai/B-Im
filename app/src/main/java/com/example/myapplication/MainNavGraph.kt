@@ -168,9 +168,9 @@ fun MainNavGraph(
         composable(MingChaoRoute.BOOK_LIST) {
             HookList(toolsViewModel, navHostController)
         }
-        composable(MingChaoRoute.WIKI) {
-            MCWIKI(MingChaoAPI.WIKI_URL)
-        }
+//        composable(MingChaoRoute.WIKI) {
+//            MCWIKI(MingChaoAPI.WIKI_URL)
+//        }
         composable("${WEB_API_ROURE.WEB_ROUTE}/{url}") { backStackEntry ->
             WebScreen(
                 originalUrl = backStackEntry.arguments?.getString("url") ?: "",

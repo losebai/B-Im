@@ -59,6 +59,7 @@ import com.example.myapplication.common.ui.HeadImage
 import com.example.myapplication.common.ui.MySwipeRefresh
 import com.example.myapplication.common.ui.MySwipeRefreshState
 import com.example.myapplication.common.ui.NORMAL
+import com.example.myapplication.common.ui.PagerList
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.config.WEB_API_ROURE
 import com.example.myapplication.dto.CommunityEntity
@@ -261,10 +262,6 @@ fun ToolsList(
     modifier: Modifier = Modifier,
     mainController: NavHostController = rememberNavController(),
 ) {
-    val scope = rememberCoroutineScope()
-    val pagerState = rememberPagerState {
-        toolsViewModel.pool.size
-    }
     var bannerIndex by remember {
         mutableIntStateOf(0)
     }
@@ -285,37 +282,16 @@ fun ToolsList(
         modifier = modifier
             .fillMaxSize()
     ) {
-        TopAppBar(title = {
-            LazyVerticalGrid(GridCells.Fixed(4), modifier = Modifier.fillMaxWidth()) {
-                items(toolsViewModel.pool.size) {
-                    Column(
-                        modifier = Modifier
-                            .clickable {
-                                scope.launch {
-                                    pagerState.scrollToPage(it)
-                                }
-                            },
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(text = toolsViewModel.pool[it], fontSize = 20.sp, color= Color.Black)
-                        Divider(
-                            thickness = 2.dp,
-                            color = if (pagerState.currentPage == it) Color.Green else Color.Transparent,
-                        )
-                    }
-                }
-            }
-        },
-            actions = {
-            })
-        HorizontalPager(pagerState, modifier = Modifier.fillMaxWidth()) {
-            images = toolsViewModel.getBannerList(toolsViewModel.pool[it])
-            logger.info { "开始加载images:${toolsViewModel.pool[it]}:${images.size}" }
+        PagerList(toolsViewModel.pool, Color.White) {
+            val game = toolsViewModel.pool[it]
+            val api = toolsViewModel.getBaseAPI(game)
+            images = toolsViewModel.getBannerList(game)
+            logger.info { "开始加载images:${game}:${images.size}" }
             Column {
                 Row {
                     if (images.size > bannerIndex) {
                         Surface(shape = StyleCommon.ONE_SHAPE) {
-                            logger.info { "开始加载banner:$bannerIndex:${toolsViewModel.pool[it]}:${images.size}" }
+                            logger.info { "开始加载banner:$bannerIndex:${game}:${images.size}" }
                             AsyncImage(
                                 model = images[bannerIndex].url, contentDescription = null,
                                 modifier = Modifier
@@ -345,13 +321,13 @@ fun ToolsList(
                                 mainController.navigate(
                                     WEB_API_ROURE.WEB_ROUTE + "/${
                                         Uri.encode(
-                                            MingChaoAPI.MAIN_URL
+                                            api.HOME
                                         )
                                     }"
                                 )
                             }) {
                                 AsyncImage(
-                                    model = ICons.FAVICON,
+                                    model =  api.HOME_ICON,
                                     contentDescription = null,
                                     modifier = StyleCommon.ICON_SIZE
                                 )
@@ -359,40 +335,40 @@ fun ToolsList(
                             Text(text = "官网")
                         }
                     }
-                    item {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            IconButton(onClick = {
-                                mainController.navigate(
-                                    WEB_API_ROURE.WEB_ROUTE + "/${
-                                        Uri.encode(
-                                            MingChaoAPI.WIKI_URL
-                                        )
-                                    }"
-                                )
-                            }) {
-                                AsyncImage(
-                                    model = ICons.USER,
-                                    contentDescription = "角色",
-                                    modifier = StyleCommon.ICON_SIZE
-                                )
-                            }
-                            Text(text = "我的")
-
-                        }
-                    }
+//                    item {
+//                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+//                            IconButton(onClick = {
+//                                mainController.navigate(
+//                                    WEB_API_ROURE.WEB_ROUTE + "/${
+//                                        Uri.encode(
+//                                            api.WIKI
+//                                        )
+//                                    }"
+//                                )
+//                            }) {
+//                                AsyncImage(
+//                                    model = ICons.USER,
+//                                    contentDescription = "角色",
+//                                    modifier = StyleCommon.ICON_SIZE
+//                                )
+//                            }
+//                            Text(text = "我的")
+//
+//                        }
+//                    }
                     item() {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             IconButton(onClick = {
                                 mainController.navigate(
                                     WEB_API_ROURE.WEB_ROUTE + "/${
                                         Uri.encode(
-                                            MingChaoAPI.WIKI_URL
+                                            api.WIKI
                                         )
                                     }"
                                 )
                             }) {
                                 AsyncImage(
-                                    model = ICons.WIKI,
+                                    model = api.WIKI_ICON,
                                     contentDescription = "声骸图鉴",
                                     modifier = StyleCommon.ICON_SIZE
                                 )
@@ -400,31 +376,11 @@ fun ToolsList(
                             Text(text = "WIKI")
                         }
                     }
-                    item() {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            IconButton(onClick = {
-                                mainController.navigate(
-                                    PageRouteConfig.TOOLS_IMAGE_LIST
-                                )
-                            }) {
-                                AsyncImage(
-                                    model = ICons.WIKI,
-                                    contentDescription = null,
-                                    modifier = StyleCommon.ICON_SIZE
-                                )
-                            }
-                            Text(text = "图片集合")
-                        }
-                    }
 //                    item() {
 //                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
 //                            IconButton(onClick = {
 //                                mainController.navigate(
-//                                    WEB_API_ROURE.WEB_ROUTE + "/${
-//                                        Uri.encode(
-//                                            AppAPI.MingChao.WIKI_URL
-//                                        )
-//                                    }"
+//                                    PageRouteConfig.TOOLS_IMAGE_LIST
 //                                )
 //                            }) {
 //                                AsyncImage(
@@ -433,16 +389,35 @@ fun ToolsList(
 //                                    modifier = StyleCommon.ICON_SIZE
 //                                )
 //                            }
-//                            Text(text = "工具")
+//                            Text(text = "图片集合")
 //                        }
 //                    }
+                    item() {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            IconButton(onClick = {
+                                mainController.navigate(
+                                    WEB_API_ROURE.WEB_ROUTE + "/${
+                                        Uri.encode(
+                                            api.MAP
+                                        )
+                                    }"
+                                )
+                            }) {
+                                AsyncImage(
+                                    model =  api.MAP_ICON,
+                                    contentDescription = null,
+                                    modifier = StyleCommon.ICON_SIZE
+                                )
+                            }
+                            Text(text = "大地图")
+                        }
+                    }
                 }
                 when (it) {
                     0 -> {
                         MingChaoHome(toolsViewModel, mainController)
                     }
                 }
-
             }
         }
     }
