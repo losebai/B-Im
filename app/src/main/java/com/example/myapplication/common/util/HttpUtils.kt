@@ -3,21 +3,25 @@ package com.example.myapplication.common.util;
 import com.example.myapplication.BuildConfig
 import okhttp3.FormBody
 import okhttp3.Headers
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import org.noear.snack.ONode
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 
 object HttpUtils {
 
-    val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaTypeOrNull();
+    private val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType();
 
-    val FORM_DATA = "multipart/form-data; charset=utf-8".toMediaTypeOrNull();
+    private val FORM_DATA = "multipart/form-data; charset=utf-8".toMediaType();
 
     private val client: OkHttpClient = OkHttpClient.Builder()
         .readTimeout(30, TimeUnit.SECONDS)
@@ -31,11 +35,25 @@ object HttpUtils {
         return builder.build()
     }
 
-    fun requestBody(data: Any) : RequestBody {
+    private fun multipartBody(file : File?) : MultipartBody? {
+        file?.let {
+           return  MultipartBody.Builder()
+               .setType(MultipartBody.FORM)
+                //添加文件
+                //RequestBody.create用于接收MediaType.parse
+                //MediaType.parse("text/plain")  指定文件上传的类型
+                .addFormDataPart("file", it.getName(), it.asRequestBody(FORM_DATA))
+                .build();
+        }
+        return null
+    }
+
+
+    private fun requestBody(data: Any) : RequestBody {
        return ONode.serialize(data).toRequestBody(MEDIA_TYPE_JSON)
     }
 
-    private fun url(url: String?, params: Map<String, Any>?): String {
+    fun url(url: String?, params: Map<String, Any>?): String {
         val param = StringBuilder()
         if (params != null) {
             if (params.isNotEmpty()){
@@ -80,7 +98,7 @@ object HttpUtils {
     fun post(dto: HttpReqDto): Response? {
         val request: Request = Request.Builder()
             .url(url(dto.url, dto.params))
-            .post(requestBody(dto.body))
+            .post(multipartBody(dto.file) ?: requestBody(dto.body))
             .headers(headers(dto.headers))
             .build()
         return execute(request);

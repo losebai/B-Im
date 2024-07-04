@@ -1,6 +1,7 @@
 package com.example.myapplication.viewmodel
 
 import android.content.Context
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.common.provider.BaseContentProvider
 import com.example.myapplication.common.util.ImageUtils
@@ -8,6 +9,7 @@ import com.example.myapplication.common.util.MediaStoreUtils
 import com.example.myapplication.common.util.toFileEntity
 import com.example.myapplication.dto.FileEntity
 import com.example.myapplication.event.GlobalInitEvent
+import java.util.Collections
 import java.util.Hashtable
 
 private val EMPTY_IMAGES: Array<FileEntity>  = arrayOf()
@@ -18,12 +20,14 @@ class ImageViewModel() : ViewModel() {
 
     var groupPath = ""
 
-    val groupMap = Hashtable<String, Array<FileEntity>>()
+    val groupMap = Hashtable<String, ArrayList<FileEntity>>()
 
     // 本机目录图片集合
-    var dirList = mutableListOf<FileEntity>()
+    var dirList = mutableStateListOf<FileEntity>()
+
 
     init {
+        groupMap[""] = arrayListOf()
         GlobalInitEvent.addUnit{
             getDay7Images(BaseContentProvider.context())
         }
@@ -32,23 +36,23 @@ class ImageViewModel() : ViewModel() {
 
     fun loadPath(path: String){
         if (!groupMap.contains(path)){
-            groupMap[path] = ImageUtils.getImageList(path).toTypedArray()
+            groupMap[path] = ImageUtils.getImageList(path)
         }
     }
 
     fun reloadPath(path: String){
-        groupMap[path] = ImageUtils.getImageList(path).toTypedArray()
+        groupMap[path] = ImageUtils.getImageList(path)
     }
 
     fun reload(){
         dirList.clear()
     }
 
-    fun getImageList(path: String) : Array<FileEntity> {
+    fun getImageList(path: String) : List<FileEntity> {
         groupMap[path]?.let {
             return it;
         }
-        return EMPTY_IMAGES
+        return Collections.emptyList()
     }
 
     fun getDay7Images(context: Context){
@@ -64,7 +68,8 @@ class ImageViewModel() : ViewModel() {
             })
             day7.location = day7List[0].location
         }
-        groupMap[day7.parentPath] = day7List.toTypedArray()
+        groupMap[""]?.addAll(day7List)
+        groupMap[day7.parentPath] = day7List
     }
 
     override fun onCleared() {

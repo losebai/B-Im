@@ -136,7 +136,7 @@ fun HeadImage(
 fun HeadImage(
     path: String?,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit = {}
 ) =
     Surface(
         onClick = onClick,

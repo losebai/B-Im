@@ -78,7 +78,7 @@ object ImageUtils {
         return null
     }
 
-    fun getImageList(path: String): List<FileEntity> {
+    fun getImageList(path: String): ArrayList<FileEntity> {
         val dir = File(path)
         val fileList = ArrayList<FileEntity>()
         if (dir.isDirectory) {

@@ -29,4 +29,6 @@ object MingChaoRoute{
     const val AWARD_LIST = "AWARD_LIST"
 
     const val SET_COOKIES = "SET_COOKIES"
+
+    const val RANKING_HOME  = "RANKING_HOME"
 }

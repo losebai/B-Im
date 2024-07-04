@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -47,6 +48,7 @@ import com.example.myapplication.common.ui.MySwipeRefreshState
 import com.example.myapplication.common.ui.NORMAL
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.dto.FileEntity
+import com.example.myapplication.service.FileService
 import com.example.myapplication.viewmodel.ImageViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -89,7 +91,7 @@ fun ImagesSelectTop(
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}) {
+fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}, onSelect: (FileEntity) ->Unit =  {}) {
     val state = MySwipeRefreshState(NORMAL)
     var expend by remember {
         mutableStateOf(false)
@@ -149,13 +151,14 @@ fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}) {
             .fillMaxSize()
     ) { innerPadding ->
         if (expend) {
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(innerPadding)
             ) {
-                for (image in imagesGroups) {
-                    Row {
+                items(imagesGroups.size){it ->
+                    val image = imagesGroups[it]
+                    Row(modifier = Modifier.fillMaxWidth()) {
                         Button(
                             onClick = {
                                 imagesGroup = image
@@ -186,7 +189,8 @@ fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}) {
                     modifier = mod
                         .fillMaxSize()
                 ){
-
+                    onSelect(it)
+                    onClose()
                 }
             }
         }

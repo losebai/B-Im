@@ -3,6 +3,7 @@ package com.example.myapplication
 import com.example.myapplication.mc.dto.CatalogueDto
 import com.example.myapplication.mc.service.MingChaoService
 import com.example.myapplication.service.DictService
+import com.example.myapplication.service.FileService
 import org.junit.Test
 
 class ToolsTest {
@@ -19,5 +20,12 @@ class ToolsTest {
         val dictService = DictService()
         val list = dictService.getKeyList("games")
         println(list)
+    }
+
+    @Test
+    fun uploadTest(){
+        val path = FileService.uploadImage("D:\\java_items\\images\\img_1.png")
+        val url = FileService.getImageUrl(path)
+        println(url)
     }
 }

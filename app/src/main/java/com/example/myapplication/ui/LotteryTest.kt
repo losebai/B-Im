@@ -24,8 +24,11 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,6 +48,7 @@ import com.example.myapplication.R
 import com.example.myapplication.common.consts.StyleCommon
 import com.example.myapplication.common.provider.PlayerProvider
 import com.example.myapplication.common.ui.VideScreen
+import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.dto.LotteryPool
 import com.example.myapplication.viewmodel.LotteryViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -60,13 +64,24 @@ fun MCRoleLotteryHome(
     var poolIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
+    var pools  by remember {
+        mutableStateOf(listOf<LotteryPool>(
+            LotteryPool(0,"暂无",
+                "https://mc.kurogames.com/static4.0/assets/news-bg-5e0dc97a.jpg",""
+            )))
+    } 
+    LaunchedEffect(1) {
+        ThreadPoolManager.getInstance().addTask("lottery", "lottery"){
+            pools = lotteryViewModel.currentPools()
+        }
+    }
     Box(
         modifier = Modifier
             .background(Color.Black)
             .fillMaxSize(),
     ) {
         AsyncImage(
-            lotteryViewModel.pools[poolIndex].poolBg,
+            pools[poolIndex].poolBg,
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.FillWidth
@@ -87,9 +102,9 @@ fun MCRoleLotteryHome(
                     Modifier,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    items(lotteryViewModel.pools.size) {
+                    items(pools.size) {
                         AsyncImage(
-                            model = lotteryViewModel.pools[it].poolImageUri,
+                            model = pools[it].poolImageUri,
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
@@ -131,7 +146,7 @@ fun MCRoleLotteryHome(
                 Column {
                     Text(text = "角色活动唤取", color = Color.Yellow, fontSize = 10.sp)
                     Text(
-                        text = lotteryViewModel.pools[poolIndex].poolName,
+                        text = pools[poolIndex].poolName,
                         color = Color.White,
                         fontSize = 20.sp
                     )
@@ -139,14 +154,14 @@ fun MCRoleLotteryHome(
                 Column {
                     Text(text = "以下四星概率提升", color = Color.White, fontSize = 10.sp)
                     LazyRow {
-                        items(lotteryViewModel.pools[poolIndex].array.size) {
+                        items(pools[poolIndex].array.size) {
                             Column(
                                 modifier = Modifier
                                     .padding(5.dp)
                                     .border(1.dp, Color.Gray, StyleCommon.ONE_SHAPE)
                             ) {
                                 AsyncImage(
-                                    model = lotteryViewModel.pools[poolIndex].array[it],
+                                    model = pools[poolIndex].array[it],
                                     contentDescription = null,
                                     modifier = Modifier
                                         .size(40.dp)
@@ -181,7 +196,7 @@ fun MCRoleLotteryHome(
                 verticalAlignment = Alignment.Bottom
             ) {
                 Box(modifier = Modifier.clickable {
-                    onLottery(lotteryViewModel.pools[poolIndex], 1)
+                    onLottery(pools[poolIndex], 1)
                 }, contentAlignment = Alignment.CenterStart) {
                     Image(
                         painter = painterResource(id = R.drawable.mc_icons), null,
@@ -196,7 +211,7 @@ fun MCRoleLotteryHome(
                     )
                 }
                 Box(modifier = Modifier.clickable {
-                    onLottery(lotteryViewModel.pools[poolIndex], 10)
+                    onLottery(pools[poolIndex], 10)
                 }, contentAlignment = Alignment.CenterStart) {
                     Image(
                         painter = painterResource(id = R.drawable.hhobfg3k), null,

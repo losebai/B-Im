@@ -38,4 +38,14 @@ object AppAPI {
 
         const val AWARD_ASYNC_RECORD = "/dispatch-app/AppLotteryAward/asyncMcRecord"
     }
+
+    object RakingAPI{
+        const val GET_RAKING_LIST = "/dispatch-app/raking/rakingList"
+
+        const val GET_USER_GAME = "/dispatch-app/raking/userGame"
+    }
+
+    object FileAPI{
+        const val POST_FILE_UPLOAD = "/dispatch-app/file/uploadImage"
+    }
 }

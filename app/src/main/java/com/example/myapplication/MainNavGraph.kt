@@ -28,6 +28,7 @@ import com.example.myapplication.config.WEB_API_ROURE
 import com.example.myapplication.entity.toAppUserEntity
 import com.example.myapplication.event.GlobalInitEvent
 import com.example.myapplication.mc.consts.MingChaoAPI
+import com.example.myapplication.service.FileService
 import com.example.myapplication.ui.EditPage
 import com.example.myapplication.ui.GetCookiesUri
 import com.example.myapplication.ui.HookList
@@ -39,6 +40,7 @@ import com.example.myapplication.ui.MCWIKI
 import com.example.myapplication.ui.MessagesDetail
 import com.example.myapplication.ui.PageHost
 import com.example.myapplication.ui.PhotoDataSet
+import com.example.myapplication.ui.RankingHome
 import com.example.myapplication.ui.UserInfoEdit
 import com.example.myapplication.viewmodel.CommunityViewModel
 import com.example.myapplication.viewmodel.ImageViewModel
@@ -104,10 +106,26 @@ fun MainNavGraph(
                 Modifier.background(Color.White)
             )
         }
-        composable(PageRouteConfig.IMAGE_SELECTOR) {
-            ImageSelect(imageViewModel) {
+        composable("${PageRouteConfig.IMAGE_SELECTOR}/{event}") {backStackEntry ->
+            ImageSelect(imageViewModel, onClose = {
                 navHostController.navigateUp()
-            }
+            },
+            onSelect = {
+                when(backStackEntry.arguments?.getString("event")){
+                    "headImage" ->{
+                        ThreadPoolManager.getInstance().addTask("init") {
+                            val path = FileService.uploadImage(it.filePath)
+                            userViewModel.userEntity.imageUrl = FileService.getImageUrl(path)
+                            userViewModel.saveUser(
+                                userViewModel.userEntity.toAppUserEntity(
+                                    SystemApp.PRODUCT_DEVICE_NUMBER
+                                )
+                            )
+                            userViewModel.userEntity = userViewModel.userEntity.copy(imageUrl = userViewModel.userEntity.imageUrl)
+                        }
+                    }
+                }
+            })
         }
         composable(PageRouteConfig.USER_INFO) {
             UserInfoEdit(userViewModel.userEntity, navHostController)
@@ -140,8 +158,11 @@ fun MainNavGraph(
                 )
             }
         }
-        composable(PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL) {
-            LotterySimulate(lotteryViewModel, navHostController)
+        composable("${PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL}/{id}") { backStackEntry ->
+            LotterySimulate(
+                backStackEntry.arguments?.getString("id")?.toLong() ?: SystemApp.UserId,
+                lotteryViewModel, navHostController
+            )
         }
 
         composable(MingChaoRoute.BOOK_LIST) {
@@ -183,6 +204,9 @@ fun MainNavGraph(
                 activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
                 navHostController.navigateUp()
             })
+        }
+        composable(PageRouteConfig.RANKING_HOME) {
+            RankingHome(toolsViewModel, navHostController)
         }
     }
 }

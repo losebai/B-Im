@@ -33,7 +33,8 @@ data class PoolLotteryAward (
 )
 
 data class UserPoolLotteryAward (
-    val imageUri: String? = null,
+    var id: Long = 0,
+    var imageUri: String? = null,
     var poolId: Int? = null,
     var poolName: String? = null,
     var count: Long = 0,

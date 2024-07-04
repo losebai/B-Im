@@ -65,6 +65,7 @@ import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.consts.SystemApp.snackBarHostState
 import com.example.myapplication.common.ui.FullScreenImage
 import com.example.myapplication.common.ui.ImageGroupButton
+import com.example.myapplication.common.ui.ShadowLayout
 import com.example.myapplication.common.util.ImageUtils
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.config.PageRouteConfig
@@ -138,7 +139,7 @@ fun ImageTopBar(name: String, mainController: NavHostController) {
  */
 @Composable
 fun PhotoDataSetBody(
-    list: Array<FileEntity>,
+    list: List<FileEntity>,
     modifier: Modifier = Modifier,
     onClick: (FileEntity) -> Unit
 ) {

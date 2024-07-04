@@ -347,7 +347,7 @@ fun MessagesDetail(
                     if (sendData.isEmpty()) {
                         IconButton(
                             onClick = {
-                                mainController.navigate(PageRouteConfig.IMAGE_SELECTOR)
+                                mainController.navigate("${PageRouteConfig.IMAGE_SELECTOR}/message")
                             }, modifier = Modifier.size(50.dp)
                         ) {
                             Icon(

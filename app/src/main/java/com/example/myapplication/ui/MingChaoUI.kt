@@ -94,6 +94,7 @@ private val logger = KotlinLogging.logger {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LotterySimulate(
+    userId: Long,
     lotteryViewModel: LotteryViewModel,
     mainController: NavHostController = rememberNavController()
 ) {
@@ -111,7 +112,7 @@ fun LotterySimulate(
     }
     LaunchedEffect(isProd) {
         ThreadPoolManager.getInstance().addTask("init", "lotteryAwardCountDto") {
-            lotteryAwardCountDto = lotteryViewModel.lotteryAwardCount(isProd)
+            lotteryAwardCountDto = lotteryViewModel.lotteryAwardCount(userId, isProd)
             logger.info { "LaunchedEffect 开始加载抽卡分析 ： $isProd" }
         }
     }
@@ -359,8 +360,9 @@ fun LotterySimulate(
                         modifier =
                         Modifier
                             .wrapContentHeight()
-                            .paint(rememberAsyncImagePainter(userPoolLotteryAward.imageUri))
                             .padding(20.dp)
+                            .paint(rememberAsyncImagePainter(userPoolLotteryAward.imageUri),
+                                contentScale=ContentScale.FillBounds)
                             .border(1.dp, Color.White)
                             .padding(20.dp)
                     ) {
@@ -548,7 +550,7 @@ fun MingChaoHome(
         ) {
             item {
                 Column(modifier = Modifier.clickable {
-//                    mainController.navigate(PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL)
+                    mainController.navigate(PageRouteConfig.RANKING_HOME)
                 }, horizontalAlignment = Alignment.CenterHorizontally) {
                     AsyncImage(
                         model = "https://prod-alicdn-community.kurobbs.com/forum/f92b449640374599ae7326e2b46f40b620240509.png",

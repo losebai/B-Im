@@ -26,5 +26,5 @@ fun LotterySimulateTest(){
     )
     lotteryMap[0] = l
     val lotteryViewModel = LotteryViewModel()
-    LotterySimulate(lotteryViewModel)
+    LotterySimulate(44, lotteryViewModel)
 }
