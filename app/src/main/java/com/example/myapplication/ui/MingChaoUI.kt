@@ -78,6 +78,7 @@ import com.example.myapplication.common.util.Utils
 import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.dto.LotteryAwardCountDto
+import com.example.myapplication.mc.consts.BaseAPI
 import com.example.myapplication.mc.dto.CatalogueDto
 import com.example.myapplication.mc.dto.RoleBook
 import com.example.myapplication.viewmodel.LotteryViewModel
@@ -544,13 +545,15 @@ fun GetCookiesUri(
 @SuppressLint("MutableCollectionMutableState", "UnrememberedMutableState")
 @Composable
 fun MingChaoHome(
-    toolsViewModel: ToolsViewModel,
     mainController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier,
+    gameProvider : () -> String,
+    baseAPIProvider : () -> BaseAPI
 ) {
     val context = LocalContext.current
     val row = Modifier
         .size(100.dp)
+    val api = baseAPIProvider()
     Column(modifier, verticalArrangement = Arrangement.Center) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
@@ -558,10 +561,10 @@ fun MingChaoHome(
         ) {
             item {
                 Column(modifier = Modifier.clickable {
-                    mainController.navigate(PageRouteConfig.RANKING_HOME)
+                    mainController.navigate("${PageRouteConfig.RANKING_HOME}/${gameProvider()}")
                 }, horizontalAlignment = Alignment.CenterHorizontally) {
                     AsyncImage(
-                        model = "https://prod-alicdn-community.kurobbs.com/forum/f92b449640374599ae7326e2b46f40b620240509.png",
+                        model = api.RAKING_ICON,
                         contentDescription = "排行榜",
                         modifier = StyleCommon.ICON_SIZE
                     )
@@ -570,10 +573,10 @@ fun MingChaoHome(
             }
             item {
                 Column(modifier = Modifier.clickable {
-                    mainController.navigate("${PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL}/${SystemApp.UserId}")
+                    mainController.navigate("${PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL}/${SystemApp.UserId}/${gameProvider()}")
                 }, horizontalAlignment = Alignment.CenterHorizontally) {
                     AsyncImage(
-                        model = stringResource(id = R.string.mc_role_tick),
+                        model = api.SIMULATE_ICON,
                         contentDescription = "抽卡分析",
                         modifier = StyleCommon.ICON_SIZE
                     )
@@ -586,7 +589,7 @@ fun MingChaoHome(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AsyncImage(
-                        model = "https://prod-alicdn-community.kurobbs.com/forum/ed2a9644f28749a3849d1d1772e552dc20240519.png",
+                        model = api.LOTTERY_ICON,
                         contentDescription = "抽卡模拟",
                         modifier = StyleCommon.ICON_SIZE.clickable {
 //                            mainController.navigate(MingChaoRoute.LOTTERY_ROUTE)
@@ -596,6 +599,7 @@ fun MingChaoHome(
                                     BaseContentProvider.context(),
                                     LotteryActivity::class.java
                                 )
+                            intent.putExtra("gameName", gameProvider())
                             context.startActivity(intent)
                         }
                     )
@@ -608,7 +612,7 @@ fun MingChaoHome(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AsyncImage(
-                        model = "https://prod-alicdn-community.kurobbs.com/forum/45963f70164d4c6bb4c5d52fd5f2187620240519.png",
+                        model = api.STREING_ICON,
                         contentDescription = "抽卡模拟",
                         modifier = StyleCommon.ICON_SIZE.clickable {
                             Utils.message(GlobalScope, "暂未开放", SystemApp.snackBarHostState)
@@ -623,7 +627,7 @@ fun MingChaoHome(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AsyncImage(
-                        model = "https://prod-alicdn-community.kurobbs.com/forum/45963f70164d4c6bb4c5d52fd5f2187620240519.png",
+                        model = api.ROLE_ICON,
                         contentDescription = "抽卡模拟",
                         modifier = StyleCommon.ICON_SIZE.clickable {
                             Utils.message(GlobalScope, "暂未开放", SystemApp.snackBarHostState)

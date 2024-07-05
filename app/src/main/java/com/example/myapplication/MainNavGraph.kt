@@ -225,8 +225,9 @@ fun MainNavGraph(
                     navHostController.navigateUp()
                 })
         }
-        composable(PageRouteConfig.RANKING_HOME) {
-            RankingHome(toolsViewModel, navHostController)
+        composable("${PageRouteConfig.RANKING_HOME}/{gameName}") { baseEntity ->
+            val gameName = baseEntity.arguments?.getString("gameName") ?: ""
+            RankingHome(gameName, toolsViewModel, navHostController)
         }
     }
 }

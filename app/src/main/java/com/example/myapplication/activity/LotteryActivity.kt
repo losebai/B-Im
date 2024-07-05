@@ -3,20 +3,12 @@ package com.example.myapplication.activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -46,36 +38,36 @@ class LotteryActivity : AppCompatActivity() {
         setContent {
             ComposeTestTheme {
                 val navHostController = rememberNavController()
+                val gameName = intent.getStringExtra("gameName") ?: ""
                 NavHost(
                     navController = navHostController,
                     startDestination = MingChaoRoute.LOTTERY_ROUTE,
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    composable("${MingChaoRoute.LOTTERY_ROUTE}/{gameName}") { baseEntity ->
-                        val gameName = baseEntity.arguments?.getString("gameName") ?: ""
+                    composable(MingChaoRoute.LOTTERY_ROUTE) {
                         MCRoleLotteryHome(
                             gameName,
-                             lotteryViewModel, onLottery = { pool, num ->
-                            val isUp = 5 >= pool.poolType.value && pool.poolType.value <= 6
-                            val catalogueId = if (pool.poolType.value % 2 == 1) 1105 else 1106
-                            val poolId = pool.poolId
-                            ThreadPoolManager.getInstance().addTask("lottery", "lottery") {
-                                logger.info { "开始抽奖" }
-                                lotteryViewModel.award = lotteryViewModel.randomAward(
-                                    gameName, catalogueId, poolId, num, isUp
-                                )
-                            }
-                            navHostController.navigate(MingChaoRoute.AWARD_LIST)
-                        }, onDispatch = {
-                            val intent = Intent(baseContext, MainActivity::class.java)
-                            startActivity(intent)
-                        })
+                            lotteryViewModel, onLottery = { pool, num ->
+                                val isUp = 5 >= pool.poolType.value && pool.poolType.value <= 6
+                                val catalogueId = if (pool.poolType.value % 2 == 1) 1105 else 1106
+                                val poolId = pool.poolId
+                                ThreadPoolManager.getInstance().addTask("lottery", "lottery") {
+                                    logger.info { "开始抽奖" }
+                                    lotteryViewModel.award = lotteryViewModel.randomAward(
+                                        gameName, catalogueId, poolId, num, isUp
+                                    )
+                                }
+                                navHostController.navigate(MingChaoRoute.AWARD_LIST)
+                            }, onDispatch = {
+                                val intent = Intent(baseContext, MainActivity::class.java)
+                                startActivity(intent)
+                            })
                     }
                     composable(MingChaoRoute.AWARD_LIST) { backStackEntry ->
                         AwardList(
                             Modifier, lotteryViewModel,
-                            onDispatch={
+                            onDispatch = {
                                 navHostController.navigateUp()
                             }
                         )

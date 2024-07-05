@@ -69,4 +69,15 @@ object Utils {
     fun localDateTimeToString(time: LocalDateTime) : String{
         return time.format(formatter)
     }
+
+    fun stringEncrypt(str :String, size : Int) : String{
+        val stringBuilder = StringBuilder()
+        val len = str.length
+        val s = size
+        var e =  if (len  - size < 0) len else  len  - size
+        for (i in 0..e){
+            stringBuilder.append("*")
+        }
+        return "${str.substring(0, s)}${stringBuilder}${str.substring(s+stringBuilder.length..e)}"
+    }
 }

@@ -33,7 +33,7 @@ data class PoolLotteryAward (
 )
 
 data class UserPoolLotteryAward (
-    var id: Long = 0,
+    var id: Long? = null,
     var imageUri: String? = null,
     var poolId: Int? = null,
     var poolName: String? = null,

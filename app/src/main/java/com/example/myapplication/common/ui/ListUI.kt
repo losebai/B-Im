@@ -87,7 +87,7 @@ fun TopPagerList(
         val pagerState = rememberPagerState { pools.size }
         TopAppBar(title = {
             LazyVerticalGrid(
-                GridCells.Fixed(5),
+                GridCells.Fixed(4),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 items(pools.size) {
@@ -100,7 +100,7 @@ fun TopPagerList(
                             },
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(text = pools[it], color = textColor, fontSize = 18.sp)
+                        Text(text = pools[it], color = textColor, fontSize = 15.sp)
                         Divider(
                             thickness = 4.dp,
                             color = if (pagerState.currentPage == it) Color.Green else Color.Transparent,

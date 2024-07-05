@@ -27,6 +27,21 @@ class MingChaoAPI : BaseAPI() {
     override val MAP: String = "https://www.kurobbs.com/mc/map/"
     override val MAP_ICON: String =
         "https://prod-alicdn-community.kurobbs.com/postBanner/1719576043888541107.png"
+
+
+    override val GET_WEB_HOME: String
+        get() = super.GET_WEB_HOME
+    override val RAKING_ICON: String
+        get() = "https://prod-alicdn-community.kurobbs.com/forum/f92b449640374599ae7326e2b46f40b620240509.png"
+    override val LOTTERY_ICON: String
+        get() =  "https://prod-alicdn-community.kurobbs.com/forum/45963f70164d4c6bb4c5d52fd5f2187620240519.png"
+    override val SIMULATE_ICON: String
+        get() = "https://prod-alicdn-community.kurobbs.com/forum/ab4d00e54528486996c4ed72fc8ab5b220240520.png"
+
+    override val ROLE_ICON: String
+        get() = "https://prod-alicdn-community.kurobbs.com/forum/5e5bb6eaa1de43e6bcb66eb8d780e92c20240509.png"
+    override val STREING_ICON: String
+        get() = "https://prod-alicdn-community.kurobbs.com/forum/45963f70164d4c6bb4c5d52fd5f2187620240519.png"
 }
 
 

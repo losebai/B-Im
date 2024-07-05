@@ -52,7 +52,7 @@ import com.example.myapplication.viewmodel.ToolsViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun RankingHome(toolsViewModel: ToolsViewModel, mainController: NavHostController) {
+fun RankingHome(gameName: String ,toolsViewModel: ToolsViewModel, mainController: NavHostController) {
     val pools by remember {
         mutableStateOf(LotteryPollEnum.entries.map { it.poolName }.toList())
     }
@@ -72,8 +72,8 @@ fun RankingHome(toolsViewModel: ToolsViewModel, mainController: NavHostControlle
     val textColor = Color.White
     LaunchedEffect(poolType, isProd) {
         ThreadPoolManager.getInstance().addTask("init", "poolType") {
-            user = toolsViewModel.getUserGameDto(isProd)
-            list = toolsViewModel.getUserPoolRakingDto(poolType + 1, isProd).reversed()
+            user = toolsViewModel.getUserGameDto(isProd, gameName)
+            list = toolsViewModel.getUserPoolRakingDto(poolType + 1, isProd, gameName).reversed()
         }
     }
     Column(
@@ -133,17 +133,19 @@ fun RankingHome(toolsViewModel: ToolsViewModel, mainController: NavHostControlle
                                     if (user.uid == rakingDto.lotteryAwardCountDto.id) Color.White else Color.Black
                                 )
                                 .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(text = (index + 1).toString(), fontSize = 19.sp, color = if (index < 4) color else textColor)
                             HeadImage(path = rakingDto.imageUri, modifier = Modifier.size(50.dp))
-                            Column {
-                                Text(text = rakingDto.lotteryAwardCountDto.id.toString() ?: "", color = textColor)
+                            Column(modifier = Modifier.fillMaxWidth(0.3f)) {
+                                Text(text = if (rakingDto.lotteryAwardCountDto.id == null) "未检测到" else rakingDto.lotteryAwardCountDto.id.toString() , color = textColor)
                                 Text(text = rakingDto.name, color = textColor)
                             }
                             Text(text = (rakingDto.ouScore * 100).toString(), fontSize = 18.sp, color = color)
-                            IconButton(onClick = { mainController.navigate("${PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL}/${rakingDto.userId}") }) {
+                            IconButton(onClick = {
+                                mainController.navigate("${PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL}/${rakingDto.userId}/${gameName}")
+                            }) {
                                 Icon(imageVector = Icons.Outlined.KeyboardArrowRight,
                                     contentDescription = null,
                                     tint = Color.White)

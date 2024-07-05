@@ -140,8 +140,9 @@ class ToolsViewModel() : ViewModel() {
         Utils.message(cs, "获取抽奖记录完成，请到抽卡分析页面查看", SystemApp.snackBarHostState)
     }
 
-    fun getUserPoolRakingDto(poolType: Int, isProd: Boolean): List<UserPoolRakingDto> =
-        rakingService.getUserPoolRakingDto(poolType, isProd)
+    fun getUserPoolRakingDto(poolType: Int, isProd: Boolean, gameName: String): List<UserPoolRakingDto> =
+        rakingService.getUserPoolRakingDto(poolType, isProd, gameName)
 
-    fun getUserGameDto(isProd: Boolean) = rakingService.getUserGameDto(SystemApp.UserId, isProd)
+    fun getUserGameDto(isProd: Boolean,  gameName: String)
+    = rakingService.getUserGameDto(SystemApp.UserId, isProd, gameName)
 }

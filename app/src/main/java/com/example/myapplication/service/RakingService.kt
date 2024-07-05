@@ -9,10 +9,11 @@ import org.noear.snack.ONode
 
 class RakingService {
 
-    fun getUserGameDto(userId: Long, isProd: Boolean) : UserGameDto {
+    fun getUserGameDto(userId: Long, isProd: Boolean, gameName: String) : UserGameDto {
         val params: HashMap<String, Any> = hashMapOf()
         params["userId"] = userId
         params["isProd"] = isProd
+        params["gameName"] = gameName
         val res: Response? = HttpUtils.get(AppAPI.RakingAPI.GET_USER_GAME, params)
         if (res?.isSuccessful == true) {
             val str = res.body?.string()
@@ -23,10 +24,11 @@ class RakingService {
     }
 
 
-    fun getUserPoolRakingDto(poolType: Int, isProd: Boolean) : List<UserPoolRakingDto> {
+    fun getUserPoolRakingDto(poolType: Int, isProd: Boolean, gameName: String) : List<UserPoolRakingDto> {
         val params: HashMap<String, Any> = hashMapOf()
         params["poolType"] = poolType
         params["isProd"] = isProd
+        params["gameName"] = gameName
         val res: Response? = HttpUtils.get(AppAPI.RakingAPI.GET_RAKING_LIST, params)
         if (res?.isSuccessful == true) {
             val str = res.body?.string()

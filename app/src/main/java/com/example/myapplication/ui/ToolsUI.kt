@@ -64,6 +64,7 @@ import com.example.myapplication.common.ui.TopPagerList
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.config.WEB_API_ROURE
 import com.example.myapplication.dto.CommunityEntity
+import com.example.myapplication.mc.consts.BaseAPI
 import com.example.myapplication.mc.consts.MingChaoAPI
 import com.example.myapplication.mc.dto.BannerDto
 import com.example.myapplication.viewmodel.LotteryViewModel
@@ -308,6 +309,8 @@ fun ToolsList(
                         )
                     }
                 }
+
+
                 LazyVerticalGrid(
                     GridCells.Fixed(4),
                     modifier = Modifier.padding(start = 5.dp)
@@ -332,27 +335,6 @@ fun ToolsList(
                             Text(text = "官网")
                         }
                     }
-//                    item {
-//                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-//                            IconButton(onClick = {
-//                                mainController.navigate(
-//                                    WEB_API_ROURE.WEB_ROUTE + "/${
-//                                        Uri.encode(
-//                                            api.WIKI
-//                                        )
-//                                    }"
-//                                )
-//                            }) {
-//                                AsyncImage(
-//                                    model = ICons.USER,
-//                                    contentDescription = "角色",
-//                                    modifier = StyleCommon.ICON_SIZE
-//                                )
-//                            }
-//                            Text(text = "我的")
-//
-//                        }
-//                    }
                     item() {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             IconButton(onClick = {
@@ -412,11 +394,13 @@ fun ToolsList(
                         }
                     }
                 }
-                when (it) {
-                    0 -> {
-                        MingChaoHome(toolsViewModel, mainController)
-                    }
-                }
+
+                MingChaoHome(mainController,modifier = Modifier.padding(top=20.dp),
+                    gameProvider = {
+                    game
+                }, baseAPIProvider ={
+                    api
+                })
             }
         }
     }

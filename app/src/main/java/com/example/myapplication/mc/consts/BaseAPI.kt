@@ -14,4 +14,14 @@ abstract class BaseAPI {
 
     open val MAP = ""
     open val MAP_ICON = ""
+
+    open val ROLE_ICON = ""
+
+    open val STREING_ICON = ""
+
+    open val RAKING_ICON = ""
+
+    open val LOTTERY_ICON = ""
+
+    open val SIMULATE_ICON = ""
 }
