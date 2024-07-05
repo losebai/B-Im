@@ -117,7 +117,7 @@ fun LotterySimulate(
     var isProd by remember {
         mutableStateOf(true)
     }
-    LaunchedEffect(UInt) {
+    LaunchedEffect(isProd) {
         ThreadPoolManager.getInstance().addTask("init", "lotteryAwardCountDto") {
             lotteryAwardCountDto = lotteryViewModel.lotteryAwardCount(gameName, userId, isProd)
             logger.info { "LaunchedEffect 开始加载抽卡分析 ： $isProd" }
@@ -161,7 +161,7 @@ fun LotterySimulate(
                     }
                     Button(
                         onClick = {
-                            mainController.navigate(MingChaoRoute.SET_COOKIES)
+                            mainController.navigate("${MingChaoRoute.SET_COOKIES}/${gameName}")
                         }, modifier = Modifier.padding(top = 30.dp, start = 10.dp),
                         shape = StyleCommon.ONE_SHAPE,
                         colors = ButtonDefaults.buttonColors(Color.Transparent)

@@ -56,8 +56,8 @@ object Utils {
 
     fun randomUser() : AppUserEntity {
         val user = AppUserEntity()
-        user.name = randomName();
-        user.note = "那天，她说，她不会忘记我，可是我想太多";
+        user.name = "游客";
+        user.note = "个性签名";
         user.imageUrl = "https://pic.netbian.com/uploads/allimg/240429/225620-1714402580ab97.jpg"
         return user
     }

@@ -186,7 +186,7 @@ fun MainNavGraph(
                 onNavigateUp = { webNavActions.navigateUp() }
             )
         }
-        composable("${MingChaoRoute.SET_COOKIES}/gameName") { backStackEntry ->
+        composable("${MingChaoRoute.SET_COOKIES}/{gameName}") { backStackEntry ->
             val gameName = backStackEntry.arguments?.getString("gameName") ?: ""
             GetCookiesUri(gameName,
                 Modifier,
