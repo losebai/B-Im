@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import com.example.myapplication.mc.consts.MingChaoAPI
 import com.example.myapplication.mc.dto.CatalogueDto
 import com.example.myapplication.mc.service.MingChaoService
 import com.example.myapplication.service.DictService
@@ -10,7 +11,7 @@ class ToolsTest {
 
     @Test
     fun testHookList(){
-        val mingChaoService = MingChaoService()
+        val mingChaoService = MingChaoService(MingChaoAPI())
         val list = mingChaoService.getRole(CatalogueDto(1106))
         println(list)
     }

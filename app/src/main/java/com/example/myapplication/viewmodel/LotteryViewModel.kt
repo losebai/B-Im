@@ -23,18 +23,18 @@ class LotteryViewModel() : ViewModel() {
     private val appLotteryPoolService = AppLotteryPoolService()
 
 
-    fun currentPools(): List<LotteryPool> {
-        return appLotteryPoolService.currentPools()
+    fun currentPools(gameName: String): List<LotteryPool> {
+        return appLotteryPoolService.currentPools(gameName)
     }
 
-    fun randomAward(catalogueId: Int,poolId: Int, num: Int=1, isUp :Boolean = false) : List<Award> {
-        return appLotteryPoolService.randomAppAward(SystemApp.UserId, catalogueId, poolId, num, isUp)
+    fun randomAward(gameName: String, catalogueId: Int,poolId: Int, num: Int=1, isUp :Boolean = false) : List<Award> {
+        return appLotteryPoolService.randomAppAward(gameName,SystemApp.UserId, catalogueId, poolId, num, isUp)
     }
 
-    fun lotteryAwardCount(userId: Long, isProd: Boolean = false) : LotteryAwardCountDto =
-        appLotteryPoolService.lotteryAwardCount(userId, isProd);
+    fun lotteryAwardCount(gameName: String, userId: Long, isProd: Boolean = false) : LotteryAwardCountDto =
+        appLotteryPoolService.lotteryAwardCount(gameName,userId, isProd);
 
-    fun asyncMcRecord(uri: String) : Map<String, Int> {
-        return appLotteryPoolService.asyncMcRecord(SystemApp.UserId, uri);
+    fun asyncMcRecord(gameName: String, uri: String) : Map<String, Int> {
+        return appLotteryPoolService.asyncMcRecord(gameName, SystemApp.UserId, uri);
     }
 }

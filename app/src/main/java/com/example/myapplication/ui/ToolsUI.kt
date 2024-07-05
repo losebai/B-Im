@@ -60,6 +60,7 @@ import com.example.myapplication.common.ui.MySwipeRefresh
 import com.example.myapplication.common.ui.MySwipeRefreshState
 import com.example.myapplication.common.ui.NORMAL
 import com.example.myapplication.common.ui.PagerList
+import com.example.myapplication.common.ui.TopPagerList
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.config.WEB_API_ROURE
 import com.example.myapplication.dto.CommunityEntity
@@ -265,12 +266,10 @@ fun ToolsList(
     var bannerIndex by remember {
         mutableIntStateOf(0)
     }
-    var images by remember {
-        mutableStateOf(listOf<BannerDto>())
-    }
-    LaunchedEffect(images) {
+    var images = listOf<BannerDto>()
+    LaunchedEffect(key1 = Unit) {
         while(true) {
-            delay(5.seconds)
+            delay(20.seconds)
             if (bannerIndex + 1 >= images.size){
                 bannerIndex = 0
             } else{
@@ -282,33 +281,31 @@ fun ToolsList(
         modifier = modifier
             .fillMaxSize()
     ) {
-        PagerList(toolsViewModel.pool, Color.White) {
+        TopPagerList(pools = toolsViewModel.pool, textColor =  Color.Black) {
             val game = toolsViewModel.pool[it]
             val api = toolsViewModel.getBaseAPI(game)
             images = toolsViewModel.getBannerList(game)
-            logger.info { "开始加载images:${game}:${images.size}" }
-            Column {
-                Row {
+            logger.info { "开始加载images:${it}:$game:${images.size}" }
+            Column(modifier = Modifier.fillMaxSize()) {
+                Row(modifier = Modifier.padding(5.dp)) {
                     if (images.size > bannerIndex) {
-                        Surface(shape = StyleCommon.ONE_SHAPE) {
-                            logger.info { "开始加载banner:$bannerIndex:${game}:${images.size}" }
-                            AsyncImage(
-                                model = images[bannerIndex].url, contentDescription = null,
-                                modifier = Modifier
-                                    .padding(10.dp)
-                                    .height(200.dp)
-                                    .clickable {
-                                        mainController.navigate(
-                                            WEB_API_ROURE.WEB_ROUTE + "/${
-                                                Uri.encode(
-                                                    images[bannerIndex].linkUri
-                                                )
-                                            }"
-                                        )
-                                    },
-                                contentScale = ContentScale.Crop
-                            )
-                        }
+                        logger.info { "开始加载banner:${game}:$bannerIndex:${images[bannerIndex].url}" }
+                        AsyncImage(
+                            model = images[bannerIndex].url, contentDescription = null,
+                            modifier = Modifier
+                                .height(200.dp)
+                                .fillMaxWidth()
+                                .clickable {
+                                    mainController.navigate(
+                                        WEB_API_ROURE.WEB_ROUTE + "/${
+                                            Uri.encode(
+                                                images[bannerIndex].linkUri
+                                            )
+                                        }"
+                                    )
+                                },
+                            contentScale = ContentScale.Fit
+                        )
                     }
                 }
                 LazyVerticalGrid(
@@ -392,24 +389,26 @@ fun ToolsList(
 //                            Text(text = "图片集合")
 //                        }
 //                    }
-                    item() {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            IconButton(onClick = {
-                                mainController.navigate(
-                                    WEB_API_ROURE.WEB_ROUTE + "/${
-                                        Uri.encode(
-                                            api.MAP
-                                        )
-                                    }"
-                                )
-                            }) {
-                                AsyncImage(
-                                    model =  api.MAP_ICON,
-                                    contentDescription = null,
-                                    modifier = StyleCommon.ICON_SIZE
-                                )
+                    if (api.MAP.isNotEmpty()){
+                        item() {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                IconButton(onClick = {
+                                    mainController.navigate(
+                                        WEB_API_ROURE.WEB_ROUTE + "/${
+                                            Uri.encode(
+                                                api.MAP
+                                            )
+                                        }"
+                                    )
+                                }) {
+                                    AsyncImage(
+                                        model =  api.MAP_ICON,
+                                        contentDescription = null,
+                                        modifier = StyleCommon.ICON_SIZE
+                                    )
+                                }
+                                Text(text = "大地图")
                             }
-                            Text(text = "大地图")
                         }
                     }
                 }
@@ -422,4 +421,5 @@ fun ToolsList(
         }
     }
 }
+
 

@@ -57,6 +57,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 
 @Composable
 fun MCRoleLotteryHome(
+    gameName: String,
     lotteryViewModel: LotteryViewModel,
     onLottery: (LotteryPool, Int) -> Unit = { l, i -> },
     onDispatch: () -> Unit = {}
@@ -72,7 +73,7 @@ fun MCRoleLotteryHome(
     } 
     LaunchedEffect(1) {
         ThreadPoolManager.getInstance().addTask("lottery", "lottery"){
-            pools = lotteryViewModel.currentPools()
+            pools = lotteryViewModel.currentPools(gameName)
         }
     }
     Box(

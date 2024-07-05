@@ -2,6 +2,7 @@ package com.example.myapplication.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import coil.compose.AsyncImage
 import com.example.myapplication.dto.LotteryCount
 import com.example.myapplication.viewmodel.LotteryViewModel
 
@@ -26,5 +27,12 @@ fun LotterySimulateTest(){
     )
     lotteryMap[0] = l
     val lotteryViewModel = LotteryViewModel()
-    LotterySimulate(44, lotteryViewModel)
+    LotterySimulate("鸣潮",44, lotteryViewModel)
+}
+
+@Composable
+@Preview(showBackground = true)
+fun Test(){
+    val uri = "https://bbs-static.miyoushe.com/static/2024/07/04/e56eddc8df6bb047df44ed06f7fdda31_104566473761945531.png"
+    AsyncImage(model = uri, contentDescription = null)
 }

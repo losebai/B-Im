@@ -3,6 +3,7 @@ package com.example.myapplication.viewmodel
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.common.consts.SystemApp
+import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.common.util.Utils
 import com.example.myapplication.database.AppDatabase
 import com.example.myapplication.dto.UserPoolRakingDto
@@ -12,6 +13,7 @@ import com.example.myapplication.mc.consts.BaseAPI
 import com.example.myapplication.mc.consts.JueQuZeroAPI
 import com.example.myapplication.mc.consts.LotteryPollEnum
 import com.example.myapplication.mc.consts.MingChaoAPI
+import com.example.myapplication.mc.consts.TieDaoAPI
 import com.example.myapplication.mc.consts.YuanShenAPI
 import com.example.myapplication.mc.dto.BannerDto
 import com.example.myapplication.mc.dto.CatalogueDto
@@ -19,6 +21,7 @@ import com.example.myapplication.mc.dto.Handbook
 import com.example.myapplication.mc.dto.RoleBook
 import com.example.myapplication.mc.service.JueQuZeroService
 import com.example.myapplication.mc.service.MingChaoService
+import com.example.myapplication.mc.service.TieDaoService
 import com.example.myapplication.mc.service.YuanShenService
 import com.example.myapplication.repository.impl.OfflineMcRecordRepository
 import com.example.myapplication.service.AbsToolService
@@ -34,6 +37,7 @@ class ToolsViewModel() : ViewModel() {
     private val jueQuZeroAPI = JueQuZeroAPI()
     private val yuanShenAPI = YuanShenAPI()
     private val mingChaoAPI = MingChaoAPI()
+    private val tieDaoAPI = TieDaoAPI()
 
     private val mingChaoService by  lazy {
         MingChaoService(mingChaoAPI)
@@ -43,6 +47,10 @@ class ToolsViewModel() : ViewModel() {
     }
     private val jueQuZeroService by lazy {
         JueQuZeroService(jueQuZeroAPI)
+    }
+
+    private val tieDaoService by lazy {
+        TieDaoService(tieDaoAPI)
     }
 
     private val rakingService = RakingService()
@@ -60,7 +68,7 @@ class ToolsViewModel() : ViewModel() {
     private var bannerMap = hashMapOf<String, List<BannerDto>>()
 
 
-    var records = mutableStateMapOf<Int, List<McRecordEntity>>()
+    private var records = mutableStateMapOf<Int, List<McRecordEntity>>()
 
     private val mcRecordRepository: OfflineMcRecordRepository by lazy {
         OfflineMcRecordRepository(AppDatabase.getInstance().McRecordDao())
@@ -81,6 +89,7 @@ class ToolsViewModel() : ViewModel() {
             "鸣潮" -> mingChaoService
             "原神" -> yuanShenService
             "绝区零" -> jueQuZeroService
+            "星穹铁道" -> tieDaoService
             else -> {
                 null
             }
@@ -92,6 +101,7 @@ class ToolsViewModel() : ViewModel() {
             "鸣潮" -> mingChaoService.mingChaoAPI
             "原神" -> yuanShenService.yuanShenAPI
             "绝区零" -> jueQuZeroService.jueQuZeroAPI
+            "星穹铁道" -> tieDaoService.tieDaoAPI
             else -> {
                 mingChaoService.mingChaoAPI
             }
@@ -100,6 +110,11 @@ class ToolsViewModel() : ViewModel() {
 
 
     fun getBannerList(name: String): List<BannerDto> {
+        if (!bannerMap.contains(name)){
+            ThreadPoolManager.getInstance().addTask("init", name){
+                bannerMap[name] = getToolService(name)?.getBannerList() ?: listOf()
+            }
+        }
         return bannerMap[name] ?: listOf()
     }
 

@@ -52,15 +52,18 @@ class LotteryActivity : AppCompatActivity() {
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    composable(MingChaoRoute.LOTTERY_ROUTE) {
-                        MCRoleLotteryHome(lotteryViewModel, onLottery = { pool, num ->
+                    composable("${MingChaoRoute.LOTTERY_ROUTE}/{gameName}") { baseEntity ->
+                        val gameName = baseEntity.arguments?.getString("gameName") ?: ""
+                        MCRoleLotteryHome(
+                            gameName,
+                             lotteryViewModel, onLottery = { pool, num ->
                             val isUp = 5 >= pool.poolType.value && pool.poolType.value <= 6
                             val catalogueId = if (pool.poolType.value % 2 == 1) 1105 else 1106
                             val poolId = pool.poolId
                             ThreadPoolManager.getInstance().addTask("lottery", "lottery") {
                                 logger.info { "开始抽奖" }
                                 lotteryViewModel.award = lotteryViewModel.randomAward(
-                                    catalogueId, poolId, num, isUp
+                                    gameName, catalogueId, poolId, num, isUp
                                 )
                             }
                             navHostController.navigate(MingChaoRoute.AWARD_LIST)

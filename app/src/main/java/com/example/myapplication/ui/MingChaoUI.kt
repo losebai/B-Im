@@ -67,12 +67,14 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.R
 import com.example.myapplication.activity.LotteryActivity
 import com.example.myapplication.common.consts.StyleCommon
+import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.provider.BaseContentProvider
 import com.example.myapplication.common.ui.MySwipeRefresh
 import com.example.myapplication.common.ui.MySwipeRefreshState
 import com.example.myapplication.common.ui.NORMAL
 import com.example.myapplication.common.ui.PagerList
 import com.example.myapplication.common.util.ThreadPoolManager
+import com.example.myapplication.common.util.Utils
 import com.example.myapplication.config.MingChaoRoute
 import com.example.myapplication.config.PageRouteConfig
 import com.example.myapplication.dto.LotteryAwardCountDto
@@ -81,6 +83,9 @@ import com.example.myapplication.mc.dto.RoleBook
 import com.example.myapplication.viewmodel.LotteryViewModel
 import com.example.myapplication.viewmodel.ToolsViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 
 private val logger = KotlinLogging.logger {
 }
@@ -94,6 +99,7 @@ private val logger = KotlinLogging.logger {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LotterySimulate(
+    gameName: String,
     userId: Long,
     lotteryViewModel: LotteryViewModel,
     mainController: NavHostController = rememberNavController()
@@ -110,9 +116,9 @@ fun LotterySimulate(
     var isProd by remember {
         mutableStateOf(true)
     }
-    LaunchedEffect(isProd) {
+    LaunchedEffect(UInt) {
         ThreadPoolManager.getInstance().addTask("init", "lotteryAwardCountDto") {
-            lotteryAwardCountDto = lotteryViewModel.lotteryAwardCount(userId, isProd)
+            lotteryAwardCountDto = lotteryViewModel.lotteryAwardCount(gameName, userId, isProd)
             logger.info { "LaunchedEffect 开始加载抽卡分析 ： $isProd" }
         }
     }
@@ -300,7 +306,7 @@ fun LotterySimulate(
                     ) {
                         val poolList =
                             lotteryAwardCountDto.poolLotteryAwards.filter { it.poolName.isNotEmpty() }
-                        PagerList(poolList.map { it.poolName }.toList(), textColor) {
+                        PagerList(pools=poolList.map { it.poolName }.toList(), textColor=textColor) {
                             LazyColumn(
                                 Modifier.wrapContentHeight(),
                                 reverseLayout = true,
@@ -460,6 +466,7 @@ fun LotterySimulate(
 
 @Composable
 fun GetCookiesUri(
+    gameName: String,
     modifier: Modifier = Modifier,
     toolsViewModel: ToolsViewModel,
     lotteryViewModel: LotteryViewModel,
@@ -518,7 +525,7 @@ fun GetCookiesUri(
                     onClick = {
                         // toolsViewModel.changeRecords(uri)
                         ThreadPoolManager.getInstance().addTask("init") {
-                            lotteryViewModel.asyncMcRecord(uri)
+                            lotteryViewModel.asyncMcRecord(gameName, uri)
                         }
                         onBack()
                     },
@@ -533,6 +540,7 @@ fun GetCookiesUri(
 }
 
 
+@OptIn(DelicateCoroutinesApi::class)
 @SuppressLint("MutableCollectionMutableState", "UnrememberedMutableState")
 @Composable
 fun MingChaoHome(
@@ -562,7 +570,7 @@ fun MingChaoHome(
             }
             item {
                 Column(modifier = Modifier.clickable {
-                    mainController.navigate(PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL)
+                    mainController.navigate("${PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL}/${SystemApp.UserId}")
                 }, horizontalAlignment = Alignment.CenterHorizontally) {
                     AsyncImage(
                         model = stringResource(id = R.string.mc_role_tick),
@@ -602,9 +610,26 @@ fun MingChaoHome(
                     AsyncImage(
                         model = "https://prod-alicdn-community.kurobbs.com/forum/45963f70164d4c6bb4c5d52fd5f2187620240519.png",
                         contentDescription = "抽卡模拟",
-                        modifier = StyleCommon.ICON_SIZE
+                        modifier = StyleCommon.ICON_SIZE.clickable {
+                            Utils.message(GlobalScope, "暂未开放", SystemApp.snackBarHostState)
+                        }
                     )
                     Text(text = "练度统计")
+                }
+            }
+            item {
+                Column(
+                    modifier = row,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AsyncImage(
+                        model = "https://prod-alicdn-community.kurobbs.com/forum/45963f70164d4c6bb4c5d52fd5f2187620240519.png",
+                        contentDescription = "抽卡模拟",
+                        modifier = StyleCommon.ICON_SIZE.clickable {
+                            Utils.message(GlobalScope, "暂未开放", SystemApp.snackBarHostState)
+                        }
+                    )
+                    Text(text = "角色强度榜")
                 }
             }
         }

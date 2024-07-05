@@ -120,7 +120,7 @@ fun RankingHome(toolsViewModel: ToolsViewModel, mainController: NavHostControlle
             }
             Text(text = user.zonRaking.toString(), color = color, fontSize = 30.sp)
         }
-        PagerList(pools, Color.White) {
+        PagerList(pools=pools,textColor= Color.White) {
             poolType = it
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(list.size) { index ->

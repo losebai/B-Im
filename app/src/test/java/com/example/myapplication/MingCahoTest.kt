@@ -1,12 +1,13 @@
 package com.example.myapplication
 
+import com.example.myapplication.mc.consts.MingChaoAPI
 import com.example.myapplication.mc.dto.HomeDto
 import com.example.myapplication.mc.service.MingChaoService
 import org.junit.Test
 
 class MingCahoTest {
 
-    private val mingChaoService = MingChaoService()
+    private val mingChaoService = MingChaoService(MingChaoAPI())
 
     @Test
     fun homePageTest(){

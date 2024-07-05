@@ -12,9 +12,10 @@ import java.util.Collections
 class AppLotteryPoolService() {
 
 
-
-    fun currentPools(): List<LotteryPool> {
-        val res: Response? = HttpUtils.get(AppAPI.AppLotteryPoolAPI.CURRENT_POOLS)
+    fun currentPools(gameName: String): List<LotteryPool> {
+        val params: HashMap<String, Any> = hashMapOf()
+        params["gameName"] = gameName
+        val res: Response? = HttpUtils.get(AppAPI.AppLotteryPoolAPI.CURRENT_POOLS, params)
         if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
             return json["data"].toObjectList(LotteryPool::class.java)
@@ -22,9 +23,10 @@ class AppLotteryPoolService() {
         return Collections.emptyList()
     }
 
-    fun randomAppAward(userId :Long, catalogueId: Int,poolId: Int, num: Int=1,isUp :Boolean = false): List<Award> {
+    fun randomAppAward(gameName: String, userId :Long, catalogueId: Int,poolId: Int, num: Int=1,isUp :Boolean = false): List<Award> {
         val params: HashMap<String, Any> = hashMapOf()
         params["userId"] = userId
+        params["gameName"] = gameName
         params["catalogueId"] = catalogueId
         params["num"] = num
         params["isUp"] = if (isUp) "ture" else "false"
@@ -37,10 +39,11 @@ class AppLotteryPoolService() {
         return Collections.emptyList()
     }
 
-    fun lotteryAwardCount(userId: Long, isProd: Boolean) : LotteryAwardCountDto {
+    fun lotteryAwardCount(gameName: String, userId: Long, isProd: Boolean) : LotteryAwardCountDto {
         val params: HashMap<String, Any> = hashMapOf()
         params["userId"] = userId
         params["isProd"] = isProd
+        params["gameName"] = gameName
         val res: Response? = HttpUtils.get( AppAPI.AppLotteryPoolAPI.LOTTERY_AWARD_COUNT, params)
         if (res?.isSuccessful == true){
             val str = res.body?.string()
@@ -50,10 +53,11 @@ class AppLotteryPoolService() {
         return LotteryAwardCountDto()
     }
 
-    fun asyncMcRecord(userId: Long, uri: String) : Map<String, Int> {
+    fun asyncMcRecord(gameName: String, userId: Long, uri: String) : Map<String, Int> {
         val params: HashMap<String, Any> = hashMapOf()
         params["userId"] = userId
         params["uri"] = uri
+        params["gameName"] = gameName
         val res: Response? = HttpUtils.get(
             AppAPI.AppLotteryPoolAPI.AWARD_ASYNC_RECORD,
             params,

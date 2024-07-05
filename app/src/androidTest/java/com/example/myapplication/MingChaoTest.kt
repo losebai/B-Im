@@ -29,7 +29,7 @@ fun HookListTest(){
 @Composable
 //@Preview
 fun GetCookiesUriTest(){
-    GetCookiesUri(Modifier.fillMaxSize(),
+    GetCookiesUri("鸣潮",Modifier.fillMaxSize(),
         ToolsViewModel(),
         LotteryViewModel()
     )
