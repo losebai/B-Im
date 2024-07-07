@@ -2,6 +2,7 @@ package com.example.myapplication.common.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,8 +43,9 @@ fun PagerList(
     val pagerState = rememberPagerState { pools.size }
     Column(modifier) {
         LazyVerticalGrid(
-            GridCells.Fixed(5),
-            modifier = Modifier.fillMaxWidth()
+            GridCells.Fixed(pools.size),
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
             items(pools.size) {
                 Column(
