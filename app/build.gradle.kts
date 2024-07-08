@@ -23,7 +23,7 @@ android {
     compileSdk = configProperties.getProperty("compileSdkVersion").toInt()
     defaultConfig {
         applicationId = "com.example.myapplication"
-        minSdk = 27
+        minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.1.2"
@@ -33,7 +33,7 @@ android {
             useSupportLibrary = true
         }
         ndk {
-            abiFilters.add( "x86_64")
+            abiFilters.addAll( listOf("mips","mips64","x86_64","armeabi","armeabi-v7a","arm64-v8a"))
         }
 
     }
@@ -131,8 +131,8 @@ android {
             dimension = "tier"
             manifestPlaceholders["app_channel_value"] = name
             manifestPlaceholders["app_name_value"] = "Android"
-            buildConfigField("String", "BASE_URL", "\"http://192.168.20.119:8050\"")
-            buildConfigField("String", "SOCKET_URL", "\"sd:tcp://192.168.20.119:8002\"")
+            buildConfigField("String", "BASE_URL", "\"http://192.168.1.3:8050\"")
+            buildConfigField("String", "SOCKET_URL", "\"sd:tcp://192.168.1.3:8002\"")
 //            buildConfigField("String", "BASE_URL", "\"http://192.168.20.119:8082\"")
         }
         create("pro") {

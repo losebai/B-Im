@@ -2,10 +2,15 @@ package com.example.myapplication.common.util
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.core.content.ContextCompat.startActivity
 import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.provider.BaseContentProvider
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.GlobalScope
+
+private val logger = KotlinLogging.logger {
+}
 
 
 object QQUtils {
@@ -26,6 +31,7 @@ object QQUtils {
            try {
             startActivity(BaseContentProvider.context(), intent, null)
         } catch (e: Exception) {
+               logger.error { e }
             // 未安装手Q或安装的版本不支持
             Utils.message(GlobalScope, "未安装手Q或安装的版本不支持", SystemApp.snackBarHostState)
         }

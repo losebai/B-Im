@@ -1,7 +1,7 @@
 package com.example.myapplication.dto
 
 data class LotteryAwardCountDto (
-    var id: Long? = null,
+    var id: String? = null,
     var name: String = "",
     var sumCount: Int = 0,
     var star5Count: Int = 0,
@@ -9,6 +9,7 @@ data class LotteryAwardCountDto (
     var avgRoleCount: Double = 0.0,
     var avgWeaponCount: Double = 0.0,
     var up: Double = 0.0,
+    var avgUpCount : Double = 0.0,
     var upCount: Int = 0,
     var avgCount: Double = 0.0,
     var tag: String? = null,

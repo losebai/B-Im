@@ -118,6 +118,7 @@ fun LotterySimulate(
         mutableStateOf(true)
     }
     LaunchedEffect(isProd) {
+        lotteryAwardCountDto = LotteryAwardCountDto()
         ThreadPoolManager.getInstance().addTask("init", "lotteryAwardCountDto") {
             lotteryAwardCountDto = lotteryViewModel.lotteryAwardCount(gameName, userId, isProd)
             logger.info { "LaunchedEffect 开始加载抽卡分析 ： $isProd" }
@@ -273,9 +274,9 @@ fun LotterySimulate(
                             columModifier,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = "每UP角色: ", color = textColor)
+                            Text(text = "每UP出金: ", color = textColor)
                             Text(
-                                text = lotteryAwardCountDto.avgRoleCount.toString(),
+                                text = lotteryAwardCountDto.avgUpCount.toString(),
                                 color = color,
                                 fontSize = 20.sp
                             )
@@ -307,7 +308,7 @@ fun LotterySimulate(
                     ) {
                         val poolList =
                             lotteryAwardCountDto.poolLotteryAwards.filter { it.poolName.isNotEmpty() }
-                        PagerList(pools=poolList.map { it.poolName }.toList(), textColor=textColor) {
+                        PagerList(Modifier.fillMaxWidth(),pools=poolList.map { it.poolName }.toList(), textColor=textColor) {
                             LazyColumn(
                                 Modifier.wrapContentHeight(),
                                 reverseLayout = true,
@@ -319,7 +320,7 @@ fun LotterySimulate(
                                             .padding(2.dp)
                                             .height(50.dp)
                                             .fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically
+                                        verticalAlignment=Alignment.CenterVertically
                                     ) {
                                         if (poolLotteryAward.hookAwards[it].imageUri.isNullOrEmpty()) {
                                             Text(
@@ -369,7 +370,7 @@ fun LotterySimulate(
                             .wrapContentHeight()
                             .padding(20.dp)
                             .paint(rememberAsyncImagePainter(userPoolLotteryAward.imageUri),
-                                contentScale=ContentScale.FillBounds)
+                                contentScale=ContentScale.FillBounds, alpha = 0.2f)
                             .border(1.dp, Color.White)
                             .padding(20.dp)
                     ) {
