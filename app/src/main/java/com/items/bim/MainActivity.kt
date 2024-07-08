@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var messagesViewModel: MessagesViewModel;
 
-
     private val viewModelEvent: ViewModelEvent = ViewModelEvent.getInstance(this)
 
     override fun onRestart() {

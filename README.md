@@ -63,6 +63,7 @@ data: room
 <img alt="img5_png" height="400" src="img/img_5.png" width="200"/>
 
 #### 抽卡分析
+<img alt="img5_png" height="400" src="img/game_raking.png" width="200"/>
 <img alt="img5_png" height="400" src="img/image_award.png" width="200"/>
 
 #### 抽卡模拟
