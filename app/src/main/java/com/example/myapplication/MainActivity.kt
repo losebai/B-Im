@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     override fun onRestart() {
         super.onRestart()
         messagesViewModel.messageService.reconnect()
+        logger.info { "onRestart" }
     }
 
     override fun onDestroy() {
@@ -59,6 +60,7 @@ class MainActivity : AppCompatActivity() {
         ThreadPoolManager.getInstance().exitThreadPool("init")
         ThreadPoolManager.getInstance().exitThreadPool("lottery")
         ThreadPoolManager.getInstance().exitThreadPool("message")
+        logger.info { "onDestroy" }
     }
 
     private fun initLoad(){
@@ -75,6 +77,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             viewModelEvent.onUserAll(this@MainActivity, userViewModel)
+            messagesViewModel.messageService.start()
             Utils.message(this, "程序初始化完成", SystemApp.snackBarHostState)
         }
     }
@@ -92,14 +95,15 @@ class MainActivity : AppCompatActivity() {
                 this,
                 MessagesViewModel.MessageViewModelFactory(this)
             )[MessagesViewModel::class.java]
-        this.initLoad()
         setContent {
             AppTheme(appBase.darkTheme) {
                 MainNavGraph(this,
                     appBase,
                     userViewModel,
                     messagesViewModel,
-                    appBase.imageViewModel)
+                    appBase.imageViewModel,init={
+                        this.initLoad()
+                    })
             }
         }
     }

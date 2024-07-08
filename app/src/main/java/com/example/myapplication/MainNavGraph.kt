@@ -59,7 +59,8 @@ fun MainNavGraph(
     activity: AppCompatActivity, appBase: AppBase,
     userViewModel: UserViewModel,
     messagesViewModel: MessagesViewModel,
-    imageViewModel: ImageViewModel
+    imageViewModel: ImageViewModel,
+    init : () -> Unit = {}
 ) {
     val communityViewModel = viewModel<CommunityViewModel>()
     val toolsViewModel = viewModel<ToolsViewModel>()
@@ -69,6 +70,7 @@ fun MainNavGraph(
     val wanUiState by webViewModel.uiState.collectAsStateWithLifecycle()
     val webNavActions = remember(navHostController) { WanNavActions(navHostController) }
     GlobalInitEvent.run()
+    init()
     NavHost(
         navController = navHostController,
         startDestination = PageRouteConfig.MENU_ROUTE,

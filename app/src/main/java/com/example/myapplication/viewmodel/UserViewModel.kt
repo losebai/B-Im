@@ -58,7 +58,7 @@ class UserViewModel(context: Context): ViewModel() {
     }
 
     init {
-        GlobalInitEvent.addUnit{
+        GlobalInitEvent.addUnit {
             val appUserEntity = Utils.randomUser()
             appUserEntity.deviceNumber = SystemApp.PRODUCT_DEVICE_NUMBER
             val user = this.gerUserByNumber(SystemApp.PRODUCT_DEVICE_NUMBER)

@@ -108,20 +108,20 @@ class ThreadPoolManager private constructor() {
      *  @param tag 针对每个TAG 获取对应的线程池
      *  @param runnable 对应的 runnable 任务
      * */
-    fun addTask(tag: String, runnable: Runnable) {
-        addTask(tag, runnable.toString(), runnable)
+    fun addTask(tag: String, runnable: Runnable) : Future<*>? {
+        return addTask(tag, runnable.toString(), runnable)
     }
 
     /**
      *  @param tag 针对每个TAG 获取对应的线程池
      *  @param runnable 对应的 runnable 任务
      * */
-    fun addTask(tag: String, name: String, runnable: Runnable) {
+    fun addTask(tag: String, name: String, runnable: Runnable) : Future<*>? {
         if (running.contains(name)){
-            return
+            return null
         }
         running.add(name)
-        getThreadPool(tag).execute{
+        return getThreadPool(tag).submit{
             try {
                 runnable.run()
             }catch (e: Exception){

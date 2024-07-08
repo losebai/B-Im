@@ -3,6 +3,7 @@ package com.example.myapplication.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.myapplication.common.consts.AppEventConst
 import com.example.myapplication.common.util.ThreadPoolManager
 import com.example.myapplication.database.AppDatabase
 import com.example.myapplication.entity.UserMessages
@@ -55,7 +56,7 @@ class MessagesViewModel(context: Context) : ViewModel() {
 
     init {
         GlobalInitEvent.addUnit{
-            messageService.sendText("", "")
+            messageService.sendText(AppEventConst.OFF_LINE_USER_MESSAGE, "")
         }
     }
 
