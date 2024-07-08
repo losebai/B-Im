@@ -18,20 +18,20 @@ data: room
 
 ### 消息
 
-<img alt="img_1.png" height="1217" src="img_1.png" width="592"/>
+<img alt="img_1.png" height="1217" src="img/img_1.png" width="592"/>
 
 #### 消息详情
 
-![img_2.png](img_2.png)
+![img_2.png](img/img_2.png)
 
 ### 联系人
 
-![img.png](img.png)
+![img.png](img/img.png)
 
 ### 游戏
 
-![img_3.png](img_3.png)
+![img_3.png](img/img_3.png)
 
 ### 社区
 
-![img_4.png](img_4.png)
+![img_4.png](img/img_4.png)

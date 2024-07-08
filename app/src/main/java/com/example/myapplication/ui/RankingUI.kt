@@ -40,6 +40,7 @@ import androidx.navigation.NavHostController
 import com.example.myapplication.R
 import com.example.myapplication.common.consts.ICons
 import com.example.myapplication.common.consts.StyleCommon
+import com.example.myapplication.common.consts.SystemApp
 import com.example.myapplication.common.ui.HeadImage
 import com.example.myapplication.common.ui.PagerList
 import com.example.myapplication.common.util.ThreadPoolManager
@@ -118,7 +119,7 @@ fun RankingHome(gameName: String ,toolsViewModel: ToolsViewModel, mainController
                 Text(text = "   称号: ${user.tag}", color = textColor)
                 Text(text = "   名称: ${user.name}", color = textColor)
             }
-            Text(text = user.zonRaking.toString(), color = color, fontSize = 30.sp)
+//            Text(text = user.zonRaking.toString(), color = color, fontSize = 30.sp)
         }
         PagerList(pools=pools,textColor= Color.White) {
             poolType = it
@@ -130,7 +131,7 @@ fun RankingHome(gameName: String ,toolsViewModel: ToolsViewModel, mainController
                             modifier = Modifier
                                 .border(
                                     1.dp,
-                                    if (user.uid == rakingDto.lotteryAwardCountDto.id) Color.White else Color.Black
+                                    if (rakingDto.userId == SystemApp.UserId) Color.White else Color.Black
                                 )
                                 .fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,

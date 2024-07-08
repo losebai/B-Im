@@ -286,11 +286,11 @@ fun ToolsList(
             val game = toolsViewModel.pool[it]
             val api = toolsViewModel.getBaseAPI(game)
             images = toolsViewModel.getBannerList(game)
-            logger.info { "开始加载images:${it}:$game:${images.size}" }
+//            logger.info { "开始加载images:${it}:$game:${images.size}" }
             Column(modifier = Modifier.fillMaxSize()) {
                 Row(modifier = Modifier.padding(5.dp)) {
                     if (images.size > bannerIndex) {
-                        logger.info { "开始加载banner:${game}:$bannerIndex:${images[bannerIndex].url}" }
+//                        logger.info { "开始加载banner:${game}:$bannerIndex:${images[bannerIndex].url}" }
                         AsyncImage(
                             model = images[bannerIndex].url, contentDescription = null,
                             modifier = Modifier

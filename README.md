@@ -48,23 +48,26 @@ data: room
 
 ### 消息
 
-<img alt="img_1.png" height="400" src="img_1.png" width="200"/>
+<img alt="img_1.png" height="400" src="img/img_1.png" width="200"/>
 
 #### 消息详情
 
-<img alt="img_2png" height="400" src="img_2.png" width="200"/>
+<img alt="img_2png" height="400" src="img/img_2.png" width="200"/>
 
 ### 联系人
 
-<img alt="img_png" height="400" src="img.png" width="200"/>
+<img alt="img_png" height="400" src="img/img.png" width="200"/>
 
 ### 游戏
-<img alt="img_png" height="400" src="img_3.png" width="200"/>
-<img alt="img5_png" height="400" src="img_5.png" width="200"/>
+<img alt="img_png" height="400" src="img/img_3.png" width="200"/>
+<img alt="img5_png" height="400" src="img/img_5.png" width="200"/>
+
+#### 抽卡分析
+<img alt="img5_png" height="400" src="img/image_award.png" width="200"/>
 
 #### 抽卡模拟
-<img alt="img5_png" height="400" src="image_lottery.png" width="200"/>
-<img alt="img5_png" height="400" src="image_award.png" width="200"/>
+<img alt="img5_png" height="400" src="img/image_lottery.png" width="200"/>
+<img alt="img5_png" height="400" src="img/lottery_award.png" width="200"/>
 
 ### 社区
-<img alt="img_png" height="400" src="img_4.png" width="200"/>
+<img alt="img_png" height="400" src="img/img_4.png" width="200"/>

@@ -118,7 +118,6 @@ fun LotterySimulate(
         mutableStateOf(true)
     }
     LaunchedEffect(isProd) {
-        lotteryAwardCountDto = LotteryAwardCountDto()
         ThreadPoolManager.getInstance().addTask("init", "lotteryAwardCountDto") {
             lotteryAwardCountDto = lotteryViewModel.lotteryAwardCount(gameName, userId, isProd)
             logger.info { "LaunchedEffect 开始加载抽卡分析 ： $isProd" }
