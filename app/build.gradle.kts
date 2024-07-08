@@ -19,10 +19,10 @@ val keystoreProperties = Properties()
 keystoreProperties.load(FileInputStream(rootProject.file("keystore.properties")))
 
 android {
-    namespace = "com.example.myapplication"
+    namespace = "com.items.bim"
     compileSdk = configProperties.getProperty("compileSdkVersion").toInt()
     defaultConfig {
-        applicationId = "com.example.myapplication"
+        applicationId = "com.items.bim"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.myapplication">
+    package="com.items.bim">
 
     <!-- 获取手机外部存储读写权限 -->
     <uses-feature
@@ -37,7 +37,7 @@
         tools:targetApi="34">
         <!--        主文件 android.intent.action.MAI -->
         <provider
-            android:name="com.example.myapplication.common.provider.BaseContentProvider"
+            android:name="com.items.bim.common.provider.BaseContentProvider"
             android:authorities="${applicationId}.BaseProvider"
             android:exported="false" />
         <activity
@@ -57,7 +57,7 @@
         </activity>
 <!--        <provider-->
 <!--            android:name="androidx.core.content.FileProvider"-->
-<!--            android:authorities="com.example.myapplication.fileprovider"-->
+<!--            android:authorities="com.items.bim.fileprovider"-->
 <!--            android:exported="false"-->
 <!--            android:grantUriPermissions="true">-->
 <!--            <meta-data-->
