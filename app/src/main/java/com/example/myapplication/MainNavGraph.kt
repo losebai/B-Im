@@ -5,6 +5,10 @@ import android.os.Build
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,6 +52,7 @@ import com.example.myapplication.viewmodel.ToolsViewModel
 import com.example.myapplication.viewmodel.UserViewModel
 import com.example.myapplication.viewmodel.WebVIewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlin.concurrent.thread
 
 private val logger = KotlinLogging.logger {
 }
@@ -56,11 +61,12 @@ private val logger = KotlinLogging.logger {
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun MainNavGraph(
-    activity: AppCompatActivity, appBase: AppBase,
+    activity: AppCompatActivity,
+    appBase: AppBase,
     userViewModel: UserViewModel,
     messagesViewModel: MessagesViewModel,
     imageViewModel: ImageViewModel,
-    init : () -> Unit = {}
+    init: () -> Unit = {}
 ) {
     val communityViewModel = viewModel<CommunityViewModel>()
     val toolsViewModel = viewModel<ToolsViewModel>()
@@ -69,11 +75,24 @@ fun MainNavGraph(
     val webViewModel = viewModel<WebVIewModel>()
     val wanUiState by webViewModel.uiState.collectAsStateWithLifecycle()
     val webNavActions = remember(navHostController) { WanNavActions(navHostController) }
-    GlobalInitEvent.run()
-    init()
+    thread {
+        GlobalInitEvent.run()
+        init()
+    }
     NavHost(
         navController = navHostController,
         startDestination = PageRouteConfig.MENU_ROUTE,
+        enterTransition = {
+            slideInHorizontally(animationSpec = tween(1000), //动画时长1s
+                initialOffsetX = {
+                    -it //初始位置在负一屏的位置，也就是说初始位置我们看不到，动画动起来的时候会从负一屏位置滑动到屏幕位置
+                })
+        },
+        exitTransition = {
+            slideOutHorizontally(animationSpec = tween(1000), targetOffsetX = {
+                it
+            })
+        },
         modifier = Modifier
             .fillMaxWidth(1f)
             .fillMaxHeight(1f)

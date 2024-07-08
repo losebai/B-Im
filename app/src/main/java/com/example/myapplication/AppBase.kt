@@ -70,8 +70,6 @@ class AppBase {
 
     var settingDrawerState by mutableStateOf(DrawerState(DrawerValue.Closed))
 
-    private var isLoadImage by mutableStateOf(false)
-
     var topVisible by mutableStateOf(false)
 
     var darkTheme by mutableStateOf(false)
