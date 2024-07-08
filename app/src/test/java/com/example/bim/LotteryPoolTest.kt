@@ -10,7 +10,7 @@ class LotteryPoolTest {
 
     @Test
     fun lotteryAwardCount(){
-        val lotteryAwardCountDto =  appLotteryPoolService.lotteryAwardCount(3L,  false)
+        val lotteryAwardCountDto =  appLotteryPoolService.lotteryAwardCount("鸣潮",3L,  false)
         println(lotteryAwardCountDto)
     }
 }
