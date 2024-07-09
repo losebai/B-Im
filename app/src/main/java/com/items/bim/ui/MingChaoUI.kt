@@ -292,144 +292,32 @@ fun LotterySimulate(
                 }
             }
 
-            if (lotteryAwardCountDto.poolLotteryAwards.isEmpty()) {
-            } else {
-                item {
-                    Column(
-                        modifier = Modifier
-                            .height(310.dp)
-                            .padding(20.dp)
-                            .border(1.dp, Color.White)
-                            .padding(20.dp)
-                    ) {
-                        val poolList =
-                            lotteryAwardCountDto.poolLotteryAwards.filter { it.poolName.isNotEmpty() }
-                        PagerList(Modifier.fillMaxWidth(),pools=poolList.map { it.poolName }.toList(), textColor=textColor) {
-                            LazyColumn(
-                                Modifier.wrapContentHeight(),
-                                reverseLayout = true,
-                            ) {
-                                val poolLotteryAward = poolList[it]
-                                items(poolLotteryAward.hookAwards.size) {
-                                    Row(
-                                        modifier = Modifier
-                                            .padding(2.dp)
-                                            .height(50.dp)
-                                            .fillMaxWidth(),
-                                        verticalAlignment=Alignment.CenterVertically
-                                    ) {
-                                        if (poolLotteryAward.hookAwards[it].imageUri.isNullOrEmpty()) {
-                                            Text(
-                                                "?", color = Color.White,
-                                                fontSize = 18.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                modifier = Modifier
-                                                    .size(50.dp)
-                                                    .background(upColor)
-                                                    .wrapContentSize(Alignment.Center)
-                                            )
-                                        } else {
-                                            AsyncImage(
-                                                model = poolLotteryAward.hookAwards[it].imageUri,
-                                                contentDescription = null,
-                                                modifier = StyleCommon.FONT_MODIFIER
-                                                    .size(50.dp)
-                                                    .background(upColor)
-                                            )
-                                        }
-                                        Divider(
-                                            thickness = 50.dp, color = Color.Green,
-                                            modifier = Modifier
-                                                .background(if (poolLotteryAward.hookAwards[it].isUp) Color.Red else Color.Green)
-                                                .fillMaxWidth(poolLotteryAward.hookAwards[it].count / 100f)
-                                        )
-                                        Text(
-                                            text = poolLotteryAward.hookAwards[it].count.toString(),
-                                            color = Color.White,
-                                            fontWeight = FontWeight.Bold,
-                                            modifier = StyleCommon.FONT_MODIFIER
-                                        )
-//                                if (!poolLotteryAward.hookAwards[it].isUp){
-//                                    Text(text = "歪", color= Color.Red)
-//                                }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                items(lotteryAwardCountDto.userPoolLotteryAwards.size) {
-                    val userPoolLotteryAward = lotteryAwardCountDto.userPoolLotteryAwards[it]
-                    Column(
-                        modifier =
-                        Modifier
-                            .wrapContentHeight()
-                            .padding(20.dp)
-                            .paint(rememberAsyncImagePainter(userPoolLotteryAward.imageUri),
-                                contentScale=ContentScale.FillBounds, alpha = 0.2f)
-                            .border(1.dp, Color.White)
-                            .padding(20.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+        if (lotteryAwardCountDto.poolLotteryAwards.isNotEmpty()) {
+            item {
+                Column(
+                    modifier = Modifier
+                        .height(310.dp)
+                        .padding(20.dp)
+                        .border(1.dp, Color.White)
+                        .padding(20.dp)
+                ) {
+                    val poolList =
+                        lotteryAwardCountDto.poolLotteryAwards.filter { it.poolName.isNotEmpty() }
+                    PagerList(Modifier.fillMaxWidth(),pools=poolList.map { it.poolName }.toList(), textColor=textColor) {
+                        LazyColumn(
+                            Modifier.height(310.dp),
+                            reverseLayout = true,
                         ) {
-                            Text(
-                                text = userPoolLotteryAward.poolName.toString(),
-                                color = color,
-                                fontSize = 12.sp
-                            )
-                            Text(
-                                text = userPoolLotteryAward.tag ?: "",
-                                color = color,
-                                fontSize = 18.sp
-                            )
-                        }
-                        Row(
-                            modifier = rowModifier,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = "总抽卡", color = textColor)
-                                Text(
-                                    text = userPoolLotteryAward.count.toString(),
-                                    color = color,
-                                    fontSize = 20.sp
-                                )
-                            }
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = "总出金", color = textColor)
-                                Text(
-                                    text = userPoolLotteryAward.okCount.toString(),
-                                    color = color,
-                                    fontSize = 20.sp
-                                )
-                            }
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = "平均出金", color = textColor)
-                                Text(
-                                    text = userPoolLotteryAward.avgCount.toString(),
-                                    color = color,
-                                    fontSize = 20.sp
-                                )
-                            }
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = "平均UP出金", color = textColor)
-                                Text(
-                                    text = userPoolLotteryAward.avgUpCount.toString(),
-                                    color = color,
-                                    fontSize = 20.sp
-                                )
-                            }
-                        }
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(5),
-                            modifier = Modifier.heightIn(60.dp, 180.dp),
-                        ) {
-                            items(userPoolLotteryAward.hookAwards.size) { it ->
-                                val h = userPoolLotteryAward.hookAwards[it]
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    if (h.imageUri.isNullOrEmpty()) {
+                            val poolLotteryAward = poolList[it]
+                            items(poolLotteryAward.hookAwards.size) {
+                                Row(
+                                    modifier = Modifier
+                                        .padding(2.dp)
+                                        .height(50.dp)
+                                        .fillMaxWidth(),
+                                    verticalAlignment=Alignment.CenterVertically
+                                ) {
+                                    if (poolLotteryAward.hookAwards[it].imageUri.isNullOrEmpty()) {
                                         Text(
                                             "?", color = Color.White,
                                             fontSize = 18.sp,
@@ -441,18 +329,129 @@ fun LotterySimulate(
                                         )
                                     } else {
                                         AsyncImage(
-                                            model = h.imageUri,
+                                            model = poolLotteryAward.hookAwards[it].imageUri,
                                             contentDescription = null,
                                             modifier = StyleCommon.FONT_MODIFIER
                                                 .size(50.dp)
                                                 .background(upColor)
                                         )
                                     }
+                                    Divider(
+                                        thickness = 50.dp, color = Color.Green,
+                                        modifier = Modifier
+                                            .background(if (poolLotteryAward.hookAwards[it].isUp) Color.Red else Color.Green)
+                                            .fillMaxWidth(poolLotteryAward.hookAwards[it].count / 100f)
+                                    )
                                     Text(
-                                        text = h.count.toString(), color = textColor,
+                                        text = poolLotteryAward.hookAwards[it].count.toString(),
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
                                         modifier = StyleCommon.FONT_MODIFIER
                                     )
+//                                if (!poolLotteryAward.hookAwards[it].isUp){
+//                                    Text(text = "歪", color= Color.Red)
+//                                }
+                                    }
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+            items(lotteryAwardCountDto.userPoolLotteryAwards.size) {
+                val userPoolLotteryAward = lotteryAwardCountDto.userPoolLotteryAwards[it]
+                Column(
+                    modifier =
+                    Modifier
+                        .wrapContentHeight()
+                        .padding(20.dp)
+                        .paint(rememberAsyncImagePainter(userPoolLotteryAward.imageUri),
+                            contentScale=ContentScale.FillBounds, alpha = 0.2f)
+                        .border(1.dp, Color.White)
+                        .padding(20.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = userPoolLotteryAward.poolName.toString(),
+                            color = color,
+                            fontSize = 12.sp
+                        )
+                        Text(
+                            text = userPoolLotteryAward.tag ?: "",
+                            color = color,
+                            fontSize = 18.sp
+                        )
+                    }
+                    Row(
+                        modifier = rowModifier,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "总抽卡", color = textColor)
+                            Text(
+                                text = userPoolLotteryAward.count.toString(),
+                                color = color,
+                                fontSize = 20.sp
+                            )
+                        }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "总出金", color = textColor)
+                            Text(
+                                text = userPoolLotteryAward.okCount.toString(),
+                                color = color,
+                                fontSize = 20.sp
+                            )
+                        }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "平均出金", color = textColor)
+                            Text(
+                                text = userPoolLotteryAward.avgCount.toString(),
+                                color = color,
+                                fontSize = 20.sp
+                            )
+                        }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "平均UP出金", color = textColor)
+                            Text(
+                                text = userPoolLotteryAward.avgUpCount.toString(),
+                                color = color,
+                                fontSize = 20.sp
+                            )
+                        }
+                    }
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(5),
+                        modifier = Modifier.heightIn(60.dp, 180.dp),
+                    ) {
+                        items(userPoolLotteryAward.hookAwards.size) { it ->
+                            val h = userPoolLotteryAward.hookAwards[it]
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                if (h.imageUri.isNullOrEmpty()) {
+                                    Text(
+                                        "?", color = Color.White,
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .background(upColor)
+                                            .wrapContentSize(Alignment.Center)
+                                    )
+                                } else {
+                                    AsyncImage(
+                                        model = h.imageUri,
+                                        contentDescription = null,
+                                        modifier = StyleCommon.FONT_MODIFIER
+                                            .size(50.dp)
+                                            .background(upColor)
+                                    )
+                                }
+                                Text(
+                                    text = h.count.toString(), color = textColor,
+                                    modifier = StyleCommon.FONT_MODIFIER
+                                )
                             }
                         }
                     }

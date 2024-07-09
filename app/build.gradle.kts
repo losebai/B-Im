@@ -68,7 +68,7 @@ android {
             // 指定混淆保留规则
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
             signingConfig = signingConfigs.getByName("config")
         }
@@ -79,8 +79,9 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
+
             )
-//            signingConfig = signingConfigs.getByName("config")
+            signingConfig = signingConfigs.getByName("config")
             //noinspection ChromeOsAbiSupport
             ndk.abiFilters += "x86"
         }
@@ -166,6 +167,7 @@ dependencies {
     implementation("org.noear:snack3:3.2.95")
     implementation("org.noear:socketd-transport-smartsocket:2.5.0")
 
+//    implementation("com.android.support:support-v4:34.0.0")
     //noinspection GradleDependency
     //noinspection GradleDependency
     implementation("androidx.navigation:navigation-compose:2.7.7")
@@ -187,6 +189,7 @@ dependencies {
     testImplementation("androidx.room:room-testing:$room_version")
     implementation("androidx.room:room-paging:$room_version")
 
+//    implementation("com.android.tools:r8:8.4.37")
     //noinspection GradlePluginVersion
 //    implementation("com.android.tools.build:gradle:8.2.2")
 //    implementation("com.google.accompanist:accompanist-permissions:0.31.0-alpha")
