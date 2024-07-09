@@ -18,7 +18,7 @@
 
 <a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=u5b9H-KYtVZ1AkWNj4a_QVhzaGpxZxAn&jump_from=webapi&authKey=1FnsQITgER4fNmkupjQ2SOmHwJkxO7ePsSfBbmr6AzRTWRkxi3dKUbNCQQRYTeFE"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="BIM" title="BIM"></a>
 
-下载链接（暂时，服务器带宽不够）：http://121.40.62.167:8100/B-Im-debug-1.1.2-pro.apk
+下载链接（暂时，服务器带宽不够）：http://121.40.62.167:8100/B-Im-release-1.1.2-pro.apk
 ### 技术栈
 本项目偏向国产化
 ```
