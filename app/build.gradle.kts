@@ -46,6 +46,10 @@ android {
             res.srcDirs("res/mc")
         }
 
+        getByName("androidTest") {
+            res.srcDirs("src/androidTest")
+        }
+
     }
 
 

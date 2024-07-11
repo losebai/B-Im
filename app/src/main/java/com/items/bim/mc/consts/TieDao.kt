@@ -1,5 +1,7 @@
 package com.items.bim.mc.consts
 
+import com.items.bim.R
+
 class TieDaoAPI : BaseAPI(){
 
     override val GET_WEB_HOME: String
@@ -33,4 +35,7 @@ class TieDaoAPI : BaseAPI(){
         get() = "https://act-upload.mihoyo.com/sr-wiki/2023/04/21/288909604/eb7c80e9dfc503a24c281be6a89ab013_779574104987902327.png?x-oss-process=image/quality,q_75/resize,s_96"
     override val STREING_ICON: String
         get() = "https://act-upload.mihoyo.com/sr-wiki/2023/04/21/288909604/2e26011af9032d72b665a2f90cc483f0_4601761747747010855.png?x-oss-process=image/quality,q_75/resize,s_96"
+
+    override val bg_id: Int
+        get() = R.drawable.tool_td_bg
 }

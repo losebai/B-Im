@@ -295,8 +295,6 @@ fun ToolsList(
                         )
                     }
                 }
-
-
                 LazyVerticalGrid(
                     GridCells.Fixed(4),
                     modifier = Modifier.padding(start = 5.dp)

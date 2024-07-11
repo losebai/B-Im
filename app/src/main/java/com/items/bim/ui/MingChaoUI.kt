@@ -100,6 +100,7 @@ fun LotterySimulate(
     gameName: String,
     userId: Long,
     lotteryViewModel: LotteryViewModel,
+    toolsViewModel: ToolsViewModel,
     mainController: NavHostController = rememberNavController()
 ) {
     val color = colorResource(id = R.color.golden)
@@ -114,6 +115,7 @@ fun LotterySimulate(
     var isProd by remember {
         mutableStateOf(true)
     }
+    val api = toolsViewModel.getBaseAPI(gameName)
     LaunchedEffect(isProd) {
         ThreadPoolManager.getInstance().addTask("init", "lotteryAwardCountDto") {
             lotteryAwardCountDto = lotteryViewModel.lotteryAwardCount(gameName, userId, isProd)
@@ -129,7 +131,7 @@ fun LotterySimulate(
         modifier = Modifier
             .fillMaxSize()
             .paint(
-                painterResource(id = R.drawable.mc_lottery_bg),
+                painterResource(id = api.bg_id),
                 contentScale = ContentScale.Crop
             )
     ) { it ->
@@ -292,65 +294,71 @@ fun LotterySimulate(
                 }
             }
 
-        if (lotteryAwardCountDto.poolLotteryAwards.isNotEmpty()) {
-            item {
-                Column(
-                    modifier = Modifier
-                        .height(310.dp)
-                        .padding(20.dp)
-                        .border(1.dp, Color.White)
-                        .padding(20.dp)
-                ) {
-                    val poolList =
-                        lotteryAwardCountDto.poolLotteryAwards.filter { it.poolName.isNotEmpty() }
-                    PagerList(Modifier.fillMaxWidth(),pools=poolList.map { it.poolName }.toList(), textColor=textColor) {
-                        LazyColumn(
-                            Modifier.height(310.dp),
-                            reverseLayout = true,
-                        ) {
-                            val poolLotteryAward = poolList[it]
-                            items(poolLotteryAward.hookAwards.size) {
-                                Row(
-                                    modifier = Modifier
-                                        .padding(2.dp)
-                                        .height(50.dp)
-                                        .fillMaxWidth(),
-                                    verticalAlignment=Alignment.CenterVertically
+            if (lotteryAwardCountDto.poolLotteryAwards.isNotEmpty()) {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .height(310.dp)
+                            .padding(20.dp)
+                            .border(1.dp, Color.White)
+                            .padding(20.dp)
+                    ) {
+                        val poolList =
+                            lotteryAwardCountDto.poolLotteryAwards.filter { it.poolName.isNotEmpty() }
+                        if (poolList.isNotEmpty()) {
+                            PagerList(
+                                Modifier.fillMaxWidth(),
+                                pools = poolList.map { it.poolName }.toList(),
+                                textColor = textColor
+                            ) {
+                                LazyColumn(
+                                    Modifier.height(310.dp),
+                                    reverseLayout = true,
                                 ) {
-                                    if (poolLotteryAward.hookAwards[it].imageUri.isNullOrEmpty()) {
-                                        Text(
-                                            "?", color = Color.White,
-                                            fontSize = 18.sp,
-                                            fontWeight = FontWeight.Bold,
+                                    val poolLotteryAward = poolList[it]
+                                    items(poolLotteryAward.hookAwards.size) {
+                                        Row(
                                             modifier = Modifier
-                                                .size(50.dp)
-                                                .background(upColor)
-                                                .wrapContentSize(Alignment.Center)
-                                        )
-                                    } else {
-                                        AsyncImage(
-                                            model = poolLotteryAward.hookAwards[it].imageUri,
-                                            contentDescription = null,
-                                            modifier = StyleCommon.FONT_MODIFIER
-                                                .size(50.dp)
-                                                .background(upColor)
-                                        )
-                                    }
-                                    Divider(
-                                        thickness = 50.dp, color = Color.Green,
-                                        modifier = Modifier
-                                            .background(if (poolLotteryAward.hookAwards[it].isUp) Color.Red else Color.Green)
-                                            .fillMaxWidth(poolLotteryAward.hookAwards[it].count / 100f)
-                                    )
-                                    Text(
-                                        text = poolLotteryAward.hookAwards[it].count.toString(),
-                                        color = Color.White,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = StyleCommon.FONT_MODIFIER
-                                    )
+                                                .padding(2.dp)
+                                                .height(50.dp)
+                                                .fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            if (poolLotteryAward.hookAwards[it].imageUri.isNullOrEmpty()) {
+                                                Text(
+                                                    "?", color = Color.White,
+                                                    fontSize = 18.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    modifier = Modifier
+                                                        .size(50.dp)
+                                                        .background(upColor)
+                                                        .wrapContentSize(Alignment.Center)
+                                                )
+                                            } else {
+                                                AsyncImage(
+                                                    model = poolLotteryAward.hookAwards[it].imageUri,
+                                                    contentDescription = null,
+                                                    modifier = StyleCommon.FONT_MODIFIER
+                                                        .size(50.dp)
+                                                        .background(upColor)
+                                                )
+                                            }
+                                            Divider(
+                                                thickness = 50.dp, color = Color.Green,
+                                                modifier = Modifier
+                                                    .background(if (poolLotteryAward.hookAwards[it].isUp) Color.Red else Color.Green)
+                                                    .fillMaxWidth(poolLotteryAward.hookAwards[it].count / 100f)
+                                            )
+                                            Text(
+                                                text = poolLotteryAward.hookAwards[it].count.toString(),
+                                                color = Color.White,
+                                                fontWeight = FontWeight.Bold,
+                                                modifier = StyleCommon.FONT_MODIFIER
+                                            )
 //                                if (!poolLotteryAward.hookAwards[it].isUp){
 //                                    Text(text = "歪", color= Color.Red)
 //                                }
+                                        }
                                     }
                                 }
                             }
@@ -365,8 +373,10 @@ fun LotterySimulate(
                     Modifier
                         .wrapContentHeight()
                         .padding(20.dp)
-                        .paint(rememberAsyncImagePainter(userPoolLotteryAward.imageUri),
-                            contentScale=ContentScale.FillBounds, alpha = 0.2f)
+                        .paint(
+                            rememberAsyncImagePainter(userPoolLotteryAward.imageUri),
+                            contentScale = ContentScale.FillBounds, alpha = 0.2f
+                        )
                         .border(1.dp, Color.White)
                         .padding(20.dp)
                 ) {
@@ -544,8 +554,8 @@ fun GetCookiesUri(
 fun MingChaoHome(
     mainController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier,
-    gameProvider : () -> String,
-    baseAPIProvider : () -> BaseAPI
+    gameProvider: () -> String,
+    baseAPIProvider: () -> BaseAPI
 ) {
     val context = LocalContext.current
     val row = Modifier

@@ -5,6 +5,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.items.bim.dto.LotteryCount
 import com.items.bim.viewmodel.LotteryViewModel
+import com.items.bim.viewmodel.ToolsViewModel
 
 
 @Composable
@@ -27,7 +28,7 @@ fun LotterySimulateTest(){
     )
     lotteryMap[0] = l
     val lotteryViewModel = LotteryViewModel()
-    LotterySimulate("鸣潮",44, lotteryViewModel)
+    LotterySimulate("鸣潮",44,  lotteryViewModel, ToolsViewModel())
 }
 
 @Composable

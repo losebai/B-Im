@@ -1,5 +1,6 @@
 package com.items.bim.mc.consts
 
+import com.items.bim.R
 import org.noear.snack.annotation.ONodeAttr
 
 class MingChaoAPI : BaseAPI() {
@@ -42,6 +43,9 @@ class MingChaoAPI : BaseAPI() {
         get() = "https://prod-alicdn-community.kurobbs.com/forum/5e5bb6eaa1de43e6bcb66eb8d780e92c20240509.png"
     override val STREING_ICON: String
         get() = "https://prod-alicdn-community.kurobbs.com/forum/45963f70164d4c6bb4c5d52fd5f2187620240519.png"
+
+    override val bg_id: Int
+        get() = R.drawable.tool_mc_bg
 }
 
 

@@ -1,5 +1,7 @@
 package com.items.bim.mc.consts
 
+import com.items.bim.R
+
 class YuanShenAPI : BaseAPI() {
 
      override var GET_WEB_HOME = "https://bbs-api-static.miyoushe.com/apihub/wapi/webHome?gids=2&page=1&page_size=20"
@@ -30,5 +32,8 @@ class YuanShenAPI : BaseAPI() {
           get() = "https://uploadstatic.mihoyo.com/ys-obc/2021/06/07/75276545/da087c70d5ce5e95ab353896cde77186_732830328053361739.png?x-oss-process=image/quality,q_75/resize,s_96"
      override val STREING_ICON: String
           get() = "https://prod-alicdn-community.kurobbs.com/forum/45963f70164d4c6bb4c5d52fd5f2187620240519.png"
+
+     override val bg_id: Int
+          get() = R.drawable.tool_ys_bg
 }
 

@@ -71,6 +71,8 @@ object PageRouteConfig{
 
     const val RANKING_HOME  = "RANKING_HOME"
 
+    const val TOOLS_GAME_ROLE_RAKING = "TOOLS_GAME_ROLE_RAKING"
+
 
 }
 

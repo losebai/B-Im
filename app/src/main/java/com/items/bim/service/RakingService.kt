@@ -2,6 +2,7 @@ package com.items.bim.service
 
 import com.items.bim.common.consts.AppAPI
 import com.items.bim.common.util.HttpUtils
+import com.items.bim.dto.AppGameRole
 import com.items.bim.dto.UserGameDto
 import com.items.bim.dto.UserPoolRakingDto
 import okhttp3.Response
@@ -36,6 +37,18 @@ class RakingService {
             return json["data"].toObjectList(UserPoolRakingDto::class.java)
         }
         return listOf()
+    }
+
+    fun  getAppGameRole(gameName: String) : AppGameRole {
+        val params: HashMap<String, Any> = hashMapOf()
+        params["gameName"] = gameName
+        val res: Response? = HttpUtils.get(AppAPI.RakingAPI.GET_RAKING_LIST, params)
+        if (res?.isSuccessful == true) {
+            val str = res.body?.string()
+            val json = ONode.load(str)
+            return json["data"].toObject(AppGameRole::class.java)
+        }
+        return AppGameRole(null, mapOf())
     }
 
 }

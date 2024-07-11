@@ -145,4 +145,6 @@ class ToolsViewModel() : ViewModel() {
 
     fun getUserGameDto(isProd: Boolean,  gameName: String)
     = rakingService.getUserGameDto(SystemApp.UserId, isProd, gameName)
+
+    fun getAppGameRole(gameName: String) = rakingService.getAppGameRole(gameName);
 }

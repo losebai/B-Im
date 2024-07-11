@@ -11,39 +11,38 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 
-abstract class UIBase {
 
-    lateinit var navHostController: NavHostController;
 
-    var groupName by mutableIntStateOf(0)
+var groupName by mutableIntStateOf(0)
 
-    @Composable
-    abstract fun GetTopAppBar()
+@Composable
+fun GetTopAppBar() {
+}
 
-    @Composable
-    abstract fun GetBottomBar()
+@Composable
+fun GetBottomBar() {
+}
 
-    @Composable
-    fun Context(
-        content: @Composable (PaddingValues) -> Unit,
-        topBar: @Composable () -> Unit = { GetTopAppBar() },
-        bottomBar: @Composable () -> Unit = { GetBottomBar() },
-        floatingActionButton: @Composable () -> Unit = {  },
-    ) {
-        Scaffold(
-            snackbarHost={
-            },
-            topBar = {
-                topBar()
-            },
-            bottomBar = {
-                bottomBar()
-            },
-            floatingActionButton = { floatingActionButton() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            content = content
-        )
-    }
+@Composable
+fun Context(
+    content: @Composable (PaddingValues) -> Unit,
+    topBar: @Composable () -> Unit = { GetTopAppBar() },
+    bottomBar: @Composable () -> Unit = { GetBottomBar() },
+    floatingActionButton: @Composable () -> Unit = { },
+) {
+    Scaffold(
+        snackbarHost = {
+        },
+        topBar = {
+            topBar()
+        },
+        bottomBar = {
+            bottomBar()
+        },
+        floatingActionButton = { floatingActionButton() },
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
+        content = content
+    )
 }

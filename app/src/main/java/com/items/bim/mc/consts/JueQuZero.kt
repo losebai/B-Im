@@ -1,5 +1,6 @@
 package com.items.bim.mc.consts
 
+import com.items.bim.R
 
 
 class JueQuZeroAPI : BaseAPI(){
@@ -30,4 +31,7 @@ class JueQuZeroAPI : BaseAPI(){
         get() = "https://act-upload.mihoyo.com/nap-obc-indep/2024/06/01/76099754/1e8d488828fed5c9caba7eb393d18a52_4588078170030823167.png?x-oss-process=image/quality,q_75/resize,s_96"
     override val STREING_ICON: String
         get() = "https://act-upload.mihoyo.com/nap-obc-indep/2024/06/01/76099754/b61294cb18cd1fd562ffe2a0c6f0642e_536792962072159478.png?x-oss-process=image/quality,q_75/resize,s_96"
+
+    override val bg_id: Int
+        get() = R.drawable.tool_zero_bg
 }

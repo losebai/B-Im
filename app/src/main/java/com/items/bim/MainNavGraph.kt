@@ -32,6 +32,7 @@ import com.items.bim.entity.toAppUserEntity
 import com.items.bim.event.GlobalInitEvent
 import com.items.bim.service.FileService
 import com.items.bim.ui.EditPage
+import com.items.bim.ui.GameRoleRaking
 import com.items.bim.ui.GetCookiesUri
 import com.items.bim.ui.HookList
 import com.items.bim.ui.ImageGroupList
@@ -186,7 +187,8 @@ fun MainNavGraph(
             LotterySimulate(
                 gameName,
                 backStackEntry.arguments?.getString("id")?.toLong() ?: SystemApp.UserId,
-                lotteryViewModel, navHostController
+                lotteryViewModel,
+                toolsViewModel, navHostController
             )
         }
 
@@ -248,6 +250,10 @@ fun MainNavGraph(
         composable("${PageRouteConfig.RANKING_HOME}/{gameName}") { baseEntity ->
             val gameName = baseEntity.arguments?.getString("gameName") ?: ""
             RankingHome(gameName, toolsViewModel, navHostController)
+        }
+        composable("${PageRouteConfig.TOOLS_GAME_ROLE_RAKING}/{gameName}") { baseEntity ->
+            val gameName = baseEntity.arguments?.getString("gameName") ?: ""
+            GameRoleRaking(gameName, toolsViewModel, navHostController)
         }
     }
 }

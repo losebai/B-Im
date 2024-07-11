@@ -24,4 +24,6 @@ abstract class BaseAPI {
     open val LOTTERY_ICON = ""
 
     open val SIMULATE_ICON = ""
+
+    open val bg_id = 0
 }
