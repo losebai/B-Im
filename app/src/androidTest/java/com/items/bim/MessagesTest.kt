@@ -1,4 +1,4 @@
-package com.example.bim
+package com.items.bim
 
 import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable

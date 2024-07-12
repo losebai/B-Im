@@ -49,10 +49,9 @@ fun GameRoleRaking(gameName: String ,toolsViewModel: ToolsViewModel,
                    navHostController: NavHostController){
     var appGameRole by remember {
         mutableStateOf(AppGameRole())
-    }.apply {
-        ThreadPoolManager.getInstance().addTask("init", "GameRoleRaking"){
-            this.value = toolsViewModel.getAppGameRole(gameName)
-        }
+    }
+    ThreadPoolManager.getInstance().addTask("init", "GameRoleRaking"){
+        appGameRole = toolsViewModel.getAppGameRole(gameName)
     }
     val pools = appGameRole.appGameRoleRaking.keys.toList()
     Column {

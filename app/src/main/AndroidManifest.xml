@@ -24,7 +24,6 @@
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
-        android:debuggable="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/zi"
@@ -35,6 +34,7 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true"
         android:hardwareAccelerated="true"
+        android:enableOnBackInvokedCallback="true"
         tools:targetApi="34"
         tools:ignore="HardcodedDebugMode">
         <!--        主文件 android.intent.action.MAI -->

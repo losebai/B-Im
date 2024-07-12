@@ -48,4 +48,8 @@ object AppAPI {
     object FileAPI{
         const val POST_FILE_UPLOAD = "/dispatch-app/file/uploadImage"
     }
+
+    object AppGameRoleRaking{
+        const val GET_APP_GAME_ROLE = "/dispatch-app/appGameRoleRaking/appGameRole"
+    }
 }

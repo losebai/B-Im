@@ -112,9 +112,7 @@ fun LotterySimulate(
     val rowModifier = Modifier.fillMaxWidth()
     val columModifier = Modifier.height(50.dp)
     val state = MySwipeRefreshState(NORMAL)
-    var isProd by remember {
-        mutableStateOf(true)
-    }
+    var isProd = false
     val api = toolsViewModel.getBaseAPI(gameName)
     LaunchedEffect(isProd) {
         ThreadPoolManager.getInstance().addTask("init", "lotteryAwardCountDto") {
@@ -484,11 +482,12 @@ fun GetCookiesUri(
         mutableStateOf("")
     }
     val textColor = Color.White
+    val api = toolsViewModel.getBaseAPI(gameName)
     Column(
         modifier
             .fillMaxSize()
             .paint(
-                painterResource(id = R.drawable.mc_lottery_bg),
+                painterResource(id = api.bg_id),
                 contentScale = ContentScale.Crop
             )
             .padding(20.dp),
@@ -635,9 +634,10 @@ fun MingChaoHome(
                 ) {
                     AsyncImage(
                         model = api.ROLE_ICON,
-                        contentDescription = "抽卡模拟",
+                        contentDescription = "角色强度榜",
                         modifier = StyleCommon.ICON_SIZE.clickable {
-                            Utils.message(GlobalScope, "暂未开放", SystemApp.snackBarHostState)
+                            mainController.navigate("${PageRouteConfig.TOOLS_GAME_ROLE_RAKING}/${gameProvider()}")
+//                            Utils.message(GlobalScope, "暂未开放", SystemApp.snackBarHostState)
                         }
                     )
                     Text(text = "角色强度榜")

@@ -43,7 +43,7 @@ fun PagerList(
     val pagerState = rememberPagerState { pools.size }
     Column(modifier) {
         LazyVerticalGrid(
-            GridCells.Fixed(pools.size),
+            GridCells.Fixed(if (pools.isEmpty()) 1 else pools.size ),
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {

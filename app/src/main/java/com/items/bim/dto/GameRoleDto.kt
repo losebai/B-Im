@@ -25,6 +25,6 @@ data class GameRoleDto(
 )
 
 data class AppGameRole(
-    var updateTime : LocalDateTime? = null,
-    var appGameRoleRaking : Map<String, List<GameRoleDto>> = mapOf()
+    var updateTime : String? = null,
+    var appGameRoleRaking : Map<String, List<GameRoleDto>> = hashMapOf()
 )

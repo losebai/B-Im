@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -83,13 +84,13 @@ fun MainNavGraph(
         navController = navHostController,
         startDestination = PageRouteConfig.MENU_ROUTE,
         enterTransition = {
-            slideInHorizontally(animationSpec = tween(1000), //动画时长1s
+            slideInHorizontally(animationSpec = tween(800), //动画时长1s
                 initialOffsetX = {
                     -it //初始位置在负一屏的位置，也就是说初始位置我们看不到，动画动起来的时候会从负一屏位置滑动到屏幕位置
                 })
         },
         exitTransition = {
-            slideOutHorizontally(animationSpec = tween(1000), targetOffsetX = {
+            slideOutHorizontally(animationSpec = tween(800), targetOffsetX = {
                 it
             })
         },
