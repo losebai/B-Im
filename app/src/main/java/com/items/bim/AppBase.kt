@@ -217,7 +217,7 @@ class AppBase {
                 })
             }
         }
-        Divider(color = Color.Black)
+//        Divider(color = Color.Black)
     }
 
 
