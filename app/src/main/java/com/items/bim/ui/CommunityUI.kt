@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -58,9 +59,9 @@ fun DynamicMessage(communityEntity: CommunityEntity, modifier: Modifier = Modifi
     Column(
         modifier = modifier
             .border(1.dp, Color.Black)
-            .padding(10.dp)
+            .padding(5.dp)
             .background(Color.White),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.Top
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -71,21 +72,21 @@ fun DynamicMessage(communityEntity: CommunityEntity, modifier: Modifier = Modifi
             HeadImage(
                 onClick = {},
                 userEntity = communityEntity.userEntity,
-                modifier = Modifier.size(50.dp)
+                modifier = Modifier.size(40.dp)
             )
             Column(
                 modifier = Modifier
-                    .padding(start = 10.dp)
-                    .height(100.dp),
+                    .padding(5.dp)
+                    .height(50.dp),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(text = communityEntity.userEntity.name, fontSize = 18.sp)
-                Text(text = communityEntity.createTime, fontSize = 14.sp)
+                Text(text = communityEntity.createTime, fontSize = 12.sp)
             }
         }
         Text(
             text = communityEntity.message, modifier = Modifier
-                .padding(start = 10.dp), fontSize = 24.sp
+                .padding(start = 10.dp), fontSize = 15.sp
         )
         LazyVerticalGrid(
             columns = GridCells.Fixed(
@@ -149,13 +150,12 @@ fun DynamicMessage(communityEntity: CommunityEntity, modifier: Modifier = Modifi
                 onClick = {},
                 userEntity = communityEntity.userEntity,
                 modifier = Modifier
-                    .height(40.dp)
-                    .width(60.dp)
-                    .padding(start = 10.dp, end = 10.dp)
+                    .size(30.dp)
             )
             OutlinedTextField(value = pingLun, modifier = Modifier
+                .padding(start = 5.dp)
                 .width(250.dp)
-                .height(40.dp),
+                .height(30.dp),
                 onValueChange = {
                     pingLun = it
                 })
@@ -195,14 +195,14 @@ fun CommunityHome(
             ) {
                 HeadImage(
                     onClick = {}, userEntity = userEntity,
-                    modifier = Modifier.size(70.dp)
+                    modifier = Modifier.size(60.dp)
                 )
             }
         }
         items(communityList.size) {
             DynamicMessage(
                 communityList[it], modifier = Modifier
-                    .height(500.dp)
+                    .heightIn(min=300.dp, max=500.dp)
                     .padding(1.dp)
             )
         }

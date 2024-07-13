@@ -51,8 +51,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.consts.UserStatus
+import com.items.bim.common.ui.AppBarButton
 import com.items.bim.common.ui.DialogImageAdd
 import com.items.bim.common.ui.HeadImage
+import com.items.bim.common.ui.buttonClick
 import com.items.bim.config.MenuRouteConfig
 import com.items.bim.config.PageRouteConfig
 import com.items.bim.entity.UserEntity
@@ -78,7 +80,7 @@ class AppBase {
     @SuppressLint("CoroutineCreationDuringComposition", "ResourceAsColor")
     @Composable
     @OptIn(ExperimentalMaterial3Api::class)
-    fun GetTopAppBar(appUserEntity: UserEntity, nvHostController : NavHostController) {
+    fun GetTopAppBar(appUserEntity: UserEntity, nvHostController: NavHostController) {
         var expanded by remember { mutableStateOf(false) }
         var selectedIndex by remember { mutableIntStateOf(-1) }
         var importImaged by remember { mutableStateOf(false) }
@@ -190,7 +192,7 @@ class AppBase {
     fun GetBottomBar() {
         val IconModifier = Modifier
         BottomAppBar(
-            modifier = Modifier.height(100.dp),
+            modifier = Modifier.height(50.dp),
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.primary,
             contentPadding = PaddingValues(5.dp, 5.dp)
@@ -200,59 +202,19 @@ class AppBase {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier.clickable { page = MenuRouteConfig.ROUTE_MESSAGE },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        modifier = IconModifier,
-                        imageVector = Icons.Outlined.MailOutline,
-                        contentDescription = "Localized description"
-                    )
-                    Text(
-                        text = "消息",
-                        fontSize = 12.sp,
-                    )
-                }
-                Column(
-                    modifier = Modifier.clickable { page = MenuRouteConfig.ROUTE_USERS },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        modifier = IconModifier,
-                        imageVector = Icons.Outlined.AccountCircle,
-                        contentDescription = "Localized description"
-                    )
-                    Text(
-                        text = "联系人",
-                        fontSize = 12.sp,
-                    )
-                }
-                Column(
-                    modifier = Modifier.clickable { page = MenuRouteConfig.TOOLS_ROUTE },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        modifier = IconModifier,
-                        imageVector = Icons.Outlined.Home,
-                        contentDescription = "Localized description"
-                    )
-                    Text(
-                        text = "游戏",
-                        fontSize = 12.sp,
-                    )
-                }
-                Column(
-                    modifier = Modifier.clickable { page = MenuRouteConfig.ROUTE_COMMUNITY },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        modifier = IconModifier,
-                        imageVector = Icons.Outlined.Home,
-                        contentDescription = "Localized description"
-                    )
-                    Text(text = "社区", fontSize = 12.sp)
-                }
+                val activeColor = colorResource(R.color.active_button)
+                AppBarButton(page == MenuRouteConfig.ROUTE_MESSAGE, activeColor, "消息", IconModifier, onClick = {
+                    page = MenuRouteConfig.ROUTE_MESSAGE
+                })
+                AppBarButton(page == MenuRouteConfig.ROUTE_USERS, activeColor, "联系人", IconModifier, onClick = {
+                    page = MenuRouteConfig.ROUTE_USERS
+                })
+                AppBarButton(page == MenuRouteConfig.TOOLS_ROUTE, activeColor, "游戏", IconModifier, onClick = {
+                    page = MenuRouteConfig.TOOLS_ROUTE
+                })
+                AppBarButton(page == MenuRouteConfig.ROUTE_COMMUNITY, activeColor, "社区", IconModifier, onClick = {
+                    page = MenuRouteConfig.ROUTE_COMMUNITY
+                })
             }
         }
         Divider(color = Color.Black)

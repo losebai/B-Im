@@ -22,5 +22,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "B-Im"
 include(":app")
-include(":mylibrary")
-include(":myapplication")

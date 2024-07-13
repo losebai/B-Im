@@ -1,12 +1,23 @@
 package com.items.bim.ui
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
-import coil.compose.AsyncImage
+import com.items.bim.common.ui.LogCompositions
 import com.items.bim.dto.LotteryCount
 import com.items.bim.viewmodel.LotteryViewModel
 import com.items.bim.viewmodel.ToolsViewModel
+import io.github.oshai.kotlinlogging.KotlinLogging
 
+
+private val logger = KotlinLogging.logger {}
 
 @Composable
 @Preview(showBackground = true)
@@ -32,8 +43,35 @@ fun LotterySimulateTest(){
 }
 
 @Composable
+fun NotText(text: () -> String){
+    LogCompositions("NotText")
+    Text(text = text())
+
+    Test()
+}
+
+
+/**
+ * compose作用域范围不是用remember来确定的，是采用非 inline fun 确定
+ */
+@Composable
 @Preview(showBackground = true)
 fun Test(){
-    val uri = "https://bbs-static.miyoushe.com/static/2024/07/04/e56eddc8df6bb047df44ed06f7fdda31_104566473761945531.png"
-    AsyncImage(model = uri, contentDescription = null)
+    Row {
+        var b by remember {
+            mutableStateOf(false)
+        }
+        Button(onClick = {
+            b = !b
+        }) {
+            LogCompositions("Button")
+            Text(text = b.toString())
+            logger.info { b.toString() }
+        }
+    }
+    Column {
+        Text(text = "11")
+        LogCompositions("Column")
+    }
+    LogCompositions("Main Test")
 }
