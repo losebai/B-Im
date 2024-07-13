@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,6 +56,7 @@ fun Modifier.buttonClick(onClick: () -> Unit) = composed {
 
 @Composable
 fun AppBarButton(active: Boolean,
+                 imageVector: ImageVector,
                  activeColor : Color,
                  text: String,
                  modifier: Modifier,
@@ -63,7 +65,7 @@ fun AppBarButton(active: Boolean,
         onClick()
     }, horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(
-            imageVector = Icons.Outlined.MailOutline,
+            imageVector = imageVector,
             contentDescription = "Localized description",
             tint = if (active) activeColor else Color.Black
         )

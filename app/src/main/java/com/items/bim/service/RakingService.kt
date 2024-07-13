@@ -49,7 +49,7 @@ class RakingService {
             val str = res.body?.string()
             val json = ONode.load(str)
             val data = json["data"]
-            val updateTIme = data.get("updateTIme").toObject<String>()
+            val updateTIme = data.get("updateTime").toObject<String>()
             val appGameRoleRaking = data.get("appGameRoleRaking").toObject<HashMap<String, ArrayList<GameRoleDto>>>(object : HashMap<String, ArrayList<GameRoleDto>>() {}.javaClass)
             return AppGameRole(updateTIme, appGameRoleRaking)
         }

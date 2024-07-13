@@ -18,7 +18,7 @@ import com.items.bim.common.util.ThreadPoolManager
 import com.items.bim.config.MingChaoRoute
 import com.items.bim.event.GlobalInitEvent
 import com.items.bim.ui.AwardList
-import com.items.bim.ui.ComposeTestTheme
+import com.items.bim.common.ui.ComposeTestTheme
 import com.items.bim.ui.MCRoleLotteryHome
 import com.items.bim.viewmodel.LotteryViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging

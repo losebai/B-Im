@@ -108,11 +108,13 @@ fun LotterySimulate(
         mutableStateOf(LotteryAwardCountDto())
     }
     val upColor = colorResource(id = R.color.star5)
-    val textColor = Color.White
+    val textColor = Color.Black
     val rowModifier = Modifier.fillMaxWidth()
     val columModifier = Modifier.height(50.dp)
     val state = MySwipeRefreshState(NORMAL)
-    var isProd = false
+    var isProd by remember {
+        mutableStateOf(false)
+    }
     val api = toolsViewModel.getBaseAPI(gameName)
     LaunchedEffect(isProd) {
         ThreadPoolManager.getInstance().addTask("init", "lotteryAwardCountDto") {
@@ -373,7 +375,7 @@ fun LotterySimulate(
                         .padding(20.dp)
                         .paint(
                             rememberAsyncImagePainter(userPoolLotteryAward.imageUri),
-                            contentScale = ContentScale.FillBounds, alpha = 0.2f
+                            contentScale = ContentScale.FillBounds, alpha = 0.4f
                         )
                         .border(1.dp, Color.White)
                         .padding(20.dp)
@@ -797,64 +799,72 @@ fun HookList(
             columns = GridCells.Fixed(3),
         ) {
             items(roles.size) {
-                Column(
-                    modifier = StyleCommon.HOOK_LIST,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    AsyncImage(
-                        model = roles[it].imageUri,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                when (roles[it].star) {
-                                    5 -> colorResource(R.color.star5)
-                                    4 -> colorResource(R.color.star4)
-                                    else -> colorResource(R.color.star0)
-                                }
-                            )
-                    )
-                    Row(
-                        modifier = Modifier.height(20.dp),
-                    ) {
-                        if (roles[it].star == 5) {
-                            Image(
-                                bitmap = StyleCommon.startVitmap.asImageBitmap(),
-                                contentDescription = null,
-                                alignment = Alignment.CenterStart,
-                                modifier = Modifier.padding(start = 8.dp),
-                                contentScale = ContentScale.FillHeight
-                            )
-                        } else if (roles[it].star == 4) {
-                            Image(
-                                bitmap = StyleCommon.startVitmap.asImageBitmap(),
-                                contentDescription = null,
-                                modifier = Modifier.fillMaxWidth(0.8f),
-                                contentScale = ContentScale.FillHeight
-                            )
-                        } else if (roles[it].star == 3) {
-                            Image(
-                                bitmap = StyleCommon.startVitmap.asImageBitmap(),
-                                contentDescription = null,
-                                alignment = Alignment.CenterStart,
-                                modifier = Modifier.fillMaxWidth(0.5f),
-                                contentScale = ContentScale.FillHeight
-                            )
-                        }
-                    }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = roles[it].name,
-                            color = Color.White
-                        )
-                    }
-                }
+
+                val role = roles[it]
+                HookItem(role.star, role.imageUri, role.imageUri)
             }
         }
     }
 }
+
+@Composable
+fun HookItem(star: Int, imageUri: String, name: String) {
+    Column(
+        modifier = StyleCommon.HOOK_LIST,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        AsyncImage(
+            model = imageUri,
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    when (star) {
+                        5 -> colorResource(R.color.star5)
+                        4 -> colorResource(R.color.star4)
+                        else -> colorResource(R.color.star0)
+                    }
+                )
+        )
+//        Row(
+//            modifier = Modifier.height(20.dp),
+//        ) {
+//            if (star == 5) {
+//                Image(
+//                    bitmap = StyleCommon.startVitmap.asImageBitmap(),
+//                    contentDescription = null,
+//                    alignment = Alignment.CenterStart,
+//                    modifier = Modifier.padding(start = 8.dp),
+//                    contentScale = ContentScale.FillHeight
+//                )
+//            } else if (star == 4) {
+//                Image(
+//                    bitmap = StyleCommon.startVitmap.asImageBitmap(),
+//                    contentDescription = null,
+//                    modifier = Modifier.fillMaxWidth(0.8f),
+//                    contentScale = ContentScale.FillHeight
+//                )
+//            } else if (star == 3) {
+//                Image(
+//                    bitmap = StyleCommon.startVitmap.asImageBitmap(),
+//                    contentDescription = null,
+//                    alignment = Alignment.CenterStart,
+//                    modifier = Modifier.fillMaxWidth(0.5f),
+//                    contentScale = ContentScale.FillHeight
+//                )
+//            }
+//        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = name,
+                color = Color.White
+            )
+        }
+    }
+}
+
 
 @Composable
 fun MCWIKI(url: String) {

@@ -10,7 +10,7 @@ import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.util.ThreadPoolManager
 import com.items.bim.common.util.Utils
 import com.items.bim.event.ViewModelEvent
-import com.items.bim.ui.AppTheme
+import com.items.bim.common.ui.AppTheme
 import com.items.bim.viewmodel.MessagesViewModel
 import com.items.bim.viewmodel.UserViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging

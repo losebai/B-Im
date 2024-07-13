@@ -46,6 +46,7 @@ import com.items.bim.ui.PhotoDataSet
 import com.items.bim.ui.RankingHome
 import com.items.bim.ui.UserInfoEdit
 import com.items.bim.viewmodel.CommunityViewModel
+import com.items.bim.viewmodel.ConfigViewModel
 import com.items.bim.viewmodel.ImageViewModel
 import com.items.bim.viewmodel.LotteryViewModel
 import com.items.bim.viewmodel.MessagesViewModel
@@ -69,6 +70,7 @@ fun MainNavGraph(
     imageViewModel: ImageViewModel,
     init: () -> Unit = {}
 ) {
+    val configViewModel = viewModel<ConfigViewModel>()
     val communityViewModel = viewModel<CommunityViewModel>()
     val toolsViewModel = viewModel<ToolsViewModel>()
     val navHostController = rememberNavController()
@@ -79,6 +81,7 @@ fun MainNavGraph(
     thread {
         GlobalInitEvent.run()
         init()
+        configViewModel.check()
     }
     NavHost(
         navController = navHostController,
@@ -254,7 +257,7 @@ fun MainNavGraph(
         }
         composable("${PageRouteConfig.TOOLS_GAME_ROLE_RAKING}/{gameName}") { baseEntity ->
             val gameName = baseEntity.arguments?.getString("gameName") ?: ""
-            GameRoleRaking(gameName, toolsViewModel, navHostController)
+            GameRoleRaking(gameName, toolsViewModel, configViewModel, navHostController)
         }
     }
 }

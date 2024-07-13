@@ -9,7 +9,7 @@ data class GameRoleDto(
     var name: String = "",
     var hookId: Long? = null,
     var imageUri: String = "",
-    var star: Int? = null,
+    var star: Int = 0,
     var updateTime: LocalDateTime? = null,
     var remake: String? = null,
     /**

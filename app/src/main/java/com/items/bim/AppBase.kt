@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Build
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material3.BottomAppBar
@@ -45,6 +47,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -203,16 +206,18 @@ class AppBase {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 val activeColor = colorResource(R.color.active_button)
-                AppBarButton(page == MenuRouteConfig.ROUTE_MESSAGE, activeColor, "消息", IconModifier, onClick = {
+                AppBarButton(page == MenuRouteConfig.ROUTE_MESSAGE,
+                    Icons.Outlined.MailOutline,
+                    activeColor, "消息", IconModifier, onClick = {
                     page = MenuRouteConfig.ROUTE_MESSAGE
                 })
-                AppBarButton(page == MenuRouteConfig.ROUTE_USERS, activeColor, "联系人", IconModifier, onClick = {
+                AppBarButton(page == MenuRouteConfig.ROUTE_USERS, Icons.Outlined.AccountCircle, activeColor, "联系人", IconModifier, onClick = {
                     page = MenuRouteConfig.ROUTE_USERS
                 })
-                AppBarButton(page == MenuRouteConfig.TOOLS_ROUTE, activeColor, "游戏", IconModifier, onClick = {
+                AppBarButton(page == MenuRouteConfig.TOOLS_ROUTE,  Icons.Outlined.Build,activeColor, "游戏", IconModifier, onClick = {
                     page = MenuRouteConfig.TOOLS_ROUTE
                 })
-                AppBarButton(page == MenuRouteConfig.ROUTE_COMMUNITY, activeColor, "社区", IconModifier, onClick = {
+                AppBarButton(page == MenuRouteConfig.ROUTE_COMMUNITY,  Icons.Outlined.FavoriteBorder, activeColor, "社区", IconModifier, onClick = {
                     page = MenuRouteConfig.ROUTE_COMMUNITY
                 })
             }

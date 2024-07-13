@@ -52,7 +52,7 @@ fun EditPage(
         mutableStateOf(default)
     }
     Column(horizontalAlignment = Alignment.Start,
-        modifier = Modifier.padding(10.dp)) {
+        modifier = Modifier.padding(5.dp)) {
         TopAppBar(title = { Text(text = title, color = Color.Black) }, navigationIcon = {
             IconButton(onClick = {
                 mainController.navigateUp()
