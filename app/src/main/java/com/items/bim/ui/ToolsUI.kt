@@ -379,6 +379,7 @@ fun ToolsList(
             }
 
             MingChaoHome(mainController, modifier = Modifier.padding(top = 20.dp),
+                toolsViewModel,
                 gameProvider = {
                     game
                 }, baseAPIProvider = {
@@ -387,5 +388,3 @@ fun ToolsList(
         }
     }
 }
-
-

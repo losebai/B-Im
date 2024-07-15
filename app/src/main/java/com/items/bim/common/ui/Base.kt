@@ -60,7 +60,7 @@ fun LogCompositions(msg: String) {
 
 @Composable
 fun TopAppRow(navigationIcon : () -> Unit , title: @Composable () -> Unit){
-    Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+    Row(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth(0.2f)) {
             IconButton(onClick = navigationIcon, modifier = Modifier.padding(top = 30.dp, start = 10.dp)) {
                 Icon(

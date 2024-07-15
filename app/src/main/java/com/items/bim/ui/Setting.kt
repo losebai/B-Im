@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.content.PermissionChecker
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -47,6 +48,7 @@ import com.items.bim.common.util.PermissionUtils
 import com.items.bim.common.util.PermissionsChecker
 import com.items.bim.common.consts.StyleCommon.ZERO_PADDING
 import com.items.bim.common.consts.SystemApp.snackBarHostState
+import com.items.bim.common.util.CheckPermission
 import com.items.bim.common.util.QQUtils
 import com.items.bim.common.util.Utils
 import com.items.bim.config.PageRouteConfig
@@ -215,7 +217,6 @@ fun SettingHome(
 @Preview(showBackground = true)
 @Composable
 fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()) {
-    val permissionChecker = PermissionsChecker(LocalContext.current)
     Dialog(onDismissRequest = { permissionViewModel.isCheck = false }) {
         Box(
             modifier = Modifier
@@ -237,7 +238,7 @@ fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(text = "写入修改文件权限", fontSize = 12.sp)
-                    if (!permissionChecker.lacksPermission(Manifest.permission.MANAGE_EXTERNAL_STORAGE)) {
+                    if (PermissionsChecker.getInstance().lacksPermission(Manifest.permission.MANAGE_EXTERNAL_STORAGE)) {
                         TextButton(
                             onClick = { permissionViewModel.filePermission = true },
                             modifier = Modifier.padding(0.dp)
@@ -253,14 +254,14 @@ fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()
                     }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                         if (permissionViewModel.filePermission) {
-                            PermissionUtils.CheckPermission(
+                            CheckPermission(
                                 arrayOf(
                                     Manifest.permission.MANAGE_EXTERNAL_STORAGE,
                                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                                 )
                             )
                         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            PermissionUtils.CheckPermission(
+                            CheckPermission(
                                 arrayOf(
                                     Manifest.permission.READ_EXTERNAL_STORAGE,
                                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -276,9 +277,9 @@ fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(text = "读取相册权限", fontSize = 12.sp)
-                    if (!permissionChecker.lacksPermissions(
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.READ_MEDIA_IMAGES
+                    if (PermissionsChecker.getInstance().lacksPermissions(
+                            arrayOf(Manifest.permission.CAMERA,
+                                Manifest.permission.READ_MEDIA_IMAGES)
                         )
                     ) {
                         TextButton(
@@ -295,7 +296,7 @@ fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()
                         )
                     }
                     if (permissionViewModel.photoPermission) {
-                        PermissionUtils.CheckPermission(
+                        CheckPermission(
                             arrayOf(
                                 Manifest.permission.CAMERA,
                                 Manifest.permission.READ_MEDIA_IMAGES
@@ -309,7 +310,7 @@ fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(text = "获取分享应用列表权限", fontSize = 12.sp)
-                    if (!permissionChecker.lacksPermissions(Manifest.permission.QUERY_ALL_PACKAGES)) {
+                    if (PermissionsChecker.getInstance().lacksPermission(Manifest.permission.QUERY_ALL_PACKAGES)) {
                         TextButton(
                             onClick = { permissionViewModel.appPermission = true },
                             modifier = Modifier.padding(0.dp)
@@ -324,7 +325,7 @@ fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()
                         )
                     }
                     if (permissionViewModel.appPermission) {
-                        PermissionUtils.CheckPermission(
+                        CheckPermission(
                             arrayOf(
                                 Manifest.permission.QUERY_ALL_PACKAGES
                             )
@@ -337,7 +338,7 @@ fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(text = "网络权限", fontSize = 12.sp)
-                    if (!permissionChecker.lacksPermissions(Manifest.permission.ACCESS_NETWORK_STATE)) {
+                    if (PermissionsChecker.getInstance().lacksPermission(Manifest.permission.ACCESS_NETWORK_STATE)) {
                         TextButton(
                             onClick = { permissionViewModel.networkPermission = true },
                             modifier = Modifier.padding(0.dp)
@@ -352,7 +353,7 @@ fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()
                         )
                     }
                     if (permissionViewModel.networkPermission) {
-                        PermissionUtils.CheckPermission(Manifest.permission.ACCESS_NETWORK_STATE)
+                        CheckPermission(Manifest.permission.ACCESS_NETWORK_STATE)
                     }
                 }
                 Row(

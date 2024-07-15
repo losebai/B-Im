@@ -1,5 +1,6 @@
 package com.items.bim.common.ui
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +42,7 @@ fun PagerList(
 ) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState { pools.size }
+    Log.d("list", "PagerList")
     Column(modifier) {
         LazyVerticalGrid(
             GridCells.Fixed(if (pools.isEmpty()) 1 else pools.size ),

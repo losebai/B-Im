@@ -195,7 +195,7 @@ dependencies {
 //    implementation("com.android.tools:r8:8.4.37")
     //noinspection GradlePluginVersion
 //    implementation("com.android.tools.build:gradle:8.2.2")
-//    implementation("com.google.accompanist:accompanist-permissions:0.31.0-alpha")
+    implementation("com.google.accompanist:accompanist-permissions:0.31.0-alpha")
 //    implementation("com.google.accompanist:accompanist-placeholder-material:0.31.0-alpha")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("androidx.core:core-ktx:1.12.0")

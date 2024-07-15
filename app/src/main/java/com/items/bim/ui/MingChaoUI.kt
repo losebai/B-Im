@@ -555,6 +555,7 @@ fun GetCookiesUri(
 fun MingChaoHome(
     mainController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier,
+    toolsViewModel: ToolsViewModel,
     gameProvider: () -> String,
     baseAPIProvider: () -> BaseAPI
 ) {
@@ -638,8 +639,8 @@ fun MingChaoHome(
                         model = api.ROLE_ICON,
                         contentDescription = "角色强度榜",
                         modifier = StyleCommon.ICON_SIZE.clickable {
+                            toolsViewModel.getAppGameRole(gameProvider())
                             mainController.navigate("${PageRouteConfig.TOOLS_GAME_ROLE_RAKING}/${gameProvider()}")
-//                            Utils.message(GlobalScope, "暂未开放", SystemApp.snackBarHostState)
                         }
                     )
                     Text(text = "角色强度榜")
@@ -859,8 +860,8 @@ fun HookItem(star: Int, imageUri: String, name: String) {
         ) {
             Text(
                 text = name,
-                color = Color.White
-            )
+                color = Color.Black,
+                fontSize = 10.sp)
         }
     }
 }

@@ -37,7 +37,7 @@ object StyleCommon {
 
     val IMAGE_SIZE =  Modifier.height(100.dp).width(100.dp);
 
-    val HOOK_LIST = Modifier.padding(5.dp).background(Color.Black)
+    val HOOK_LIST = Modifier.padding(5.dp)
 
     val ICON_SIZE = Modifier.size(40.dp)
 

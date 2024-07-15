@@ -1,5 +1,6 @@
 package com.items.bim.ui
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -63,15 +64,9 @@ fun GameRoleRaking(
     configViewModel: ConfigViewModel,
     navHostController: NavHostController
 ) {
-    var appGameRole by remember {
-        mutableStateOf(AppGameRole())
-    }
-    ThreadPoolManager.getInstance().addTask("init", "GameRoleRaking") {
-        appGameRole = toolsViewModel.getAppGameRole(gameName)
-    }
-    val pools = appGameRole.appGameRoleRaking.keys.toList()
     val imageUri: String? =
         configViewModel.getConfig(ConfigKey.GamesBG.format(gameName), String::class.java)
+    Log.d("roleRanking", "GameRoleRaking ...")
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -86,7 +81,10 @@ fun GameRoleRaking(
         }, title = {
             Text(text = "角色强度排名")
         })
+        val appGameRole = toolsViewModel.appGameRole
+        val pools = appGameRole.appGameRoleRaking.keys.toList()
         PagerList(pools = pools, textColor = Color.White) { it ->
+            Log.d("roleRanking", "PagerList ${it}...")
             Column {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -95,19 +93,15 @@ fun GameRoleRaking(
                     Text(text = "最后更新时间${appGameRole.updateTime}" , color =Color.White)
                 }
                 LazyColumn(modifier = Modifier.fillMaxHeight()) {
-                    item {
-
-                    }
                     val rakingMap = appGameRole.appGameRoleRaking[pools[it]]?.stream()
                         ?.collect(Collectors.groupingBy(GameRoleDto::raking))
                     if (rakingMap != null) {
                         val rakings = rakingMap.keys.toList().sorted()
-                        var index = 0
-                        items(rakings) { i ->
+                        items(rakings.size) { i ->
                             key(i) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text(text = "T${index++}", color =Color.White, fontSize = 20.sp)
-                                    rakingMap[i]?.let { it1 -> GameRoleList(it1) }
+                                    Text(text = "T${i}", color =Color.White, fontSize = 20.sp)
+                                    rakingMap[rakings[i]]?.let { it1 -> GameRoleList(it1) }
                                 }
                             }
                         }
