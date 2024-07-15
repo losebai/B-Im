@@ -1,16 +1,19 @@
 package com.items.bim
 
+import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.items.bim.common.consts.SystemApp
+import com.items.bim.common.ui.AppTheme
+import com.items.bim.common.util.MultiplePermissions
 import com.items.bim.common.util.ThreadPoolManager
 import com.items.bim.common.util.Utils
 import com.items.bim.event.ViewModelEvent
-import com.items.bim.common.ui.AppTheme
 import com.items.bim.viewmodel.MessagesViewModel
 import com.items.bim.viewmodel.UserViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -48,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         logger.info { "onDestroy" }
     }
 
-    private fun initLoad(){
+    private fun initLoad() {
         MainScope().launch {
             viewModelEvent.onUserMessageLastByUserId(
                 this@MainActivity,
@@ -68,6 +71,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    @OptIn(ExperimentalPermissionsApi::class)
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,12 +85,21 @@ class MainActivity : AppCompatActivity() {
                 MessagesViewModel.MessageViewModelFactory(this)
             )[MessagesViewModel::class.java]
         setContent {
+            MultiplePermissions(
+                listOf(
+                    Manifest.permission.QUERY_ALL_PACKAGES,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            )
             AppTheme(appBase.darkTheme) {
                 MainNavGraph(this,
                     appBase,
                     userViewModel,
                     messagesViewModel,
-                    appBase.imageViewModel,init={
+                    appBase.imageViewModel, init = {
                         this.initLoad()
                     })
             }
