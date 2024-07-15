@@ -72,32 +72,30 @@ fun UserList(
     modifier: Modifier = Modifier,
     onClick: (UserEntity) -> Unit
 ) {
-    val state = MySwipeRefreshState(NORMAL)
-    val scope = rememberCoroutineScope()
-    var list by remember {
+    val list by remember {
         mutableStateOf(userViewModel.users)
     }
-    val user = com.items.bim.entity.AppUserEntity()
-    MySwipeRefresh(
-        state = state,
-        indicator = { _modifier, s, indicatorHeight ->
-            LoadingIndicator(_modifier, s, indicatorHeight)
-        },
-        onRefresh = {
-            scope.launch {
-                state.loadState = REFRESHING
-                ThreadPoolManager.getInstance().addTask("user", "UserList"){
-                    list = userViewModel.getReferUser(user)
-                }
-                logger.info { "用户下拉刷新" }
-                state.loadState = NORMAL
-            }
-        },
-        onLoadMore = {
-        },
-        modifier = modifier
-    ) {
-        LazyColumn(it) {
+//    val user = AppUserEntity()
+//    MySwipeRefresh(
+//        state = state,
+//        indicator = { _modifier, s, indicatorHeight ->
+//            LoadingIndicator(_modifier, s, indicatorHeight)
+//        },
+//        onRefresh = {
+//            scope.launch {
+//                state.loadState = REFRESHING
+//                ThreadPoolManager.getInstance().addTask("user", "UserList"){
+//                    list = userViewModel.getReferUser(user)
+//                }
+//                logger.info { "用户下拉刷新" }
+//                state.loadState = NORMAL
+//            }
+//        },
+//        onLoadMore = {
+//        },
+//        modifier = modifier
+//    ) {
+        LazyColumn(modifier) {
             items(list.size) {
                 Button(
                     onClick = {
@@ -128,7 +126,7 @@ fun UserList(
                 }
             }
         }
-    }
+//    }
 
 }
 

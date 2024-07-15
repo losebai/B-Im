@@ -42,9 +42,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.launch
 
 
-private val logger = KotlinLogging.logger {
-}
-
 @SuppressLint("CoroutineCreationDuringComposition")
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -134,46 +131,15 @@ fun Community(
     userViewModel: UserViewModel,
     communityViewModel: CommunityViewModel,
 ) {
-    val state = MySwipeRefreshState(NORMAL)
-    val scope = rememberCoroutineScope()
     var list: List<CommunityEntity> by remember {
         mutableStateOf(communityViewModel.getCommunityList())
     }
     ThreadPoolManager.getInstance().addTask("community", "communityList"){
         list = communityViewModel.nextCommunityPage()
     }
-    MySwipeRefresh(
-        state = state,
-        indicator = { _modifier, s, indicatorHeight ->
-            LoadingIndicator(_modifier, s, indicatorHeight)
-        },
-        onRefresh = {
-            scope.launch {
-                state.loadState = REFRESHING
-                communityViewModel.clearCommunityList()
-                ThreadPoolManager.getInstance().addTask("community", "communityList") {
-                    list = communityViewModel.nextCommunityPage()
-                }
-                logger.info { "社区下拉刷新" }
-                state.loadState = NORMAL
-            }
-        },
-        onLoadMore = {
-//                scope.launch {
-//                    state.loadState = LOADING_MORE
-//                    ThreadPoolManager.getInstance().addTask("community") {
-//                        list = communityViewModel.nextCommunityPage()
-//                    }
-//                    logger.info { "社区上拉刷新" }
-//                    state.loadState = NORMAL
-//                }
-        },
-        modifier = modifier
-    ) { _modifier ->
-        CommunityHome(
-            userViewModel.userEntity,
-            communityList = list,
-            modifier = _modifier
-        )
-    }
+    CommunityHome(
+        userViewModel.userEntity,
+        communityList = list,
+        modifier=modifier
+    )
 }
