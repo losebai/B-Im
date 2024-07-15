@@ -21,7 +21,8 @@ object SystemApp {
     var snackBarHostState = SnackbarHostState()
 
 
-    val IMAGE_PATHS = arrayOf(ImageUtils.PICTURES_PATH, ImageUtils.DCIM_PATH)
+    val IMAGE_PATHS = arrayOf(ImageUtils.PICTURES_PATH, ImageUtils.DCIM_PATH,
+        ImageUtils.QQ_IMAGE_PATH, ImageUtils.WEI_XIN_IMG_PATH)
 
     var userStatus by mutableStateOf(UserStatus.INIT)
 

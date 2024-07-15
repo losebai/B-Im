@@ -85,8 +85,7 @@ class AppBase {
     @OptIn(ExperimentalMaterial3Api::class)
     fun GetTopAppBar(appUserEntity: UserEntity, nvHostController: NavHostController) {
         var expanded by remember { mutableStateOf(false) }
-        var selectedIndex by remember { mutableIntStateOf(-1) }
-        var importImaged by remember { mutableStateOf(false) }
+
         Column(modifier = Modifier) {
             if (topVisible) {
                 TopAppBar(
@@ -111,21 +110,6 @@ class AppBase {
                                 nvHostController.navigate(PageRouteConfig.IMAGE_GROUP_LIST)
                                 logger.info { "图库中心" }
                             })
-//                            DropdownMenuItem(text = {
-//                                Text(text = "导入")
-//                            }, onClick = {
-//                                logger.info { "开始导入图片" }
-//                                imageViewModel.reload()
-//                                importImaged = true
-//                                expanded = false
-//                                isLoadImage = true
-//                            })
-//                            DropdownMenuItem(text = {
-//                                Text(text = "新建文件夹")
-//                            }, onClick = {
-//                                selectedIndex = 1
-//                                expanded = false
-//                            })
                         }
                     },
                     title = {
@@ -173,22 +157,7 @@ class AppBase {
                 Divider(color = Color.Black)
             }
         }
-        if (importImaged) {
-            ImportImages(imageViewModel = imageViewModel) {
-                importImaged = false
-                this@AppBase.page = MenuRouteConfig.ROUTE_IMAGE
-            }
-        }
-        when (selectedIndex) {
-            0 -> {
-            }
 
-            1 -> {
-                DialogImageAdd(onDismissRequest = {
-                    selectedIndex = -1
-                })
-            }
-        }
     }
 
     @Composable
