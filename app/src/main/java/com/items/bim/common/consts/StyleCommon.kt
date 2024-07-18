@@ -2,6 +2,7 @@ package com.items.bim.common.consts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -48,6 +49,10 @@ object StyleCommon {
     val FONT_MODIFIER = Modifier.wrapContentSize(Alignment.Center)
 
     val NAME_FONT_SIZE = 14.sp
+
+    val rowModifier = Modifier
+        .fillMaxWidth()
+        .padding(10.dp)
 
 }
 

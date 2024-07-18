@@ -32,14 +32,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.items.bim.common.consts.StyleCommon.rowModifier
 import com.items.bim.common.ui.HeadImage
 import com.items.bim.config.PageRouteConfig
 import com.items.bim.entity.UserEntity
 
 
-private val rowModifier = Modifier
-    .fillMaxWidth()
-    .padding(10.dp)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

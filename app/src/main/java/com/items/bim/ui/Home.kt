@@ -86,6 +86,7 @@ fun PageHost(
                             .padding(innerPadding),
                         userViewModel,
                         communityViewModel,
+                        mainController
                     )
                 }
                 MenuRouteConfig.ROUTE_MESSAGE -> {
@@ -127,6 +128,7 @@ fun Community(
     modifier: Modifier = Modifier,
     userViewModel: UserViewModel,
     communityViewModel: CommunityViewModel,
+    mainController: NavHostController
 ) {
     var list: List<CommunityEntity> by remember {
         mutableStateOf(communityViewModel.getCommunityList())
@@ -137,6 +139,7 @@ fun Community(
     CommunityHome(
         userViewModel.userEntity,
         communityList = list,
-        modifier=modifier
+        modifier=modifier,
+        mainController=mainController
     )
 }

@@ -30,9 +30,9 @@ import com.items.bim.R
 fun BButton(modifier: Modifier = Modifier, onClick: () -> Unit,content: @Composable RowScope.() -> Unit) = Button(
     modifier= modifier.buttonClick(onClick),
     onClick = onClick,
-    shape = RoundedCornerShape(0),
+    shape = RoundedCornerShape(10),
     colors = ButtonDefaults.buttonColors(
-        containerColor = colorResource(R.color.white),
+        containerColor = colorResource(R.color.active_button),
         contentColor = Color.Black
     ),
     elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp),

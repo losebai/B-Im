@@ -73,6 +73,8 @@ object PageRouteConfig{
 
     const val TOOLS_GAME_ROLE_RAKING = "TOOLS_GAME_ROLE_RAKING"
 
+    const val ADD_DYNAMIC = "ADD_DYNAMIC"
+
 
 }
 

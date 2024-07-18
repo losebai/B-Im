@@ -28,9 +28,11 @@ import com.items.bim.common.util.ThreadPoolManager
 import com.items.bim.config.MingChaoRoute
 import com.items.bim.config.PageRouteConfig
 import com.items.bim.config.WEB_API_ROURE
+import com.items.bim.dto.AppDynamic
 import com.items.bim.entity.toAppUserEntity
 import com.items.bim.event.GlobalInitEvent
 import com.items.bim.service.FileService
+import com.items.bim.ui.AddDynamic
 import com.items.bim.ui.EditPage
 import com.items.bim.ui.GameRoleRaking
 import com.items.bim.ui.GetCookiesUri
@@ -152,6 +154,12 @@ fun MainNavGraph(
                                     userViewModel.userEntity.copy(imageUrl = userViewModel.userEntity.imageUrl)
                             }
                         }
+                        "addDynamic" -> {
+                            ThreadPoolManager.getInstance().addTask("init", "addDynamic") {
+                                val path = FileService.uploadImage(it.filePath)
+                                communityViewModel.images.add(FileService.getImageUrl(path))
+                            }
+                        }
                     }
                 })
         }
@@ -257,6 +265,9 @@ fun MainNavGraph(
         composable("${PageRouteConfig.TOOLS_GAME_ROLE_RAKING}/{gameName}") { baseEntity ->
             val gameName = baseEntity.arguments?.getString("gameName") ?: ""
             GameRoleRaking(gameName, toolsViewModel, configViewModel, navHostController)
+        }
+        composable(PageRouteConfig.ADD_DYNAMIC){
+            AddDynamic(mainController = navHostController, communityViewModel)
         }
     }
 }
