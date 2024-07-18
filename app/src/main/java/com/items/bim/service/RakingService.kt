@@ -27,18 +27,17 @@ class RakingService {
     }
 
 
-    fun getUserPoolRakingDto(poolType: Int, isProd: Boolean, gameName: String) : List<UserPoolRakingDto> {
+    fun getUserPoolRakingDto(isProd: Boolean, gameName: String) : HashMap<Int, ArrayList<UserPoolRakingDto>> {
         val params: HashMap<String, Any> = hashMapOf()
-        params["poolType"] = poolType
         params["isProd"] = isProd
         params["gameName"] = gameName
         val res: Response? = HttpUtils.get(AppAPI.RakingAPI.GET_RAKING_LIST, params)
         if (res?.isSuccessful == true) {
             val str = res.body?.string()
             val json = ONode.load(str)
-            return json["data"].toObjectList(UserPoolRakingDto::class.java)
+            return json["data"].toObject(object: HashMap<Int, ArrayList<UserPoolRakingDto>>(){}.javaClass)
         }
-        return listOf()
+        return hashMapOf()
     }
 
     fun  getAppGameRole(gameName: String) : AppGameRole {

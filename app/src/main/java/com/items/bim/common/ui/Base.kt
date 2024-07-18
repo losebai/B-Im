@@ -58,7 +58,7 @@ class Ref(var value: Int)
 inline fun LogCompositions(msg: String) {
     val ref = remember { Ref(0) }
     SideEffect { ref.value++ }
-    Text(text = "$msg 重组次数 ${ref.value}")
+//    Text(text = "$msg 重组次数 ${ref.value}")
     Log.d("RecompositionLog", "Compositions: $msg ${ref.value}")
 }
 
@@ -76,4 +76,9 @@ fun TopAppRow(navigationIcon : () -> Unit , title: @Composable () -> Unit){
         }
         title()
     }
+}
+
+@Composable
+fun WrapperUI(content: @Composable () -> Unit){
+    content()
 }

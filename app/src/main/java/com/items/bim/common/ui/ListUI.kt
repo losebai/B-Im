@@ -42,7 +42,7 @@ fun PagerList(
 ) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState { if (pools.isEmpty()) 1 else pools.size }
-    Log.d("list", "PagerList ${pools.size}")
+    LogCompositions(msg = "PagerList")
     Column(modifier) {
         LazyVerticalGrid(
             GridCells.Fixed(if (pools.isEmpty()) 1 else pools.size ),
@@ -72,7 +72,7 @@ fun PagerList(
             modifier = Modifier
                 .padding(top = 10.dp)
                 .fillMaxHeight(),
-            pageContent = pageContent
+            pageContent = {pageContent(it)}
         )
     }
 }

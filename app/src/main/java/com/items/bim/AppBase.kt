@@ -86,7 +86,6 @@ class AppBase {
     @Composable
     @OptIn(ExperimentalMaterial3Api::class)
     fun GetTopAppBar(appUserEntity: UserEntity, nvHostController: NavHostController) {
-        var expanded by remember { mutableStateOf(false) }
         val isPositive by remember {
             derivedStateOf {
                 when(page){
@@ -116,6 +115,7 @@ class AppBase {
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
                     actions = {
+                        var expanded by remember { mutableStateOf(false) }
                         IconButton(onClick = { expanded = true }) {
                             Icon(
                                 modifier = Modifier.size(50.dp),
