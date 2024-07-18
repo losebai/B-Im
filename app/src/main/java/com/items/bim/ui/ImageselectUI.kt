@@ -51,9 +51,8 @@ import com.items.bim.viewmodel.ImageViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
 fun ImagesSelectTop(
-    title: String = "",
+    titleValue: () -> String,
     onClose: () -> Unit = {},
     onExpand: (Boolean) -> Unit = {}
 ) {
@@ -67,7 +66,7 @@ fun ImagesSelectTop(
                 onExpand(expend)
             }) {
                 Row {
-                    Text(text = title)
+                    Text(text = titleValue())
                     Icon(
                         imageVector = if (!expend) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
                         contentDescription = null
@@ -90,7 +89,6 @@ fun ImagesSelectTop(
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}, onSelect: (FileEntity) ->Unit =  {}) {
-    val state = MySwipeRefreshState(NORMAL)
     var expend by remember {
         mutableStateOf(false)
     }
@@ -103,7 +101,7 @@ fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}, onSele
     var title by remember {
         mutableStateOf("最近照片")
     }
-    var isDrawing by remember {
+    val isDrawing by remember {
         mutableStateOf(false)
     }
     val scope = rememberCoroutineScope()
@@ -116,7 +114,7 @@ fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}, onSele
             )
         },
         topBar = {
-            ImagesSelectTop(title, onClose = onClose, onExpand = {
+            ImagesSelectTop(titleValue = {title}, onClose = onClose, onExpand = {
                 expend = it
             })
         },
@@ -139,7 +137,7 @@ fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}, onSele
                     Text(text = "编辑")
                 }
                 RadioButton(selected = isDrawing, onClick = {
-                    isDrawing = !isDrawing
+//                    isDrawing = !isDrawing
                     Utils.message(scope, message, SystemApp.snackBarHostState)
                 })
                 Text(text = "原图")
@@ -151,8 +149,8 @@ fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}, onSele
         if (expend) {
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(innerPadding)
+                    .fillMaxWidth()
             ) {
                 items(imagesGroups.size){it ->
                     val image = imagesGroups[it]
@@ -179,17 +177,13 @@ fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}, onSele
                 }
             }
         } else {
-            MySwipeRefresh(state = state, onRefresh = { /*TODO*/ }, onLoadMore = { /*TODO*/ },
+            PhotoDataSetBody(
+                images,
                 modifier = Modifier.padding(innerPadding)
-            ) { mod ->
-                PhotoDataSetBody(
-                    images,
-                    modifier = mod
-                        .fillMaxSize()
-                ){
-                    onSelect(it)
-                    onClose()
-                }
+                    .fillMaxSize()
+            ){
+                onSelect(it)
+                onClose()
             }
         }
     }

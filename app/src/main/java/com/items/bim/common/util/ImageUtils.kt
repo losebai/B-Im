@@ -32,6 +32,9 @@ object ImageUtils {
     val PICTURES_PATH: String =
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath
 
+    const val QQ_IMAGE_PATH = "/storage/emulated/0/tencent/QQ_Images"
+
+    const val WEI_XIN_IMG_PATH = "/storage/emulated/0/tencent/MicroMsg/weixin"
 
     /**
      * 获取一级文件夹

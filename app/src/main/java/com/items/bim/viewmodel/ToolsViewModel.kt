@@ -1,11 +1,17 @@
 package com.items.bim.viewmodel
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.util.ThreadPoolManager
 import com.items.bim.common.util.Utils
 import com.items.bim.database.AppDatabase
+import com.items.bim.dto.AppGameRole
 import com.items.bim.dto.UserPoolRakingDto
 import com.items.bim.entity.McRecordEntity
 import com.items.bim.event.GlobalInitEvent
@@ -30,6 +36,8 @@ import com.items.bim.service.RakingService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ToolsViewModel() : ViewModel() {
@@ -73,6 +81,8 @@ class ToolsViewModel() : ViewModel() {
     private val mcRecordRepository: OfflineMcRecordRepository by lazy {
         OfflineMcRecordRepository(AppDatabase.getInstance().McRecordDao())
     }
+
+    var appGameRole by mutableStateOf<AppGameRole>(AppGameRole())
 
     init {
         GlobalInitEvent.addUnit {
@@ -140,11 +150,15 @@ class ToolsViewModel() : ViewModel() {
         Utils.message(cs, "获取抽奖记录完成，请到抽卡分析页面查看", SystemApp.snackBarHostState)
     }
 
-    fun getUserPoolRakingDto(poolType: Int, isProd: Boolean, gameName: String): List<UserPoolRakingDto> =
-        rakingService.getUserPoolRakingDto(poolType, isProd, gameName)
+    fun getUserPoolRakingDto(isProd: Boolean, gameName: String)=
+        rakingService.getUserPoolRakingDto(isProd, gameName)
 
     fun getUserGameDto(isProd: Boolean,  gameName: String)
     = rakingService.getUserGameDto(SystemApp.UserId, isProd, gameName)
 
-    fun getAppGameRole(gameName: String) = rakingService.getAppGameRole(gameName);
+    fun getAppGameRole(gameName: String){
+        ThreadPoolManager.getInstance().addTask("init", "GameRoleRaking") {
+            appGameRole =  rakingService.getAppGameRole(gameName);
+        }
+    }
 }

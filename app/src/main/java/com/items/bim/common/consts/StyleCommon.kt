@@ -2,6 +2,7 @@ package com.items.bim.common.consts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -37,7 +38,7 @@ object StyleCommon {
 
     val IMAGE_SIZE =  Modifier.height(100.dp).width(100.dp);
 
-    val HOOK_LIST = Modifier.padding(5.dp).background(Color.Black)
+    val HOOK_LIST = Modifier.padding(5.dp)
 
     val ICON_SIZE = Modifier.size(40.dp)
 
@@ -48,6 +49,10 @@ object StyleCommon {
     val FONT_MODIFIER = Modifier.wrapContentSize(Alignment.Center)
 
     val NAME_FONT_SIZE = 14.sp
+
+    val rowModifier = Modifier
+        .fillMaxWidth()
+        .padding(10.dp)
 
 }
 

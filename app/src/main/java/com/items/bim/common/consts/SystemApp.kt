@@ -1,5 +1,6 @@
 package com.items.bim.common.consts
 
+import android.os.Build.VERSION
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,6 +9,7 @@ import com.items.bim.common.util.ImageUtils
 
 
 object SystemApp {
+
 
     // 设备唯一识别吗
     val PRODUCT_DEVICE_NUMBER: String = android.os.Build.FINGERPRINT ?: ""
@@ -19,7 +21,8 @@ object SystemApp {
     var snackBarHostState = SnackbarHostState()
 
 
-    val IMAGE_PATHS = arrayOf(ImageUtils.PICTURES_PATH, ImageUtils.DCIM_PATH)
+    val IMAGE_PATHS = arrayOf(ImageUtils.PICTURES_PATH, ImageUtils.DCIM_PATH,
+        ImageUtils.QQ_IMAGE_PATH, ImageUtils.WEI_XIN_IMG_PATH)
 
     var userStatus by mutableStateOf(UserStatus.INIT)
 

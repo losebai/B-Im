@@ -1,5 +1,8 @@
 package com.items.bim.common.consts
 
+import android.os.Build.VERSION
+import com.items.bim.BuildConfig
+
 object AppAPI {
 
 
@@ -11,7 +14,7 @@ object AppAPI {
 
     const val POST_USER_LIST: String = "/dispatch-app/appUser/list"
 
-
+    const val CONFIG_URI: String  = "/dispatch-app/config/app-config-${BuildConfig.VERSION_NAME}.json"
 
     object CommunityAPI{
         const  val GET_DYNAMIC: String = "/dispatch-app/appDynamic/"
@@ -23,8 +26,6 @@ object AppAPI {
 
     object DictAPI{
         const  val GET_DICT_BY_KEYS: String = "/dispatch-app/dict/getDictByKeys"
-
-
     }
 
     object AppLotteryPoolAPI{

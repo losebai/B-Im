@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Build
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material3.BottomAppBar
@@ -33,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -45,18 +48,24 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.consts.UserStatus
+import com.items.bim.common.ui.AppBarButton
 import com.items.bim.common.ui.DialogImageAdd
 import com.items.bim.common.ui.HeadImage
+import com.items.bim.common.ui.buttonClick
 import com.items.bim.config.MenuRouteConfig
 import com.items.bim.config.PageRouteConfig
 import com.items.bim.entity.UserEntity
+import com.items.bim.ui.Community
 import com.items.bim.ui.ImportImages
+import com.items.bim.ui.MessagesList
+import com.items.bim.ui.ToolsList
 import com.items.bim.viewmodel.ImageViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
 
@@ -70,26 +79,43 @@ class AppBase {
 
     var settingDrawerState by mutableStateOf(DrawerState(DrawerValue.Closed))
 
-    var topVisible by mutableStateOf(false)
-
     var darkTheme by mutableStateOf(false)
 
 
     @SuppressLint("CoroutineCreationDuringComposition", "ResourceAsColor")
     @Composable
     @OptIn(ExperimentalMaterial3Api::class)
-    fun GetTopAppBar(appUserEntity: UserEntity, nvHostController : NavHostController) {
-        var expanded by remember { mutableStateOf(false) }
-        var selectedIndex by remember { mutableIntStateOf(-1) }
-        var importImaged by remember { mutableStateOf(false) }
+    fun GetTopAppBar(appUserEntity: UserEntity, nvHostController: NavHostController) {
+        val isPositive by remember {
+            derivedStateOf {
+                when(page){
+                    MenuRouteConfig.TOOLS_ROUTE -> {
+                        false
+                    }
+                    MenuRouteConfig.ROUTE_COMMUNITY -> {
+                        false
+                    }
+                    MenuRouteConfig.ROUTE_MESSAGE -> {
+                        true
+                    }
+                    MenuRouteConfig.ROUTE_USERS -> {
+                        true
+                    }
+                    else -> {
+                        false
+                    }
+                }
+            }
+        }
         Column(modifier = Modifier) {
-            if (topVisible) {
+            if (isPositive) {
                 TopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
                     actions = {
+                        var expanded by remember { mutableStateOf(false) }
                         IconButton(onClick = { expanded = true }) {
                             Icon(
                                 modifier = Modifier.size(50.dp),
@@ -104,23 +130,8 @@ class AppBase {
                                 Text(text = "图库中心")
                             }, onClick = {
                                 nvHostController.navigate(PageRouteConfig.IMAGE_GROUP_LIST)
-                                logger.info { "图库中心" }
+                                logger.debug { "图库中心" }
                             })
-//                            DropdownMenuItem(text = {
-//                                Text(text = "导入")
-//                            }, onClick = {
-//                                logger.info { "开始导入图片" }
-//                                imageViewModel.reload()
-//                                importImaged = true
-//                                expanded = false
-//                                isLoadImage = true
-//                            })
-//                            DropdownMenuItem(text = {
-//                                Text(text = "新建文件夹")
-//                            }, onClick = {
-//                                selectedIndex = 1
-//                                expanded = false
-//                            })
                         }
                     },
                     title = {
@@ -168,29 +179,14 @@ class AppBase {
                 Divider(color = Color.Black)
             }
         }
-        if (importImaged) {
-            ImportImages(imageViewModel = imageViewModel) {
-                importImaged = false
-                this@AppBase.page = MenuRouteConfig.ROUTE_IMAGE
-            }
-        }
-        when (selectedIndex) {
-            0 -> {
-            }
 
-            1 -> {
-                DialogImageAdd(onDismissRequest = {
-                    selectedIndex = -1
-                })
-            }
-        }
     }
 
     @Composable
     fun GetBottomBar() {
         val IconModifier = Modifier
         BottomAppBar(
-            modifier = Modifier.height(100.dp),
+            modifier = Modifier.height(50.dp),
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.primary,
             contentPadding = PaddingValues(5.dp, 5.dp)
@@ -200,62 +196,23 @@ class AppBase {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier.clickable { page = MenuRouteConfig.ROUTE_MESSAGE },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        modifier = IconModifier,
-                        imageVector = Icons.Outlined.MailOutline,
-                        contentDescription = "Localized description"
-                    )
-                    Text(
-                        text = "消息",
-                        fontSize = 12.sp,
-                    )
-                }
-                Column(
-                    modifier = Modifier.clickable { page = MenuRouteConfig.ROUTE_USERS },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        modifier = IconModifier,
-                        imageVector = Icons.Outlined.AccountCircle,
-                        contentDescription = "Localized description"
-                    )
-                    Text(
-                        text = "联系人",
-                        fontSize = 12.sp,
-                    )
-                }
-                Column(
-                    modifier = Modifier.clickable { page = MenuRouteConfig.TOOLS_ROUTE },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        modifier = IconModifier,
-                        imageVector = Icons.Outlined.Home,
-                        contentDescription = "Localized description"
-                    )
-                    Text(
-                        text = "游戏",
-                        fontSize = 12.sp,
-                    )
-                }
-                Column(
-                    modifier = Modifier.clickable { page = MenuRouteConfig.ROUTE_COMMUNITY },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        modifier = IconModifier,
-                        imageVector = Icons.Outlined.Home,
-                        contentDescription = "Localized description"
-                    )
-                    Text(text = "社区", fontSize = 12.sp)
-                }
+                val activeColor = colorResource(R.color.active_button)
+                AppBarButton(page == MenuRouteConfig.ROUTE_MESSAGE,
+                    Icons.Outlined.MailOutline,
+                    activeColor, "消息", IconModifier, onClick = {
+                    page = MenuRouteConfig.ROUTE_MESSAGE
+                })
+                AppBarButton(page == MenuRouteConfig.ROUTE_USERS, Icons.Outlined.AccountCircle, activeColor, "联系人", IconModifier, onClick = {
+                    page = MenuRouteConfig.ROUTE_USERS
+                })
+                AppBarButton(page == MenuRouteConfig.TOOLS_ROUTE,  Icons.Outlined.Build,activeColor, "游戏", IconModifier, onClick = {
+                    page = MenuRouteConfig.TOOLS_ROUTE
+                })
+                AppBarButton(page == MenuRouteConfig.ROUTE_COMMUNITY,  Icons.Outlined.FavoriteBorder, activeColor, "社区", IconModifier, onClick = {
+                    page = MenuRouteConfig.ROUTE_COMMUNITY
+                })
             }
         }
-        Divider(color = Color.Black)
     }
 
 

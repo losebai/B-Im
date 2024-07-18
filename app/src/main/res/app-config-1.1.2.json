@@ -1,0 +1,21 @@
+{
+
+  "Menus": ["消息", "联系人" ,"社区" ,"工具"],
+  "Games": {
+    "鸣潮": {
+      "background" : "https://media-cdn-mingchao.kurogame.com/akiwebsite/website2.0/images/1705420800000/7kmoj91e8l1t6v4h8y-1705465837895.jpg"
+    },
+    "原神": {
+      "background" : "https://webstatic.mihoyo.com/app/community-game-records/images/bg.6d29d296.png"
+
+    },
+    "星穹铁道": {
+      "background" : "https://fastcdn.mihoyo.com/content-v2/hkrpg/101956/3ff792bf2bc4b5092e714f08b5d728a3_4296252783649092438.mp4?x-oss-process=video/snapshot,t_1,f_jpg,m_fast"
+
+    },
+    "绝区零": {
+      "background" : "https://fastcdn.mihoyo.com/content-v2/nap/102005/37198ce9c5ee13abb2c49f1bd1c3ca97_7702488080246216541.png"
+
+    }
+  }
+}

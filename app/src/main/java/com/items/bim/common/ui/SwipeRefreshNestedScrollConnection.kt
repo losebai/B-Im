@@ -57,7 +57,7 @@ private class SwipeRefreshNestedScrollConnection(
         //当处于刷新状态或者更多状态，不处理
         state.loadState != NORMAL -> Offset.Zero
         source == NestedScrollSource.Drag -> {
-            Log.v("hj", "onPreScroll available = $available")
+//            Log.v("hj", "onPreScroll available = $available")
             if (available.y > 0 && isBottom) {
                 onScroll(available)
             } else if (available.y < 0 && isTop) {
@@ -82,7 +82,7 @@ private class SwipeRefreshNestedScrollConnection(
         else if (state.loadState != NORMAL) {
             return Offset.Zero
         } else if (source == NestedScrollSource.Drag) {
-            Log.d("hj", "onPostScroll available = $available , consumed = $consumed")
+//            Log.d("hj", "onPostScroll available = $available , consumed = $consumed")
             if (available.y < 0) {
                 if (!isBottom) {
                     isBottom = true

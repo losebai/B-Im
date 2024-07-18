@@ -13,6 +13,7 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,9 +42,6 @@ import com.items.bim.viewmodel.UserViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.launch
 
-
-private val logger = KotlinLogging.logger {
-}
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -76,7 +74,6 @@ fun PageHost(
                 .fillMaxSize()
             when (appBase.page) {
                 MenuRouteConfig.TOOLS_ROUTE -> {
-                    appBase.topVisible = false
                     ToolsList(
                         toolsViewModel,
                         mod,
@@ -84,16 +81,15 @@ fun PageHost(
                     )
                 }
                 MenuRouteConfig.ROUTE_COMMUNITY -> {
-                    appBase.topVisible = false
                     Community(
                         modifier = Modifier
                             .padding(innerPadding),
                         userViewModel,
                         communityViewModel,
+                        mainController
                     )
                 }
                 MenuRouteConfig.ROUTE_MESSAGE -> {
-                    appBase.topVisible = true
                     MessagesList(
                         messagesViewModel,
                         userViewModel,
@@ -102,7 +98,6 @@ fun PageHost(
                     )
                 }
                 MenuRouteConfig.ROUTE_USERS -> {
-                    appBase.topVisible = true
                     Column(modifier = mod) {
                         SearchUser(
                             searchUserName, onValueChange = {
@@ -133,47 +128,18 @@ fun Community(
     modifier: Modifier = Modifier,
     userViewModel: UserViewModel,
     communityViewModel: CommunityViewModel,
+    mainController: NavHostController
 ) {
-    val state = MySwipeRefreshState(NORMAL)
-    val scope = rememberCoroutineScope()
     var list: List<CommunityEntity> by remember {
         mutableStateOf(communityViewModel.getCommunityList())
     }
     ThreadPoolManager.getInstance().addTask("community", "communityList"){
         list = communityViewModel.nextCommunityPage()
     }
-    MySwipeRefresh(
-        state = state,
-        indicator = { _modifier, s, indicatorHeight ->
-            LoadingIndicator(_modifier, s, indicatorHeight)
-        },
-        onRefresh = {
-            scope.launch {
-                state.loadState = REFRESHING
-                communityViewModel.clearCommunityList()
-                ThreadPoolManager.getInstance().addTask("community", "communityList") {
-                    list = communityViewModel.nextCommunityPage()
-                }
-                logger.info { "社区下拉刷新" }
-                state.loadState = NORMAL
-            }
-        },
-        onLoadMore = {
-//                scope.launch {
-//                    state.loadState = LOADING_MORE
-//                    ThreadPoolManager.getInstance().addTask("community") {
-//                        list = communityViewModel.nextCommunityPage()
-//                    }
-//                    logger.info { "社区上拉刷新" }
-//                    state.loadState = NORMAL
-//                }
-        },
-        modifier = modifier
-    ) { _modifier ->
-        CommunityHome(
-            userViewModel.userEntity,
-            communityList = list,
-            modifier = _modifier
-        )
-    }
+    CommunityHome(
+        userViewModel.userEntity,
+        communityList = list,
+        modifier=modifier,
+        mainController=mainController
+    )
 }

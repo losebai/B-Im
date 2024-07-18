@@ -13,7 +13,6 @@ import androidx.navigation.NavHostController
 
 
 
-var groupName by mutableIntStateOf(0)
 
 @Composable
 fun GetTopAppBar() {

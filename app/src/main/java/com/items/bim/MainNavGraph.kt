@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,9 +28,11 @@ import com.items.bim.common.util.ThreadPoolManager
 import com.items.bim.config.MingChaoRoute
 import com.items.bim.config.PageRouteConfig
 import com.items.bim.config.WEB_API_ROURE
+import com.items.bim.dto.AppDynamic
 import com.items.bim.entity.toAppUserEntity
 import com.items.bim.event.GlobalInitEvent
 import com.items.bim.service.FileService
+import com.items.bim.ui.AddDynamic
 import com.items.bim.ui.EditPage
 import com.items.bim.ui.GameRoleRaking
 import com.items.bim.ui.GetCookiesUri
@@ -46,6 +47,7 @@ import com.items.bim.ui.PhotoDataSet
 import com.items.bim.ui.RankingHome
 import com.items.bim.ui.UserInfoEdit
 import com.items.bim.viewmodel.CommunityViewModel
+import com.items.bim.viewmodel.ConfigViewModel
 import com.items.bim.viewmodel.ImageViewModel
 import com.items.bim.viewmodel.LotteryViewModel
 import com.items.bim.viewmodel.MessagesViewModel
@@ -69,6 +71,7 @@ fun MainNavGraph(
     imageViewModel: ImageViewModel,
     init: () -> Unit = {}
 ) {
+    val configViewModel = viewModel<ConfigViewModel>()
     val communityViewModel = viewModel<CommunityViewModel>()
     val toolsViewModel = viewModel<ToolsViewModel>()
     val navHostController = rememberNavController()
@@ -79,6 +82,7 @@ fun MainNavGraph(
     thread {
         GlobalInitEvent.run()
         init()
+        configViewModel.check()
     }
     NavHost(
         navController = navHostController,
@@ -114,6 +118,7 @@ fun MainNavGraph(
         }
         // 二级页面 相片页
         composable(PageRouteConfig.IMAGE_PAGE_ROUTE) {
+            logger.debug { PageRouteConfig.IMAGE_PAGE_ROUTE }
             PhotoDataSet(imageViewModel, navHostController)
         }
         composable(PageRouteConfig.IMAGE_GROUP_LIST) {
@@ -147,6 +152,12 @@ fun MainNavGraph(
                                 )
                                 userViewModel.userEntity =
                                     userViewModel.userEntity.copy(imageUrl = userViewModel.userEntity.imageUrl)
+                            }
+                        }
+                        "addDynamic" -> {
+                            ThreadPoolManager.getInstance().addTask("init", "addDynamic") {
+                                val path = FileService.uploadImage(it.filePath)
+                                communityViewModel.images.add(FileService.getImageUrl(path))
                             }
                         }
                     }
@@ -196,9 +207,6 @@ fun MainNavGraph(
         composable(MingChaoRoute.BOOK_LIST) {
             HookList(toolsViewModel, navHostController)
         }
-//        composable(MingChaoRoute.WIKI) {
-//            MCWIKI(MingChaoAPI.WIKI_URL)
-//        }
         composable("${WEB_API_ROURE.WEB_ROUTE}/{url}") { backStackEntry ->
             WebScreen(
                 originalUrl = backStackEntry.arguments?.getString("url") ?: "",
@@ -250,11 +258,16 @@ fun MainNavGraph(
         }
         composable("${PageRouteConfig.RANKING_HOME}/{gameName}") { baseEntity ->
             val gameName = baseEntity.arguments?.getString("gameName") ?: ""
-            RankingHome(gameName, toolsViewModel, navHostController)
+            RankingHome(gameNameValue = {
+                gameName
+            }, toolsViewModel, navHostController)
         }
         composable("${PageRouteConfig.TOOLS_GAME_ROLE_RAKING}/{gameName}") { baseEntity ->
             val gameName = baseEntity.arguments?.getString("gameName") ?: ""
-            GameRoleRaking(gameName, toolsViewModel, navHostController)
+            GameRoleRaking(gameName, toolsViewModel, configViewModel, navHostController)
+        }
+        composable(PageRouteConfig.ADD_DYNAMIC){
+            AddDynamic(mainController = navHostController, communityViewModel)
         }
     }
 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,14 +32,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.items.bim.common.consts.StyleCommon.rowModifier
 import com.items.bim.common.ui.HeadImage
 import com.items.bim.config.PageRouteConfig
 import com.items.bim.entity.UserEntity
 
 
-private val rowModifier = Modifier
-    .fillMaxWidth()
-    .padding(10.dp)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,7 +51,7 @@ fun EditPage(
         mutableStateOf(default)
     }
     Column(horizontalAlignment = Alignment.Start,
-        modifier = Modifier.padding(10.dp)) {
+        modifier = Modifier.padding(5.dp)) {
         TopAppBar(title = { Text(text = title, color = Color.Black) }, navigationIcon = {
             IconButton(onClick = {
                 mainController.navigateUp()
@@ -94,7 +93,8 @@ fun UserInfoEdit(
 //            .padding(10.dp)
     ) {
         TopAppBar(title = {
-        }, navigationIcon = {
+        }, modifier=Modifier.height(70.dp)
+            ,navigationIcon = {
             IconButton(onClick = {
                 mainController.navigateUp()
             }) {

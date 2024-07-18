@@ -165,6 +165,7 @@ dependencies {
 
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
     implementation("org.slf4j:slf4j-simple:2.0.12")
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
 
 //    implementation("org.noear:solon:2.7.5")
     implementation("org.noear:snack3:3.2.95")
@@ -195,7 +196,7 @@ dependencies {
 //    implementation("com.android.tools:r8:8.4.37")
     //noinspection GradlePluginVersion
 //    implementation("com.android.tools.build:gradle:8.2.2")
-//    implementation("com.google.accompanist:accompanist-permissions:0.31.0-alpha")
+    implementation("com.google.accompanist:accompanist-permissions:0.31.0-alpha")
 //    implementation("com.google.accompanist:accompanist-placeholder-material:0.31.0-alpha")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("androidx.core:core-ktx:1.12.0")

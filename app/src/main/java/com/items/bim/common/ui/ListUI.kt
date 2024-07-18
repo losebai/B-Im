@@ -1,5 +1,6 @@
 package com.items.bim.common.ui
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +41,8 @@ fun PagerList(
     pageContent: @Composable PagerScope.(page: Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    val pagerState = rememberPagerState { pools.size }
+    val pagerState = rememberPagerState { if (pools.isEmpty()) 1 else pools.size }
+    LogCompositions(msg = "PagerList")
     Column(modifier) {
         LazyVerticalGrid(
             GridCells.Fixed(if (pools.isEmpty()) 1 else pools.size ),
@@ -70,7 +72,7 @@ fun PagerList(
             modifier = Modifier
                 .padding(top = 10.dp)
                 .fillMaxHeight(),
-            pageContent = pageContent
+            pageContent = { pageContent(it) }
         )
     }
 }
@@ -82,11 +84,10 @@ fun TopPagerList(
     pools: List<String>, textColor: Color,
     pageContent: @Composable PagerScope.(page: Int) -> Unit,
 ) {
-    logger.info { "TopPagerList" }
     val scope = rememberCoroutineScope()
     Column(modifier.fillMaxWidth(),
         horizontalAlignment=Alignment.CenterHorizontally) {
-        val pagerState = rememberPagerState { pools.size }
+        val pagerState = rememberPagerState {if (pools.isEmpty()) 1 else pools.size }
         TopAppBar(title = {
             LazyVerticalGrid(
                 GridCells.Fixed(4),
@@ -113,7 +114,9 @@ fun TopPagerList(
         })
         HorizontalPager(
             pagerState,
-            pageContent = pageContent
+            pageContent = {
+                pageContent(it)
+            }
         )
     }
 }
