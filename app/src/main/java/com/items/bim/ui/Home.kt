@@ -13,6 +13,7 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,7 +74,6 @@ fun PageHost(
                 .fillMaxSize()
             when (appBase.page) {
                 MenuRouteConfig.TOOLS_ROUTE -> {
-                    appBase.topVisible = false
                     ToolsList(
                         toolsViewModel,
                         mod,
@@ -81,7 +81,6 @@ fun PageHost(
                     )
                 }
                 MenuRouteConfig.ROUTE_COMMUNITY -> {
-                    appBase.topVisible = false
                     Community(
                         modifier = Modifier
                             .padding(innerPadding),
@@ -90,7 +89,6 @@ fun PageHost(
                     )
                 }
                 MenuRouteConfig.ROUTE_MESSAGE -> {
-                    appBase.topVisible = true
                     MessagesList(
                         messagesViewModel,
                         userViewModel,
@@ -99,7 +97,6 @@ fun PageHost(
                     )
                 }
                 MenuRouteConfig.ROUTE_USERS -> {
-                    appBase.topVisible = true
                     Column(modifier = mod) {
                         SearchUser(
                             searchUserName, onValueChange = {

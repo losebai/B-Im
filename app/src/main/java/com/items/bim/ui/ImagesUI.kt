@@ -43,6 +43,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -89,16 +90,11 @@ private val logger = KotlinLogging.logger {}
 
 private val TEXT_ROW_MODIFIER = Modifier.fillMaxWidth(0.8f)
 
-class ImagesUI {
-    companion object {
-        var isDetail by mutableStateOf(false)
-    }
-}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ImageTopBar(name: String, mainController: NavHostController) {
+fun ImageTopBar(name: String, mainController: NavHostController, isDetail: () -> Boolean) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -115,11 +111,9 @@ fun ImageTopBar(name: String, mainController: NavHostController) {
         // 返回
         navigationIcon = {
             IconButton(onClick = {
-                if (!ImagesUI.isDetail) {
+                if (!isDetail()) {
                     // 从列表页返回
                     mainController.navigateUp()
-                } else {
-                    ImagesUI.isDetail = false
                 }
             }) {
                 Icon(
@@ -199,24 +193,27 @@ fun PhotoDataSet(
     var imageDetail by remember {
         mutableStateOf(FileEntity())
     }
-    logger.info { "PhotoDataSet 重组了" }
+    val isDetail = remember(path) {
+        mutableStateOf(false)
+    }
+    logger.info { "PhotoDataSet重组了 $path" }
     Scaffold(
         snackbarHost = {
-            if (ImagesUI.isDetail) {
+            if (isDetail.value) {
                 SnackbarHost(hostState = snackBarHostState, modifier = Modifier.padding(0.dp))
             }
         },
         topBar = {
-            if (ImagesUI.isDetail) {
+            if (isDetail.value) {
                 AnimatedVisibility(visible = topVisible) {
-                    ImageTopBar(imageDetail.name, mainController)
+                    ImageTopBar(imageDetail.name, mainController, isDetail={isDetail.value})
                 }
             } else {
-                ImageTopBar(imageViewModel.groupName, mainController)
+                ImageTopBar(imageViewModel.groupName, mainController, isDetail={isDetail.value})
             }
         },
         bottomBar = {
-            if (ImagesUI.isDetail) {
+            if (isDetail.value) {
                 AnimatedVisibility(visible = topVisible) {
                     GetBottomBar(imageDetail.filePath) {
                         // 这里是异步
@@ -226,7 +223,7 @@ fun PhotoDataSet(
             }
         },
     ) { innerPadding ->
-        if (ImagesUI.isDetail) {
+        if (isDetail.value) {
             val pagerState = rememberPagerState {
                 images.size
             }
@@ -265,9 +262,8 @@ fun PhotoDataSet(
                     .fillMaxSize()
             ) {
                 imageDetail = it
-                ImagesUI.isDetail = true
+                isDetail.value = true
             }
-
         }
     }
 }

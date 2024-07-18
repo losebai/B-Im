@@ -18,7 +18,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -52,9 +55,10 @@ fun TopAppBarBack(modifier: Modifier=Modifier,
 class Ref(var value: Int)
 
 @Composable
-fun LogCompositions(msg: String) {
+inline fun LogCompositions(msg: String) {
     val ref = remember { Ref(0) }
     SideEffect { ref.value++ }
+    Text(text = "$msg 重组次数 ${ref.value}")
     Log.d("RecompositionLog", "Compositions: $msg ${ref.value}")
 }
 

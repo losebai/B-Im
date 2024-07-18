@@ -85,15 +85,15 @@ class MainActivity : AppCompatActivity() {
                 MessagesViewModel.MessageViewModelFactory(this)
             )[MessagesViewModel::class.java]
         setContent {
-            MultiplePermissions(
-                listOf(
-                    Manifest.permission.QUERY_ALL_PACKAGES,
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.READ_MEDIA_IMAGES,
-                    Manifest.permission.MANAGE_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-            )
+//            MultiplePermissions(
+//                listOf(
+//                    Manifest.permission.QUERY_ALL_PACKAGES,
+//                    Manifest.permission.CAMERA,
+//                    Manifest.permission.READ_MEDIA_IMAGES,
+//                    Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+//                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+//                )
+//            )
             AppTheme(appBase.darkTheme) {
                 MainNavGraph(this,
                     appBase,

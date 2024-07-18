@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -61,7 +62,10 @@ import com.items.bim.common.ui.buttonClick
 import com.items.bim.config.MenuRouteConfig
 import com.items.bim.config.PageRouteConfig
 import com.items.bim.entity.UserEntity
+import com.items.bim.ui.Community
 import com.items.bim.ui.ImportImages
+import com.items.bim.ui.MessagesList
+import com.items.bim.ui.ToolsList
 import com.items.bim.viewmodel.ImageViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
 
@@ -75,8 +79,6 @@ class AppBase {
 
     var settingDrawerState by mutableStateOf(DrawerState(DrawerValue.Closed))
 
-    var topVisible by mutableStateOf(false)
-
     var darkTheme by mutableStateOf(false)
 
 
@@ -85,9 +87,29 @@ class AppBase {
     @OptIn(ExperimentalMaterial3Api::class)
     fun GetTopAppBar(appUserEntity: UserEntity, nvHostController: NavHostController) {
         var expanded by remember { mutableStateOf(false) }
-
+        val isPositive by remember {
+            derivedStateOf {
+                when(page){
+                    MenuRouteConfig.TOOLS_ROUTE -> {
+                        false
+                    }
+                    MenuRouteConfig.ROUTE_COMMUNITY -> {
+                        false
+                    }
+                    MenuRouteConfig.ROUTE_MESSAGE -> {
+                        true
+                    }
+                    MenuRouteConfig.ROUTE_USERS -> {
+                        true
+                    }
+                    else -> {
+                        false
+                    }
+                }
+            }
+        }
         Column(modifier = Modifier) {
-            if (topVisible) {
+            if (isPositive) {
                 TopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -108,7 +130,7 @@ class AppBase {
                                 Text(text = "图库中心")
                             }, onClick = {
                                 nvHostController.navigate(PageRouteConfig.IMAGE_GROUP_LIST)
-                                logger.info { "图库中心" }
+                                logger.debug { "图库中心" }
                             })
                         }
                     },
@@ -191,7 +213,6 @@ class AppBase {
                 })
             }
         }
-//        Divider(color = Color.Black)
     }
 
 

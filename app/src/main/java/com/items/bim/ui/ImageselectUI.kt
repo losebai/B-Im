@@ -51,9 +51,8 @@ import com.items.bim.viewmodel.ImageViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
 fun ImagesSelectTop(
-    title: String = "",
+    titleValue: () -> String,
     onClose: () -> Unit = {},
     onExpand: (Boolean) -> Unit = {}
 ) {
@@ -67,7 +66,7 @@ fun ImagesSelectTop(
                 onExpand(expend)
             }) {
                 Row {
-                    Text(text = title)
+                    Text(text = titleValue())
                     Icon(
                         imageVector = if (!expend) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
                         contentDescription = null
@@ -90,7 +89,6 @@ fun ImagesSelectTop(
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}, onSelect: (FileEntity) ->Unit =  {}) {
-    val state = MySwipeRefreshState(NORMAL)
     var expend by remember {
         mutableStateOf(false)
     }
@@ -116,7 +114,7 @@ fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}, onSele
             )
         },
         topBar = {
-            ImagesSelectTop(title, onClose = onClose, onExpand = {
+            ImagesSelectTop(titleValue = {title}, onClose = onClose, onExpand = {
                 expend = it
             })
         },

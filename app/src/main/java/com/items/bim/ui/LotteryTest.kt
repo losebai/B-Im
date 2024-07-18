@@ -106,7 +106,6 @@ fun MCRoleLotteryHome(
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
-//                                .fillMaxSize()
                                 .height(if (poolIndex == it) 50.dp else 40.dp)
                                 .width(if (poolIndex == it) 100.dp else 90.dp)
                                 .padding(top = 5.dp)

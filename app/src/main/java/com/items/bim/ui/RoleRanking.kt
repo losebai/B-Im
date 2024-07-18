@@ -32,8 +32,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.items.bim.common.consts.ConfigKey
 import com.items.bim.common.ui.PagerList
 import com.items.bim.common.ui.TopAppRow
-import com.items.bim.common.util.ThreadPoolManager
-import com.items.bim.dto.AppGameRole
 import com.items.bim.dto.GameRoleDto
 import com.items.bim.viewmodel.ConfigViewModel
 import com.items.bim.viewmodel.ToolsViewModel

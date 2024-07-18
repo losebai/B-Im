@@ -41,8 +41,8 @@ fun PagerList(
     pageContent: @Composable PagerScope.(page: Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    val pagerState = rememberPagerState { pools.size }
-    Log.d("list", "PagerList")
+    val pagerState = rememberPagerState { if (pools.isEmpty()) 1 else pools.size }
+    Log.d("list", "PagerList ${pools.size}")
     Column(modifier) {
         LazyVerticalGrid(
             GridCells.Fixed(if (pools.isEmpty()) 1 else pools.size ),

@@ -12,7 +12,6 @@ import com.items.bim.event.GlobalInitEvent
 import java.util.Collections
 import java.util.Hashtable
 
-private val EMPTY_IMAGES: Array<FileEntity>  = arrayOf()
 
 class ImageViewModel() : ViewModel() {
 
@@ -45,7 +44,7 @@ class ImageViewModel() : ViewModel() {
     }
 
     fun reload(){
-        dirList.clear()
+        dirList.removeRange(0, dirList.size - 1)
     }
 
     fun getImageList(path: String) : List<FileEntity> {
@@ -58,7 +57,7 @@ class ImageViewModel() : ViewModel() {
     fun getDay7Images(context: Context){
         val day7 = FileEntity()
         day7.name = "最近图片"
-        day7.parentPath = "day7"
+        day7.parentPath = ""
         day7.isDir = true
         dirList.add(0, day7)
         val day7List = ArrayList<FileEntity>()
@@ -69,7 +68,6 @@ class ImageViewModel() : ViewModel() {
             day7.location = day7List[0].location
         }
         groupMap[""]?.addAll(day7List)
-        groupMap[day7.parentPath] = day7List
     }
 
     override fun onCleared() {

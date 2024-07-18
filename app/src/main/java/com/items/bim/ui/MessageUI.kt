@@ -1,6 +1,7 @@
 package com.items.bim.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,8 +30,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -134,30 +139,28 @@ fun MessagesList(
     }
 }
 
-@OptIn(DelicateCoroutinesApi::class)
+@OptIn(DelicateCoroutinesApi::class, ExperimentalMaterial3Api::class)
 @SuppressLint("ResourceAsColor", "CoroutineCreationDuringComposition")
 @Composable
 fun MessagesBody(
-    messages: SnapshotStateList<MessagesEntity>,
+    messagesProd: () -> SnapshotStateList<MessagesEntity>,
     messagesViewModel: MessagesViewModel,
     recvUserEntity: UserEntity,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
     val state = MySwipeRefreshState(NORMAL)
-    var oldData by remember {
-        mutableStateOf("")
-    }
     GlobalScope.launch(Dispatchers.Default)  {
+        var oldData = ""
         val list = messagesViewModel.getMessagesSendAndRecvByUser(
             SystemApp.UserId,
             recvUserEntity.id,
             1,
             100
         )
+        val messages = messagesProd()
         messages.clear()
         messages.addAll(list)
         logger.info { "一直有多少条消息${SystemApp.UserId}:${ recvUserEntity.id}:${list.size}" }
-
         messagesViewModel.getMessagesSendAndRecvFlowByUserAck(
             recvUserEntity.id,
             SystemApp.UserId, 1, 100
@@ -176,9 +179,9 @@ fun MessagesBody(
     MySwipeRefresh(state = state, onRefresh = { /*TODO*/ }, onLoadMore = { /*TODO*/ },
         modifier = modifier
     ) { refreshModifier ->
-        logger.info { "MySwipeRefresh 重组" }
+        logger.info { "MessagesBody MySwipeRefresh 重组" }
         LazyColumn(refreshModifier, reverseLayout=true) {
-            items(messages) { it ->
+            items(messagesProd()) { it ->
                 val isSend = it.sendUserId == SystemApp.UserId
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -196,7 +199,7 @@ fun MessagesBody(
 //                                Text(text = it.sendDateTime, fontSize = 10.sp)
                             Surface(
                                 shape = RectangleShape,
-                                shadowElevation = 1.dp,
+                                shadowElevation = 4.dp,
                                 tonalElevation = 1.dp,
                                 color = Color(R.color.sendMessage),
                                 modifier = Modifier
@@ -229,7 +232,7 @@ fun MessagesBody(
 //                                Text(text = it.sendDateTime, fontSize = 10.sp)
                             Surface(
                                 shape = RectangleShape,
-                                shadowElevation = 1.dp,
+                                shadowElevation = 4.dp,
                                 tonalElevation = 1.dp,
                                 modifier = Modifier
                                     .wrapContentWidth()
@@ -242,7 +245,7 @@ fun MessagesBody(
                                     ),
                                     textAlign = TextAlign.Left,
                                     fontSize = 18.sp,
-                                    modifier = Modifier.padding(4.dp),
+                                    modifier = Modifier.padding(5.dp),
                                     overflow = TextOverflow.Ellipsis
                                 )
                             }
@@ -273,16 +276,18 @@ fun MessagesDetail(
     mainController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-//    val activity = LocalContext.current as Activity
+    val activity = LocalContext.current as Activity
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var sendData by remember {
         mutableStateOf("")
     }
+    val sendDataIsEmpty by remember {
+        derivedStateOf { sendData.isEmpty() }
+    }
     val messages = remember {
         mutableStateListOf<MessagesEntity>()
     }
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -331,15 +336,14 @@ fun MessagesDetail(
                     TextField(
                         value = sendData, onValueChange = {
                             sendData = it
-                        }, colors = TextFieldDefaults.colors(Color.White)
+                        }, colors = TextFieldDefaults.colors(Color.White),
+                        modifier=Modifier.clickable {
+                            logger.info { "状态栏高度 ${scrollBehavior.state.heightOffset} " +
+                                    "${scrollBehavior.state.heightOffsetLimit}" }
+                            scrollBehavior.state.heightOffset =  -scrollBehavior.state.heightOffsetLimit
+                        }
                     )
-//                    IconButton(onClick = { /*TODO*/ }) {
-//                        Icon(
-//                            imageVector = Icons.Filled.FavoriteBorder,
-//                            contentDescription = "Localized description"
-//                        )
-//                    }
-                    if (sendData.isEmpty()) {
+                    if (sendDataIsEmpty) {
                         IconButton(
                             onClick = {
                                 mainController.navigate("${PageRouteConfig.IMAGE_SELECTOR}/message")
@@ -386,6 +390,6 @@ fun MessagesDetail(
             .fillMaxWidth()
             .fillMaxHeight(),
     ) { pand ->
-        MessagesBody( messages,messagesViewModel, recvUserEntity, Modifier.padding(pand))
+        MessagesBody( messagesProd = {messages}, messagesViewModel, recvUserEntity, Modifier.padding(pand))
     }
 }

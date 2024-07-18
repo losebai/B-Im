@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -117,6 +116,7 @@ fun MainNavGraph(
         }
         // 二级页面 相片页
         composable(PageRouteConfig.IMAGE_PAGE_ROUTE) {
+            logger.debug { PageRouteConfig.IMAGE_PAGE_ROUTE }
             PhotoDataSet(imageViewModel, navHostController)
         }
         composable(PageRouteConfig.IMAGE_GROUP_LIST) {
@@ -199,9 +199,6 @@ fun MainNavGraph(
         composable(MingChaoRoute.BOOK_LIST) {
             HookList(toolsViewModel, navHostController)
         }
-//        composable(MingChaoRoute.WIKI) {
-//            MCWIKI(MingChaoAPI.WIKI_URL)
-//        }
         composable("${WEB_API_ROURE.WEB_ROUTE}/{url}") { backStackEntry ->
             WebScreen(
                 originalUrl = backStackEntry.arguments?.getString("url") ?: "",
@@ -253,7 +250,9 @@ fun MainNavGraph(
         }
         composable("${PageRouteConfig.RANKING_HOME}/{gameName}") { baseEntity ->
             val gameName = baseEntity.arguments?.getString("gameName") ?: ""
-            RankingHome(gameName, toolsViewModel, navHostController)
+            RankingHome(gameNameValue = {
+                gameName
+            }, toolsViewModel, navHostController)
         }
         composable("${PageRouteConfig.TOOLS_GAME_ROLE_RAKING}/{gameName}") { baseEntity ->
             val gameName = baseEntity.arguments?.getString("gameName") ?: ""

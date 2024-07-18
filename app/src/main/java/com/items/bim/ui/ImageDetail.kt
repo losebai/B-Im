@@ -45,13 +45,13 @@ import java.io.File
 private val logger = KotlinLogging.logger {}
 
 @Composable
-fun ImageDetail(fileEntity: FileEntity, mainController: NavHostController) {
+fun ImageDetail(fileEntity: FileEntity, mainController: NavHostController, isDetail: () -> Boolean) {
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = SystemApp.snackBarHostState, modifier = Modifier.padding(0.dp))
         },
         topBar = {
-            ImageTopBar(fileEntity.name, mainController)
+            ImageTopBar(fileEntity.name, mainController, isDetail)
         },
         bottomBar = {
             GetBottomBar(fileEntity.filePath){}

@@ -42,6 +42,7 @@ import com.items.bim.common.consts.StyleCommon
 import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.ui.HeadImage
 import com.items.bim.common.ui.PagerList
+import com.items.bim.common.ui.TopAppRow
 import com.items.bim.common.util.ThreadPoolManager
 import com.items.bim.config.PageRouteConfig
 import com.items.bim.dto.UserGameDto
@@ -52,7 +53,7 @@ import com.items.bim.viewmodel.ToolsViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun RankingHome(gameName: String ,toolsViewModel: ToolsViewModel, mainController: NavHostController) {
+fun RankingHome(gameNameValue: () -> String  ,toolsViewModel: ToolsViewModel, mainController: NavHostController) {
     val pools by remember {
         mutableStateOf(LotteryPollEnum.entries.map { it.poolName }.toList())
     }
@@ -72,8 +73,8 @@ fun RankingHome(gameName: String ,toolsViewModel: ToolsViewModel, mainController
     val textColor = Color.White
     LaunchedEffect(poolType, isProd) {
         ThreadPoolManager.getInstance().addTask("init", "poolType") {
-            user = toolsViewModel.getUserGameDto(isProd, gameName)
-            list = toolsViewModel.getUserPoolRakingDto(poolType + 1, isProd, gameName).reversed()
+            user = toolsViewModel.getUserGameDto(isProd, gameNameValue())
+            list = toolsViewModel.getUserPoolRakingDto(poolType + 1, isProd, gameNameValue()).reversed()
         }
     }
     Column(
@@ -85,16 +86,9 @@ fun RankingHome(gameName: String ,toolsViewModel: ToolsViewModel, mainController
             )
             .padding(20.dp)
     ) {
-        Row(horizontalArrangement = Arrangement.Center) {
-            IconButton(onClick = {
-                mainController.navigateUp()
-            }, modifier = Modifier.padding(top = 30.dp, start = 10.dp)) {
-                Icon(
-                    imageVector = Icons.Outlined.ArrowBack,
-                    contentDescription = "返回",
-                    tint = Color.White
-                )
-            }
+        TopAppRow(navigationIcon = {
+            mainController.navigateUp()
+        }, title = {
             Button(
                 onClick = {
                     isProd = !isProd
@@ -104,7 +98,7 @@ fun RankingHome(gameName: String ,toolsViewModel: ToolsViewModel, mainController
             ) {
                 Text(text = if (!isProd) "切到到真实" else "切到到模拟", color = textColor)
             }
-        }
+        })
         Row(modifier = Modifier
             .background(Color.Transparent)
             .fillMaxWidth()
@@ -144,7 +138,7 @@ fun RankingHome(gameName: String ,toolsViewModel: ToolsViewModel, mainController
                             }
                             Text(text = (rakingDto.ouScore * 100).toString(), fontSize = 18.sp, color = color)
                             IconButton(onClick = {
-                                mainController.navigate("${PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL}/${rakingDto.userId}/${gameName}")
+                                mainController.navigate("${PageRouteConfig.TOOLS_MINGCHAO_LOTTERY_DETAIL}/${rakingDto.userId}/${gameNameValue()}")
                             }) {
                                 Icon(imageVector = Icons.Outlined.KeyboardArrowRight,
                                     contentDescription = null,
