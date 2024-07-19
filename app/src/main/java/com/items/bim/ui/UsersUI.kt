@@ -39,9 +39,6 @@ import com.items.bim.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 import io.github.oshai.kotlinlogging.KotlinLogging
 
-
-private val logger = KotlinLogging.logger {}
-
 @Composable
 fun SearchUser(
     username: String, modifier: Modifier = Modifier,

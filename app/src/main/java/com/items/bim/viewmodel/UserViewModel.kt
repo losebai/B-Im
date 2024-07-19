@@ -71,7 +71,7 @@ class UserViewModel(context: Context): ViewModel() {
                 this.saveUser(appUserEntity)
             }
             logger.info { "${SystemApp.PRODUCT_DEVICE_NUMBER} 当前UserID: ${SystemApp.UserId}开始加载联系人" }
-            val users = this.getReferUser(com.items.bim.entity.AppUserEntity())
+            val users = this.getReferUser(AppUserEntity())
             val map = users.parallelStream().collect(Collectors.toMap(UserEntity::id) { it })
             this.users = users
             this.userMap = map
@@ -99,7 +99,7 @@ class UserViewModel(context: Context): ViewModel() {
         return user
     }
 
-    fun getReferUser(user : com.items.bim.entity.AppUserEntity) : List<UserEntity>{
+    fun getReferUser(user : AppUserEntity) : List<UserEntity>{
         val userTemp = userService.getList(user)
         users = userTemp
         return userTemp

@@ -4,9 +4,11 @@ import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.ui.AppTheme
@@ -14,6 +16,7 @@ import com.items.bim.common.util.MultiplePermissions
 import com.items.bim.common.util.ThreadPoolManager
 import com.items.bim.common.util.Utils
 import com.items.bim.event.ViewModelEvent
+import com.items.bim.viewmodel.HomeViewModel
 import com.items.bim.viewmodel.MessagesViewModel
 import com.items.bim.viewmodel.UserViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -27,8 +30,7 @@ private val logger = KotlinLogging.logger {
 
 class MainActivity : AppCompatActivity() {
 
-
-    private var appBase: AppBase = AppBase()
+    private lateinit var homeViewModel: HomeViewModel;
 
     private lateinit var userViewModel: UserViewModel;
 
@@ -94,12 +96,13 @@ class MainActivity : AppCompatActivity() {
 //                    Manifest.permission.WRITE_EXTERNAL_STORAGE
 //                )
 //            )
-            AppTheme(appBase.darkTheme) {
+            homeViewModel = viewModel<HomeViewModel>()
+            AppTheme(homeViewModel.darkTheme) {
                 MainNavGraph(this,
-                    appBase,
+                    homeViewModel,
                     userViewModel,
                     messagesViewModel,
-                    appBase.imageViewModel, init = {
+                     init = {
                         this.initLoad()
                     })
             }

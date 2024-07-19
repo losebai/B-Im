@@ -79,8 +79,7 @@ fun GameRoleRaking(
         }, title = {
             Text(text = "角色强度排名")
         })
-        val appGameRole = toolsViewModel.appGameRole
-        val pools = appGameRole.appGameRoleRaking.keys.toList()
+        val pools = toolsViewModel.appGameRole.appGameRoleRaking.keys.toList()
         PagerList(pools = pools, textColor = Color.White) { it ->
             Log.d("roleRanking", "PagerList ${it}...")
             Column {
@@ -88,18 +87,20 @@ fun GameRoleRaking(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    Text(text = "最后更新时间${appGameRole.updateTime}" , color =Color.White)
+                    Text(text = "最后更新时间${toolsViewModel.appGameRole.updateTime}" , color =Color.White)
                 }
                 LazyColumn(modifier = Modifier.fillMaxHeight()) {
-                    val rakingMap = appGameRole.appGameRoleRaking[pools[it]]?.stream()
-                        ?.collect(Collectors.groupingBy(GameRoleDto::raking))
-                    if (rakingMap != null) {
-                        val rakings = rakingMap.keys.toList().sorted()
-                        items(rakings.size) { i ->
-                            key(i) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text(text = "T${i}", color =Color.White, fontSize = 20.sp)
-                                    rakingMap[rakings[i]]?.let { it1 -> GameRoleList(it1) }
+                    if (pools.isNotEmpty()){
+                        val rakingMap = toolsViewModel.appGameRole.appGameRoleRaking[pools[it]]?.stream()
+                            ?.collect(Collectors.groupingBy(GameRoleDto::raking))
+                        if (rakingMap != null) {
+                            val rakings = rakingMap.keys.toList().sorted()
+                            items(rakings.size) { i ->
+                                key(i) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(text = "T${i}", color =Color.White, fontSize = 20.sp)
+                                        rakingMap[rakings[i]]?.let { it1 -> GameRoleList(it1) }
+                                    }
                                 }
                             }
                         }

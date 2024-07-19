@@ -47,6 +47,8 @@ object PageRouteConfig{
 
     const val IMAGE_GROUP_LIST = "IMAGE_GROUP_LIST"
 
+    const val IMAGE_DETAIL = "IMAGE_DETAIL"
+
     const val IMAGE_DETAIL_ROUTE = "IMAGE_SHOW_ROUTE";
 
     // 消息发送

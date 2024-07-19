@@ -28,7 +28,6 @@ import com.items.bim.common.util.ThreadPoolManager
 import com.items.bim.config.MingChaoRoute
 import com.items.bim.config.PageRouteConfig
 import com.items.bim.config.WEB_API_ROURE
-import com.items.bim.dto.AppDynamic
 import com.items.bim.entity.toAppUserEntity
 import com.items.bim.event.GlobalInitEvent
 import com.items.bim.service.FileService
@@ -37,6 +36,7 @@ import com.items.bim.ui.EditPage
 import com.items.bim.ui.GameRoleRaking
 import com.items.bim.ui.GetCookiesUri
 import com.items.bim.ui.HookList
+import com.items.bim.ui.ImageDetail
 import com.items.bim.ui.ImageGroupList
 import com.items.bim.ui.ImageSelect
 import com.items.bim.ui.LotterySimulate
@@ -48,6 +48,7 @@ import com.items.bim.ui.RankingHome
 import com.items.bim.ui.UserInfoEdit
 import com.items.bim.viewmodel.CommunityViewModel
 import com.items.bim.viewmodel.ConfigViewModel
+import com.items.bim.viewmodel.HomeViewModel
 import com.items.bim.viewmodel.ImageViewModel
 import com.items.bim.viewmodel.LotteryViewModel
 import com.items.bim.viewmodel.MessagesViewModel
@@ -65,10 +66,9 @@ private val logger = KotlinLogging.logger {
 @Composable
 fun MainNavGraph(
     activity: AppCompatActivity,
-    appBase: AppBase,
+    homeViewModel: HomeViewModel,
     userViewModel: UserViewModel,
     messagesViewModel: MessagesViewModel,
-    imageViewModel: ImageViewModel,
     init: () -> Unit = {}
 ) {
     val configViewModel = viewModel<ConfigViewModel>()
@@ -77,6 +77,7 @@ fun MainNavGraph(
     val navHostController = rememberNavController()
     val lotteryViewModel = viewModel<LotteryViewModel>()
     val webViewModel = viewModel<WebVIewModel>()
+    val imageViewModel = viewModel<ImageViewModel>()
     val wanUiState by webViewModel.uiState.collectAsStateWithLifecycle()
     val webNavActions = remember(navHostController) { WanNavActions(navHostController) }
     thread {
@@ -105,8 +106,7 @@ fun MainNavGraph(
         // 一级页面
         composable(PageRouteConfig.MENU_ROUTE) {
             PageHost(
-                appBase,
-                appBase.settingDrawerState,
+                homeViewModel,
                 imageViewModel,
                 messagesViewModel,
                 navHostController,
@@ -118,8 +118,21 @@ fun MainNavGraph(
         }
         // 二级页面 相片页
         composable(PageRouteConfig.IMAGE_PAGE_ROUTE) {
-            logger.debug { PageRouteConfig.IMAGE_PAGE_ROUTE }
             PhotoDataSet(imageViewModel, navHostController)
+        }
+        composable(PageRouteConfig.IMAGE_DETAIL,
+            enterTransition = {
+                slideInHorizontally(animationSpec = tween(0), //动画时长1s
+                    initialOffsetX = {
+                        -it //初始位置在负一屏的位置，也就是说初始位置我们看不到，动画动起来的时候会从负一屏位置滑动到屏幕位置
+                    })
+            },
+            exitTransition = {
+                slideOutHorizontally(animationSpec = tween(0), targetOffsetX = {
+                    it
+                })
+            },) {
+            ImageDetail(imageViewModel, navHostController)
         }
         composable(PageRouteConfig.IMAGE_GROUP_LIST) {
             ImageGroupList(
