@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -30,10 +31,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -60,6 +59,7 @@ import com.items.bim.common.ui.MySwipeRefresh
 import com.items.bim.common.ui.MySwipeRefreshState
 import com.items.bim.common.ui.NORMAL
 import com.items.bim.common.ui.REFRESHING
+import com.items.bim.common.util.DateUtils
 import com.items.bim.common.util.ThreadPoolManager
 import com.items.bim.config.PageRouteConfig
 import com.items.bim.entity.MessagesEntity
@@ -94,7 +94,7 @@ fun MessagesList(
         onRefresh = {
             ThreadPoolManager.getInstance().addTask("MessagesList") {
                 state.loadState = REFRESHING
-                logger.info { "正在获取刷新联系人列表" }
+                logger.info { "正在获取刷新 消息列表" }
                 state.loadState = NORMAL
             }
         },
@@ -107,6 +107,7 @@ fun MessagesList(
             items(messagesViewModel.userMessagesList) { user ->
                 val isSend = SystemApp.UserId == user.sendUserId
                 Row(modifier = Modifier
+                    .fillMaxWidth()
                     .padding(5.dp)
                     .clickable {
                         userViewModel.recvUserId = if (isSend) user.recvUserId else user.sendUserId
@@ -117,7 +118,10 @@ fun MessagesList(
                         modifier = StyleCommon.HEAD_IMAGE
                     ) {
                     }
-                    Column(modifier = Modifier.padding(start = 10.dp)) {
+                    Column(modifier =
+                    Modifier.padding(start = 10.dp)
+                        .fillMaxWidth(0.8f)
+                    ) {
                         Text(
                             text = if (isSend) user.recvUserName else user.sendUserName,
                             modifier = Modifier
@@ -133,13 +137,27 @@ fun MessagesList(
                             color = Color.Black
                         )
                     }
+                    Row(modifier= Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+                        .padding(start = 10.dp),
+                        horizontalArrangement = Arrangement.End) {
+                        Column {
+                            Text(text = DateUtils.timestampToDateStr(user.sendDateTime),
+                                fontSize = 10.sp,
+                                color = Color.Gray)
+                            Surface {
+                                Text(text = "")
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-@OptIn(DelicateCoroutinesApi::class, ExperimentalMaterial3Api::class)
+@OptIn(DelicateCoroutinesApi::class)
 @SuppressLint("ResourceAsColor", "CoroutineCreationDuringComposition")
 @Composable
 fun MessagesBody(
@@ -276,7 +294,6 @@ fun MessagesDetail(
     mainController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    val activity = LocalContext.current as Activity
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var sendData by remember {

@@ -3,6 +3,7 @@ package com.items.bim.service
 import com.items.bim.common.consts.AppAPI
 import com.items.bim.common.consts.UserStatus
 import com.items.bim.common.util.HttpUtils
+import com.items.bim.dto.UserGroup
 import com.items.bim.entity.UserEntity
 import com.items.bim.entity.AppUserEntity
 import okhttp3.Response
@@ -68,4 +69,6 @@ class UserService {
         }
         return Collections.emptyList()
     }
+
+
 }

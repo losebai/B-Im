@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,29 +16,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.items.bim.common.consts.StyleCommon
+import com.items.bim.common.ui.ExpandableItem
 import com.items.bim.common.ui.HeadImage
-import com.items.bim.common.ui.LoadingIndicator
-import com.items.bim.common.ui.MySwipeRefresh
-import com.items.bim.common.ui.MySwipeRefreshState
-import com.items.bim.common.ui.NORMAL
-import com.items.bim.common.ui.REFRESHING
-import com.items.bim.common.util.ThreadPoolManager
 import com.items.bim.common.util.Utils
 import com.items.bim.entity.UserEntity
-import com.items.bim.entity.AppUserEntity
 import com.items.bim.viewmodel.UserViewModel
-import kotlinx.coroutines.launch
-import io.github.oshai.kotlinlogging.KotlinLogging
 
 @Composable
 fun SearchUser(
@@ -69,9 +57,6 @@ fun UserList(
     modifier: Modifier = Modifier,
     onClick: (UserEntity) -> Unit
 ) {
-    val list by remember {
-        mutableStateOf(userViewModel.users)
-    }
 //    val user = AppUserEntity()
 //    MySwipeRefresh(
 //        state = state,
@@ -92,38 +77,46 @@ fun UserList(
 //        },
 //        modifier = modifier
 //    ) {
-        LazyColumn(modifier) {
-            items(list.size) {
-                Button(
-                    onClick = {
-                        onClick(list[it])
-                    },
-                    shape = StyleCommon.ZERO_SHAPE,
-                    colors = ButtonDefaults.buttonColors(Color.White)
-                ) {
-                    Row {
-                        HeadImage(userEntity = list[it], modifier = StyleCommon.HEAD_IMAGE) {
-                        }
-                        Column(modifier = Modifier.padding(start = 10.dp)) {
-                            Text(
-                                text = list[it].name, modifier = Modifier
-                                    .fillMaxWidth(),
-                                color = Color.Black, fontSize = StyleCommon.NAME_FONT_SIZE
-                            )
-                            Row {
-                                Text(text = "[${list[it].status.tag}] ", fontSize = 12.sp,)
-                                Text(
-                                    text = Utils.stringLen(list[it].note),
-                                    fontSize = 12.sp,
-                                    color = Color.Black
-                                )
+        LazyColumn(modifier.padding(10.dp)) {
+            items(userViewModel.users.value.size) {
+                val userGroup = userViewModel.users.value[it]
+                ExpandableItem(userGroup.groupName, modifier=Modifier.heightIn(min = 50.dp, 999.dp), subItemStartPadding = 0
+                   ){
+                    LazyColumn(modifier=Modifier.heightIn(min = 50.dp, 999.dp)) {
+                        items(userGroup.users.size){it2 ->
+                            val user = userGroup.users[it2]
+                            Button(
+                                onClick = {
+                                    onClick(user)
+                                },
+                                shape = StyleCommon.ZERO_SHAPE,
+                                colors = ButtonDefaults.buttonColors(Color.White)
+                            ) {
+                                Row {
+                                    HeadImage(userEntity = user, modifier = StyleCommon.HEAD_IMAGE) {
+                                    }
+                                    Column(modifier = Modifier.padding(start = 10.dp)) {
+                                        Text(
+                                            text = user.name, modifier = Modifier
+                                                .fillMaxWidth(),
+                                            color = Color.Black, fontSize = StyleCommon.NAME_FONT_SIZE
+                                        )
+                                        Row {
+                                            Text(text = "[${user.status.tag}] ", fontSize = 12.sp,)
+                                            Text(
+                                                text = Utils.stringLen(user.note),
+                                                fontSize = 12.sp,
+                                                color = Color.Black
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
+
             }
         }
-//    }
-
 }
 

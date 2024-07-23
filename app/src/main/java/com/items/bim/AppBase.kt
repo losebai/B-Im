@@ -187,7 +187,7 @@ fun AppGetBottomBar(homeViewModel: HomeViewModel,
                 })
             AppBarButton(homeViewModel.page == MenuRouteConfig.ROUTE_USERS, Icons.Outlined.AccountCircle, activeColor, "联系人", IconModifier, onClick = {
                 ThreadPoolManager.getInstance().addTask("user", "UserList"){
-                    userViewModel.users = userViewModel.getReferUser(AppUserEntity())
+                    userViewModel.referUser()
                 }
                 homeViewModel.page = MenuRouteConfig.ROUTE_USERS
             })

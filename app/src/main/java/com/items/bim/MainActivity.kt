@@ -1,18 +1,19 @@
 package com.items.bim
 
-import android.Manifest
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
+import android.os.PersistableBundle
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.ui.AppTheme
-import com.items.bim.common.util.MultiplePermissions
 import com.items.bim.common.util.ThreadPoolManager
 import com.items.bim.common.util.Utils
 import com.items.bim.event.ViewModelEvent
@@ -38,19 +39,36 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModelEvent: ViewModelEvent = ViewModelEvent.getInstance(this)
 
+
+    private val connection  = object : ServiceConnection {
+
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val sessionBinder = service as SessionBinder
+            sessionBinder.messagesViewModel = messagesViewModel
+            messagesViewModel.messageService.reconnect()
+        }
+
+        @Override
+        override fun  onServiceDisconnected(name: ComponentName) {
+            messagesViewModel.messageService.close()
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+        val startIntent = Intent(this, AppStartService::class.java)
+        bindService(startIntent, connection, BIND_AUTO_CREATE)
+//        startService(startIntent) // 启动服务
+    }
+
     override fun onRestart() {
         super.onRestart()
-        messagesViewModel.messageService.reconnect()
-        logger.info { "onRestart" }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        messagesViewModel.messageService.close()
-        ThreadPoolManager.getInstance().exitThreadPool("init")
-        ThreadPoolManager.getInstance().exitThreadPool("lottery")
-        ThreadPoolManager.getInstance().exitThreadPool("message")
-        logger.info { "onDestroy" }
+        ThreadPoolManager.getInstance().exitThreadPool()
+        logger.debug { "onDestroy" }
     }
 
     private fun initLoad() {
@@ -72,8 +90,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-    @OptIn(ExperimentalPermissionsApi::class)
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

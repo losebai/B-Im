@@ -35,6 +35,8 @@ android {
         ndk {
             abiFilters.addAll( listOf("mips","mips64","x86_64","armeabi","armeabi-v7a","arm64-v8a"))
         }
+//        testFunctionalTest = true
+//        testHandleProfiling = true
 
     }
 
@@ -42,11 +44,13 @@ android {
         getByName("main") {
             res.srcDirs("src/main/res")
         }
-        getByName("debug") {
-            res.srcDirs("res/mc")
+        getByName("test") {
+            setRoot("src/test/")
+            res.srcDirs("src/test/java")
         }
         getByName("androidTest") {
-            setRoot("androidTest")
+            setRoot("src/androidTest")
+            res.srcDirs("src/androidTest/java")
         }
 
     }

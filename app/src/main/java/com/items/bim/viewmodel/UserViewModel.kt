@@ -1,7 +1,9 @@
 package com.items.bim.viewmodel
 
 import android.content.Context
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -9,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.util.Utils
 import com.items.bim.database.AppDatabase
+import com.items.bim.dto.UserGroup
 import com.items.bim.entity.UserEntity
 import com.items.bim.event.GlobalInitEvent
 import com.items.bim.entity.AppUserEntity
@@ -37,10 +40,12 @@ class UserViewModel(context: Context): ViewModel() {
     var recvUserId = 0L
 
     // 联系人列表
-    var users: List<UserEntity> = listOf()
+    var users: MutableState<List<UserGroup>> = mutableStateOf(listOf())
 
     // id对应
     var userMap: MutableMap<Long, UserEntity> = mutableMapOf()
+
+    val userWhere = AppUserEntity()
 
     class MessageViewModelFactory constructor(private val context: Context ) : ViewModelProvider.Factory{
 
@@ -71,9 +76,8 @@ class UserViewModel(context: Context): ViewModel() {
                 this.saveUser(appUserEntity)
             }
             logger.info { "${SystemApp.PRODUCT_DEVICE_NUMBER} 当前UserID: ${SystemApp.UserId}开始加载联系人" }
-            val users = this.getReferUser(AppUserEntity())
+            val users = this.referUser()
             val map = users.parallelStream().collect(Collectors.toMap(UserEntity::id) { it })
-            this.users = users
             this.userMap = map
         }
     }
@@ -99,10 +103,15 @@ class UserViewModel(context: Context): ViewModel() {
         return user
     }
 
-    fun getReferUser(user : AppUserEntity) : List<UserEntity>{
-        val userTemp = userService.getList(user)
-        users = userTemp
-        return userTemp
+    fun referUser() : List<UserEntity> {
+        val users =  userService.getList(userWhere)
+        val iter =  users.groupBy(UserEntity::status)
+        val list = ArrayList<UserGroup>()
+        iter.forEach{
+            list.add(UserGroup(it.key.tag, it.value))
+        }
+        this.users.value = list
+        return users
     }
 
     fun gerUserByNumber(str: String) : com.items.bim.entity.AppUserEntity {
@@ -112,6 +121,5 @@ class UserViewModel(context: Context): ViewModel() {
     fun saveUser(user : com.items.bim.entity.AppUserEntity){
         userService.save(user)
     }
-
 
 }

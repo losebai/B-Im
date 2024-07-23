@@ -99,7 +99,7 @@ fun PageHost(
                                 .fillMaxWidth()
                                 .padding(2.dp)
                         )
-                        UserList(userViewModel, onClick = {
+                        UserList(userViewModel,modifier=Modifier.fillMaxSize(), onClick = {
                             userViewModel.recvUserId = it.id
                             mainController.navigate(PageRouteConfig.MESSAGE_ROUTE)
                         })
