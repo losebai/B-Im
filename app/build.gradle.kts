@@ -166,7 +166,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.12")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
 
-    implementation("com.github.alibaba:aliyunpan-android-sdk:v0.2.2")
+//    implementation("com.github.alibaba:aliyunpan-android-sdk:v0.2.2")
 
 //    implementation("org.noear:solon:2.7.5")
     implementation("org.noear:snack3:3.2.95")
