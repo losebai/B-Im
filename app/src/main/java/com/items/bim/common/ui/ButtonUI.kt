@@ -55,9 +55,9 @@ fun Modifier.buttonClick(onClick: () -> Unit) = composed {
 }
 
 @Composable
-fun AppBarButton(active: Boolean,
+fun AppBarButton(active: Boolean = false,
                  imageVector: ImageVector,
-                 activeColor : Color,
+                 activeColor : Color = Color.Black,
                  text: String,
                  modifier: Modifier,
                  onClick: () -> Unit){

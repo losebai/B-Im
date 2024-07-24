@@ -71,6 +71,7 @@ class ImageViewModel() : ViewModel() {
                 this.index = i
             })
             day7.location = day7List[0].location
+            day7.dirSize = day7List.size
         }
         groupMap[""]?.addAll(day7List)
     }

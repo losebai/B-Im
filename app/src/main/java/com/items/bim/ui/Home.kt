@@ -56,7 +56,7 @@ fun PageHost(
         modifier = Modifier.padding(0.dp),
         drawerContent = {
         ModalDrawerSheet {
-            SettingHome(userViewModel.userEntity, mainController)
+            SettingHome(userViewModel.userEntity, mainController, homeViewModel)
         }
     }) {
         Context(content = { innerPadding ->

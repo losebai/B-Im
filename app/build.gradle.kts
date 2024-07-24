@@ -83,11 +83,6 @@ android {
             isDebuggable = true
             isMinifyEnabled = false
             isShrinkResources = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-
-            )
             signingConfig = signingConfigs.getByName("config")
             //noinspection ChromeOsAbiSupport
             ndk.abiFilters += "x86"
@@ -141,7 +136,6 @@ android {
             manifestPlaceholders["app_name_value"] = "Android"
             buildConfigField("String", "BASE_URL", "\"http://192.168.1.3:8050\"")
             buildConfigField("String", "SOCKET_URL", "\"sd:tcp://192.168.1.3:8002\"")
-//            buildConfigField("String", "BASE_URL", "\"http://192.168.20.119:8082\"")
         }
         create("pro") {
             //应用包名添加后缀
@@ -167,9 +161,12 @@ android {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
+
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
     implementation("org.slf4j:slf4j-simple:2.0.12")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
+
+    implementation("com.github.alibaba:aliyunpan-android-sdk:v0.2.2")
 
 //    implementation("org.noear:solon:2.7.5")
     implementation("org.noear:snack3:3.2.95")

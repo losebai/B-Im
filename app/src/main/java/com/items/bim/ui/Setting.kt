@@ -48,11 +48,13 @@ import com.items.bim.common.util.PermissionUtils
 import com.items.bim.common.util.PermissionsChecker
 import com.items.bim.common.consts.StyleCommon.ZERO_PADDING
 import com.items.bim.common.consts.SystemApp.snackBarHostState
+import com.items.bim.common.ui.AppBarButton
 import com.items.bim.common.util.CheckPermission
 import com.items.bim.common.util.QQUtils
 import com.items.bim.common.util.Utils
 import com.items.bim.config.PageRouteConfig
 import com.items.bim.entity.UserEntity
+import com.items.bim.viewmodel.HomeViewModel
 import com.items.bim.viewmodel.PermissionViewModel
 
 
@@ -61,7 +63,8 @@ import com.items.bim.viewmodel.PermissionViewModel
 @Composable
 fun SettingHome(
     userEntity: UserEntity = UserEntity(),
-    mainController: NavHostController = rememberNavController()
+    mainController: NavHostController = rememberNavController(),
+    homeViewModel: HomeViewModel = viewModel()
 ) {
     val permissionViewModel: PermissionViewModel = viewModel()
     val scope = rememberCoroutineScope()
@@ -74,139 +77,132 @@ fun SettingHome(
             .fillMaxHeight()
             .padding(end = 10.dp)
     ) {
-        Column() {
-            Row(
-                modifier = Modifier
-                    .padding(20.dp)
-                    .fillMaxWidth()
-            ) {
-                Button(
-                    onClick = {
-                        mainController.navigate(PageRouteConfig.USER_INFO)
-                    },
+        Column(verticalArrangement=Arrangement.SpaceBetween) {
+            Column(modifier = Modifier.fillMaxHeight(0.8f)) {
+                Row(
                     modifier = Modifier
-                        .size(60.dp)
-                        .padding(0.dp),
-                    contentPadding = ZERO_PADDING,
-                    colors = ButtonDefaults.buttonColors(Color.White)
+                        .padding(20.dp)
+                        .fillMaxWidth()
                 ) {
-                    Surface(
-                        shape = CircleShape,
-                        border = BorderStroke(0.dp, Color.Gray)
+                    Button(
+                        onClick = {
+                            mainController.navigate(PageRouteConfig.USER_INFO)
+                        },
+                        modifier = Modifier
+                            .size(60.dp)
+                            .padding(0.dp),
+                        contentPadding = ZERO_PADDING,
+                        colors = ButtonDefaults.buttonColors(Color.White)
                     ) {
-                        AsyncImage(
-                            userEntity.imageUrl,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop
+                        Surface(
+                            shape = CircleShape,
+                            border = BorderStroke(0.dp, Color.Gray)
+                        ) {
+                            AsyncImage(
+                                userEntity.imageUrl,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
+                    Column {
+                        TextButton(
+                            onClick = { /*TODO*/ },
+                            contentPadding = ZERO_PADDING,
+                        ) {
+                            Text(text = userEntity.name, fontSize = 20.sp)
+                        }
+                        Text(
+                            text = userEntity.note, fontSize = 10.sp,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(start = 15.dp)
                         )
                     }
                 }
-                Column {
-                    TextButton(
-                        onClick = { /*TODO*/ },
-                        contentPadding = ZERO_PADDING,
+
+                TextButton(
+                    onClick = {
+                        permissionViewModel.isCheck = true
+                    },
+                    modifier = buttonModifier
+                ) {
+                    Row(
+                        modifier = buttonModifier.padding(start = 10.dp),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = userEntity.name, fontSize = 20.sp)
+                        Icon(
+                            modifier = iconModifier,
+                            imageVector = Icons.Filled.Build,
+                            contentDescription = "Localized description"
+                        )
+                        Text(
+                            text = "  检查权限",
+                        )
                     }
-                    Text(
-                        text = userEntity.note, fontSize = 10.sp,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(start = 15.dp)
-                    )
+                }
+
+                TextButton(
+                    onClick = { QQUtils.joinQQGroup("966922403" ) },
+                    modifier = buttonModifier
+                ) {
+                    Row(
+                        modifier = buttonModifier.padding(start = 10.dp),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = iconModifier,
+                            imageVector = Icons.Filled.MailOutline,
+                            contentDescription = "Localized description"
+                        )
+                        Text(
+                            text = "  意见反馈",
+//                        fontSize = 12.sp,
+                        )
+                    }
+                }
+
+                TextButton(
+                    onClick = { QQUtils.joinQQGroup("966922403" ) },
+                    modifier = buttonModifier
+                ) {
+                    Row(
+                        modifier = buttonModifier.padding(start = 10.dp),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = iconModifier,
+                            imageVector = Icons.Filled.Home,
+                            contentDescription = "Localized description"
+                        )
+                        Text(
+                            text = "  加入QQ群",
+//                        fontSize = 12.sp,
+                        )
+                    }
                 }
             }
-            TextButton(
-                onClick = {
-                    permissionViewModel.isCheck = true
-                },
-                modifier = buttonModifier
-            ) {
-                Row(
-                    modifier = buttonModifier.padding(start = 10.dp),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = iconModifier,
-                        imageVector = Icons.Filled.Build,
-                        contentDescription = "Localized description"
-                    )
-                    Text(
-                        text = "  检查权限",
-                    )
-                }
-            }
-            TextButton(
-                onClick = { Utils.message(scope, message, snackBarHostState) },
-                modifier = buttonModifier
-            ) {
-                Row(
-                    modifier = buttonModifier.padding(start = 10.dp),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = iconModifier,
+            Column(verticalArrangement=Arrangement.Bottom){
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    AppBarButton(
                         imageVector = Icons.Filled.Settings,
-                        contentDescription = "Localized description"
+                        text = "设置",
+                        modifier = buttonModifier,
+                        onClick = { Utils.message(scope, message, snackBarHostState) },
                     )
-                    Text(
-                        text = "  我的设置",
-//                        fontSize = 12.sp,
-                    )
-                }
-            }
-            TextButton(
-                onClick = { QQUtils.joinQQGroup("966922403" ) },
-                modifier = buttonModifier
-            ) {
-                Row(
-                    modifier = buttonModifier.padding(start = 10.dp),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = iconModifier,
-                        imageVector = Icons.Filled.MailOutline,
-                        contentDescription = "Localized description"
-                    )
-                    Text(
-                        text = "  意见反馈",
-//                        fontSize = 12.sp,
+                    AppBarButton(
+                        homeViewModel.darkTheme,
+                        imageVector = Icons.Filled.Settings,
+                        activeColor= Color.Yellow,
+                        text =  if (homeViewModel.darkTheme) "白天" else  "夜间",
+                        modifier = buttonModifier,
+                        onClick = { homeViewModel.darkTheme = !homeViewModel.darkTheme },
                     )
                 }
             }
-
-            TextButton(
-                onClick = { QQUtils.joinQQGroup("966922403" ) },
-                modifier = buttonModifier
-            ) {
-                Row(
-                    modifier = buttonModifier.padding(start = 10.dp),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = iconModifier,
-                        imageVector = Icons.Filled.Home,
-                        contentDescription = "Localized description"
-                    )
-                    Text(
-                        text = "  加入QQ群",
-//                        fontSize = 12.sp,
-                    )
-                }
-            }
-
         }
-//        Column {
-//            Switch(
-//                checked = checked,
-//                onCheckedChange = {
-//                    checked = it
-//                }
-//            )
-//        }
     }
     if (permissionViewModel.isCheck) {
         CheckPermissionDialog(permissionViewModel)
