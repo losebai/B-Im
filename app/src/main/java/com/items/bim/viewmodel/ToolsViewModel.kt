@@ -82,7 +82,7 @@ class ToolsViewModel() : ViewModel() {
         OfflineMcRecordRepository(AppDatabase.getInstance().McRecordDao())
     }
 
-    var appGameRole by mutableStateOf<AppGameRole>(AppGameRole())
+    var appGameRole by mutableStateOf(AppGameRole())
 
     init {
         GlobalInitEvent.addUnit {

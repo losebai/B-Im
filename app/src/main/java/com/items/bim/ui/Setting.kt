@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -74,10 +75,9 @@ fun SettingHome(
     Box(
         modifier = Modifier
             .background(Color.White)
-            .fillMaxHeight()
             .padding(end = 10.dp)
     ) {
-        Column(verticalArrangement=Arrangement.SpaceBetween) {
+        Column(Modifier.fillMaxSize(),verticalArrangement=Arrangement.SpaceBetween) {
             Column(modifier = Modifier.fillMaxHeight(0.8f)) {
                 Row(
                     modifier = Modifier
@@ -184,8 +184,9 @@ fun SettingHome(
                     }
                 }
             }
-            Column(verticalArrangement=Arrangement.Bottom){
-                Row(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.fillMaxWidth(),
+                verticalArrangement=Arrangement.Bottom){
+                Row() {
                     AppBarButton(
                         imageVector = Icons.Filled.Settings,
                         text = "设置",
@@ -193,7 +194,7 @@ fun SettingHome(
                         onClick = { Utils.message(scope, message, snackBarHostState) },
                     )
                     AppBarButton(
-                        homeViewModel.darkTheme,
+                        active =  homeViewModel.darkTheme,
                         imageVector = Icons.Filled.Settings,
                         activeColor= Color.Yellow,
                         text =  if (homeViewModel.darkTheme) "白天" else  "夜间",

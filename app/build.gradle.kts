@@ -52,7 +52,6 @@ android {
             setRoot("src/androidTest")
             res.srcDirs("src/androidTest/java")
         }
-
     }
 
 
@@ -77,7 +76,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            signingConfig = signingConfigs.getByName("config")
+            signingConfig = signingConfigs.getByName("debug")
         }
         debug {
             isDebuggable = true
@@ -158,6 +157,8 @@ android {
     }
 }
 
+val coilVersion = "2.5.0"
+
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
@@ -171,6 +172,9 @@ dependencies {
 //    implementation("org.noear:solon:2.7.5")
     implementation("org.noear:snack3:3.2.95")
     implementation("org.noear:socketd-transport-smartsocket:2.5.0")
+
+    implementation("io.coil-kt:coil-compose:$coilVersion")
+    implementation("io.coil-kt:coil-svg:$coilVersion")
 
 //    implementation("com.android.support:support-v4:34.0.0")
     //noinspection GradleDependency

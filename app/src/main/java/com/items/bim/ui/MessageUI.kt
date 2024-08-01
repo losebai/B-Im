@@ -2,6 +2,7 @@ package com.items.bim.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -71,6 +72,9 @@ import kotlinx.coroutines.launch
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.seconds
 
 private val logger = KotlinLogging.logger {
 }
@@ -167,33 +171,7 @@ fun MessagesBody(
     modifier: Modifier,
 ) {
     val state = MySwipeRefreshState(NORMAL)
-    GlobalScope.launch(Dispatchers.Default)  {
-        var oldData = ""
-        val list = messagesViewModel.getMessagesSendAndRecvByUser(
-            SystemApp.UserId,
-            recvUserEntity.id,
-            1,
-            100
-        )
-        val messages = messagesProd()
-        messages.clear()
-        messages.addAll(list)
-        logger.info { "一直有多少条消息${SystemApp.UserId}:${ recvUserEntity.id}:${list.size}" }
-        messagesViewModel.getMessagesSendAndRecvFlowByUserAck(
-            recvUserEntity.id,
-            SystemApp.UserId, 1, 100
-        ) {
-            for(message : MessagesEntity in it){
-                if (message.messagesId == oldData){
-                    continue
-                }
-                oldData = message.messagesId
-                messages.add(0, message)
-            }
-            logger.info { "本次接受 ${it.size}" }
-        }
-    }
-    logger.info { "MessagesBody 重组" }
+
     MySwipeRefresh(state = state, onRefresh = { /*TODO*/ }, onLoadMore = { /*TODO*/ },
         modifier = modifier
     ) { refreshModifier ->
@@ -282,7 +260,7 @@ fun MessagesBody(
  * @param [mainController]
  * @param [modifier]
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, DelicateCoroutinesApi::class)
 @SuppressLint(
     "UnusedMaterial3ScaffoldPaddingParameter", "ResourceAsColor",
     "CoroutineCreationDuringComposition"
@@ -305,6 +283,7 @@ fun MessagesDetail(
     val messages = remember {
         mutableStateListOf<MessagesEntity>()
     }
+    logger.info { "MessagesBody 重组" }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -323,6 +302,7 @@ fun MessagesDetail(
                 navigationIcon = {
                     IconButton(onClick = {
                         // 从列表页返回
+                        scope.cancel()
                         mainController.navigateUp()
                     }) {
                         Icon(
@@ -407,6 +387,34 @@ fun MessagesDetail(
             .fillMaxWidth()
             .fillMaxHeight(),
     ) { pand ->
+        scope.launch(Dispatchers.IO)  {
+            val list = messagesViewModel.getMessagesSendAndRecvByUser(
+                SystemApp.UserId,
+                recvUserEntity.id,
+                1,
+                100
+            )
+            messages.addAll(list)
+            logger.info { "一直有多少条消息${SystemApp.UserId}:${ recvUserEntity.id}:${list.size}" }
+            while (true){
+                val mes = messagesViewModel.getMessagesSendAndRecvFlowByUserAck(
+                    recvUserEntity.id,
+                    SystemApp.UserId, 1, 100
+                )
+                if (mes.isNotEmpty()){
+                    messages.addAll(0, mes)
+                    mes.forEach { mess ->
+                        // 将未读给确认
+                        if (mess.ack == 1){
+                            mess.ack = 2
+                        }
+                    }
+                    val num = messagesViewModel.updateItemBatch(mes)
+                    Log.d("uiMessageState ", "已确认 $num")
+                }
+                delay(1.seconds)
+            }
+        }
         MessagesBody( messagesProd = {messages}, messagesViewModel, recvUserEntity, Modifier.padding(pand))
     }
 }

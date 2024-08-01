@@ -40,7 +40,7 @@ class RakingService {
         return hashMapOf()
     }
 
-    fun  getAppGameRole(gameName: String) : AppGameRole {
+    fun getAppGameRole(gameName: String) : AppGameRole {
         val params: HashMap<String, Any> = hashMapOf()
         params["gameName"] = gameName
         val res: Response? = HttpUtils.get(AppAPI.AppGameRoleRaking.GET_APP_GAME_ROLE, params)

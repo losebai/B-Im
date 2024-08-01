@@ -32,5 +32,5 @@ interface MessagesRepository : OfflineRepository<MessagesEntity, MessagesDao> {
         sendUserId: Long, recvUserId: Long,
         page: Int,
         pageSize: Int
-    ): Flow<List<MessagesEntity>>
+    ): List<MessagesEntity>
 }

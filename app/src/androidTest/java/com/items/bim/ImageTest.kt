@@ -43,6 +43,7 @@ import com.items.bim.common.ui.REFRESHING
 import com.items.bim.dto.FileEntity
 import com.items.bim.ui.GetBottomBar
 import com.items.bim.ui.ImageDetail
+import com.items.bim.viewmodel.ImageViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
@@ -126,7 +127,7 @@ fun TestImageShare() {
 fun TestImageDetail(){
     val uri: Uri = Uri.parse("android:resource://drawable/" + R.drawable.zi)
     val mainController = rememberNavController();
-    ImageDetail(FileEntity(File(uri.toString())), mainController)
+    ImageDetail(ImageViewModel(), mainController)
 }
 
 

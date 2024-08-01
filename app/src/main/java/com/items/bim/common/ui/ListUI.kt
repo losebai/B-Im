@@ -1,6 +1,5 @@
 package com.items.bim.common.ui
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -18,7 +17,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -59,7 +57,7 @@ fun PagerList(
     LogCompositions(msg = "PagerList")
     Column(modifier) {
         LazyVerticalGrid(
-            GridCells.Fixed(if (pools.isEmpty()) 1 else pools.size ),
+            GridCells.Fixed(if (pools.isEmpty()) 1 else pools.size),
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
@@ -99,9 +97,11 @@ fun TopPagerList(
     pageContent: @Composable PagerScope.(page: Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    Column(modifier.fillMaxWidth(),
-        horizontalAlignment=Alignment.CenterHorizontally) {
-        val pagerState = rememberPagerState {if (pools.isEmpty()) 1 else pools.size }
+    Column(
+        modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        val pagerState = rememberPagerState { if (pools.isEmpty()) 1 else pools.size }
         TopAppBar(title = {
             LazyVerticalGrid(
                 GridCells.Fixed(4),
@@ -150,37 +150,41 @@ fun ExpandableItem(
     modifier: Modifier = Modifier,
     endText: String = "",
     subItemStartPadding: Int = 8,
+    expandable: Boolean = false,
     subItem: @Composable () -> Unit
 ) {
-    var isShowSubItem by remember { mutableStateOf(false) }
-
+    var isShowSubItem by remember { mutableStateOf(expandable) }
     val arrowRotateDegrees: Float by animateFloatAsState(if (isShowSubItem) 90f else 0f, label = "")
-
     Column(modifier = modifier) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    isShowSubItem = !isShowSubItem
-                }
-        ) {
-            Text(text = title)
-            Row {
-                if (endText.isNotBlank()) {
-                    Text(text = endText,
-                        modifier = modifier.padding(end = 4.dp).widthIn(0.dp, 100.dp),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis)
-                }
+        Row {
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .clickable {
+                        isShowSubItem = !isShowSubItem
+                    }
+            ) {
                 Icon(
                     Icons.Outlined.KeyboardArrowRight,
                     contentDescription = title,
                     modifier = Modifier.rotate(arrowRotateDegrees)
                 )
+                Text(text = title)
+            }
+            Row {
+                if (endText.isNotBlank()) {
+                    Text(
+                        text = endText,
+                        modifier = modifier
+                            .padding(end = 4.dp)
+                            .widthIn(0.dp, 100.dp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         }
-
         AnimatedVisibility(visible = isShowSubItem) {
             Column(modifier = Modifier.padding(start = subItemStartPadding.dp)) {
                 subItem()

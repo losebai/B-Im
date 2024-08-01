@@ -18,9 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.items.bim.R
 import com.items.bim.common.consts.StyleCommon
+import com.items.bim.common.consts.UserStatus
 import com.items.bim.common.ui.ExpandableItem
 import com.items.bim.common.ui.HeadImage
 import com.items.bim.common.util.Utils
@@ -80,7 +83,10 @@ fun UserList(
         LazyColumn(modifier.padding(10.dp)) {
             items(userViewModel.users.value.size) {
                 val userGroup = userViewModel.users.value[it]
-                ExpandableItem(userGroup.groupName, modifier=Modifier.heightIn(min = 50.dp, 999.dp), subItemStartPadding = 0
+                ExpandableItem(userGroup.groupName,
+                    modifier=Modifier.heightIn(min = 50.dp, 999.dp),
+                    subItemStartPadding = 0,
+                    expandable = it == 0
                    ){
                     LazyColumn(modifier=Modifier.heightIn(min = 50.dp, 999.dp)) {
                         items(userGroup.users.size){it2 ->
@@ -102,7 +108,10 @@ fun UserList(
                                             color = Color.Black, fontSize = StyleCommon.NAME_FONT_SIZE
                                         )
                                         Row {
-                                            Text(text = "[${user.status.tag}] ", fontSize = 12.sp,)
+                                            Text(text = "[${user.status.tag}] ", fontSize = 12.sp,
+                                                color = if (user.status.value == UserStatus.ON_LINE.value) colorResource(
+                                                    R.color.ON_LINE
+                                                ) else Color.Black)
                                             Text(
                                                 text = Utils.stringLen(user.note),
                                                 fontSize = 12.sp,

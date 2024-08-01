@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -19,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
@@ -27,8 +26,12 @@ import com.items.bim.R
 
 
 @Composable
-fun BButton(modifier: Modifier = Modifier, onClick: () -> Unit,content: @Composable RowScope.() -> Unit) = Button(
-    modifier= modifier.buttonClick(onClick),
+fun BButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    content: @Composable RowScope.() -> Unit
+) = Button(
+    modifier = modifier.buttonClick(onClick),
     onClick = onClick,
     shape = RoundedCornerShape(10),
     colors = ButtonDefaults.buttonColors(
@@ -37,35 +40,62 @@ fun BButton(modifier: Modifier = Modifier, onClick: () -> Unit,content: @Composa
     ),
     elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp),
     contentPadding = PaddingValues(1.dp),
-    content=content
+    content = content
 )
 
 @Composable
 fun BIConButton() = IconButton(onClick = { /*TODO*/ }) {
-    
+
 }
 
 fun Modifier.buttonClick(onClick: () -> Unit) = composed {
-    this.clickable( onClick = onClick,
-            // 去除点击效果
-            indication = null,
-            interactionSource = remember {
-                MutableInteractionSource()
-            })
+    this.clickable(onClick = onClick,
+        // 去除点击效果
+        indication = null,
+        interactionSource = remember {
+            MutableInteractionSource()
+        })
 }
 
 @Composable
-fun AppBarButton(active: Boolean = false,
-                 imageVector: ImageVector,
-                 activeColor : Color = Color.Black,
-                 text: String,
-                 modifier: Modifier,
-                 onClick: () -> Unit){
+fun AppBarButton(
+    text: String,
+    imageVector: ImageVector,
+    active: Boolean = false,
+    activeColor: Color = Color.Black,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Column(modifier = modifier.buttonClick {
         onClick()
     }, horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(
             imageVector = imageVector,
+            contentDescription = "Localized description",
+            tint = if (active) activeColor else Color.Black
+        )
+        Text(
+            text = text,
+            fontSize = 12.sp,
+            color = if (active) activeColor else Color.Black
+        )
+    }
+}
+
+@Composable
+fun AppBarButton(
+    text: String,
+    painter: Painter,
+    active: Boolean = false,
+    activeColor: Color = Color.Black,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Column(modifier = modifier.buttonClick {
+        onClick()
+    }, horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(
+            painter,
             contentDescription = "Localized description",
             tint = if (active) activeColor else Color.Black
         )

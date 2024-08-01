@@ -2,6 +2,7 @@ package com.items.bim.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Update
 import com.items.bim.entity.MessagesEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -71,6 +72,6 @@ interface MessagesDao : BaseDao<MessagesEntity> {
     @Query("select * from messages where sendUserId = :sendUserId and recvUserId = :recvUserId  and ack = 1 LIMIT (:page - 1 * :pageSize), :pageSize")
     fun getMessagesSendAndRecvFlowByUser(sendUserId: Long, recvUserId : Long,
                                      page: Int,
-                                     pageSize: Int) : Flow<List<MessagesEntity>>
+                                     pageSize: Int) : List<MessagesEntity>
 
 }

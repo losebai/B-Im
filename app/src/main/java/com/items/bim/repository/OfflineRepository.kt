@@ -10,5 +10,8 @@ interface OfflineRepository<T, M : BaseDao<T> > : BaseRepository<T> {
 
     override suspend fun updateItem(t: T) = getDao().update(t)
 
+
+    override suspend fun updateItemBatch(t: List<T>) = getDao().updateBatch(t)
+
     override suspend fun insertItemBatch(t: List<T>) = getDao().insertBatch(t)
 }

@@ -277,6 +277,7 @@ fun MainNavGraph(
         }
         composable("${PageRouteConfig.TOOLS_GAME_ROLE_RAKING}/{gameName}") { baseEntity ->
             val gameName = baseEntity.arguments?.getString("gameName") ?: ""
+            toolsViewModel.getAppGameRole(gameName)
             GameRoleRaking(gameName, toolsViewModel, configViewModel, navHostController)
         }
         composable(PageRouteConfig.ADD_DYNAMIC){

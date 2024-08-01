@@ -1,8 +1,10 @@
 package com.items.bim.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import com.items.bim.common.consts.AppEventConst
 import com.items.bim.common.util.ThreadPoolManager
 import com.items.bim.database.AppDatabase
@@ -17,6 +19,9 @@ import com.items.bim.repository.impl.OfflineUserRepository
 import com.items.bim.repository.UserRepository
 import com.items.bim.service.MessageService
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onEach
 import java.util.stream.Collectors
 
 
@@ -53,6 +58,11 @@ class MessagesViewModel(context: Context) : ViewModel() {
     private val userRepository: UserRepository by lazy {
         OfflineUserRepository(AppDatabase.getDatabase(context).userDao())
     }
+
+    private val _uiMessageState = MutableStateFlow(listOf<MessagesEntity>())
+
+    // The UI collects from this StateFlow to get its state updates
+    val uiMessageState: StateFlow<List<MessagesEntity>> = _uiMessageState
 
     init {
         GlobalInitEvent.addUnit{
@@ -129,24 +139,25 @@ class MessagesViewModel(context: Context) : ViewModel() {
      * @param [pageSize]
      * @return [Flow<List<MessagesEntity>>]
      */
-    suspend fun getMessagesSendAndRecvFlowByUserAck(
+    fun getMessagesSendAndRecvFlowByUserAck(
         sendUserId: Long, recvUserId: Long,
         page: Int,
-        pageSize: Int, onChange: (List<MessagesEntity>) -> Unit
-    ) {
-        itemsRepository.getMessagesSendAndRecvFlowByUser(sendUserId, recvUserId, page, pageSize)
-            .collect() {
-                it.forEach { mess ->
-                    mess.ack = 2
-                    itemsRepository.updateItem(mess)
-                }
-                onChange(it)
-                ThreadPoolManager.getInstance().addTask("message") {
-                    it.forEach { mess ->
-                        mess.ack = 1
-                        messageService.sendMessagesEntity(mess)
+        pageSize: Int
+    ) : List<MessagesEntity>{
+        return itemsRepository.getMessagesSendAndRecvFlowByUser(sendUserId, recvUserId, page, pageSize)
+            .let {
+                if (it.isNotEmpty()){
+                    // 发送到UI数据流
+                    _uiMessageState.value = it
+                    ThreadPoolManager.getInstance().addTask("message") {
+                        it.forEach { mess ->
+                            mess.ack = 1
+                            messageService.sendMessagesEntity(mess)
+                        }
                     }
                 }
+                Log.d("Message Flow", "getMessagesSendAndRecvFlowByUser ${it.size}")
+                it
             }
     }
 
@@ -154,8 +165,8 @@ class MessagesViewModel(context: Context) : ViewModel() {
         itemsRepository.insertItem(messagesEntity)
     }
 
-    suspend fun updateItem(messagesEntity: MessagesEntity) {
-        itemsRepository.updateItem(messagesEntity)
+    suspend fun updateItemBatch(messagesEntitys: List<MessagesEntity>) : Int{
+        return itemsRepository.updateItemBatch(messagesEntitys)
     }
 
 }

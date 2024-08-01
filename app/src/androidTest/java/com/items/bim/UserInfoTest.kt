@@ -1,4 +1,4 @@
-package com.example.bim
+package com.items.bim
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview

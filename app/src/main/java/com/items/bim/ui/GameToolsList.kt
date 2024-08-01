@@ -25,7 +25,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -245,7 +244,7 @@ fun ImageText(list: List<CommunityEntity>, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ToolsList(
+fun GameToolsList(
     toolsViewModel: ToolsViewModel,
     modifier: Modifier = Modifier,
     mainController: NavHostController = rememberNavController(),

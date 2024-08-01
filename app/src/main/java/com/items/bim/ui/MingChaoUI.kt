@@ -645,7 +645,7 @@ fun MingChaoHome(
                         model = api.ROLE_ICON,
                         contentDescription = "角色强度榜",
                         modifier = StyleCommon.ICON_SIZE.clickable {
-                            toolsViewModel.getAppGameRole(gameProvider())
+                            logger.debug { "角色强度榜: " + gameProvider() }
                             mainController.navigate("${PageRouteConfig.TOOLS_GAME_ROLE_RAKING}/${gameProvider()}")
                         }
                     )

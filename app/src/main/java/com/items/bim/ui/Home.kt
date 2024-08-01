@@ -66,7 +66,7 @@ fun PageHost(
                 .fillMaxSize()
             when (homeViewModel.page) {
                 MenuRouteConfig.TOOLS_ROUTE -> {
-                    ToolsList(
+                    GameToolsList(
                         toolsViewModel,
                         mod,
                         mainController,

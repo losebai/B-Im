@@ -81,7 +81,7 @@ fun GameRoleRaking(
         })
         val pools = toolsViewModel.appGameRole.appGameRoleRaking.keys.toList()
         PagerList(pools = pools, textColor = Color.White) { it ->
-            Log.d("roleRanking", "PagerList ${it}...")
+            Log.d("GameRoleRaking", "PagerList ${it}...")
             Column {
                 Row(
                     modifier = Modifier.fillMaxWidth(),

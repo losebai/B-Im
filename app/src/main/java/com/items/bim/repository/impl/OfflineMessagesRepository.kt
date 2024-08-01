@@ -38,7 +38,9 @@ class OfflineMessagesRepository(private val messagesDao: MessagesDao) : Messages
         recvUserId: Long,
         page: Int,
         pageSize: Int
-    ): Flow<List<MessagesEntity>> = messagesDao.getMessagesSendAndRecvFlowByUser(sendUserId,recvUserId,page,pageSize)
+    ): List<MessagesEntity> = messagesDao.getMessagesSendAndRecvFlowByUser(sendUserId,recvUserId,page,pageSize)
 
     override fun getDao(): BaseDao<MessagesEntity> = messagesDao
+
+
 }

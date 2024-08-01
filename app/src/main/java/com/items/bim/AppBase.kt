@@ -7,13 +7,17 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Build
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Divider
@@ -52,6 +56,7 @@ import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.consts.UserStatus
 import com.items.bim.common.ui.AppBarButton
 import com.items.bim.common.ui.HeadImage
+import com.items.bim.common.ui.rememberAssetsPainter
 import com.items.bim.common.util.ThreadPoolManager
 import com.items.bim.config.MenuRouteConfig
 import com.items.bim.config.PageRouteConfig
@@ -166,10 +171,10 @@ fun AppGetTopAppBar(userViewModel: UserViewModel,
 
 @Composable
 fun AppGetBottomBar(homeViewModel: HomeViewModel,
-                 userViewModel: UserViewModel) {
-    val IconModifier = Modifier
+                    userViewModel: UserViewModel,
+                    modifier: Modifier = Modifier) {
     BottomAppBar(
-        modifier = Modifier.height(50.dp),
+        modifier = Modifier.navigationBarsPadding().height(50.dp),
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.primary,
         contentPadding = PaddingValues(5.dp, 5.dp)
@@ -180,21 +185,29 @@ fun AppGetBottomBar(homeViewModel: HomeViewModel,
             verticalAlignment = Alignment.CenterVertically
         ) {
             val activeColor = colorResource(R.color.active_button)
-            AppBarButton(homeViewModel.page == MenuRouteConfig.ROUTE_MESSAGE,
-                Icons.Outlined.MailOutline,
-                activeColor, "消息", IconModifier, onClick = {
+            AppBarButton("消息", Icons.Outlined.MailOutline,
+                homeViewModel.page == MenuRouteConfig.ROUTE_MESSAGE,
+                activeColor,  modifier, onClick = {
                     homeViewModel.page = MenuRouteConfig.ROUTE_MESSAGE
                 })
-            AppBarButton(homeViewModel.page == MenuRouteConfig.ROUTE_USERS, Icons.Outlined.AccountCircle, activeColor, "联系人", IconModifier, onClick = {
+            AppBarButton( "联系人", Icons.Outlined.AccountCircle,
+                homeViewModel.page == MenuRouteConfig.ROUTE_USERS,    activeColor, modifier, onClick = {
                 ThreadPoolManager.getInstance().addTask("user", "UserList"){
                     userViewModel.referUser()
                 }
                 homeViewModel.page = MenuRouteConfig.ROUTE_USERS
             })
-            AppBarButton(homeViewModel.page == MenuRouteConfig.TOOLS_ROUTE,  Icons.Outlined.Build,activeColor, "游戏", IconModifier, onClick = {
+//            AppBarButton(painter = rememberAssetsPainter("drawable/icos/sports_esports_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg"),
+//                active = homeViewModel.page == MenuRouteConfig.TOOLS_ROUTE,
+//                text =  "工具", modifier=modifier, onClick = {
+//                    homeViewModel.page = MenuRouteConfig.TOOLS_ROUTE
+//                })
+            AppBarButton(painter = rememberAssetsPainter("drawable/icos/sports_esports_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg"),
+                active = homeViewModel.page == MenuRouteConfig.TOOLS_ROUTE,
+                text =  "游戏", modifier=modifier, onClick = {
                 homeViewModel.page = MenuRouteConfig.TOOLS_ROUTE
             })
-            AppBarButton(homeViewModel.page == MenuRouteConfig.ROUTE_COMMUNITY,  Icons.Outlined.FavoriteBorder, activeColor, "社区", IconModifier, onClick = {
+            AppBarButton( "社区", Icons.Outlined.FavoriteBorder, homeViewModel.page == MenuRouteConfig.ROUTE_COMMUNITY,  activeColor,modifier, onClick = {
                 homeViewModel.page = MenuRouteConfig.ROUTE_COMMUNITY
             })
         }
@@ -219,7 +232,7 @@ fun Context(
         },
         topBar = topBar,
         bottomBar = bottomBar,
-        floatingActionButton = { floatingActionButton() },
+        floatingActionButton = floatingActionButton,
         modifier = Modifier
             .padding(0.dp)
 //            .background(Color.White)
