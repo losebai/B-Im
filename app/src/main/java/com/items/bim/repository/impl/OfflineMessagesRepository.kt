@@ -3,6 +3,7 @@ package com.items.bim.repository.impl
 import com.items.bim.dao.BaseDao
 import com.items.bim.dao.MessagesDao
 import com.items.bim.entity.MessagesEntity
+import com.items.bim.entity.UserMessages
 import com.items.bim.repository.MessagesRepository
 import kotlinx.coroutines.flow.Flow
 
@@ -24,7 +25,7 @@ class OfflineMessagesRepository(private val messagesDao: MessagesDao) : Messages
 
     override  fun getUserMessageLastByRecvUserId(
         sendUserId: Long, recvUserId : Long,
-    ): Flow<List<MessagesEntity>> = messagesDao.getUserMessageLastByUserId(sendUserId, recvUserId)
+    ): Flow<List<UserMessages>> = messagesDao.getUserMessageLastByUserId(sendUserId, recvUserId)
 
     override  fun getMessagesSendAndRecvByUser(
         sendUserId: Long, recvUserId: Long,
@@ -38,7 +39,7 @@ class OfflineMessagesRepository(private val messagesDao: MessagesDao) : Messages
         recvUserId: Long,
         page: Int,
         pageSize: Int
-    ): List<MessagesEntity> = messagesDao.getMessagesSendAndRecvFlowByUser(sendUserId,recvUserId,page,pageSize)
+    ) = messagesDao.getMessagesSendAndRecvFlowByUser(sendUserId,recvUserId,page,pageSize)
 
     override fun getDao(): BaseDao<MessagesEntity> = messagesDao
 

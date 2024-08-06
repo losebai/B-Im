@@ -3,11 +3,14 @@ package com.items.bim.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,6 +37,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -44,7 +48,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
@@ -123,7 +130,8 @@ fun MessagesList(
                     ) {
                     }
                     Column(modifier =
-                    Modifier.padding(start = 10.dp)
+                    Modifier
+                        .padding(start = 10.dp)
                         .fillMaxWidth(0.8f)
                     ) {
                         Text(
@@ -150,9 +158,12 @@ fun MessagesList(
                             Text(text = DateUtils.timestampToDateStr(user.sendDateTime),
                                 fontSize = 10.sp,
                                 color = Color.Gray)
-                            Surface {
-                                Text(text = "")
+                            if (user.num!! > 0){
+                                Surface(modifier = Modifier.background(Color.Red)) {
+                                    Text(text = "${user.num}", fontSize = 10.sp,)
+                                }
                             }
+
                         }
                     }
                 }
@@ -161,23 +172,31 @@ fun MessagesList(
     }
 }
 
-@OptIn(DelicateCoroutinesApi::class)
 @SuppressLint("ResourceAsColor", "CoroutineCreationDuringComposition")
 @Composable
 fun MessagesBody(
-    messagesProd: () -> SnapshotStateList<MessagesEntity>,
+    messages: SnapshotStateList<MessagesEntity>,
     messagesViewModel: MessagesViewModel,
     recvUserEntity: UserEntity,
     modifier: Modifier,
 ) {
     val state = MySwipeRefreshState(NORMAL)
-
+    val scope = rememberCoroutineScope()
+    if (!messagesViewModel.isOnUserMessageLister){
+        scope.launch {
+            messagesViewModel.onUserMessageLister(this, recvUserEntity.id){
+                messages.add(0, it)
+                logger.info { "onUserMessageLister ${it}" }
+            }
+        }
+        messagesViewModel.isOnUserMessageLister = true
+    }
     MySwipeRefresh(state = state, onRefresh = { /*TODO*/ }, onLoadMore = { /*TODO*/ },
         modifier = modifier
     ) { refreshModifier ->
         logger.info { "MessagesBody MySwipeRefresh 重组" }
         LazyColumn(refreshModifier, reverseLayout=true) {
-            items(messagesProd()) { it ->
+            items(messages) { it ->
                 val isSend = it.sendUserId == SystemApp.UserId
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -260,7 +279,7 @@ fun MessagesBody(
  * @param [mainController]
  * @param [modifier]
  */
-@OptIn(ExperimentalMaterial3Api::class, DelicateCoroutinesApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint(
     "UnusedMaterial3ScaffoldPaddingParameter", "ResourceAsColor",
     "CoroutineCreationDuringComposition"
@@ -277,13 +296,21 @@ fun MessagesDetail(
     var sendData by remember {
         mutableStateOf("")
     }
-    val sendDataIsEmpty by remember {
-        derivedStateOf { sendData.isEmpty() }
-    }
     val messages = remember {
         mutableStateListOf<MessagesEntity>()
     }
-    logger.info { "MessagesBody 重组" }
+    LaunchedEffect(key1 = recvUserEntity.id) {
+        messages.clear()
+        scope.launch(Dispatchers.Default) {
+            messages.addAll( messagesViewModel.getMessagesSendAndRecvByUser(
+                SystemApp.UserId,
+                recvUserEntity.id,
+                1,
+                10
+            ))
+        }
+    }
+    logger.info { "MessagesBody 重组 $recvUserEntity" }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -303,6 +330,7 @@ fun MessagesDetail(
                     IconButton(onClick = {
                         // 从列表页返回
                         scope.cancel()
+                        messagesViewModel.isOnUserMessageLister = false
                         mainController.navigateUp()
                     }) {
                         Icon(
@@ -340,7 +368,7 @@ fun MessagesDetail(
                             scrollBehavior.state.heightOffset =  -scrollBehavior.state.heightOffsetLimit
                         }
                     )
-                    if (sendDataIsEmpty) {
+                    if (sendData.isEmpty()) {
                         IconButton(
                             onClick = {
                                 mainController.navigate("${PageRouteConfig.IMAGE_SELECTOR}/message")
@@ -356,22 +384,17 @@ fun MessagesDetail(
                             // 关闭键盘
 //                            activity.dismissKeyboardShortcutsHelper()
                             if (sendData.isNotEmpty()) {
-                                scope.launch {
-                                    val message = MessagesEntity(
-                                        sendUserId = SystemApp.UserId,
-                                        sendDateTime = System.currentTimeMillis(),
-                                        recvUserId = recvUserEntity.id,
-                                        messageData = sendData,
-                                        recvDateTime = null,
-                                        ack = 0
-                                    )
-                                    messagesViewModel.saveItem(message)
-                                    ThreadPoolManager.getInstance().addTask("message") {
-                                        messagesViewModel.messageService.sendMessagesEntity(message)
-                                    }
-                                    sendData = ""
-                                    messages.add(0, message)
-                                }
+                                val message = MessagesEntity(
+                                    sendUserId = SystemApp.UserId,
+                                    sendDateTime = System.currentTimeMillis(),
+                                    recvUserId = recvUserEntity.id,
+                                    messageData = sendData,
+                                    recvDateTime = null,
+                                    ack = 1
+                                )
+                                messagesViewModel.sendUserMessage(message)
+                                messages.add(0, message)
+                                sendData = ""
                             }
                         },modifier = Modifier.size(50.dp)) {
                             Icon(
@@ -387,34 +410,6 @@ fun MessagesDetail(
             .fillMaxWidth()
             .fillMaxHeight(),
     ) { pand ->
-        scope.launch(Dispatchers.IO)  {
-            val list = messagesViewModel.getMessagesSendAndRecvByUser(
-                SystemApp.UserId,
-                recvUserEntity.id,
-                1,
-                100
-            )
-            messages.addAll(list)
-            logger.info { "一直有多少条消息${SystemApp.UserId}:${ recvUserEntity.id}:${list.size}" }
-            while (true){
-                val mes = messagesViewModel.getMessagesSendAndRecvFlowByUserAck(
-                    recvUserEntity.id,
-                    SystemApp.UserId, 1, 100
-                )
-                if (mes.isNotEmpty()){
-                    messages.addAll(0, mes)
-                    mes.forEach { mess ->
-                        // 将未读给确认
-                        if (mess.ack == 1){
-                            mess.ack = 2
-                        }
-                    }
-                    val num = messagesViewModel.updateItemBatch(mes)
-                    Log.d("uiMessageState ", "已确认 $num")
-                }
-                delay(1.seconds)
-            }
-        }
-        MessagesBody( messagesProd = {messages}, messagesViewModel, recvUserEntity, Modifier.padding(pand))
+        MessagesBody( messages = messages, messagesViewModel, recvUserEntity, Modifier.padding(pand))
     }
 }

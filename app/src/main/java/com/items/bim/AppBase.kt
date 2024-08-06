@@ -204,6 +204,7 @@ fun AppGetBottomBar(homeViewModel: HomeViewModel,
 //                })
             AppBarButton(painter = rememberAssetsPainter("drawable/icos/sports_esports_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg"),
                 active = homeViewModel.page == MenuRouteConfig.TOOLS_ROUTE,
+                activeColor = activeColor,
                 text =  "游戏", modifier=modifier, onClick = {
                 homeViewModel.page = MenuRouteConfig.TOOLS_ROUTE
             })

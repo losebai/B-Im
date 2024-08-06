@@ -158,6 +158,7 @@ android {
 }
 
 val coilVersion = "2.5.0"
+val navigationVersion = "2.8.0-alpha06"
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
@@ -179,10 +180,10 @@ dependencies {
 //    implementation("com.android.support:support-v4:34.0.0")
     //noinspection GradleDependency
     //noinspection GradleDependency
-    implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-dynamic-features-fragment:2.7.7")
+    implementation("androidx.navigation:navigation-compose:$navigationVersion")
+    implementation("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
+    implementation("androidx.navigation:navigation-ui-ktx:$navigationVersion")
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:$navigationVersion")
     implementation("androidx.webkit:webkit:1.11.0")
 
 

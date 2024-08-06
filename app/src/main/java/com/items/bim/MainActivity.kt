@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.os.PersistableBundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -82,6 +83,7 @@ class MainActivity : AppCompatActivity() {
                 if (userMessages.isNotEmpty()) {
                     messagesViewModel.userMessagesList.clear()
                     messagesViewModel.userMessagesList.addAll(userMessages)
+                    Log.d("onUserMessageLastByUserId", userMessages.toString())
                 }
             }
             viewModelEvent.onUserAll(this@MainActivity, userViewModel)

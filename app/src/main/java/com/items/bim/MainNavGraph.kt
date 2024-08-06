@@ -2,6 +2,7 @@ package com.items.bim
 
 import android.content.pm.ActivityInfo
 import android.os.Build
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -80,11 +82,14 @@ fun MainNavGraph(
     val imageViewModel = viewModel<ImageViewModel>()
     val wanUiState by webViewModel.uiState.collectAsStateWithLifecycle()
     val webNavActions = remember(navHostController) { WanNavActions(navHostController) }
-    thread {
-        GlobalInitEvent.run()
-        init()
-        configViewModel.check()
+    LaunchedEffect(Unit) {
+        thread {
+            GlobalInitEvent.run()
+            init()
+            configViewModel.check()
+        }
     }
+    logger.info { "MainNavGraph init" }
     NavHost(
         navController = navHostController,
         startDestination = PageRouteConfig.MENU_ROUTE,

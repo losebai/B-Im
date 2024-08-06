@@ -1,6 +1,5 @@
 package com.items.bim.common.consts
 
-import android.os.Build.VERSION
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
