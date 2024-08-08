@@ -56,7 +56,7 @@ interface MessagesDao : BaseDao<MessagesEntity> {
      * @param [pageSize]
      * @return [Flow<List<MessagesEntity>>]
      */
-    @Query("select * from (" +
+    @Query("select distinct * from (" +
             "select * from messages where sendUserId  = :sendUserId and recvUserId = :recvUserId  " +
             "union all " +
             "select * from messages where sendUserId  = :recvUserId and recvUserId = :sendUserId " +

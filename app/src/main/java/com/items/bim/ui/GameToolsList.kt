@@ -62,7 +62,6 @@ import kotlin.time.Duration.Companion.seconds
 private val logger = KotlinLogging.logger {
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImageBar(images: List<String>) {
     val pagerState = rememberPagerState {
@@ -242,7 +241,6 @@ fun ImageText(list: List<CommunityEntity>, modifier: Modifier = Modifier) {
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GameToolsList(
     toolsViewModel: ToolsViewModel,

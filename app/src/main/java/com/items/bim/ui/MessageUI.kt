@@ -29,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -63,6 +64,8 @@ import com.items.bim.R
 import com.items.bim.common.consts.StyleCommon
 import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.ui.HeadImage
+import com.items.bim.common.ui.InputBottom
+import com.items.bim.common.ui.MessageText
 import com.items.bim.common.ui.MySwipeRefresh
 import com.items.bim.common.ui.MySwipeRefreshState
 import com.items.bim.common.ui.NORMAL
@@ -160,7 +163,7 @@ fun MessagesList(
                                 color = Color.Gray)
                             if (user.num!! > 0){
                                 Surface(modifier = Modifier.background(Color.Red)) {
-                                    Text(text = "${user.num}", fontSize = 10.sp,)
+                                    Text(text = "${user.num}", fontSize = 20.sp)
                                 }
                             }
 
@@ -175,27 +178,19 @@ fun MessagesList(
 @SuppressLint("ResourceAsColor", "CoroutineCreationDuringComposition")
 @Composable
 fun MessagesBody(
-    messages: SnapshotStateList<MessagesEntity>,
+    messagesProd: () -> SnapshotStateList<MessagesEntity>,
     messagesViewModel: MessagesViewModel,
     recvUserEntity: UserEntity,
     modifier: Modifier,
 ) {
     val state = MySwipeRefreshState(NORMAL)
     val scope = rememberCoroutineScope()
-    if (!messagesViewModel.isOnUserMessageLister){
-        scope.launch {
-            messagesViewModel.onUserMessageLister(this, recvUserEntity.id){
-                messages.add(0, it)
-                logger.info { "onUserMessageLister ${it}" }
-            }
-        }
-        messagesViewModel.isOnUserMessageLister = true
-    }
     MySwipeRefresh(state = state, onRefresh = { /*TODO*/ }, onLoadMore = { /*TODO*/ },
         modifier = modifier
     ) { refreshModifier ->
         logger.info { "MessagesBody MySwipeRefresh 重组" }
         LazyColumn(refreshModifier, reverseLayout=true) {
+            val messages = messagesProd()
             items(messages) { it ->
                 val isSend = it.sendUserId == SystemApp.UserId
                 Row(
@@ -211,59 +206,18 @@ fun MessagesBody(
                             modifier = Modifier.padding(10.dp),
                             horizontalAlignment = Alignment.End
                         ) {
-//                                Text(text = it.sendDateTime, fontSize = 10.sp)
-                            Surface(
-                                shape = RectangleShape,
-                                shadowElevation = 4.dp,
-                                tonalElevation = 1.dp,
-                                color = Color(R.color.sendMessage),
-                                modifier = Modifier
-                                    .wrapContentWidth()
-                                    .padding(1.dp)
-                            ) {
-                                Text(
-                                    text = it.messageData.substring(
-                                        0,
-                                        if (it.messageData.length < 20) it.messageData.length else 20
-                                    ),
-                                    textAlign = TextAlign.Right,
-                                    fontSize = 18.sp,
-                                    color = Color.White,
-                                    modifier = Modifier.padding(4.dp),
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
+                            MessageText(it)
                         }
                         HeadImage(
                             SystemApp.USER_IMAGE,
                             modifier = StyleCommon.HEAD_IMAGE
                         ) {
-
                         }
                     } else {
                         HeadImage(recvUserEntity.imageUrl, modifier = StyleCommon.HEAD_IMAGE) {
                         }
                         Column(modifier = Modifier.padding(10.dp)) {
-//                                Text(text = it.sendDateTime, fontSize = 10.sp)
-                            Surface(
-                                shape = RectangleShape,
-                                shadowElevation = 4.dp,
-                                tonalElevation = 1.dp,
-                                modifier = Modifier
-                                    .wrapContentWidth()
-                                    .padding(1.dp)
-                            ) {
-                                Text(
-                                    text = it.messageData.substring(
-                                        0,
-                                        if (it.messageData.length < 20) it.messageData.length else 20
-                                    ),
-                                    textAlign = TextAlign.Left,
-                                    fontSize = 18.sp,
-                                    modifier = Modifier.padding(5.dp),
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
+                            MessageText(it)
                         }
                     }
                 }
@@ -293,9 +247,6 @@ fun MessagesDetail(
 ) {
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    var sendData by remember {
-        mutableStateOf("")
-    }
     val messages = remember {
         mutableStateListOf<MessagesEntity>()
     }
@@ -351,65 +302,34 @@ fun MessagesDetail(
             )
         },
         bottomBar = {
-            BottomAppBar(modifier = modifier) {
-                Row(
-                    modifier = modifier
-                        .padding(10.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    TextField(
-                        value = sendData, onValueChange = {
-                            sendData = it
-                        }, colors = TextFieldDefaults.colors(Color.White),
-                        modifier=Modifier.clickable {
-                            logger.info { "状态栏高度 ${scrollBehavior.state.heightOffset} " +
-                                    "${scrollBehavior.state.heightOffsetLimit}" }
-                            scrollBehavior.state.heightOffset =  -scrollBehavior.state.heightOffsetLimit
-                        }
-                    )
-                    if (sendData.isEmpty()) {
-                        IconButton(
-                            onClick = {
-                                mainController.navigate("${PageRouteConfig.IMAGE_SELECTOR}/message")
-                            }, modifier = Modifier.size(50.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Add,
-                                contentDescription = "Localized description"
-                            )
-                        }
-                    } else {
-                        IconButton(onClick = {
-                            // 关闭键盘
-//                            activity.dismissKeyboardShortcutsHelper()
-                            if (sendData.isNotEmpty()) {
-                                val message = MessagesEntity(
-                                    sendUserId = SystemApp.UserId,
-                                    sendDateTime = System.currentTimeMillis(),
-                                    recvUserId = recvUserEntity.id,
-                                    messageData = sendData,
-                                    recvDateTime = null,
-                                    ack = 1
-                                )
-                                messagesViewModel.sendUserMessage(message)
-                                messages.add(0, message)
-                                sendData = ""
-                            }
-                        },modifier = Modifier.size(50.dp)) {
-                            Icon(
-                                imageVector = Icons.Filled.Send,
-                                contentDescription = "Localized description"
-                            )
-                        }
-                    }
-                }
-            }
+            InputBottom(modifier, onSendData = {
+                val message = MessagesEntity(
+                    sendUserId = SystemApp.UserId,
+                    sendDateTime = System.currentTimeMillis(),
+                    recvUserId = recvUserEntity.id,
+                    messageData = it,
+                    recvDateTime = null,
+                    ack = if (recvUserEntity.id == SystemApp.UserId) 5 else 1
+                )
+                messagesViewModel.sendUserMessage(message)
+                messages.add(0, message)
+            }, onCloseSendData = {
+                mainController.navigate("${PageRouteConfig.IMAGE_SELECTOR}/message")
+            })
         },
         modifier = modifier
             .fillMaxWidth()
             .fillMaxHeight(),
     ) { pand ->
-        MessagesBody( messages = messages, messagesViewModel, recvUserEntity, Modifier.padding(pand))
+        if (!messagesViewModel.isOnUserMessageLister){
+            scope.launch {
+                messagesViewModel.onUserMessageLister(this, recvUserEntity.id){
+                    messages.add(0, it)
+                    logger.debug { "onUserMessageLister ${it}" }
+                }
+            }
+            messagesViewModel.isOnUserMessageLister = true
+        }
+        MessagesBody( messagesProd = {messages}, messagesViewModel, recvUserEntity, Modifier.padding(pand))
     }
 }

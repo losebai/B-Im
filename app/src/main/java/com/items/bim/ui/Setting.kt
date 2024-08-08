@@ -33,24 +33,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.core.content.PermissionChecker
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.items.bim.R
-import com.items.bim.common.util.PermissionUtils
-import com.items.bim.common.util.PermissionsChecker
 import com.items.bim.common.consts.StyleCommon.ZERO_PADDING
 import com.items.bim.common.consts.SystemApp.snackBarHostState
 import com.items.bim.common.ui.AppBarButton
 import com.items.bim.common.util.CheckPermission
+import com.items.bim.common.util.PermissionsChecker
 import com.items.bim.common.util.QQUtils
 import com.items.bim.common.util.Utils
 import com.items.bim.config.PageRouteConfig
@@ -77,7 +74,7 @@ fun SettingHome(
             .background(Color.White)
             .padding(end = 10.dp)
     ) {
-        Column(Modifier.fillMaxSize(),verticalArrangement=Arrangement.SpaceBetween) {
+        Column(Modifier.fillMaxSize()) {
             Column(modifier = Modifier.fillMaxHeight(0.8f)) {
                 Row(
                     modifier = Modifier
@@ -143,7 +140,7 @@ fun SettingHome(
                 }
 
                 TextButton(
-                    onClick = { QQUtils.joinQQGroup("966922403" ) },
+                    onClick = { QQUtils.joinQQGroup("966922403") },
                     modifier = buttonModifier
                 ) {
                     Row(
@@ -164,7 +161,7 @@ fun SettingHome(
                 }
 
                 TextButton(
-                    onClick = { QQUtils.joinQQGroup("966922403" ) },
+                    onClick = { QQUtils.joinQQGroup("966922403") },
                     modifier = buttonModifier
                 ) {
                     Row(
@@ -184,8 +181,10 @@ fun SettingHome(
                     }
                 }
             }
-            Column(modifier = Modifier.fillMaxWidth(),
-                verticalArrangement=Arrangement.Bottom){
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Bottom
+            ) {
                 Row() {
                     AppBarButton(
                         imageVector = Icons.Filled.Settings,
@@ -194,10 +193,10 @@ fun SettingHome(
                         onClick = { Utils.message(scope, message, snackBarHostState) },
                     )
                     AppBarButton(
-                        active =  homeViewModel.darkTheme,
+                        active = homeViewModel.darkTheme,
                         imageVector = Icons.Filled.Settings,
-                        activeColor= Color.Yellow,
-                        text =  if (homeViewModel.darkTheme) "白天" else  "夜间",
+                        activeColor = Color.Yellow,
+                        text = if (homeViewModel.darkTheme) "白天" else "夜间",
                         modifier = buttonModifier,
                         onClick = { homeViewModel.darkTheme = !homeViewModel.darkTheme },
                     )
@@ -235,7 +234,9 @@ fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(text = "写入修改文件权限", fontSize = 12.sp)
-                    if (PermissionsChecker.getInstance().lacksPermission(Manifest.permission.MANAGE_EXTERNAL_STORAGE)) {
+                    if (PermissionsChecker.getInstance()
+                            .lacksPermission(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
+                    ) {
                         TextButton(
                             onClick = { permissionViewModel.filePermission = true },
                             modifier = Modifier.padding(0.dp)
@@ -273,10 +274,47 @@ fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    Text(text = "相机摄像头权限", fontSize = 12.sp)
+                    if (PermissionsChecker.getInstance().lacksPermissions(
+                            arrayOf(
+                                Manifest.permission.CAMERA,
+                                Manifest.permission.RECORD_AUDIO
+                            )
+                        )
+                    ) {
+                        TextButton(
+                            onClick = { permissionViewModel.cameraPermission = true },
+                            modifier = Modifier.padding(0.dp)
+                        ) {
+                            Text(text = "检查", fontSize = 12.sp, color = Color.Green)
+                        }
+                    } else {
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = null,
+                            tint = Color.Green
+                        )
+                    }
+                    if (permissionViewModel.cameraPermission) {
+                        CheckPermission(
+                            arrayOf(
+                                Manifest.permission.CAMERA,
+                                Manifest.permission.RECORD_AUDIO
+                            )
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text(text = "读取相册权限", fontSize = 12.sp)
                     if (PermissionsChecker.getInstance().lacksPermissions(
-                            arrayOf(Manifest.permission.CAMERA,
-                                Manifest.permission.READ_MEDIA_IMAGES)
+                            arrayOf(
+                                Manifest.permission.CAMERA,
+                                Manifest.permission.READ_MEDIA_IMAGES
+                            )
                         )
                     ) {
                         TextButton(
@@ -307,7 +345,9 @@ fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(text = "获取分享应用列表权限", fontSize = 12.sp)
-                    if (PermissionsChecker.getInstance().lacksPermission(Manifest.permission.QUERY_ALL_PACKAGES)) {
+                    if (PermissionsChecker.getInstance()
+                            .lacksPermission(Manifest.permission.QUERY_ALL_PACKAGES)
+                    ) {
                         TextButton(
                             onClick = { permissionViewModel.appPermission = true },
                             modifier = Modifier.padding(0.dp)
@@ -335,7 +375,9 @@ fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(text = "网络权限", fontSize = 12.sp)
-                    if (PermissionsChecker.getInstance().lacksPermission(Manifest.permission.ACCESS_NETWORK_STATE)) {
+                    if (PermissionsChecker.getInstance()
+                            .lacksPermission(Manifest.permission.ACCESS_NETWORK_STATE)
+                    ) {
                         TextButton(
                             onClick = { permissionViewModel.networkPermission = true },
                             modifier = Modifier.padding(0.dp)

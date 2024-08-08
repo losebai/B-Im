@@ -54,7 +54,6 @@ fun GameRoleList(list: List<GameRoleDto>) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GameRoleRaking(
     gameName: String,

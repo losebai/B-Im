@@ -22,6 +22,7 @@ import com.items.bim.viewmodel.HomeViewModel
 import com.items.bim.viewmodel.MessagesViewModel
 import com.items.bim.viewmodel.UserViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -73,7 +74,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initLoad() {
-        MainScope().launch {
+        MainScope().launch() {
             viewModelEvent.onUserMessageLastByUserId(
                 this@MainActivity,
                 SystemApp.UserId,
@@ -81,8 +82,7 @@ class MainActivity : AppCompatActivity() {
                 userViewModel
             ) { userMessages ->
                 if (userMessages.isNotEmpty()) {
-                    messagesViewModel.userMessagesList.clear()
-                    messagesViewModel.userMessagesList.addAll(userMessages)
+                    messagesViewModel.userMessagesList = userMessages
                     Log.d("onUserMessageLastByUserId", userMessages.toString())
                 }
             }

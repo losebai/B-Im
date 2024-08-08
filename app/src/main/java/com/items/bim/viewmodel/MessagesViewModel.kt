@@ -3,7 +3,10 @@ package com.items.bim.viewmodel
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
@@ -25,19 +28,9 @@ import com.items.bim.service.MessageService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.util.stream.Collectors
-import kotlin.time.Duration.Companion.seconds
 
 
 private val logger = KotlinLogging.logger {}
@@ -49,9 +42,7 @@ class MessagesViewModel(context: Context) : ViewModel() {
     /**
      * 消息列表
      * */
-    val userMessagesList by lazy {
-        ArrayList<UserMessages>()
-    }
+    var userMessagesList by mutableStateOf(listOf<UserMessages>())
 
     // 与接受人的消息列表
     val messages = ArrayList<MessagesEntity>()

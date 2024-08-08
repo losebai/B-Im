@@ -1,12 +1,13 @@
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
-import java.util.Properties
 import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
 //    id("org.jetbrains.kotlin.plugin.compose")
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
-    id("org.jetbrains.kotlin.kapt" )
+    id("org.jetbrains.kotlin.kapt")
 //    id("org.jetbrains.kotlin.plugin.parcelize")
     id("kotlin-parcelize")
 //    kotlin("jvm")
@@ -26,7 +27,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.1.2"
+        versionName = "0.1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -45,7 +46,7 @@ android {
             res.srcDirs("src/main/res")
         }
         getByName("test") {
-            setRoot("src/test/")
+            setRoot("src/test")
             res.srcDirs("src/test/java")
         }
         getByName("androidTest") {
@@ -104,7 +105,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
-        buildConfig= true
+        buildConfig = true
 
     }
 
@@ -150,7 +151,8 @@ android {
     applicationVariants.all {
         outputs.all {
             if (this is BaseVariantOutputImpl) {
-                val name = "B-Im-${buildType.name}-${versionName}-${productFlavors.first().name}.apk"
+                val name =
+                    "B-Im-${buildType.name}-${versionName}-${productFlavors.first().name}.apk"
                 outputFileName = name
             }
         }
@@ -162,6 +164,16 @@ val navigationVersion = "2.8.0-alpha06"
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+
+    val cameraxVersion = "1.2.0-alpha04"
+    implementation("androidx.camera:camera-extensions:$cameraxVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
+    implementation("androidx.camera:camera-view:$cameraxVersion")
+
+    // mlkit
+    implementation("com.google.mlkit:barcode-scanning:17.0.2")
+    implementation("com.google.mlkit:text-recognition:16.0.0-beta4")
+    implementation("com.google.mlkit:text-recognition-chinese:16.0.0-beta4")
 
 
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")

@@ -1,5 +1,6 @@
 package com.items.bim.common.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.items.bim.R
@@ -103,6 +105,27 @@ fun AppBarButton(
             text = text,
             fontSize = 12.sp,
             color = if (active) activeColor else Color.Black
+        )
+    }
+}
+@Composable
+fun ImageButton(
+    text: String,
+    painter: Painter,
+    fontSize: TextUnit = 12.sp,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Column(modifier = modifier.buttonClick {
+        onClick()
+    }, horizontalAlignment = Alignment.CenterHorizontally) {
+        Image(
+            painter=painter,
+            contentDescription = "Localized description",
+        )
+        Text(
+            text = text,
+            fontSize = fontSize,
         )
     }
 }

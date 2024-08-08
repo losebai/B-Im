@@ -1,23 +1,24 @@
 package com.items.bim
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Build
-import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Divider
@@ -29,10 +30,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -59,35 +62,41 @@ import com.items.bim.common.ui.HeadImage
 import com.items.bim.common.ui.rememberAssetsPainter
 import com.items.bim.common.util.ThreadPoolManager
 import com.items.bim.config.MenuRouteConfig
-import com.items.bim.config.PageRouteConfig
-import com.items.bim.entity.AppUserEntity
 import com.items.bim.viewmodel.HomeViewModel
 import com.items.bim.viewmodel.UserViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
 
-private val logger = KotlinLogging.logger {}
-
 @SuppressLint("CoroutineCreationDuringComposition", "ResourceAsColor")
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun AppGetTopAppBar(userViewModel: UserViewModel,
-                    nvHostController: NavHostController,
-                    homeViewModel: HomeViewModel) {
+fun AppGetTopAppBar(
+    userViewModel: UserViewModel,
+    nvHostController: NavHostController,
+    homeViewModel: HomeViewModel
+) {
     val isPositive by remember {
         derivedStateOf {
-            when(homeViewModel.page){
-                MenuRouteConfig.TOOLS_ROUTE -> {
+            when (homeViewModel.page) {
+                MenuRouteConfig.GAME_TOOLS_ROUTE -> {
                     false
                 }
+
+                MenuRouteConfig.COMMON_TOOLS_ROUTE -> {
+                    true
+                }
+
                 MenuRouteConfig.ROUTE_COMMUNITY -> {
                     false
                 }
+
                 MenuRouteConfig.ROUTE_MESSAGE -> {
                     true
                 }
+
                 MenuRouteConfig.ROUTE_USERS -> {
                     true
                 }
+
                 else -> {
                     false
                 }
@@ -114,10 +123,12 @@ fun AppGetTopAppBar(userViewModel: UserViewModel,
                         expanded = expanded,
                         onDismissRequest = { expanded = false }) {
                         DropdownMenuItem(text = {
-                            Text(text = "图库中心")
+                            Text(text = "扫一扫")
                         }, onClick = {
-                            nvHostController.navigate(PageRouteConfig.IMAGE_GROUP_LIST)
-                            logger.debug { "图库中心" }
+                        })
+                        DropdownMenuItem(text = {
+                            Text(text = "创建聊天")
+                        }, onClick = {
                         })
                     }
                 },
@@ -170,11 +181,15 @@ fun AppGetTopAppBar(userViewModel: UserViewModel,
 }
 
 @Composable
-fun AppGetBottomBar(homeViewModel: HomeViewModel,
-                    userViewModel: UserViewModel,
-                    modifier: Modifier = Modifier) {
+fun AppGetBottomBar(
+    homeViewModel: HomeViewModel,
+    userViewModel: UserViewModel,
+    modifier: Modifier = Modifier
+) {
     BottomAppBar(
-        modifier = Modifier.navigationBarsPadding().height(50.dp),
+        modifier = Modifier
+            .navigationBarsPadding()
+            .height(50.dp),
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.primary,
         contentPadding = PaddingValues(5.dp, 5.dp)
@@ -187,30 +202,40 @@ fun AppGetBottomBar(homeViewModel: HomeViewModel,
             val activeColor = colorResource(R.color.active_button)
             AppBarButton("消息", Icons.Outlined.MailOutline,
                 homeViewModel.page == MenuRouteConfig.ROUTE_MESSAGE,
-                activeColor,  modifier, onClick = {
+                activeColor, modifier, onClick = {
                     homeViewModel.page = MenuRouteConfig.ROUTE_MESSAGE
                 })
-            AppBarButton( "联系人", Icons.Outlined.AccountCircle,
-                homeViewModel.page == MenuRouteConfig.ROUTE_USERS,    activeColor, modifier, onClick = {
-                ThreadPoolManager.getInstance().addTask("user", "UserList"){
-                    userViewModel.referUser()
-                }
-                homeViewModel.page = MenuRouteConfig.ROUTE_USERS
-            })
-//            AppBarButton(painter = rememberAssetsPainter("drawable/icos/sports_esports_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg"),
-//                active = homeViewModel.page == MenuRouteConfig.TOOLS_ROUTE,
-//                text =  "工具", modifier=modifier, onClick = {
-//                    homeViewModel.page = MenuRouteConfig.TOOLS_ROUTE
+            AppBarButton("联系人",
+                Icons.Outlined.AccountCircle,
+                homeViewModel.page == MenuRouteConfig.ROUTE_USERS,
+                activeColor,
+                modifier,
+                onClick = {
+                    ThreadPoolManager.getInstance().addTask("user", "UserList") {
+                        userViewModel.referUser()
+                    }
+                    homeViewModel.page = MenuRouteConfig.ROUTE_USERS
+                })
+//            AppBarButton("工具", Icons.Filled.Build,
+//                active = homeViewModel.page == MenuRouteConfig.COMMON_TOOLS_ROUTE,
+//                modifier = modifier, onClick = {
+//                    homeViewModel.page = MenuRouteConfig.COMMON_TOOLS_ROUTE
 //                })
             AppBarButton(painter = rememberAssetsPainter("drawable/icos/sports_esports_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg"),
-                active = homeViewModel.page == MenuRouteConfig.TOOLS_ROUTE,
+                active = homeViewModel.page == MenuRouteConfig.GAME_TOOLS_ROUTE,
                 activeColor = activeColor,
-                text =  "游戏", modifier=modifier, onClick = {
-                homeViewModel.page = MenuRouteConfig.TOOLS_ROUTE
-            })
-            AppBarButton( "社区", Icons.Outlined.FavoriteBorder, homeViewModel.page == MenuRouteConfig.ROUTE_COMMUNITY,  activeColor,modifier, onClick = {
-                homeViewModel.page = MenuRouteConfig.ROUTE_COMMUNITY
-            })
+                text = "游戏", modifier = modifier, onClick = {
+                    homeViewModel.page = MenuRouteConfig.GAME_TOOLS_ROUTE
+                })
+            AppBarButton(
+                "社区",
+                Icons.Outlined.FavoriteBorder,
+                homeViewModel.page == MenuRouteConfig.ROUTE_COMMUNITY,
+                activeColor,
+                modifier,
+                onClick = {
+                    homeViewModel.page = MenuRouteConfig.ROUTE_COMMUNITY
+                })
         }
     }
 }

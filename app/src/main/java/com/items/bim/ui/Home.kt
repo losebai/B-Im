@@ -65,7 +65,7 @@ fun PageHost(
                 .background(Color.White)
                 .fillMaxSize()
             when (homeViewModel.page) {
-                MenuRouteConfig.TOOLS_ROUTE -> {
+                MenuRouteConfig.GAME_TOOLS_ROUTE -> {
                     GameToolsList(
                         toolsViewModel,
                         mod,
@@ -104,6 +104,9 @@ fun PageHost(
                             mainController.navigate(PageRouteConfig.MESSAGE_ROUTE)
                         })
                     }
+                }
+                MenuRouteConfig.COMMON_TOOLS_ROUTE -> {
+                    CommonTools(mainController)
                 }
             }
         },

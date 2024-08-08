@@ -63,7 +63,7 @@ fun MCRoleLotteryHome(
         mutableIntStateOf(0)
     }
     var pools  by remember {
-        mutableStateOf(listOf<LotteryPool>(
+        mutableStateOf(listOf(
             LotteryPool(0,"暂无",
                 "https://mc.kurogames.com/static4.0/assets/news-bg-5e0dc97a.jpg",""
             )))
@@ -151,7 +151,7 @@ fun MCRoleLotteryHome(
                 Column {
                     Text(text = "以下四星概率提升", color = Color.White, fontSize = 10.sp)
                     LazyRow {
-                        if (pools[poolIndex].array.isNotEmpty()){
+                        if (pools.isNotEmpty() && pools[poolIndex].array.isNotEmpty()){
                             items(pools[poolIndex].array.size) {
                                 Column(
                                     modifier = Modifier
