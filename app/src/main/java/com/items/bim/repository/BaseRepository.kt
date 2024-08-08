@@ -22,6 +22,10 @@ interface BaseRepository<T> {
     suspend fun updateItem(t: T) : Int
 
 
+
+    suspend fun updateItemBatch(t: List<T>) : Int
+
+
     /**
      * Insert T in the data source
      */

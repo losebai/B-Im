@@ -63,7 +63,7 @@ fun MCRoleLotteryHome(
         mutableIntStateOf(0)
     }
     var pools  by remember {
-        mutableStateOf(listOf<LotteryPool>(
+        mutableStateOf(listOf(
             LotteryPool(0,"暂无",
                 "https://mc.kurogames.com/static4.0/assets/news-bg-5e0dc97a.jpg",""
             )))
@@ -151,35 +151,37 @@ fun MCRoleLotteryHome(
                 Column {
                     Text(text = "以下四星概率提升", color = Color.White, fontSize = 10.sp)
                     LazyRow {
-                        items(pools[poolIndex].array.size) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(5.dp)
-                                    .border(1.dp, Color.Gray, StyleCommon.ONE_SHAPE)
-                            ) {
-                                AsyncImage(
-                                    model = pools[poolIndex].array[it],
-                                    contentDescription = null,
+                        if (pools.isNotEmpty() && pools[poolIndex].array.isNotEmpty()){
+                            items(pools[poolIndex].array.size) {
+                                Column(
                                     modifier = Modifier
-                                        .size(40.dp)
-                                        .background(
-                                            brush = Brush.verticalGradient(
-                                                colors = listOf(
-                                                    Color.Black,
-                                                    colorResource(id = R.color.star4)
-                                                ),
-                                                startY = 50f,
-                                                endY = 150f,
-                                                tileMode = TileMode.Clamp
+                                        .padding(5.dp)
+                                        .border(1.dp, Color.Gray, StyleCommon.ONE_SHAPE)
+                                ) {
+                                    AsyncImage(
+                                        model = pools[poolIndex].array[it],
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .background(
+                                                brush = Brush.verticalGradient(
+                                                    colors = listOf(
+                                                        Color.Black,
+                                                        colorResource(id = R.color.star4)
+                                                    ),
+                                                    startY = 50f,
+                                                    endY = 150f,
+                                                    tileMode = TileMode.Clamp
+                                                )
                                             )
-                                        )
-                                )
-                                Divider(
-                                    color = colorResource(id = R.color.star4),
-                                    thickness = 3.dp,
-                                    modifier = Modifier
-                                        .width(40.dp)
-                                )
+                                    )
+                                    Divider(
+                                        color = colorResource(id = R.color.star4),
+                                        thickness = 3.dp,
+                                        modifier = Modifier
+                                            .width(40.dp)
+                                    )
+                                }
                             }
                         }
                     }

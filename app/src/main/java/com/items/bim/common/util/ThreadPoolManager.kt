@@ -140,11 +140,9 @@ class ThreadPoolManager private constructor() {
 
     //shutDown()：关闭线程池后不影响已经提交的任务
     //shutDownNow()：关闭线程池后会尝试去终止正在执行任务的线程
-    fun exitThreadPool(tag: String) {
-        val threadPoolExecutor = threadPoolMap[tag]
-        if (threadPoolExecutor != null) {
-            threadPoolExecutor.shutdownNow()
-            threadPoolMap.remove(tag)
+    fun exitThreadPool() {
+        threadPoolMap.forEach{
+            it.value.shutdownNow()
         }
     }
 

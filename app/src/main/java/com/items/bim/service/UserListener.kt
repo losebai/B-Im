@@ -1,8 +1,12 @@
 package com.items.bim.service
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.items.bim.common.consts.AppEventConst
+import com.items.bim.common.consts.AppUserAck
 import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.consts.UserStatus
+import com.items.bim.dto.AppUserMessage
 import com.items.bim.entity.MessagesEntity
 import com.items.bim.viewmodel.MessagesViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -15,6 +19,8 @@ import org.noear.socketd.transport.core.Message
 import org.noear.socketd.transport.core.Session
 import org.noear.socketd.transport.core.entity.StringEntity
 import org.noear.socketd.transport.core.listener.EventListener
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class UserListener(private val messagesViewModel: MessagesViewModel) : EventListener() {
 
@@ -35,29 +41,33 @@ class UserListener(private val messagesViewModel: MessagesViewModel) : EventList
         logger.info { "onOpen${SystemApp.userStatus}" }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onMessage(session: Session?, message: Message?) {
         if (message != null) {
             if (message.event() == AppEventConst.USER_MESSAGE) {
-                val entity: Entity = message.entity()
-                val data = ONode.load(entity.dataAsString())
-                val messageData = data.get("messageData").toString()
-                val ack = data.get("ack").toString().toInt()
+                val readmes: AppUserMessage = ONode.deserialize(message.dataAsString(), AppUserMessage::class.java)
+                val messageData = readmes.messageData
+                val ack: Int = message.metaAsInt("ack")
+                readmes.ack = ack + 1
                 val userMessage = MessagesEntity(
-                    data.get("messagesId").toString().replace("\"",""),
-                    data.get("sendUserId").toString().toLong(),
-                    data.get("recvUserId").toString().toLong(),
-                    messageData.substring(1, messageData.length - 1),
-                    data.get("sendDateTime").toString().toLong(),
+                    readmes.messagesId.toString().replace("\"",""),
+                    readmes.sendUserId.toString().toLong(),
+                    readmes.recvUserId.toString().toLong(),
+                    messageData,
+                    readmes.sendDateTime.toInstant(ZoneOffset.UTC).toEpochMilli(),
                     null,
-                    if (ack == 0) 1 else ack
+                    readmes.ack
                 )
                 scope.launch {
-                    logger.info { "message:${data.toJson()}" }
                     messagesViewModel.saveItem(userMessage)
-                    session?.send(AppEventConst.USER_MESSAGE, StringEntity(data.toJson()))
+                    if (ack == AppUserAck.SERVER_ACK.value) {
+                        // 已确认
+                        readmes.ack = AppUserAck.ACK_OK.value
+                        session?.send(AppEventConst.USER_MESSAGE, StringEntity(ONode.load(readmes).toJson()).at(readmes.sendUserId.toString()))
+                    }
                 }
+                logger.info { "onMessage::${userMessage}" }
             }
-            logger.info { "onMessage::${message}" }
         }
         super.onMessage(session, message)
     }

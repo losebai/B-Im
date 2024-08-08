@@ -21,7 +21,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
-import com.items.bim.AppBase
+import com.items.bim.Context
 import com.items.bim.R
 import com.items.bim.ui.AppTypography
 import com.items.bim.ui.backgroundDark
@@ -462,10 +462,9 @@ fun AppTheme(
 @Composable
 fun ContrastAwareReplyThemeTest() {
     AppTheme() {
-        val appBase: AppBase = AppBase()
-        appBase.Context(content = {
+        Context(content = {
             Text(text = "test")
-        },{})
+        })
     }
 }
 

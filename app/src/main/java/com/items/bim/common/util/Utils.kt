@@ -3,6 +3,8 @@ package com.items.bim.common.util
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import com.items.bim.entity.AppUserEntity
@@ -61,9 +63,11 @@ object Utils {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     var formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun localDateTimeToString(time: LocalDateTime) : String{
         return time.format(formatter)
     }

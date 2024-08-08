@@ -2,6 +2,7 @@ package com.items.bim.repository
 
 import com.items.bim.dao.MessagesDao
 import com.items.bim.entity.MessagesEntity
+import com.items.bim.entity.UserMessages
 import kotlinx.coroutines.flow.Flow
 
 interface MessagesRepository : OfflineRepository<MessagesEntity, MessagesDao> {
@@ -13,7 +14,7 @@ interface MessagesRepository : OfflineRepository<MessagesEntity, MessagesDao> {
     fun getUserMessageLastByRecvUserId(
         sendUserId: Long,
         recvUserId: Long
-    ): Flow<List<MessagesEntity>>
+    ): Flow<List<UserMessages>>
 
     /**
      * @param [sendUserId]

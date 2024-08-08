@@ -1,6 +1,9 @@
 package com.items.bim.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,12 +11,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,44 +29,91 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.items.bim.R
+import com.items.bim.common.consts.StyleCommon
 import com.items.bim.common.consts.SystemApp
+import com.items.bim.common.ui.FullScreenImage
 import com.items.bim.common.util.ShareUtil
 import com.items.bim.common.util.Utils
-import com.items.bim.common.ui.FullScreenImage
 import com.items.bim.dto.FileEntity
-import kotlinx.coroutines.launch
+import com.items.bim.viewmodel.ImageViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.launch
 import java.io.File
-
 
 
 private val logger = KotlinLogging.logger {}
 
+@SuppressLint("CoroutineCreationDuringComposition")
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ImageDetail(fileEntity: FileEntity, mainController: NavHostController, isDetail: () -> Boolean) {
+fun ImageDetail(
+    imageViewModel: ImageViewModel,
+    mainController: NavHostController
+) {
+    val images = imageViewModel.getImageList(imageViewModel.groupPath)
+    val coroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState {
+        images.size
+    }
+    var visible by remember {
+        mutableStateOf(true)
+    }
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = SystemApp.snackBarHostState, modifier = Modifier.padding(0.dp))
         },
         topBar = {
-            ImageTopBar(fileEntity.name, mainController, isDetail)
+            AnimatedVisibility(visible = visible) {
+                ImageTopBar(imageViewModel.imageDetail.value.name, mainController)
+            }
         },
         bottomBar = {
-            GetBottomBar(fileEntity.filePath){}
-        }
+            AnimatedVisibility(visible = visible) {
+                GetBottomBar(imageViewModel.imageDetail.value.filePath, onChange = {
+                    // 这里是异步
+                    imageViewModel.reloadPath(imageViewModel.groupPath)
+                })
+            }
+        },
     ) { innerPadding ->
-        FullScreenImage(fileEntity = fileEntity, modifier = Modifier
-            .padding(innerPadding)
-            .fillMaxSize())
+        // 定位
+        coroutineScope.launch {
+            pagerState.scrollToPage(imageViewModel.imageDetail.value.index)
+        }
+        // 详情页面
+        HorizontalPager(
+            state = pagerState,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) { it ->
+            Button(
+                onClick = {
+                    visible = !visible
+                },
+                shape = StyleCommon.ZERO_SHAPE,
+                colors = ButtonDefaults.buttonColors(Color.White),
+            ) {
+                FullScreenImage(
+                    fileEntity = images[it]
+                )
+            }
+        }
     }
 }
 
@@ -129,7 +183,7 @@ fun GetBottomBar(filePath: String, onChange: () -> Unit) {
             IconButton(
                 onClick = {
                     scope.launch {
-                        if (File(filePath).delete()){
+                        if (File(filePath).delete()) {
                             SystemApp.snackBarHostState.showSnackbar(
                                 "删除成功",
                                 actionLabel = "关闭",
@@ -138,7 +192,7 @@ fun GetBottomBar(filePath: String, onChange: () -> Unit) {
                             )
                             logger.info { "文件删除成功" }
                             onChange()
-                        }else{
+                        } else {
                             SystemApp.snackBarHostState.showSnackbar(
                                 "删除失败",
                                 actionLabel = "关闭",

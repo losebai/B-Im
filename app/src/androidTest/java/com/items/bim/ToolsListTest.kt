@@ -1,10 +1,10 @@
-package com.example.bim
+package com.items.bim
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.items.bim.dto.LotteryCount
 import com.items.bim.ui.LotterySimulate
-import com.items.bim.ui.ToolsList
+import com.items.bim.ui.GameToolsList
 import com.items.bim.viewmodel.LotteryViewModel
 import com.items.bim.viewmodel.ToolsViewModel
 
@@ -12,7 +12,7 @@ import com.items.bim.viewmodel.ToolsViewModel
 @Composable
 @Preview(showBackground = true)
 fun ToolsListTest(){
-    ToolsList(ToolsViewModel())
+    GameToolsList(ToolsViewModel())
 }
 
 @Composable
@@ -31,5 +31,5 @@ fun LotterySimulateTest(){
     ))
     lotteryMap[0] = l
     val lotteryViewModel: LotteryViewModel = LotteryViewModel()
-    LotterySimulate("鸣潮",44, lotteryViewModel)
+    LotterySimulate("鸣潮",44, lotteryViewModel, ToolsViewModel())
 }

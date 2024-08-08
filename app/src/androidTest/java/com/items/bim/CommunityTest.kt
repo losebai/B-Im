@@ -29,5 +29,5 @@ fun DynamicMessageTest(){
 @Preview(showBackground = true)
 fun CommunityHomeTest(){
     val communityList = ArrayList<CommunityEntity>()
-    CommunityHome(communityList=communityList, background = "")
+//    CommunityHome(communityList=communityList, background = "", communityList= arrayListOf(),)
 }

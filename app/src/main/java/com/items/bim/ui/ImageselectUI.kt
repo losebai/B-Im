@@ -36,15 +36,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.items.bim.R
 import com.items.bim.common.consts.StyleCommon
 import com.items.bim.common.consts.SystemApp
-import com.items.bim.common.ui.MySwipeRefresh
-import com.items.bim.common.ui.MySwipeRefreshState
-import com.items.bim.common.ui.NORMAL
 import com.items.bim.common.util.Utils
 import com.items.bim.dto.FileEntity
 import com.items.bim.viewmodel.ImageViewModel
@@ -156,6 +152,7 @@ fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}, onSele
                     val image = imagesGroups[it]
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Button(
+                            modifier = Modifier.fillMaxWidth(),
                             onClick = {
                                 imagesGroup = image
                                 title = image.name
@@ -187,5 +184,4 @@ fun ImageSelect(imageViewModel: ImageViewModel, onClose: () -> Unit = {}, onSele
             }
         }
     }
-
 }

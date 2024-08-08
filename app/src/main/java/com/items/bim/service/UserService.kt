@@ -3,6 +3,7 @@ package com.items.bim.service
 import com.items.bim.common.consts.AppAPI
 import com.items.bim.common.consts.UserStatus
 import com.items.bim.common.util.HttpUtils
+import com.items.bim.dto.UserGroup
 import com.items.bim.entity.UserEntity
 import com.items.bim.entity.AppUserEntity
 import okhttp3.Response
@@ -49,7 +50,7 @@ class UserService {
         return appUserEntity
     }
 
-    fun save(user: com.items.bim.entity.AppUserEntity): Boolean {
+    fun save(user: AppUserEntity): Boolean {
         val res: Response? = HttpUtils.post(AppAPI.POST_USER_SAVE, user)
         if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
@@ -58,12 +59,16 @@ class UserService {
         return false
     }
 
-    fun getList(user: com.items.bim.entity.AppUserEntity): List<UserEntity> {
+    fun getList(user: AppUserEntity): List<UserEntity> {
         val res: Response? = HttpUtils.post(AppAPI.POST_USER_LIST, user)
         if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
-            return json["data"].toObjectList(UserEntity::class.java)
+            return json["data"].toObjectList(UserEntity::class.java).sortedByDescending {
+                it.status.value
+            }
         }
         return Collections.emptyList()
     }
+
+
 }

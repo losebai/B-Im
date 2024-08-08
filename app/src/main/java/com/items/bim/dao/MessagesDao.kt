@@ -2,7 +2,10 @@ package com.items.bim.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Update
+import com.items.bim.common.consts.AppUserAck
 import com.items.bim.entity.MessagesEntity
+import com.items.bim.entity.UserMessages
 import kotlinx.coroutines.flow.Flow
 
 
@@ -31,27 +34,29 @@ interface MessagesDao : BaseDao<MessagesEntity> {
 
 
     /**获取最新的消息，并没有被确认的消息，按人进行分组
+     * 消息列表中没有确认的
      * @param [id]
      * @param [page]
      * @param [pageSize]
      * @return [Flow<List<MessagesEntity>>]
      */
     @Query(
-        "SELECT m.* from messages m join ( SELECT sendUserId,recvUserId,max(sendDateTime) max_time from messages where sendUserId in (:sendUserId, :recvUserId) or recvUserId in (:sendUserId, :recvUserId) group by sendUserId,recvUserId) m1 " +
+        "SELECT m.*,m1.num from messages m join ( SELECT sendUserId,recvUserId,max(sendDateTime) max_time, sum(case  when ack == 3 then 1 else 0 end ) num from messages where sendUserId in (:sendUserId, :recvUserId) or recvUserId in (:sendUserId, :recvUserId) group by sendUserId,recvUserId) m1 " +
                 "on m1.max_time = m.sendDateTime  "
     )
     fun getUserMessageLastByUserId(
         sendUserId: Long, recvUserId : Long,
-    ): Flow<List<MessagesEntity>>
+    ): Flow<List<UserMessages>>
 
     /**获取和某个人消息，接收人和发送人
+     * 全部消息
      * @param [sendUserId]
      * @param [recvUserId]
      * @param [page]
      * @param [pageSize]
      * @return [Flow<List<MessagesEntity>>]
      */
-    @Query("select * from (" +
+    @Query("select distinct * from (" +
             "select * from messages where sendUserId  = :sendUserId and recvUserId = :recvUserId  " +
             "union all " +
             "select * from messages where sendUserId  = :recvUserId and recvUserId = :sendUserId " +
@@ -61,14 +66,16 @@ interface MessagesDao : BaseDao<MessagesEntity> {
                                      page: Int,
                                      pageSize: Int) : List<MessagesEntity>
 
-    /**获取和某个人消息，接收人和发送人，未被确认的消息
+    /**
+     * 获取和某个人消息，接收人和发送人，未被确认的消息
+     * 对方发送的，我没确认（待确认中的）一般在消息沟通中
      * @param [sendUserId]
      * @param [recvUserId]
      * @param [page]
      * @param [pageSize]
      * @return [Flow<List<MessagesEntity>>]
      */
-    @Query("select * from messages where sendUserId = :sendUserId and recvUserId = :recvUserId  and ack = 1 LIMIT (:page - 1 * :pageSize), :pageSize")
+    @Query("select * from messages where sendUserId = :sendUserId and recvUserId = :recvUserId  and ack = 3 LIMIT (:page - 1 * :pageSize), :pageSize")
     fun getMessagesSendAndRecvFlowByUser(sendUserId: Long, recvUserId : Long,
                                      page: Int,
                                      pageSize: Int) : Flow<List<MessagesEntity>>

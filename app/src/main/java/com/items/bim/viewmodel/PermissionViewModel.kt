@@ -11,6 +11,8 @@ class PermissionViewModel : ViewModel() {
     var isCheck by mutableStateOf(false)
 
 
+    var cameraPermission by mutableStateOf(false)
+
     var photoPermission by mutableStateOf(false)
 
     var appPermission by mutableStateOf(false)

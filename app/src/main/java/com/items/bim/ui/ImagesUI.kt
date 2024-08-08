@@ -94,7 +94,7 @@ private val TEXT_ROW_MODIFIER = Modifier.fillMaxWidth(0.8f)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ImageTopBar(name: String, mainController: NavHostController, isDetail: () -> Boolean) {
+fun ImageTopBar(name: String, mainController: NavHostController) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -111,10 +111,7 @@ fun ImageTopBar(name: String, mainController: NavHostController, isDetail: () ->
         // 返回
         navigationIcon = {
             IconButton(onClick = {
-                if (!isDetail()) {
-                    // 从列表页返回
-                    mainController.navigateUp()
-                }
+                mainController.navigateUp()
             }) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
@@ -173,97 +170,35 @@ fun PhotoDataSetBody(
  * @param [mainController]
  */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PhotoDataSet(
     imageViewModel: ImageViewModel,
     mainController: NavHostController = rememberNavController()
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val path = imageViewModel.groupPath
     if (path != "") {
-        coroutineScope.launch {
+        ThreadPoolManager.getInstance().addTask("image", "loadPath"){
             imageViewModel.loadPath(path)
         }
     }
     val images = imageViewModel.getImageList(path)
-    var topVisible by remember {
-        mutableStateOf(true)
-    }
-    var imageDetail by remember {
-        mutableStateOf(FileEntity())
-    }
-    val isDetail = remember(path) {
-        mutableStateOf(false)
-    }
     logger.info { "PhotoDataSet重组了 $path" }
     Scaffold(
         snackbarHost = {
-            if (isDetail.value) {
-                SnackbarHost(hostState = snackBarHostState, modifier = Modifier.padding(0.dp))
-            }
+            SnackbarHost(hostState = snackBarHostState, modifier = Modifier.padding(0.dp))
         },
         topBar = {
-            if (isDetail.value) {
-                AnimatedVisibility(visible = topVisible) {
-                    ImageTopBar(imageDetail.name, mainController, isDetail={isDetail.value})
-                }
-            } else {
-                ImageTopBar(imageViewModel.groupName, mainController, isDetail={isDetail.value})
-            }
-        },
-        bottomBar = {
-            if (isDetail.value) {
-                AnimatedVisibility(visible = topVisible) {
-                    GetBottomBar(imageDetail.filePath) {
-                        // 这里是异步
-                        imageViewModel.reloadPath(path)
-                    }
-                }
-            }
+            ImageTopBar(imageViewModel.groupName, mainController)
         },
     ) { innerPadding ->
-        if (isDetail.value) {
-            val pagerState = rememberPagerState {
-                images.size
-            }
-            // 定位
-            coroutineScope.launch {
-                pagerState.scrollToPage(imageDetail.index)
-            }
-            // 详情页面
-            HorizontalPager(
-                state = pagerState,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-            ) { it ->
-                Button(
-                    onClick = {
-                        topVisible = !topVisible
-                        if (imageDetail.index != it) {
-                            imageDetail = images[it]
-                        }
-                    },
-                    shape = StyleCommon.ZERO_SHAPE,
-                    colors = ButtonDefaults.buttonColors(Color.White),
-                ) {
-                    FullScreenImage(
-                        fileEntity = images[it]
-                    )
-                }
-            }
-        } else {
-            PhotoDataSetBody(
-                images,
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-            ) {
-                imageDetail = it
-                isDetail.value = true
-            }
+        PhotoDataSetBody(
+            images,
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            imageViewModel.imageDetail.value = it
+            mainController.navigate(PageRouteConfig.IMAGE_DETAIL)
         }
     }
 }

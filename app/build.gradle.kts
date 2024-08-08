@@ -1,12 +1,13 @@
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
-import java.util.Properties
 import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
 //    id("org.jetbrains.kotlin.plugin.compose")
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
-    id("org.jetbrains.kotlin.kapt" )
+    id("org.jetbrains.kotlin.kapt")
 //    id("org.jetbrains.kotlin.plugin.parcelize")
     id("kotlin-parcelize")
 //    kotlin("jvm")
@@ -26,7 +27,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.1.2"
+        versionName = "0.1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -35,6 +36,8 @@ android {
         ndk {
             abiFilters.addAll( listOf("mips","mips64","x86_64","armeabi","armeabi-v7a","arm64-v8a"))
         }
+//        testFunctionalTest = true
+//        testHandleProfiling = true
 
     }
 
@@ -42,13 +45,14 @@ android {
         getByName("main") {
             res.srcDirs("src/main/res")
         }
-        getByName("debug") {
-            res.srcDirs("res/mc")
+        getByName("test") {
+            setRoot("src/test")
+            res.srcDirs("src/test/java")
         }
         getByName("androidTest") {
-            setRoot("androidTest")
+            setRoot("src/androidTest")
+            res.srcDirs("src/androidTest/java")
         }
-
     }
 
 
@@ -73,17 +77,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            signingConfig = signingConfigs.getByName("config")
+            signingConfig = signingConfigs.getByName("debug")
         }
         debug {
             isDebuggable = true
             isMinifyEnabled = false
             isShrinkResources = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-
-            )
             signingConfig = signingConfigs.getByName("config")
             //noinspection ChromeOsAbiSupport
             ndk.abiFilters += "x86"
@@ -106,7 +105,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
-        buildConfig= true
+        buildConfig = true
 
     }
 
@@ -137,7 +136,6 @@ android {
             manifestPlaceholders["app_name_value"] = "Android"
             buildConfigField("String", "BASE_URL", "\"http://192.168.1.3:8050\"")
             buildConfigField("String", "SOCKET_URL", "\"sd:tcp://192.168.1.3:8002\"")
-//            buildConfigField("String", "BASE_URL", "\"http://192.168.20.119:8082\"")
         }
         create("pro") {
             //应用包名添加后缀
@@ -153,31 +151,51 @@ android {
     applicationVariants.all {
         outputs.all {
             if (this is BaseVariantOutputImpl) {
-                val name = "B-Im-${buildType.name}-${versionName}-${productFlavors.first().name}.apk"
+                val name =
+                    "B-Im-${buildType.name}-${versionName}-${productFlavors.first().name}.apk"
                 outputFileName = name
             }
         }
     }
 }
 
+val coilVersion = "2.5.0"
+val navigationVersion = "2.8.0-alpha06"
+
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+
+    val cameraxVersion = "1.2.0-alpha04"
+    implementation("androidx.camera:camera-extensions:$cameraxVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
+    implementation("androidx.camera:camera-view:$cameraxVersion")
+
+    // mlkit
+    implementation("com.google.mlkit:barcode-scanning:17.0.2")
+    implementation("com.google.mlkit:text-recognition:16.0.0-beta4")
+    implementation("com.google.mlkit:text-recognition-chinese:16.0.0-beta4")
+
 
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
     implementation("org.slf4j:slf4j-simple:2.0.12")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
 
+//    implementation("com.github.alibaba:aliyunpan-android-sdk:v0.2.2")
+
 //    implementation("org.noear:solon:2.7.5")
     implementation("org.noear:snack3:3.2.95")
     implementation("org.noear:socketd-transport-smartsocket:2.5.0")
 
+    implementation("io.coil-kt:coil-compose:$coilVersion")
+    implementation("io.coil-kt:coil-svg:$coilVersion")
+
 //    implementation("com.android.support:support-v4:34.0.0")
     //noinspection GradleDependency
     //noinspection GradleDependency
-    implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-dynamic-features-fragment:2.7.7")
+    implementation("androidx.navigation:navigation-compose:$navigationVersion")
+    implementation("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
+    implementation("androidx.navigation:navigation-ui-ktx:$navigationVersion")
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:$navigationVersion")
     implementation("androidx.webkit:webkit:1.11.0")
 
 

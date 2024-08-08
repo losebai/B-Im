@@ -2,12 +2,17 @@ package com.items.bim.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.util.Log
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -24,13 +29,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,7 +49,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
@@ -56,10 +64,13 @@ import com.items.bim.R
 import com.items.bim.common.consts.StyleCommon
 import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.ui.HeadImage
+import com.items.bim.common.ui.InputBottom
+import com.items.bim.common.ui.MessageText
 import com.items.bim.common.ui.MySwipeRefresh
 import com.items.bim.common.ui.MySwipeRefreshState
 import com.items.bim.common.ui.NORMAL
 import com.items.bim.common.ui.REFRESHING
+import com.items.bim.common.util.DateUtils
 import com.items.bim.common.util.ThreadPoolManager
 import com.items.bim.config.PageRouteConfig
 import com.items.bim.entity.MessagesEntity
@@ -71,6 +82,9 @@ import kotlinx.coroutines.launch
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.seconds
 
 private val logger = KotlinLogging.logger {
 }
@@ -94,7 +108,7 @@ fun MessagesList(
         onRefresh = {
             ThreadPoolManager.getInstance().addTask("MessagesList") {
                 state.loadState = REFRESHING
-                logger.info { "正在获取刷新联系人列表" }
+                logger.info { "正在获取刷新 消息列表" }
                 state.loadState = NORMAL
             }
         },
@@ -107,6 +121,7 @@ fun MessagesList(
             items(messagesViewModel.userMessagesList) { user ->
                 val isSend = SystemApp.UserId == user.sendUserId
                 Row(modifier = Modifier
+                    .fillMaxWidth()
                     .padding(5.dp)
                     .clickable {
                         userViewModel.recvUserId = if (isSend) user.recvUserId else user.sendUserId
@@ -117,7 +132,11 @@ fun MessagesList(
                         modifier = StyleCommon.HEAD_IMAGE
                     ) {
                     }
-                    Column(modifier = Modifier.padding(start = 10.dp)) {
+                    Column(modifier =
+                    Modifier
+                        .padding(start = 10.dp)
+                        .fillMaxWidth(0.8f)
+                    ) {
                         Text(
                             text = if (isSend) user.recvUserName else user.sendUserName,
                             modifier = Modifier
@@ -133,13 +152,29 @@ fun MessagesList(
                             color = Color.Black
                         )
                     }
+                    Row(modifier= Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+                        .padding(start = 10.dp),
+                        horizontalArrangement = Arrangement.End) {
+                        Column {
+                            Text(text = DateUtils.timestampToDateStr(user.sendDateTime),
+                                fontSize = 10.sp,
+                                color = Color.Gray)
+                            if (user.num!! > 0){
+                                Surface(modifier = Modifier.background(Color.Red)) {
+                                    Text(text = "${user.num}", fontSize = 20.sp)
+                                }
+                            }
+
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-@OptIn(DelicateCoroutinesApi::class, ExperimentalMaterial3Api::class)
 @SuppressLint("ResourceAsColor", "CoroutineCreationDuringComposition")
 @Composable
 fun MessagesBody(
@@ -149,39 +184,14 @@ fun MessagesBody(
     modifier: Modifier,
 ) {
     val state = MySwipeRefreshState(NORMAL)
-    GlobalScope.launch(Dispatchers.Default)  {
-        var oldData = ""
-        val list = messagesViewModel.getMessagesSendAndRecvByUser(
-            SystemApp.UserId,
-            recvUserEntity.id,
-            1,
-            100
-        )
-        val messages = messagesProd()
-        messages.clear()
-        messages.addAll(list)
-        logger.info { "一直有多少条消息${SystemApp.UserId}:${ recvUserEntity.id}:${list.size}" }
-        messagesViewModel.getMessagesSendAndRecvFlowByUserAck(
-            recvUserEntity.id,
-            SystemApp.UserId, 1, 100
-        ) {
-            for(message : MessagesEntity in it){
-                if (message.messagesId == oldData){
-                    continue
-                }
-                oldData = message.messagesId
-                messages.add(0, message)
-            }
-            logger.info { "本次接受 ${it.size}" }
-        }
-    }
-    logger.info { "MessagesBody 重组" }
+    val scope = rememberCoroutineScope()
     MySwipeRefresh(state = state, onRefresh = { /*TODO*/ }, onLoadMore = { /*TODO*/ },
         modifier = modifier
     ) { refreshModifier ->
         logger.info { "MessagesBody MySwipeRefresh 重组" }
         LazyColumn(refreshModifier, reverseLayout=true) {
-            items(messagesProd()) { it ->
+            val messages = messagesProd()
+            items(messages) { it ->
                 val isSend = it.sendUserId == SystemApp.UserId
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -196,59 +206,18 @@ fun MessagesBody(
                             modifier = Modifier.padding(10.dp),
                             horizontalAlignment = Alignment.End
                         ) {
-//                                Text(text = it.sendDateTime, fontSize = 10.sp)
-                            Surface(
-                                shape = RectangleShape,
-                                shadowElevation = 4.dp,
-                                tonalElevation = 1.dp,
-                                color = Color(R.color.sendMessage),
-                                modifier = Modifier
-                                    .wrapContentWidth()
-                                    .padding(1.dp)
-                            ) {
-                                Text(
-                                    text = it.messageData.substring(
-                                        0,
-                                        if (it.messageData.length < 20) it.messageData.length else 20
-                                    ),
-                                    textAlign = TextAlign.Right,
-                                    fontSize = 18.sp,
-                                    color = Color.White,
-                                    modifier = Modifier.padding(4.dp),
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
+                            MessageText(it)
                         }
                         HeadImage(
                             SystemApp.USER_IMAGE,
                             modifier = StyleCommon.HEAD_IMAGE
                         ) {
-
                         }
                     } else {
                         HeadImage(recvUserEntity.imageUrl, modifier = StyleCommon.HEAD_IMAGE) {
                         }
                         Column(modifier = Modifier.padding(10.dp)) {
-//                                Text(text = it.sendDateTime, fontSize = 10.sp)
-                            Surface(
-                                shape = RectangleShape,
-                                shadowElevation = 4.dp,
-                                tonalElevation = 1.dp,
-                                modifier = Modifier
-                                    .wrapContentWidth()
-                                    .padding(1.dp)
-                            ) {
-                                Text(
-                                    text = it.messageData.substring(
-                                        0,
-                                        if (it.messageData.length < 20) it.messageData.length else 20
-                                    ),
-                                    textAlign = TextAlign.Left,
-                                    fontSize = 18.sp,
-                                    modifier = Modifier.padding(5.dp),
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
+                            MessageText(it)
                         }
                     }
                 }
@@ -276,18 +245,23 @@ fun MessagesDetail(
     mainController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    val activity = LocalContext.current as Activity
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    var sendData by remember {
-        mutableStateOf("")
-    }
-    val sendDataIsEmpty by remember {
-        derivedStateOf { sendData.isEmpty() }
-    }
     val messages = remember {
         mutableStateListOf<MessagesEntity>()
     }
+    LaunchedEffect(key1 = recvUserEntity.id) {
+        messages.clear()
+        scope.launch(Dispatchers.Default) {
+            messages.addAll( messagesViewModel.getMessagesSendAndRecvByUser(
+                SystemApp.UserId,
+                recvUserEntity.id,
+                1,
+                10
+            ))
+        }
+    }
+    logger.info { "MessagesBody 重组 $recvUserEntity" }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -306,6 +280,8 @@ fun MessagesDetail(
                 navigationIcon = {
                     IconButton(onClick = {
                         // 从列表页返回
+                        scope.cancel()
+                        messagesViewModel.isOnUserMessageLister = false
                         mainController.navigateUp()
                     }) {
                         Icon(
@@ -326,70 +302,34 @@ fun MessagesDetail(
             )
         },
         bottomBar = {
-            BottomAppBar(modifier = modifier) {
-                Row(
-                    modifier = modifier
-                        .padding(10.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    TextField(
-                        value = sendData, onValueChange = {
-                            sendData = it
-                        }, colors = TextFieldDefaults.colors(Color.White),
-                        modifier=Modifier.clickable {
-                            logger.info { "状态栏高度 ${scrollBehavior.state.heightOffset} " +
-                                    "${scrollBehavior.state.heightOffsetLimit}" }
-                            scrollBehavior.state.heightOffset =  -scrollBehavior.state.heightOffsetLimit
-                        }
-                    )
-                    if (sendDataIsEmpty) {
-                        IconButton(
-                            onClick = {
-                                mainController.navigate("${PageRouteConfig.IMAGE_SELECTOR}/message")
-                            }, modifier = Modifier.size(50.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Add,
-                                contentDescription = "Localized description"
-                            )
-                        }
-                    } else {
-                        IconButton(onClick = {
-                            // 关闭键盘
-//                            activity.dismissKeyboardShortcutsHelper()
-                            if (sendData.isNotEmpty()) {
-                                scope.launch {
-                                    val message = MessagesEntity(
-                                        sendUserId = SystemApp.UserId,
-                                        sendDateTime = System.currentTimeMillis(),
-                                        recvUserId = recvUserEntity.id,
-                                        messageData = sendData,
-                                        recvDateTime = null,
-                                        ack = 0
-                                    )
-                                    messagesViewModel.saveItem(message)
-                                    ThreadPoolManager.getInstance().addTask("message") {
-                                        messagesViewModel.messageService.sendMessagesEntity(message)
-                                    }
-                                    sendData = ""
-                                    messages.add(0, message)
-                                }
-                            }
-                        },modifier = Modifier.size(50.dp)) {
-                            Icon(
-                                imageVector = Icons.Filled.Send,
-                                contentDescription = "Localized description"
-                            )
-                        }
-                    }
-                }
-            }
+            InputBottom(modifier, onSendData = {
+                val message = MessagesEntity(
+                    sendUserId = SystemApp.UserId,
+                    sendDateTime = System.currentTimeMillis(),
+                    recvUserId = recvUserEntity.id,
+                    messageData = it,
+                    recvDateTime = null,
+                    ack = if (recvUserEntity.id == SystemApp.UserId) 5 else 1
+                )
+                messagesViewModel.sendUserMessage(message)
+                messages.add(0, message)
+            }, onCloseSendData = {
+                mainController.navigate("${PageRouteConfig.IMAGE_SELECTOR}/message")
+            })
         },
         modifier = modifier
             .fillMaxWidth()
             .fillMaxHeight(),
     ) { pand ->
+        if (!messagesViewModel.isOnUserMessageLister){
+            scope.launch {
+                messagesViewModel.onUserMessageLister(this, recvUserEntity.id){
+                    messages.add(0, it)
+                    logger.debug { "onUserMessageLister ${it}" }
+                }
+            }
+            messagesViewModel.isOnUserMessageLister = true
+        }
         MessagesBody( messagesProd = {messages}, messagesViewModel, recvUserEntity, Modifier.padding(pand))
     }
 }

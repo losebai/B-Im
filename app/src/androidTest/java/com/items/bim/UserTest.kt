@@ -1,4 +1,4 @@
-package com.example.bim
+package com.items.bim
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.items.bim.entity.UserEntity
 import java.util.ArrayList
 
-//@Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun UserListTest(){
     val list: ArrayList<UserEntity> = ArrayList()
@@ -30,7 +30,7 @@ fun UserListTest(){
         "这是一个签名" ))
     list.add(UserEntity(1,"test", "https://profile-avatar.csdnimg.cn/fbf610cacb2842c1aeb9582d3f0ef4f4_weixin_45904404.jpg!1",
         "这是一个签名" ))
-//    UserList(list){}
+    UserList(list)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,3 +58,6 @@ fun SearchUserTest(){
         .fillMaxWidth()
         .padding(0.dp))
 }
+
+@Composable
+fun UserList(list : List<UserEntity>){}

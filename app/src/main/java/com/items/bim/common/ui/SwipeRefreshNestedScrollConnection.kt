@@ -57,7 +57,7 @@ private class SwipeRefreshNestedScrollConnection(
         //当处于刷新状态或者更多状态，不处理
         state.loadState != NORMAL -> Offset.Zero
         source == NestedScrollSource.Drag -> {
-//            Log.v("hj", "onPreScroll available = $available")
+//            Log.v("hj", "onPreScroll available = $available ${state.loadState}")
             if (available.y > 0 && isBottom) {
                 onScroll(available)
             } else if (available.y < 0 && isTop) {
@@ -171,8 +171,8 @@ fun MySwipeRefresh(
     modifier: Modifier = Modifier,
     refreshTriggerDistance: Dp = 120.dp,//indication可见的最大高度
     indicationHeight: Dp = 56.dp,//indication的高度
-    refreshEnabled: Boolean = true,//是否支持下拉刷新
-    loadMoreEnabled: Boolean = true,//是否支持上拉加载更多
+    refreshEnabled: Boolean = false,//是否支持下拉刷新
+    loadMoreEnabled: Boolean = false,//是否支持上拉加载更多
     indicator: @Composable BoxScope.(modifier: Modifier, state: MySwipeRefreshState, indicatorHeight: Dp) -> Unit = { m, s, height ->
         LoadingIndicator(m, s, height)
     },//顶部或者底部的Indicator

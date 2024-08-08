@@ -68,14 +68,11 @@ open class ViewModelEvent private constructor(context: Context) {
                 }
                 sendRecv.add(key)
                 if (send != null && recv != null) {
-                    userMessages.add(
-                        it.toUserMessages(
-                            send.name,
-                            send.imageUrl,
-                            recv.name,
-                            recv.imageUrl
-                        )
-                    )
+                    it.sendUserName = send.name;
+                    it.sendUserImageUri = send.imageUrl;
+                    it.recvUserName = recv.name;
+                    it.recvUserImageUri = recv.imageUrl;
+                    userMessages.add(it)
                 }
             }
             onChange(userMessages)

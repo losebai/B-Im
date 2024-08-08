@@ -1,4 +1,4 @@
-package com.example.bim
+package com.items.bim
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize

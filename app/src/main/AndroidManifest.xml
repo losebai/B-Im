@@ -57,6 +57,27 @@
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
+        <!-- 启动状态的Service 声明 -->
+
+<!--        <service android:name=".AppStartService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="false"-->
+<!--            android:process=":remote"-->
+<!--            android:isolatedProcess="false">-->
+<!--            &lt;!&ndash; 可以添加 intent-filter 来允许隐式启动 &ndash;&gt;-->
+<!--            &lt;!&ndash; <intent-filter> &ndash;&gt;-->
+<!--            &lt;!&ndash; <action android:name="com.example.myapp.ACTION_START_SERVICE" /> &ndash;&gt;-->
+<!--            &lt;!&ndash; </intent-filter> &ndash;&gt;-->
+<!--        </service>-->
+
+        <!-- 绑定状态的Service 声明 -->
+        <service android:name=".AppStartService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.myapp.MY_BIND_SERVICE" />
+            </intent-filter>
+        </service>
 <!--        <provider-->
 <!--            android:name="androidx.core.content.FileProvider"-->
 <!--            android:authorities="com.items.bim.fileprovider"-->

@@ -1,7 +1,11 @@
 package com.items.bim.viewmodel
 
 import android.content.Context
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.items.bim.common.provider.BaseContentProvider
 import com.items.bim.common.util.ImageUtils
@@ -22,8 +26,9 @@ class ImageViewModel() : ViewModel() {
     val groupMap = Hashtable<String, ArrayList<FileEntity>>()
 
     // 本机目录图片集合
-    var dirList = mutableStateListOf<FileEntity>()
+    var dirList = ArrayList<FileEntity>()
 
+    var imageDetail = mutableStateOf(FileEntity())
 
     init {
         groupMap[""] = arrayListOf()
@@ -44,7 +49,7 @@ class ImageViewModel() : ViewModel() {
     }
 
     fun reload(){
-        dirList.removeRange(0, dirList.size - 1)
+        dirList.subList(0, dirList.size - 1).clear()
     }
 
     fun getImageList(path: String) : List<FileEntity> {
@@ -66,6 +71,7 @@ class ImageViewModel() : ViewModel() {
                 this.index = i
             })
             day7.location = day7List[0].location
+            day7.dirSize = day7List.size
         }
         groupMap[""]?.addAll(day7List)
     }

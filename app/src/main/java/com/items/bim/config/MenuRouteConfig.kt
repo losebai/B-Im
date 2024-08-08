@@ -32,8 +32,10 @@ object MenuRouteConfig {
     const val ROUTE_USERS = "ROUTE_USERS"
 
 
-    /** 工具路径 */
-    const val TOOLS_ROUTE = "TOOLS_ROUTE"
+    /** 游戏工具路径 */
+    const val GAME_TOOLS_ROUTE = "GAME_TOOLS_ROUTE"
+
+    const val COMMON_TOOLS_ROUTE = "COMMON_TOOLS_ROUTE"
 
 }
 
@@ -46,6 +48,8 @@ object PageRouteConfig{
     const val IMAGE_PAGE_ROUTE = "IMAGE_PAGE_ROUTE"
 
     const val IMAGE_GROUP_LIST = "IMAGE_GROUP_LIST"
+
+    const val IMAGE_DETAIL = "IMAGE_DETAIL"
 
     const val IMAGE_DETAIL_ROUTE = "IMAGE_SHOW_ROUTE";
 

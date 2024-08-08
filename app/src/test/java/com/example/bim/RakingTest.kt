@@ -1,6 +1,5 @@
 package com.example.bim
 
-import com.items.bim.common.consts.SystemApp
 import com.items.bim.dto.GameRoleDto
 import com.items.bim.service.RakingService
 import org.junit.Test
