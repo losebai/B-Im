@@ -38,7 +38,9 @@ private class SwipeRefreshNestedScrollConnection(
     private val state: MySwipeRefreshState,
     private val coroutineScope: CoroutineScope,
     private val onRefresh: () -> Unit,
-    private val onLoadMore: () -> Unit
+    private val onLoadMore: () -> Unit,
+    val loadheight: Float = 100F,
+    val skipHeight: Float = 300F
 ) : NestedScrollConnection {
     var refreshEnabled: Boolean = false//是否开启下拉刷新
     var loadMoreEnabled: Boolean = false//是否开启上拉加载
@@ -57,10 +59,10 @@ private class SwipeRefreshNestedScrollConnection(
         //当处于刷新状态或者更多状态，不处理
         state.loadState != NORMAL -> Offset.Zero
         source == NestedScrollSource.Drag -> {
-//            Log.v("hj", "onPreScroll available = $available ${state.loadState}")
-            if (available.y > 0 && isBottom) {
+            Log.v("hj", "onPreScroll available = $available ${state.loadState}")
+            if (available.y > 0 && isBottom) { // 向上
                 onScroll(available)
-            } else if (available.y < 0 && isTop) {
+            } else if (available.y < 0 && isTop) { // 向下
                 onScroll(available)
             } else {
                 Offset.Zero
@@ -107,10 +109,19 @@ private class SwipeRefreshNestedScrollConnection(
         if (!isBottom && !isTop) {
             return Offset.Zero
         }
-        if (available.y > 0 && isTop) {
-            state.isSwipeInProgress = true
-        } else if (available.y < 0 && isBottom) {
-            state.isSwipeInProgress = true
+
+        if (available.y > 0 && isTop && available.y > loadheight) {
+            if (available.y > skipHeight){
+                state.isSkip = true
+            }else{
+                state.isSwipeInProgress = true
+            }
+        } else if (available.y < 0 && isBottom && available.y < -loadheight) {
+            if (available.y < -skipHeight){
+                state.isSkip = false
+            }else{
+                state.isSwipeInProgress = true
+            }
         } else if (state.indicatorOffset.roundToInt() == 0) {
             state.isSwipeInProgress = false
         }
@@ -169,10 +180,10 @@ fun MySwipeRefresh(
     onRefresh: () -> Unit,//下拉刷新回调
     onLoadMore: () -> Unit,//上拉加载更多回调
     modifier: Modifier = Modifier,
-    refreshTriggerDistance: Dp = 120.dp,//indication可见的最大高度
+    refreshTriggerDistance: Dp = 250.dp,//indication可见的最大高度
     indicationHeight: Dp = 56.dp,//indication的高度
-    refreshEnabled: Boolean = false,//是否支持下拉刷新
-    loadMoreEnabled: Boolean = false,//是否支持上拉加载更多
+    refreshEnabled: Boolean = true,//是否支持下拉刷新
+    loadMoreEnabled: Boolean = true,//是否支持上拉加载更多
     indicator: @Composable BoxScope.(modifier: Modifier, state: MySwipeRefreshState, indicatorHeight: Dp) -> Unit = { m, s, height ->
         LoadingIndicator(m, s, height)
     },//顶部或者底部的Indicator

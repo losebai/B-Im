@@ -87,7 +87,7 @@ fun SettingHome(
                         },
                         modifier = Modifier
                             .size(60.dp)
-                            .padding(0.dp),
+                            ,
                         contentPadding = ZERO_PADDING,
                         colors = ButtonDefaults.buttonColors(Color.White)
                     ) {
@@ -102,7 +102,10 @@ fun SettingHome(
                             )
                         }
                     }
-                    Column {
+                    Column(
+                        Modifier
+                            .padding(10.dp)
+                    ) {
                         TextButton(
                             onClick = { /*TODO*/ },
                             contentPadding = ZERO_PADDING,
