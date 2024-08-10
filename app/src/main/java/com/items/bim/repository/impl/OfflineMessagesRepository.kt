@@ -25,7 +25,7 @@ class OfflineMessagesRepository(private val messagesDao: MessagesDao) : Messages
 
     override  fun getUserMessageLastByRecvUserId(
         sendUserId: Long, recvUserId : Long,
-    ): Flow<List<UserMessages>> = messagesDao.getUserMessageLastByUserId(sendUserId, recvUserId)
+    ): Flow<List<UserMessages>> = messagesDao.getUserMessageLastByUserId(recvUserId)
 
     override  fun getMessagesSendAndRecvByUser(
         sendUserId: Long, recvUserId: Long,
