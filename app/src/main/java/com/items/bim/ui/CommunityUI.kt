@@ -77,7 +77,7 @@ fun DynamicMessage(communityEntity: CommunityEntity, modifier: Modifier = Modifi
             .border(1.dp, Color.Black)
             .padding(5.dp)
             .background(Color.White),
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -180,7 +180,7 @@ fun DynamicMessage(communityEntity: CommunityEntity, modifier: Modifier = Modifi
             IconButton(
                 onClick = { /*TODO*/ },
                 modifier = Modifier
-                    .height(40.dp)
+                    .height(30.dp)
                     .width(50.dp)
             ) {
                 Icon(

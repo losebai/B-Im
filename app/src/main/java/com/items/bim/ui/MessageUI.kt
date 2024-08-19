@@ -184,7 +184,7 @@ fun MessagesBody(
         modifier = modifier
     ) { refreshModifier ->
         logger.info { "MessagesBody MySwipeRefresh 重组" }
-        LazyColumn(modifier, reverseLayout = true) {
+        LazyColumn(Modifier, reverseLayout = true) {
             val messages = messagesProd()
             items(messages) { it ->
                 val isSend = it.sendUserId == SystemApp.UserId
