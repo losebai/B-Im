@@ -2,7 +2,6 @@ package com.items.bim
 
 import android.content.pm.ActivityInfo
 import android.os.Build
-import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +26,7 @@ import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.ui.web.WanNavActions
 import com.items.bim.common.ui.web.WebScreen
 import com.items.bim.common.util.ThreadPoolManager
+import com.items.bim.common.util.Utils
 import com.items.bim.config.MingChaoRoute
 import com.items.bim.config.PageRouteConfig
 import com.items.bim.config.WEB_API_ROURE
@@ -35,19 +35,25 @@ import com.items.bim.event.GlobalInitEvent
 import com.items.bim.service.FileService
 import com.items.bim.ui.AddDynamic
 import com.items.bim.ui.EditPage
+import com.items.bim.ui.EmailRegister
 import com.items.bim.ui.GameRoleRaking
 import com.items.bim.ui.GetCookiesUri
 import com.items.bim.ui.HookList
 import com.items.bim.ui.ImageDetail
 import com.items.bim.ui.ImageGroupList
 import com.items.bim.ui.ImageSelect
+import com.items.bim.ui.LoginStart
 import com.items.bim.ui.LotterySimulate
 import com.items.bim.ui.MCRoleLotteryHome
 import com.items.bim.ui.MessagesDetail
 import com.items.bim.ui.PageHost
 import com.items.bim.ui.PhotoDataSet
 import com.items.bim.ui.RankingHome
+import com.items.bim.ui.SettingDetail
 import com.items.bim.ui.UserInfoEdit
+import com.items.bim.ui.UserLogin
+import com.items.bim.ui.UserLoginBox
+import com.items.bim.ui.UserPassWord
 import com.items.bim.viewmodel.CommunityViewModel
 import com.items.bim.viewmodel.ConfigViewModel
 import com.items.bim.viewmodel.HomeViewModel
@@ -55,10 +61,14 @@ import com.items.bim.viewmodel.ImageViewModel
 import com.items.bim.viewmodel.LotteryViewModel
 import com.items.bim.viewmodel.MessagesViewModel
 import com.items.bim.viewmodel.ToolsViewModel
+import com.items.bim.viewmodel.UserLoginModel
 import com.items.bim.viewmodel.UserViewModel
 import com.items.bim.viewmodel.WebVIewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlin.concurrent.thread
+import kotlin.time.Duration.Companion.seconds
 
 private val logger = KotlinLogging.logger {
 }
@@ -71,7 +81,7 @@ fun MainNavGraph(
     homeViewModel: HomeViewModel,
     userViewModel: UserViewModel,
     messagesViewModel: MessagesViewModel,
-    init: () -> Unit = {}
+    init: suspend () -> Unit = {}
 ) {
     val configViewModel = viewModel<ConfigViewModel>()
     val communityViewModel = viewModel<CommunityViewModel>()
@@ -80,19 +90,22 @@ fun MainNavGraph(
     val lotteryViewModel = viewModel<LotteryViewModel>()
     val webViewModel = viewModel<WebVIewModel>()
     val imageViewModel = viewModel<ImageViewModel>()
+    val userLoginModel = viewModel<UserLoginModel>()
     val wanUiState by webViewModel.uiState.collectAsStateWithLifecycle()
     val webNavActions = remember(navHostController) { WanNavActions(navHostController) }
     LaunchedEffect(Unit) {
         thread {
             GlobalInitEvent.run()
-            init()
+            // 加载远程配置
             configViewModel.check()
         }
+        // 初始化
+        init()
     }
     logger.info { "MainNavGraph init" }
     NavHost(
         navController = navHostController,
-        startDestination = PageRouteConfig.MENU_ROUTE,
+        startDestination = PageRouteConfig.START_PAGE,
         enterTransition = {
             slideInHorizontally(animationSpec = tween(800), //动画时长1s
                 initialOffsetX = {
@@ -108,6 +121,41 @@ fun MainNavGraph(
             .fillMaxWidth(1f)
             .fillMaxHeight(1f)
     ) {
+        // 登录相关
+        composable(PageRouteConfig.START_PAGE){
+            LoginStart()
+            LaunchedEffect(key1 = UInt) {
+                if (userLoginModel.checkLogin()){
+                    navHostController.navigate(PageRouteConfig.MENU_ROUTE)
+                }else{
+                    navHostController.navigate(PageRouteConfig.USER_LOGIN)
+                }
+            }
+        }
+        // 登录页面
+        composable(PageRouteConfig.USER_LOGIN){
+            UserLogin(userLoginModel, userViewModel, navHostController)
+        }
+        // 注册
+        composable(PageRouteConfig.USER_REGISTER){
+            UserLoginBox(body = {
+                EmailRegister(onSendCode = {
+                    ThreadPoolManager.getInstance().addTask("io"){
+                        if(userLoginModel.userLoginService.sendCode(it)){
+                            Utils.message(MainScope(), "发送成功", SystemApp.snackBarHostState)
+                        }else{
+                            Utils.message(MainScope(), "发送失败", SystemApp.snackBarHostState)
+                        }
+                    }
+                },
+                    onRegister = { u ->
+                        ThreadPoolManager.getInstance().addTask("io"){
+                            userLoginModel.userLoginService.register(u)
+                        }
+                    })
+            })
+        }
+
         // 一级页面
         composable(PageRouteConfig.MENU_ROUTE) {
             PageHost(
@@ -121,7 +169,6 @@ fun MainNavGraph(
                 lotteryViewModel
             )
         }
-        // 二级页面 相片页
         composable(PageRouteConfig.IMAGE_PAGE_ROUTE) {
             PhotoDataSet(imageViewModel, navHostController)
         }
@@ -287,6 +334,9 @@ fun MainNavGraph(
         }
         composable(PageRouteConfig.ADD_DYNAMIC){
             AddDynamic(mainController = navHostController, communityViewModel)
+        }
+        composable(PageRouteConfig.SETTING){
+            SettingDetail(userLoginModel, navHostController)
         }
     }
 }

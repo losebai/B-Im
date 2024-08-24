@@ -40,7 +40,7 @@ import com.items.bim.common.consts.StyleCommon
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBarBack(modifier: Modifier=Modifier,
+fun TopAppBarBack(modifier: Modifier = Modifier,
                   title: @Composable () -> Unit,
                   mainController: NavHostController,
                   content: @Composable () -> Unit){
@@ -72,10 +72,10 @@ inline fun LogCompositions(msg: String) {
 }
 
 @Composable
-fun TopAppRow(navigationIcon : () -> Unit , title: @Composable () -> Unit){
+fun TopAppRow(onNavigation : () -> Unit , title: @Composable () -> Unit){
     Row(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth(0.2f)) {
-            IconButton(onClick = navigationIcon, modifier = Modifier.padding(top = 30.dp, start = 10.dp)) {
+            IconButton(onClick = onNavigation, modifier = Modifier.padding(top = 30.dp, start = 10.dp)) {
                 Icon(
                     imageVector = Icons.Outlined.ArrowBack,
                     contentDescription = "返回",

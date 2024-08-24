@@ -112,7 +112,7 @@ fun RankingHome(
             )
             .padding(20.dp)
     ) {
-        TopAppRow(navigationIcon = {
+        TopAppRow(onNavigation = {
             mainController.navigateUp()
         }, title = {
             Button(

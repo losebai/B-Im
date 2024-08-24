@@ -73,7 +73,7 @@ fun GameRoleRaking(
                 alpha = 0.8f
             )
     ) {
-        TopAppRow(navigationIcon = {
+        TopAppRow(onNavigation = {
             navHostController.navigateUp()
         }, title = {
             Text(text = "角色强度排名")

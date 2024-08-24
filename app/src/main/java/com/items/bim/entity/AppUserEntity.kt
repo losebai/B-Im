@@ -12,5 +12,5 @@ data class AppUserEntity(
     var status: UserStatus = UserStatus.INIT
 )
 
-fun com.items.bim.entity.AppUserEntity.toUserEntity() = UserEntity(id, name, imageUrl, note, status=status)
+fun AppUserEntity.toUserEntity() = UserEntity(id, name, imageUrl, note, status=status)
 

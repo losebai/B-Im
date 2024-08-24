@@ -1,7 +1,6 @@
 package com.items.bim.common.http
 
 import android.content.Context
-import com.example.miaow.base.http.CookieJar
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

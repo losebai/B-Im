@@ -1,6 +1,8 @@
 package com.items.bim.common.util;
 
+import android.util.Log
 import com.items.bim.BuildConfig
+import com.items.bim.common.http.CookieJar
 import okhttp3.FormBody
 import okhttp3.Headers
 import okhttp3.MediaType.Companion.toMediaType
@@ -24,20 +26,23 @@ object HttpUtils {
 
     private val client: OkHttpClient = OkHttpClient.Builder()
         .readTimeout(30, TimeUnit.SECONDS)
+        .cookieJar(CookieJar())
         .build();
 
-    private fun requestBody(data: Map<String, String>?) : FormBody {
+    val headersGoble = hashMapOf<String, String>()
+
+    private fun requestBody(data: Map<String, String>?): FormBody {
         val builder = FormBody.Builder()
-        data?.forEach{
+        data?.forEach {
             builder.add(it.key, it.value)
         }
         return builder.build()
     }
 
-    private fun multipartBody(file : File?) : MultipartBody? {
+    private fun multipartBody(file: File?): MultipartBody? {
         file?.let {
-           return  MultipartBody.Builder()
-               .setType(MultipartBody.FORM)
+            return MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
                 //添加文件
                 //RequestBody.create用于接收MediaType.parse
                 //MediaType.parse("text/plain")  指定文件上传的类型
@@ -48,31 +53,31 @@ object HttpUtils {
     }
 
 
-    private fun requestBody(data: Any) : RequestBody {
-       return ONode.serialize(data).toRequestBody(MEDIA_TYPE_JSON)
+    private fun requestBody(data: Any): RequestBody {
+        return ONode.serialize(data).toRequestBody(MEDIA_TYPE_JSON)
     }
 
     fun url(url: String?, params: Map<String, Any>?): String {
         val param = StringBuilder()
         if (params != null) {
-            if (params.isNotEmpty()){
+            if (params.isNotEmpty()) {
                 param.append("?")
             }
-            params.forEach{
+            params.forEach {
                 param.append(it.key).append("=").append(it.value.toString()).append("&")
             }
         }
         if (url != null) {
-            if (url.startsWith("http")){
+            if (url.startsWith("http")) {
                 return "$url$param"
             }
         }
         return "${BuildConfig.BASE_URL}$url$param"
     }
 
-    private fun headers(header :Map<String, String>?) : Headers{
-        val builder =  Headers.Builder()
-        header?.forEach{
+    private fun headers(header: Map<String, String>?): Headers {
+        val builder = Headers.Builder()
+        header?.forEach {
             builder.add(it.key, it.value)
         }
         return builder.build()
@@ -81,6 +86,7 @@ object HttpUtils {
     fun get(url: String, params: HashMap<String, Any> = hashMapOf()): Response? {
         val request: Request = Request.Builder()
             .get()
+            .headers(this.headers(headersGoble))
             .url(url(url, params))
             .build();
         return execute(request);
@@ -90,6 +96,7 @@ object HttpUtils {
         val request: Request = Request.Builder()
             .url(url(url, params))
             .post(requestBody(body))
+            .headers(this.headers(headersGoble))
             .build()
         return execute(request);
     }
@@ -98,7 +105,7 @@ object HttpUtils {
         val request: Request = Request.Builder()
             .url(url(dto.url, dto.params))
             .post(multipartBody(dto.file) ?: requestBody(dto.body))
-            .headers(headers(dto.headers))
+            .headers(headers(dto.headers?.plus(this.headersGoble)))
             .build()
         return execute(request);
     }
@@ -106,21 +113,72 @@ object HttpUtils {
     fun get(dto: HttpReqDto): Response? {
         val request: Request = Request.Builder()
             .url(url(dto.url, dto.params))
-            .headers(headers(dto.headers))
+            .headers(headers(dto.headers?.plus(this.headersGoble)))
             .build()
         return execute(request);
     }
 
+    fun getAsync(
+        url: String,
+        params: HashMap<String, Any> = hashMapOf(),
+        onResponse: (ONode) -> Unit, onError : () -> Unit = {}
+    ) {
+        val request: Request = Request.Builder()
+            .get()
+            .headers(this.headers(headersGoble))
+            .url(url(url, params))
+            .build();
+        enqueue(request, onResponse, onError)
+    }
 
-    private fun execute(request: Request) : Response? {
+    fun postAsync(
+        url: String,
+        body: Any,
+        params: Map<String, String> = hashMapOf(),
+        onResponse: (ONode) -> Unit,
+        onError : () -> Unit = {}
+    ) {
+        val request: Request = Request.Builder()
+            .url(url(url, params))
+            .post(requestBody(body))
+            .headers(this.headers(headersGoble))
+            .build()
+        enqueue(request, onResponse, onError)
+    }
+
+    fun postAsync(dto: HttpReqDto, onResponse: (ONode) -> Unit, onError : () -> Unit = {}) {
+        val request: Request = Request.Builder()
+            .url(url(dto.url, dto.params))
+            .post(multipartBody(dto.file) ?: requestBody(dto.body))
+            .headers(headers(dto.headers?.plus(this.headersGoble)))
+            .build()
+        enqueue(request, onResponse, onError)
+    }
+
+    fun getAsync(dto: HttpReqDto, onResponse: (ONode) -> Unit, onError : () -> Unit = {}) {
+        val request: Request = Request.Builder()
+            .url(url(dto.url, dto.params))
+            .headers(headers(dto.headers?.plus(this.headersGoble)))
+            .build()
+        enqueue(request, onResponse, onError)
+    }
+
+
+    private fun enqueue(request: Request, onResponse: (ONode) -> Unit,
+         onError : () -> Unit) {
+        client.newCall(request).enqueue(HttpCallback(onResponse, onError))
+    }
+
+    private fun execute(request: Request): Response? {
 
         return try {
-            client.newCall(request).execute();
-        }catch (e: Exception){
+            client.newCall(request).execute()
+        } catch (e: Exception) {
             e.printStackTrace()
             null
         }
     }
+
 
     /**
      * 解析cookie

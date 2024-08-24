@@ -41,6 +41,8 @@ object MenuRouteConfig {
 
 object PageRouteConfig{
 
+    const val START_PAGE = "START_PAGE"
+
     // 菜单主页
     const val MENU_ROUTE = "MENU_ROUTE"
 
@@ -79,6 +81,11 @@ object PageRouteConfig{
 
     const val ADD_DYNAMIC = "ADD_DYNAMIC"
 
+    const val USER_LOGIN = "USER_LOGIN"
+
+    const val USER_REGISTER = "USER_REGISTER"
+
+    const val SETTING = "SETTING"
 
 }
 

@@ -16,6 +16,18 @@ object AppAPI {
 
     const val CONFIG_URI: String  = "/dispatch-app/config/app-config-${BuildConfig.VERSION_NAME}.json"
 
+    object LoginAPI{
+        const val GET_SEND_CODE = "/dispatch-app/email/sendCode"
+
+        const val POST_USER_LOGIN =  "/dispatch-app/userLogin/login"
+
+        const val POST_USER_LOGOUT =  "/dispatch-app/userLogin/logout"
+
+        const val POST_USER_REGISTER =  "/dispatch-app/userLogin/register"
+
+        const val GET_CUR_USER = "/dispatch-app/userLogin/currUser"
+    }
+
     object CommunityAPI{
         const  val GET_DYNAMIC: String = "/dispatch-app/appDynamic/"
 

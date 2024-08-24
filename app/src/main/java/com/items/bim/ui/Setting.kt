@@ -33,6 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,6 +48,7 @@ import com.items.bim.R
 import com.items.bim.common.consts.StyleCommon.ZERO_PADDING
 import com.items.bim.common.consts.SystemApp.snackBarHostState
 import com.items.bim.common.ui.AppBarButton
+import com.items.bim.common.ui.TopAppBarBack
 import com.items.bim.common.util.CheckPermission
 import com.items.bim.common.util.PermissionsChecker
 import com.items.bim.common.util.QQUtils
@@ -54,6 +57,7 @@ import com.items.bim.config.PageRouteConfig
 import com.items.bim.entity.UserEntity
 import com.items.bim.viewmodel.HomeViewModel
 import com.items.bim.viewmodel.PermissionViewModel
+import com.items.bim.viewmodel.UserLoginModel
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -65,17 +69,20 @@ fun SettingHome(
     homeViewModel: HomeViewModel = viewModel()
 ) {
     val permissionViewModel: PermissionViewModel = viewModel()
-    val scope = rememberCoroutineScope()
     val buttonModifier = Modifier.fillMaxWidth()
     val iconModifier = Modifier.size(25.dp)
-    val message = stringResource(id = R.string.empty_ui)
+    val bottomModifier = Modifier.size(50.dp)
     Box(
         modifier = Modifier
             .background(Color.White)
             .padding(end = 10.dp)
     ) {
-        Column(Modifier.fillMaxSize()) {
-            Column(modifier = Modifier.fillMaxHeight(0.8f)) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(10.dp),
+            verticalArrangement = Arrangement.SpaceBetween) {
+            Column {
                 Row(
                     modifier = Modifier
                         .padding(20.dp)
@@ -184,26 +191,23 @@ fun SettingHome(
                     }
                 }
             }
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.Bottom
-            ) {
-                Row() {
-                    AppBarButton(
-                        imageVector = Icons.Filled.Settings,
-                        text = "设置",
-                        modifier = buttonModifier,
-                        onClick = { Utils.message(scope, message, snackBarHostState) },
-                    )
-                    AppBarButton(
-                        active = homeViewModel.darkTheme,
-                        imageVector = Icons.Filled.Settings,
-                        activeColor = Color.Yellow,
-                        text = if (homeViewModel.darkTheme) "白天" else "夜间",
-                        modifier = buttonModifier,
-                        onClick = { homeViewModel.darkTheme = !homeViewModel.darkTheme },
-                    )
-                }
+            Row(modifier = Modifier.fillMaxWidth()) {
+                AppBarButton(
+                    imageVector = Icons.Filled.Settings,
+                    text = "设置",
+                    modifier = bottomModifier,
+                    onClick = {
+                        mainController.navigate(PageRouteConfig.SETTING)
+                              },
+                )
+                AppBarButton(
+                    active = homeViewModel.darkTheme,
+                    painter = painterResource(id = R.drawable.moon),
+                    activeColor = Color.Green,
+                    text = if (homeViewModel.darkTheme) "白天" else "夜间",
+                    modifier = Modifier.size(30.dp),
+                    onClick = { homeViewModel.darkTheme = !homeViewModel.darkTheme },
+                )
             }
         }
     }
@@ -213,7 +217,7 @@ fun SettingHome(
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 @Composable
 fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()) {
     Dialog(onDismissRequest = { permissionViewModel.isCheck = false }) {
@@ -407,6 +411,26 @@ fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()
                         color = Color.Gray
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun SettingDetail(userLoginModel: UserLoginModel , mainController: NavHostController){
+    TopAppBarBack(
+        mainController=mainController, title = {
+        Text(text = "设置")
+    }){
+        Column(modifier=Modifier.padding(10.dp),) {
+            TextButton(onClick = {
+                userLoginModel.logout()
+                mainController.navigate(PageRouteConfig.USER_LOGIN)
+            },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorResource(id = R.color.active_button))) {
+                Text(text = "退出登录", color = Color.White)
             }
         }
     }
