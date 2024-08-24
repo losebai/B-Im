@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.items.bim.R
+import com.items.bim.common.consts.StyleCommon
 import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.ui.buttonClick
 import com.items.bim.common.util.ThreadPoolManager
@@ -138,10 +139,16 @@ fun UserPassWord(userLoginModel: UserLoginModel, onLogin: (String, String) -> Un
 
 @Composable
 fun EmailRegister(onSendCode: (String) -> Unit = {}, onRegister: (UserLoginDto) -> Unit = {}) {
+    var name by remember {
+        mutableStateOf("")
+    }
     var username by remember {
         mutableStateOf("")
     }
     var password by remember {
+        mutableStateOf("")
+    }
+    var password2 by remember {
         mutableStateOf("")
     }
     var email by remember {
@@ -151,6 +158,19 @@ fun EmailRegister(onSendCode: (String) -> Unit = {}, onRegister: (UserLoginDto) 
         mutableStateOf("")
     }
     Column {
+        OutlinedTextField(value = name, onValueChange = {
+            name = it
+        }, label = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,//设置水平居中对齐
+                verticalAlignment = Alignment.CenterVertically//设置垂直居中对齐
+            ) {
+                Text(
+                    text = "请输入昵称",
+                )
+            }
+        }, modifier = StyleCommon.inputModifier)
         OutlinedTextField(value = username, onValueChange = {
             username = it
         }, label = {
@@ -164,14 +184,11 @@ fun EmailRegister(onSendCode: (String) -> Unit = {}, onRegister: (UserLoginDto) 
                 )
             }
 
-        }, modifier = Modifier.fillMaxWidth()
-        )
-
+        }, modifier = StyleCommon.inputModifier)
         OutlinedTextField(value = email, onValueChange = {
             email = it
         }, label = {
             Row(
-                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,//设置水平居中对齐
                 verticalAlignment = Alignment.CenterVertically//设置垂直居中对齐
             ) {
@@ -180,9 +197,8 @@ fun EmailRegister(onSendCode: (String) -> Unit = {}, onRegister: (UserLoginDto) 
                 )
             }
 
-        }, modifier = Modifier.fillMaxWidth()
-        )
-        Row(modifier = Modifier.fillMaxWidth()) {
+        }, modifier = StyleCommon.inputModifier)
+        Row(modifier = StyleCommon.inputModifier) {
             OutlinedTextField(value = code, onValueChange = {
                 code = it
             }, label = {
@@ -219,10 +235,10 @@ fun EmailRegister(onSendCode: (String) -> Unit = {}, onRegister: (UserLoginDto) 
                     text = "请输入密码",
                 )
             }
-        }, modifier = Modifier.fillMaxWidth()
-        )
-        OutlinedTextField(value = password, onValueChange = {
-            password = it
+        }, modifier =StyleCommon.inputModifier)
+
+        OutlinedTextField(value = password2, onValueChange = {
+            password2 = it
         }, label = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -233,10 +249,9 @@ fun EmailRegister(onSendCode: (String) -> Unit = {}, onRegister: (UserLoginDto) 
                     text = "请确认密码",
                 )
             }
-        }, modifier = Modifier.fillMaxWidth()
-        )
+        },  modifier =StyleCommon.inputModifier)
         TextButton(
-            onClick = { onRegister(UserLoginDto(username, password, email, code)) },
+            onClick = { onRegister(UserLoginDto(username, password, name,  email, code)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp, bottom = 10.dp)
@@ -258,7 +273,7 @@ fun UserLoginBox(body: @Composable () -> Unit, bottom: @Composable () -> Unit = 
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            Column(modifier = Modifier.fillMaxHeight(0.2f)) {
+            Column(modifier = Modifier.fillMaxHeight(0.1f)) {
                 Image(
                     painterResource(id = R.drawable.login_log),
                     contentDescription = "登录跳转页面"

@@ -53,7 +53,6 @@ import com.items.bim.ui.SettingDetail
 import com.items.bim.ui.UserInfoEdit
 import com.items.bim.ui.UserLogin
 import com.items.bim.ui.UserLoginBox
-import com.items.bim.ui.UserPassWord
 import com.items.bim.viewmodel.CommunityViewModel
 import com.items.bim.viewmodel.ConfigViewModel
 import com.items.bim.viewmodel.HomeViewModel
@@ -66,9 +65,7 @@ import com.items.bim.viewmodel.UserViewModel
 import com.items.bim.viewmodel.WebVIewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
 import kotlin.concurrent.thread
-import kotlin.time.Duration.Companion.seconds
 
 private val logger = KotlinLogging.logger {
 }
