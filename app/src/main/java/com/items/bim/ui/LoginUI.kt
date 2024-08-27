@@ -183,12 +183,12 @@ fun EmailRegister(onSendCode: (String) -> Unit = {}, onRegister: (UserLoginDto) 
                     text = "请输入账号",
                 )
             }
-
         }, modifier = StyleCommon.inputModifier)
         OutlinedTextField(value = email, onValueChange = {
             email = it
         }, label = {
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,//设置水平居中对齐
                 verticalAlignment = Alignment.CenterVertically//设置垂直居中对齐
             ) {

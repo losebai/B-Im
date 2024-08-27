@@ -65,6 +65,8 @@ data: room
 - - 抽奖分析 （已完成）
 - - 练度统计 （未兼容）
 
+<img alt="login.png" height="400" src="img/login.png" width="200"/>
+
 ### 消息
 
 <img alt="img_1.png" height="400" src="img/img_1.png" width="200"/>

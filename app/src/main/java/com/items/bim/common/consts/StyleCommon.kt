@@ -54,7 +54,7 @@ object StyleCommon {
         .fillMaxWidth()
         .padding(10.dp)
 
-    val inputModifier = Modifier.fillMaxWidth().height(30.dp)
+    val inputModifier = Modifier.fillMaxWidth().height(60.dp)
 }
 
 
