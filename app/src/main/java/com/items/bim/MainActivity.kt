@@ -73,23 +73,24 @@ class MainActivity : AppCompatActivity() {
         logger.debug { "onDestroy" }
     }
 
-    private fun initLoad() {
-        MainScope().launch() {
-            viewModelEvent.onUserMessageLastByUserId(
-                this@MainActivity,
-                SystemApp.UserId,
-                SystemApp.UserId,
-                userViewModel
-            ) { userMessages ->
-                if (userMessages.isNotEmpty()) {
-                    messagesViewModel.userMessagesList = userMessages
-                    Log.d("onUserMessageLastByUserId", userMessages.toString())
-                }
+    suspend fun initLoad() {
+        // 监听消息列表
+        viewModelEvent.onUserMessageLastByUserId(
+            this@MainActivity,
+            SystemApp.UserId,
+            SystemApp.UserId,
+            userViewModel
+        ) { userMessages ->
+            if (userMessages.isNotEmpty()) {
+                messagesViewModel.userMessagesList = userMessages
+                Log.d("onUserMessageLastByUserId", userMessages.toString())
             }
-            viewModelEvent.onUserAll(this@MainActivity, userViewModel)
-            messagesViewModel.messageService.start()
-            Utils.message(this, "程序初始化完成", SystemApp.snackBarHostState)
         }
+
+        // 监听用户列表
+        viewModelEvent.onUserAll(this@MainActivity, userViewModel)
+        messagesViewModel.messageService.start()
+        Utils.message("程序初始化完成", SystemApp.snackBarHostState)
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)

@@ -7,7 +7,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
-    id("org.jetbrains.kotlin.kapt")
+//    id("org.jetbrains.kotlin.kapt")
 //    id("org.jetbrains.kotlin.plugin.parcelize")
     id("kotlin-parcelize")
 //    kotlin("jvm")
@@ -27,14 +27,14 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "0.1.3"
+        versionName = "0.1.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
         ndk {
-            abiFilters.addAll( listOf("mips","mips64","x86_64","armeabi","armeabi-v7a","arm64-v8a"))
+            abiFilters.addAll( listOf( "x86_64","x86","armeabi","armeabi-v7a","arm64-v8a"))
         }
 //        testFunctionalTest = true
 //        testHandleProfiling = true
@@ -44,14 +44,18 @@ android {
     sourceSets {
         getByName("main") {
             res.srcDirs("src/main/res")
+            manifest.srcFile("src/main/AndroidManifest.xml")
         }
         getByName("test") {
             setRoot("src/test")
             res.srcDirs("src/test/java")
+
         }
         getByName("androidTest") {
             setRoot("src/androidTest")
-            res.srcDirs("src/androidTest/java")
+            java.srcDirs("src/androidTest/java")
+            res.srcDirs("src/main/res") // res源路径
+            manifest.srcFile("src/main/AndroidManifest.xml")
         }
     }
 
@@ -85,7 +89,6 @@ android {
             isShrinkResources = false
             signingConfig = signingConfigs.getByName("config")
             //noinspection ChromeOsAbiSupport
-            ndk.abiFilters += "x86"
         }
     }
 
@@ -185,6 +188,8 @@ dependencies {
 //    implementation("org.noear:solon:2.7.5")
     implementation("org.noear:snack3:3.2.95")
     implementation("org.noear:socketd-transport-smartsocket:2.5.0")
+
+    implementation("cn.hutool:hutool-crypto:5.8.11")
 
     implementation("io.coil-kt:coil-compose:$coilVersion")
     implementation("io.coil-kt:coil-svg:$coilVersion")

@@ -9,6 +9,6 @@ import com.items.bim.entity.KVMapEntity
 interface KVMapDao :  BaseDao<KVMapEntity> {
 
 
-    @Query("SELECT * FROM kv_map WHERE first = :key ORDER BY id DESC LIMIT 1")
+    @Query("SELECT * FROM kv_map WHERE first = :key  LIMIT 1")
     suspend fun findByKey(key: String): KVMapEntity?
 }

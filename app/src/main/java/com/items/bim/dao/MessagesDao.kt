@@ -41,12 +41,12 @@ interface MessagesDao : BaseDao<MessagesEntity> {
      * @return [Flow<List<MessagesEntity>>]
      */
     @Query(
-        "SELECT m.*,m1.num from messages m join ( SELECT sendUserId,recvUserId,max(sendDateTime) max_time, sum(case  when ack == 3 then 1 else 0 end ) num from messages where sendUserId in (:sendUserId, :recvUserId) or recvUserId in (:sendUserId, :recvUserId) group by sendUserId,recvUserId) m1 " +
+        "SELECT m.*,m1.num from messages m join ( " +
+                "SELECT sendUserId,recvUserId,max(sendDateTime) max_time, sum(case  when ack == 3 then 1 else 0 end ) num " +
+                "from messages where  recvUserId = :recvUserId group by sendUserId,recvUserId) m1 " +
                 "on m1.max_time = m.sendDateTime  "
     )
-    fun getUserMessageLastByUserId(
-        sendUserId: Long, recvUserId : Long,
-    ): Flow<List<UserMessages>>
+    fun getUserMessageLastByUserId(recvUserId : Long): Flow<List<UserMessages>>
 
     /**获取和某个人消息，接收人和发送人
      * 全部消息

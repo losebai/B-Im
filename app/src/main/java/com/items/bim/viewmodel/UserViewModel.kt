@@ -31,7 +31,7 @@ private val logger = KotlinLogging.logger {
 
 class UserViewModel(context: Context): ViewModel() {
 
-    private val userService: UserService = UserService()
+    private val userService: UserService = UserService.instance
 
     // 当前用户
     var userEntity by mutableStateOf(Utils.randomUser().toUserEntity())
@@ -64,17 +64,6 @@ class UserViewModel(context: Context): ViewModel() {
 
     init {
         GlobalInitEvent.addUnit {
-            val appUserEntity = Utils.randomUser()
-            appUserEntity.deviceNumber = SystemApp.PRODUCT_DEVICE_NUMBER
-            val user = this.gerUserByNumber(SystemApp.PRODUCT_DEVICE_NUMBER)
-            if (user.id != 0L) {
-                SystemApp.UserId = user.id
-                SystemApp.USER_IMAGE = user.imageUrl
-                appUserEntity.id = user.id
-                this.userEntity = user.toUserEntity()
-            } else {
-                this.saveUser(appUserEntity)
-            }
             logger.info { "${SystemApp.PRODUCT_DEVICE_NUMBER} 当前UserID: ${SystemApp.UserId}开始加载联系人" }
             val users = this.referUser()
             val map = users.parallelStream().collect(Collectors.toMap(UserEntity::id) { it })
@@ -84,6 +73,12 @@ class UserViewModel(context: Context): ViewModel() {
 
     fun getUserById(id: Long) : com.items.bim.entity.AppUserEntity {
         return userService.getUser(id)
+    }
+
+    fun loadCurUser(){
+        userService.curUser {
+            this.userEntity = it.toUserEntity()
+        }
     }
 
     @OptIn(DelicateCoroutinesApi::class)

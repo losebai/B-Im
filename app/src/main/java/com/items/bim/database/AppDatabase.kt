@@ -83,7 +83,7 @@ abstract class AppDatabase : RoomDatabase() {
         }
         val MIGRATION_3_4: Migration = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                Log.i("Room_StudentDatabase", "数据库版本 2 升级到 版本 3")
+                Log.i("Room_StudentDatabase", "数据库版本 3 升级到 版本 4")
                 database.execSQL("alter table app_users RENAME  column userStatus to status")
             }
         }

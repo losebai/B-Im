@@ -29,6 +29,15 @@ object Utils {
         }
     }
 
+    suspend fun message(message: String, snackbarHostState: SnackbarHostState) {
+        snackbarHostState.showSnackbar(
+            message,
+            actionLabel = "关闭",
+            // Defaults to SnackbarDuration.Short
+            duration = SnackbarDuration.Short
+        )
+    }
+
     internal fun Context.findActivity(): Activity {
         var context = this
         while (context is ContextWrapper) {

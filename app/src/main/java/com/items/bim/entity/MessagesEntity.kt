@@ -30,7 +30,7 @@ data class UserMessages(
     var ack: Int,
     var sendDateTime: Long = 0,
     var recvDateTime: Long? = 0,
-    var num: Int? = 0
+    var num: Int = 0
 ){
     @Ignore
     var recvUserName: String = "";

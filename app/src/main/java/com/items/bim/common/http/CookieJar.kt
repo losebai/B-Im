@@ -1,4 +1,4 @@
-package com.example.miaow.base.http
+package com.items.bim.common.http
 
 import android.webkit.CookieManager
 import okhttp3.Cookie

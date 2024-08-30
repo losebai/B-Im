@@ -1,8 +1,10 @@
 package com.items.bim.service
 
+import android.util.Log
 import com.items.bim.common.consts.AppAPI
 import com.items.bim.common.consts.UserStatus
 import com.items.bim.common.util.HttpUtils
+import com.items.bim.common.util.Utils
 import com.items.bim.dto.UserGroup
 import com.items.bim.entity.UserEntity
 import com.items.bim.entity.AppUserEntity
@@ -15,8 +17,10 @@ import java.util.Collections
 class UserService {
 
     companion object {
-        private val appUserEntity: com.items.bim.entity.AppUserEntity =
-            com.items.bim.entity.AppUserEntity()
+
+        val instance = UserService()
+        private val appUserEntity: AppUserEntity =
+            AppUserEntity()
         private val options: Options = Options.def()
 
         init {
@@ -29,23 +33,29 @@ class UserService {
         }
     }
 
-     fun getUser(id: Long): com.items.bim.entity.AppUserEntity {
+    fun curUser(onResponse : (AppUserEntity) -> Unit)  {
+        HttpUtils.getAsync(AppAPI.LoginAPI.GET_CUR_USER, onResponse = { res ->
+            onResponse(res.toObject(AppUserEntity::class.java))
+        })
+    }
+
+     fun getUser(id: Long): AppUserEntity {
         val res: Response? = HttpUtils.get("${AppAPI.GET_USER}$id")
         if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
-            return json["data"].toObject<com.items.bim.entity.AppUserEntity>(com.items.bim.entity.AppUserEntity::class.java)
+            return json["data"].toObject<AppUserEntity>(AppUserEntity::class.java)
         }
         return appUserEntity
     }
 
-    fun gerUserByNumber(deviceNumber: String): com.items.bim.entity.AppUserEntity {
+    fun gerUserByNumber(deviceNumber: String): AppUserEntity {
         val res: Response? = HttpUtils.get(AppAPI.GET_USER_BY_NUMBER, hashMapOf("deviceNumber" to deviceNumber))
         if (res?.isSuccessful == true){
             val json = ONode.load(res.body?.string())
             if (!json.contains("data")){
                 return appUserEntity
             }
-            return json["data"].toObject<com.items.bim.entity.AppUserEntity>(com.items.bim.entity.AppUserEntity::class.java)
+            return json["data"].toObject<AppUserEntity>(AppUserEntity::class.java)
         }
         return appUserEntity
     }

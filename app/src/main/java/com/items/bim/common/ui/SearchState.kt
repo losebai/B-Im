@@ -34,6 +34,12 @@ class MySwipeRefreshState(
     var isSwipeInProgress: Boolean by mutableStateOf(false)
         internal set
 
+    /**
+     * 下拉到新页面
+     */
+    var isSkip: Boolean by mutableStateOf(false)
+        internal set
+
     //上下拉的偏移量等等
     var progress: SwipeProgress by mutableStateOf(SwipeProgress())
         internal set

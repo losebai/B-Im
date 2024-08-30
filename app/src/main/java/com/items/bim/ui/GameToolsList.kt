@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,16 +47,19 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.items.bim.common.consts.StyleCommon
+import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.ui.HeadImage
 import com.items.bim.common.ui.MySwipeRefresh
 import com.items.bim.common.ui.MySwipeRefreshState
 import com.items.bim.common.ui.NORMAL
 import com.items.bim.common.ui.TopPagerList
+import com.items.bim.common.util.Utils
 import com.items.bim.config.WEB_API_ROURE
 import com.items.bim.dto.CommunityEntity
 import com.items.bim.mc.dto.BannerDto
 import com.items.bim.viewmodel.ToolsViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
@@ -261,80 +265,83 @@ fun GameToolsList(
             }
         }
     }
-    TopPagerList(
-        modifier = modifier
-            .fillMaxSize(), pools = toolsViewModel.pool, textColor = Color.Black
-    ) {
-        val game = toolsViewModel.pool[it]
-        val api = toolsViewModel.getBaseAPI(game)
-        images = toolsViewModel.getBannerList(game)
+    if(toolsViewModel.pool.isEmpty()){
+        Utils.message(rememberCoroutineScope(), "暂无支持游戏", SystemApp.snackBarHostState)
+    }else{
+        TopPagerList(
+            modifier = modifier
+                .fillMaxSize(), pools = toolsViewModel.pool, textColor = Color.Black
+        ) {
+            val game = toolsViewModel.pool[it]
+            val api = toolsViewModel.getBaseAPI(game)
+            images = toolsViewModel.getBannerList(game)
 //            logger.info { "开始加载images:${it}:$game:${images.size}" }
-        Column(modifier = Modifier.fillMaxSize()) {
-            Row(modifier = Modifier.padding(start =  5.dp, end = 5.dp)) {
-                if (images.size > bannerIndex) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Row(modifier = Modifier.padding(start =  5.dp, end = 5.dp)) {
+                    if (images.size > bannerIndex) {
 //                        logger.info { "开始加载banner:${game}:$bannerIndex:${images[bannerIndex].url}" }
-                    AsyncImage(
-                        model = images[bannerIndex].url, contentDescription = null,
-                        modifier = Modifier
-                            .height(200.dp)
-                            .fillMaxWidth()
-                            .clickable {
+                        AsyncImage(
+                            model = images[bannerIndex].url, contentDescription = null,
+                            modifier = Modifier
+                                .height(200.dp)
+                                .fillMaxWidth()
+                                .clickable {
+                                    mainController.navigate(
+                                        WEB_API_ROURE.WEB_ROUTE + "/${
+                                            Uri.encode(
+                                                images[bannerIndex].linkUri
+                                            )
+                                        }"
+                                    )
+                                },
+                            contentScale = ContentScale.FillBounds
+                        )
+                    }
+                }
+                LazyVerticalGrid(
+                    GridCells.Fixed(4),
+                    modifier = Modifier.padding(start = 5.dp)
+                ) {
+                    item {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            IconButton(onClick = {
                                 mainController.navigate(
                                     WEB_API_ROURE.WEB_ROUTE + "/${
                                         Uri.encode(
-                                            images[bannerIndex].linkUri
+                                            api.HOME
                                         )
                                     }"
                                 )
-                            },
-                        contentScale = ContentScale.FillBounds
-                    )
-                }
-            }
-            LazyVerticalGrid(
-                GridCells.Fixed(4),
-                modifier = Modifier.padding(start = 5.dp)
-            ) {
-                item {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        IconButton(onClick = {
-                            mainController.navigate(
-                                WEB_API_ROURE.WEB_ROUTE + "/${
-                                    Uri.encode(
-                                        api.HOME
-                                    )
-                                }"
-                            )
-                        }) {
-                            AsyncImage(
-                                model = api.HOME_ICON,
-                                contentDescription = null,
-                                modifier = StyleCommon.ICON_SIZE
-                            )
+                            }) {
+                                AsyncImage(
+                                    model = api.HOME_ICON,
+                                    contentDescription = null,
+                                    modifier = StyleCommon.ICON_SIZE
+                                )
+                            }
+                            Text(text = "官网")
                         }
-                        Text(text = "官网")
                     }
-                }
-                item() {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        IconButton(onClick = {
-                            mainController.navigate(
-                                WEB_API_ROURE.WEB_ROUTE + "/${
-                                    Uri.encode(
-                                        api.WIKI
-                                    )
-                                }"
-                            )
-                        }) {
-                            AsyncImage(
-                                model = api.WIKI_ICON,
-                                contentDescription = "声骸图鉴",
-                                modifier = StyleCommon.ICON_SIZE
-                            )
+                    item() {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            IconButton(onClick = {
+                                mainController.navigate(
+                                    WEB_API_ROURE.WEB_ROUTE + "/${
+                                        Uri.encode(
+                                            api.WIKI
+                                        )
+                                    }"
+                                )
+                            }) {
+                                AsyncImage(
+                                    model = api.WIKI_ICON,
+                                    contentDescription = "声骸图鉴",
+                                    modifier = StyleCommon.ICON_SIZE
+                                )
+                            }
+                            Text(text = "WIKI")
                         }
-                        Text(text = "WIKI")
                     }
-                }
 //                    item() {
 //                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
 //                            IconButton(onClick = {
@@ -351,37 +358,38 @@ fun GameToolsList(
 //                            Text(text = "图片集合")
 //                        }
 //                    }
-                if (api.MAP.isNotEmpty()) {
-                    item() {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            IconButton(onClick = {
-                                mainController.navigate(
-                                    WEB_API_ROURE.WEB_ROUTE + "/${
-                                        Uri.encode(
-                                            api.MAP
-                                        )
-                                    }"
-                                )
-                            }) {
-                                AsyncImage(
-                                    model = api.MAP_ICON,
-                                    contentDescription = null,
-                                    modifier = StyleCommon.ICON_SIZE
-                                )
+                    if (api.MAP.isNotEmpty()) {
+                        item() {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                IconButton(onClick = {
+                                    mainController.navigate(
+                                        WEB_API_ROURE.WEB_ROUTE + "/${
+                                            Uri.encode(
+                                                api.MAP
+                                            )
+                                        }"
+                                    )
+                                }) {
+                                    AsyncImage(
+                                        model = api.MAP_ICON,
+                                        contentDescription = null,
+                                        modifier = StyleCommon.ICON_SIZE
+                                    )
+                                }
+                                Text(text = "大地图")
                             }
-                            Text(text = "大地图")
                         }
                     }
                 }
-            }
 
-            MingChaoHome(mainController, modifier = Modifier.padding(top = 20.dp),
-                toolsViewModel,
-                gameProvider = {
-                    game
-                }, baseAPIProvider = {
-                    api
-                })
+                MingChaoHome(mainController, modifier = Modifier.padding(top = 20.dp),
+                    toolsViewModel,
+                    gameProvider = {
+                        game
+                    }, baseAPIProvider = {
+                        api
+                    })
+            }
         }
     }
 }
