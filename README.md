@@ -66,6 +66,7 @@ data: room
 - - 练度统计 （未兼容）
 
 <img alt="login.png" height="400" src="img/login.png" width="200"/>
+<img alt="register.png" height="400" src="img/register.png" width="200"/>
 
 ### 消息
 

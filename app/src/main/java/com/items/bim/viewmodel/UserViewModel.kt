@@ -62,15 +62,6 @@ class UserViewModel(context: Context): ViewModel() {
         OfflineUserRepository(AppDatabase.getDatabase(context).userDao())
     }
 
-    init {
-        GlobalInitEvent.addUnit {
-            logger.info { "${SystemApp.PRODUCT_DEVICE_NUMBER} 当前UserID: ${SystemApp.UserId}开始加载联系人" }
-            val users = this.referUser()
-            val map = users.parallelStream().collect(Collectors.toMap(UserEntity::id) { it })
-            this.userMap = map
-        }
-    }
-
     fun getUserById(id: Long) : com.items.bim.entity.AppUserEntity {
         return userService.getUser(id)
     }
@@ -78,6 +69,8 @@ class UserViewModel(context: Context): ViewModel() {
     fun loadCurUser(){
         userService.curUser {
             this.userEntity = it.toUserEntity()
+            SystemApp.UserId = it.id
+            SystemApp.USER_IMAGE = it.imageUrl
         }
     }
 
@@ -106,6 +99,7 @@ class UserViewModel(context: Context): ViewModel() {
             list.add(UserGroup(it.key.tag, it.value))
         }
         this.users.value = list
+        this.userMap = users.parallelStream().collect(Collectors.toMap(UserEntity::id) { it })
         return users
     }
 

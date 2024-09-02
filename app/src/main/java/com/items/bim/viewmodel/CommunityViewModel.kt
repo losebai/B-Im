@@ -31,11 +31,6 @@ class CommunityViewModel: ViewModel() {
 
     var dynamicBody by mutableStateOf("")
 
-    init {
-        GlobalInitEvent.addUnit{
-            this.nextCommunityPage()
-        }
-    }
 
     /**
      * 获取下一页动态

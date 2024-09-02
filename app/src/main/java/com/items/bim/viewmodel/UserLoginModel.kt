@@ -1,7 +1,9 @@
 package com.items.bim.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.items.bim.common.consts.LocalConfig
 import com.items.bim.common.consts.SystemApp
@@ -29,7 +31,7 @@ class UserLoginModel() : ViewModel() {
 
     private var token : String = ""
 
-    private var isLogin = false;
+    var isLogin by mutableStateOf(false)
 
     var loginText = mutableStateOf("")
 
@@ -57,8 +59,8 @@ class UserLoginModel() : ViewModel() {
     fun login(userLogin: UserLoginDto, onIsLogin: (Boolean) -> Unit)  {
         userLoginService.login(userLogin, onResponse = {
             val isLogin = it.isNotEmpty()
-            this.token = it
             onIsLogin(isLogin)
+            this.token = it
             Log.d("login", "token $it")
             MainScope().launch(Dispatchers.IO) {
                 val cookies =  kvMapRepository.findByKey(LocalConfig.localCookies)
@@ -69,6 +71,7 @@ class UserLoginModel() : ViewModel() {
                     kvMapRepository.updateItem(cookies)
                 }
             }
+            this.isLogin = true
         }, onError = {
             isLogin = false
             onIsLogin(false)
@@ -95,6 +98,7 @@ class UserLoginModel() : ViewModel() {
     }
 
     fun logout(){
+        isLogin = false
         MainScope().launch(Dispatchers.IO) {
             val cookies =  kvMapRepository.findByKey(LocalConfig.localCookies)
             if (cookies != null) {

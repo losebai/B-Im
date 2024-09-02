@@ -86,7 +86,7 @@ fun PageHost(
                         messagesViewModel,
                         userViewModel,
                         mainController,
-                        modifier = mod.fillMaxWidth()
+                        modifier = mod
                     )
                 }
                 MenuRouteConfig.ROUTE_USERS -> {
@@ -129,11 +129,8 @@ fun Community(
     communityViewModel: CommunityViewModel,
     mainController: NavHostController
 ) {
-    var list: List<CommunityEntity> by remember {
+    val list: List<CommunityEntity> by remember {
         mutableStateOf(communityViewModel.getCommunityList())
-    }
-    ThreadPoolManager.getInstance().addTask("community", "communityList"){
-        list = communityViewModel.nextCommunityPage()
     }
     CommunityHome(
         userViewModel.userEntity,

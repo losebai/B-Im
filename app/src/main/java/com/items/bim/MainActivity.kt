@@ -74,7 +74,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     suspend fun initLoad() {
+        // 监听用户列表
+        viewModelEvent.onUserAll(this@MainActivity, userViewModel)
+
         // 监听消息列表
+        Log.d("MainActivity","onUserMessageLastByUserId ${SystemApp.UserId}")
         viewModelEvent.onUserMessageLastByUserId(
             this@MainActivity,
             SystemApp.UserId,
@@ -86,9 +90,6 @@ class MainActivity : AppCompatActivity() {
                 Log.d("onUserMessageLastByUserId", userMessages.toString())
             }
         }
-
-        // 监听用户列表
-        viewModelEvent.onUserAll(this@MainActivity, userViewModel)
         messagesViewModel.messageService.start()
         Utils.message("程序初始化完成", SystemApp.snackBarHostState)
     }
