@@ -104,8 +104,7 @@ fun MessagesList(
                     HeadImage(
                         if (isSend) user.recvUserImageUri else user.sendUserImageUri,
                         modifier = StyleCommon.HEAD_IMAGE
-                    ) {
-                    }
+                    )
                     Column(
                         modifier =
                         Modifier

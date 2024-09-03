@@ -53,7 +53,6 @@ open class ViewModelEvent private constructor(context: Context) {
                                           recvUserId: Long,
                                           userViewModel: UserViewModel,
                                           onChange: (ArrayList<UserMessages>) -> Unit){
-        logger.info { "onUserMessageLastByUserId..." }
         itemsRepository.getUserMessageLastByRecvUserId(sendUserId, recvUserId).asLiveData().observe(owner) { li ->
             val map = userViewModel.userMap
             val userMessages = ArrayList<UserMessages>()

@@ -91,26 +91,36 @@ fun MainNavGraph(
     val wanUiState by webViewModel.uiState.collectAsStateWithLifecycle()
     val webNavActions = remember(navHostController) { WanNavActions(navHostController) }
     LaunchedEffect(Unit) {
-        thread {
-            GlobalInitEvent.run()
-            // 加载远程配置
-            configViewModel.check()
-        }
-        // 初始化
-        init()
+        GlobalInitEvent.run()
+        // 加载远程配置
+        configViewModel.check()
     }
-    logger.info { "MainNavGraph init" }
+    LaunchedEffect(key1 = userLoginModel.isLogin) {
+        // 账户初始化
+        if (userLoginModel.isLogin){
+            logger.info { "账户初始化" }
+            thread {
+                // 加载消息
+                messagesViewModel.loadOFFLINE()
+                // 加载动态
+                communityViewModel.nextCommunityPage()
+                // 加载联系人
+                userViewModel.referUser()
+            }
+            init()
+        }
+    }
     NavHost(
         navController = navHostController,
         startDestination = PageRouteConfig.START_PAGE,
         enterTransition = {
-            slideInHorizontally(animationSpec = tween(800), //动画时长1s
+            slideInHorizontally(animationSpec = tween(400), //动画时长1s
                 initialOffsetX = {
                     -it //初始位置在负一屏的位置，也就是说初始位置我们看不到，动画动起来的时候会从负一屏位置滑动到屏幕位置
                 })
         },
         exitTransition = {
-            slideOutHorizontally(animationSpec = tween(800), targetOffsetX = {
+            slideOutHorizontally(animationSpec = tween(400), targetOffsetX = {
                 it
             })
         },

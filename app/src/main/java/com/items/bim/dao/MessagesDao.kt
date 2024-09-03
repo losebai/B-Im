@@ -5,6 +5,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.items.bim.common.consts.AppUserAck
 import com.items.bim.entity.MessagesEntity
+import com.items.bim.entity.NoAckUserMessages
 import com.items.bim.entity.UserMessages
 import kotlinx.coroutines.flow.Flow
 
@@ -33,8 +34,8 @@ interface MessagesDao : BaseDao<MessagesEntity> {
     fun getUserMessagesBySendUserId(id: Long, page: Int, pageSize: Int): Flow<List<MessagesEntity>>
 
 
-    /**获取最新的消息，并没有被确认的消息，按人进行分组
-     * 消息列表中没有确认的
+    /**消息列表中没有确认的消息数量
+     *
      * @param [id]
      * @param [page]
      * @param [pageSize]
@@ -43,8 +44,8 @@ interface MessagesDao : BaseDao<MessagesEntity> {
     @Query(
         "SELECT m.*,m1.num from messages m join ( " +
                 "SELECT sendUserId,recvUserId,max(sendDateTime) max_time, sum(case  when ack == 3 then 1 else 0 end ) num " +
-                "from messages where  recvUserId = :recvUserId group by sendUserId,recvUserId) m1 " +
-                "on m1.max_time = m.sendDateTime  "
+                "from messages where  recvUserId = :recvUserId or sendUserId = :recvUserId group by sendUserId,recvUserId) m1 " +
+                "on m1.max_time = m.sendDateTime where  m.recvUserId = :recvUserId or m.sendUserId = :recvUserId"
     )
     fun getUserMessageLastByUserId(recvUserId : Long): Flow<List<UserMessages>>
 

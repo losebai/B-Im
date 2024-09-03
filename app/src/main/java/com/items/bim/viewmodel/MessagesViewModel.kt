@@ -73,10 +73,11 @@ class MessagesViewModel(context: Context) : ViewModel() {
         OfflineUserRepository(AppDatabase.getDatabase(context).userDao())
     }
 
-    init {
-        GlobalInitEvent.addUnit{
-            messageService.sendText(AppEventConst.OFF_LINE_USER_MESSAGE, "")
-        }
+    /**
+     * 获取未确认消息
+     */
+    fun loadOFFLINE(){
+        messageService.sendText(AppEventConst.OFF_LINE_USER_MESSAGE, "")
     }
 
     /**

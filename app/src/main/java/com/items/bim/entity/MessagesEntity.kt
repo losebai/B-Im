@@ -40,8 +40,13 @@ data class UserMessages(
     var sendUserImageUri: String = "";
     @Ignore
     var sendUserName: String = ""
-
 }
+
+data class NoAckUserMessages(
+    val sendUserId: Long,
+    val recvUserId: Long,
+    val num: Int
+)
 
 
 fun MessagesEntity.toUserMessages(): UserMessages =

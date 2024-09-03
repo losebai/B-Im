@@ -59,7 +59,7 @@ private class SwipeRefreshNestedScrollConnection(
         //当处于刷新状态或者更多状态，不处理
         state.loadState != NORMAL -> Offset.Zero
         source == NestedScrollSource.Drag -> {
-            Log.v("hj", "onPreScroll available = $available ${state.loadState}")
+//            Log.v("hj", "onPreScroll available = $available ${state.loadState}")
             if (available.y > 0 && isBottom) { // 向上
                 onScroll(available)
             } else if (available.y < 0 && isTop) { // 向下
