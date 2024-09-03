@@ -18,7 +18,8 @@
 
 <a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=u5b9H-KYtVZ1AkWNj4a_QVhzaGpxZxAn&jump_from=webapi&authKey=1FnsQITgER4fNmkupjQ2SOmHwJkxO7ePsSfBbmr6AzRTWRkxi3dKUbNCQQRYTeFE"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="BIM" title="BIM"></a>
 
-下载链接（暂时，服务器带宽不够）：http://121.40.62.167:8100/B-Im-release-1.1.2-pro.apk
+下载地址 ：http://121.40.62.167:5244/public
+
 ### 技术栈
 本项目偏向国产化
 ```
@@ -69,20 +70,21 @@ data: room
 <img alt="register.png" height="400" src="img/register.png" width="200"/>
 
 ### 消息
-
-<img alt="img_1.png" height="400" src="img/img_1.png" width="200"/>
+自动监听接受消息，并获取未读数量
+<img alt="img_1.png" height="400" src="img/messList.jpg" width="200"/>
 
 #### 消息详情
 
-<img alt="img_2png" height="400" src="img/img_2.png" width="200"/>
+<img alt="img_2png" height="400" src="img/messBody.jpg" width="200"/>
 
 ### 联系人
 
-<img alt="img_png" height="400" src="img/img.png" width="200"/>
+<img alt="img_png" height="400" src="img/userList.jpg" width="200"/>
 
 ### 游戏
-<img alt="img_png" height="400" src="img/img_3.png" width="200"/>
-<img alt="img5_png" height="400" src="img/img_5.png" width="200"/>
+提供了几款游戏支持，将官网于wiki直接引入到程序中
+<img alt="img_png" height="400" src="img/gameTool.jpg" width="200"/>
+<img alt="img5_png" height="400" src="img/gameWiki.jpg" width="200"/>
 
 #### 抽卡分析
 <img alt="img5_png" height="400" src="img/game_raking.png" width="200"/>
@@ -93,4 +95,4 @@ data: room
 <img alt="img5_png" height="400" src="img/lottery_award.png" width="200"/>
 
 ### 社区
-<img alt="img_png" height="400" src="img/img_4.png" width="200"/>
+<img alt="img_png" height="400" src="img/dongtai.jpg" width="200"/>

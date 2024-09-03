@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.items.bim">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- 获取手机外部存储读写权限 -->
     <uses-feature

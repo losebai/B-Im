@@ -43,6 +43,8 @@ android {
 
     sourceSets {
         getByName("main") {
+            setRoot("src/main")
+            java.srcDirs("src/main/java")
             res.srcDirs("src/main/res")
             manifest.srcFile("src/main/AndroidManifest.xml")
         }
@@ -55,7 +57,6 @@ android {
             setRoot("src/androidTest")
             java.srcDirs("src/androidTest/java")
             res.srcDirs("src/main/res") // res源路径
-            manifest.srcFile("src/main/AndroidManifest.xml")
         }
     }
 
