@@ -71,10 +71,10 @@ data: room
 
 ### 消息
 自动监听接受消息，并获取未读数量
+
 <img alt="img_1.png" height="400" src="img/messList.jpg" width="200"/>
 
 #### 消息详情
-
 <img alt="img_2png" height="400" src="img/messBody.jpg" width="200"/>
 
 ### 联系人
@@ -83,6 +83,7 @@ data: room
 
 ### 游戏
 提供了几款游戏支持，将官网于wiki直接引入到程序中
+
 <img alt="img_png" height="400" src="img/gameTool.jpg" width="200"/>
 <img alt="img5_png" height="400" src="img/gameWiki.jpg" width="200"/>
 
