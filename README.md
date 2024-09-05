@@ -18,7 +18,7 @@
 
 <a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=u5b9H-KYtVZ1AkWNj4a_QVhzaGpxZxAn&jump_from=webapi&authKey=1FnsQITgER4fNmkupjQ2SOmHwJkxO7ePsSfBbmr6AzRTWRkxi3dKUbNCQQRYTeFE"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="BIM" title="BIM"></a>
 
-下载地址 ：http://121.40.62.167:5244/public
+下载地址 ：https://rs.loserbai.cn/public
 
 ### 技术栈
 本项目偏向国产化
