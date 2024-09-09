@@ -80,5 +80,13 @@ class UserService {
         return Collections.emptyList()
     }
 
+    fun update(user: AppUserEntity): Boolean {
+        val res: Response? = HttpUtils.post(AppAPI.POST_USER_UPDATE, user)
+        if (res?.isSuccessful == true){
+            val json = ONode.load(res.body?.string())
+            return json["data"].toObject(Boolean.Companion::class.java)
+        }
+        return false
+    }
 
 }

@@ -12,6 +12,8 @@ object AppAPI {
 
     const val POST_USER_SAVE: String = "/dispatch-app/appUser/save"
 
+    const val POST_USER_UPDATE: String = "/dispatch-app/appUser/update"
+
     const val POST_USER_LIST: String = "/dispatch-app/appUser/list"
 
     const val CONFIG_URI: String  = "/dispatch-app/config/app-config-${BuildConfig.VERSION_NAME}.json"

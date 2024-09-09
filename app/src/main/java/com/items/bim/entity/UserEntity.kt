@@ -31,4 +31,4 @@ data class UserEntity (
 )
 
 fun UserEntity.toAppUserEntity(deviceNumber: String) =
-    com.items.bim.entity.AppUserEntity(id, name, imageUrl, note, deviceNumber, status)
+    AppUserEntity(id, name, imageUrl, note, deviceNumber, status)

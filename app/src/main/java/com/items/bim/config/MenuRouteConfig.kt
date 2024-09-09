@@ -38,7 +38,6 @@ object MenuRouteConfig {
     const val COMMON_TOOLS_ROUTE = "COMMON_TOOLS_ROUTE"
 
 }
-
 object PageRouteConfig{
 
     const val START_PAGE = "START_PAGE"
@@ -85,8 +84,8 @@ object PageRouteConfig{
 
     const val USER_REGISTER = "USER_REGISTER"
 
-    const val SETTING = "SETTING"
-
+    const val SETTING_INDEX: String = "INDEX"
+    const val SETTING_ABOUT = "ABOUT"
 }
 
 object WEB_API_ROURE{

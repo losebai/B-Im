@@ -33,6 +33,7 @@ import com.items.bim.config.WEB_API_ROURE
 import com.items.bim.entity.toAppUserEntity
 import com.items.bim.event.GlobalInitEvent
 import com.items.bim.service.FileService
+import com.items.bim.ui.About
 import com.items.bim.ui.AddDynamic
 import com.items.bim.ui.EditPage
 import com.items.bim.ui.EmailRegister
@@ -133,6 +134,8 @@ fun MainNavGraph(
             LoginStart()
             LaunchedEffect(key1 = UInt) {
                 if (userLoginModel.checkLogin()){
+                    userViewModel.loadCurUser()
+                    userLoginModel.isLogin = true
                     navHostController.navigate(PageRouteConfig.MENU_ROUTE)
                 }else{
                     navHostController.navigate(PageRouteConfig.USER_LOGIN)
@@ -217,7 +220,7 @@ fun MainNavGraph(
                             ThreadPoolManager.getInstance().addTask("init") {
                                 val path = FileService.uploadImage(it.filePath)
                                 userViewModel.userEntity.imageUrl = FileService.getImageUrl(path)
-                                userViewModel.saveUser(
+                                userViewModel.updateUser(
                                     userViewModel.userEntity.toAppUserEntity(
                                         SystemApp.PRODUCT_DEVICE_NUMBER
                                     )
@@ -244,7 +247,7 @@ fun MainNavGraph(
                     name = it
                 }
                 ThreadPoolManager.getInstance().addTask("init") {
-                    userViewModel.saveUser(
+                    userViewModel.updateUser(
                         userViewModel.userEntity.toAppUserEntity(
                             SystemApp.PRODUCT_DEVICE_NUMBER
                         )
@@ -259,7 +262,7 @@ fun MainNavGraph(
                 }
             }
             ThreadPoolManager.getInstance().addTask("init") {
-                userViewModel.saveUser(
+                userViewModel.updateUser(
                     userViewModel.userEntity.toAppUserEntity(
                         SystemApp.PRODUCT_DEVICE_NUMBER
                     )
@@ -342,8 +345,11 @@ fun MainNavGraph(
         composable(PageRouteConfig.ADD_DYNAMIC){
             AddDynamic(mainController = navHostController, communityViewModel)
         }
-        composable(PageRouteConfig.SETTING){
-            SettingDetail(userLoginModel, navHostController)
+        composable(PageRouteConfig.SETTING_INDEX){
+            SettingDetail(userLoginModel, configViewModel, navHostController)
+        }
+        composable(PageRouteConfig.SETTING_ABOUT){
+            About(configViewModel, navHostController)
         }
     }
 }

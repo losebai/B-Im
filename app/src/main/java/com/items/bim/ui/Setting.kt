@@ -1,15 +1,16 @@
 package com.items.bim.ui
 
 import android.Manifest
+import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,8 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -44,24 +47,28 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.items.bim.BuildConfig
 import com.items.bim.R
+import com.items.bim.common.consts.ConfigKey
 import com.items.bim.common.consts.StyleCommon.ZERO_PADDING
 import com.items.bim.common.consts.SystemApp.snackBarHostState
 import com.items.bim.common.ui.AppBarButton
+import com.items.bim.common.ui.IconRowButton
 import com.items.bim.common.ui.TopAppBarBack
 import com.items.bim.common.util.CheckPermission
 import com.items.bim.common.util.PermissionsChecker
 import com.items.bim.common.util.QQUtils
 import com.items.bim.common.util.Utils
 import com.items.bim.config.PageRouteConfig
+import com.items.bim.config.WEB_API_ROURE
 import com.items.bim.entity.UserEntity
+import com.items.bim.viewmodel.ConfigViewModel
 import com.items.bim.viewmodel.HomeViewModel
 import com.items.bim.viewmodel.PermissionViewModel
 import com.items.bim.viewmodel.UserLoginModel
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-@Preview(showBackground = true)
 @Composable
 fun SettingHome(
     userEntity: UserEntity = UserEntity(),
@@ -197,7 +204,7 @@ fun SettingHome(
                     text = "设置",
                     modifier = bottomModifier,
                     onClick = {
-                        mainController.navigate(PageRouteConfig.SETTING)
+                        mainController.navigate(PageRouteConfig.SETTING_INDEX)
                               },
                 )
                 AppBarButton(
@@ -417,7 +424,9 @@ fun CheckPermissionDialog(permissionViewModel: PermissionViewModel = viewModel()
 }
 
 @Composable
-fun SettingDetail(userLoginModel: UserLoginModel , mainController: NavHostController){
+fun SettingDetail(userLoginModel: UserLoginModel,
+                  configViewModel : ConfigViewModel,
+                  mainController: NavHostController){
     TopAppBarBack(
         mainController=mainController, title = {
         Text(text = "设置")
@@ -433,5 +442,32 @@ fun SettingDetail(userLoginModel: UserLoginModel , mainController: NavHostContro
                 Text(text = "退出登录", color = Color.White)
             }
         }
+        TextButton(onClick = {
+            mainController.navigate(PageRouteConfig.SETTING_ABOUT)
+        }) {
+            Text(text = "关于", color = Color.White)
+        }
+    }
+}
+@Composable
+fun About(configViewModel : ConfigViewModel, mainController : NavHostController){
+    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Image(
+            painterResource(id = R.drawable.login_log),
+            contentDescription = "登录跳转页面"
+        )
+        IconRowButton(imageVector = Icons.Outlined.Info, title = "当前版本", data = BuildConfig.VERSION_NAME)
+        IconRowButton(imageVector = Icons.Outlined.Info, title = "版本更新", data = if (configViewModel.getConfig(
+                ConfigKey.APP_VERSION, String::class.java) == BuildConfig.VERSION_NAME)  "已是最新版本" else  "需要更新")
+        IconRowButton(imageVector = Icons.Outlined.Home, title = "官网", onClick = {
+            mainController.navigate(
+                WEB_API_ROURE.WEB_ROUTE + "/${
+                    Uri.encode(
+                        configViewModel.getConfig(
+                            ConfigKey.HOME_URL, String::class.java)
+                    )
+                }"
+            )
+        })
     }
 }

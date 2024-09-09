@@ -75,9 +75,8 @@ fun EditPage(
                 modifier = Modifier.fillMaxWidth(0.9f),
                 onValueChange = { dateString = it })
             Icon(Icons.Outlined.CheckCircle, null,
-                modifier = Modifier.padding(10.dp),)
+                modifier = Modifier.padding(10.dp))
         }
-
     }
 }
 

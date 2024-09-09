@@ -165,16 +165,18 @@ android {
 
 val coilVersion = "2.5.0"
 val navigationVersion = "2.8.0-alpha06"
+val cameraxVersion = "1.2.0-alpha04"
+val roomVersion = "2.6.1"
+
+
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
-    val cameraxVersion = "1.2.0-alpha04"
     implementation("androidx.camera:camera-extensions:$cameraxVersion")
     implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
     implementation("androidx.camera:camera-view:$cameraxVersion")
 
-    // mlkit
     implementation("com.google.mlkit:barcode-scanning:17.0.2")
     implementation("com.google.mlkit:text-recognition:16.0.0-beta4")
     implementation("com.google.mlkit:text-recognition-chinese:16.0.0-beta4")
@@ -205,17 +207,16 @@ dependencies {
     implementation("androidx.webkit:webkit:1.11.0")
 
 
-    val room_version = "2.6.1"
 
     // To use Kotlin Symbol Processing (KSP)
-    ksp("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-runtime:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
-    implementation("androidx.room:room-rxjava2:$room_version")
-    implementation("androidx.room:room-rxjava3:$room_version")
-    implementation("androidx.room:room-guava:$room_version")
-    testImplementation("androidx.room:room-testing:$room_version")
-    implementation("androidx.room:room-paging:$room_version")
+    ksp("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    implementation("androidx.room:room-rxjava2:$roomVersion")
+    implementation("androidx.room:room-rxjava3:$roomVersion")
+    implementation("androidx.room:room-guava:$roomVersion")
+    testImplementation("androidx.room:room-testing:$roomVersion")
+    implementation("androidx.room:room-paging:$roomVersion")
 
 //    implementation("com.android.tools:r8:8.4.37")
     //noinspection GradlePluginVersion

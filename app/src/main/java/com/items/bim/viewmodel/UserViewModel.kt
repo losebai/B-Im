@@ -103,12 +103,12 @@ class UserViewModel(context: Context): ViewModel() {
         return users
     }
 
-    fun gerUserByNumber(str: String) : com.items.bim.entity.AppUserEntity {
+    fun gerUserByNumber(str: String) : AppUserEntity {
         return userService.gerUserByNumber(str)
     }
 
-    fun saveUser(user : com.items.bim.entity.AppUserEntity){
-        userService.save(user)
-    }
+    fun saveUser(user : AppUserEntity) = userService.save(user)
+
+    fun updateUser(user : AppUserEntity) = userService.update(user)
 
 }
