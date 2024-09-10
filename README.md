@@ -77,6 +77,16 @@ data: room
 #### 消息详情
 <img alt="img_2png" height="400" src="img/messBody.jpg" width="200"/>
 
+## 侧边菜单
+- 检查权限 ： 检查app中所需要的各种权限
+- 图库 ： 可选导入本机的各种图片，并提高各种工具支持
+<img alt="img_1.png" height="400" src="img/ce_meun.png" width="200"/>
+- 加入QQ群：唤起本机QQ并加入群
+
+### 图库中心
+<img alt="img_1.png" height="400" src="img/img_group.png" width="200"/>
+<img alt="img_1.png" height="400" src="img/image_detail.png" width="200"/>
+
 ### 联系人
 
 <img alt="img_png" height="400" src="img/userList.jpg" width="200"/>
