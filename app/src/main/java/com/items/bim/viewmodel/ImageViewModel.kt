@@ -26,7 +26,7 @@ class ImageViewModel() : ViewModel() {
     val groupMap = Hashtable<String, ArrayList<FileEntity>>()
 
     // 本机目录图片集合
-    var dirList = ArrayList<FileEntity>()
+    var dirList = mutableStateListOf<FileEntity>()
 
     var imageDetail = mutableStateOf(FileEntity())
 
@@ -49,7 +49,7 @@ class ImageViewModel() : ViewModel() {
     }
 
     fun reload(){
-        dirList.subList(0, dirList.size - 1).clear()
+        dirList.clear()
     }
 
     fun getImageList(path: String) : List<FileEntity> {

@@ -20,7 +20,8 @@ import com.items.bim.entity.UserEntity
 @Database(
     entities = [MessagesEntity::class, UserEntity::class,
         KVMapEntity::class, McRecordEntity::class],
-    version = 5
+    version = 5,
+    exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 

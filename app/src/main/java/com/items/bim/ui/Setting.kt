@@ -7,6 +7,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,8 +21,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
@@ -50,11 +53,13 @@ import coil.compose.AsyncImage
 import com.items.bim.BuildConfig
 import com.items.bim.R
 import com.items.bim.common.consts.ConfigKey
+import com.items.bim.common.consts.StyleCommon
 import com.items.bim.common.consts.StyleCommon.ZERO_PADDING
 import com.items.bim.common.consts.SystemApp.snackBarHostState
 import com.items.bim.common.ui.AppBarButton
 import com.items.bim.common.ui.IconRowButton
 import com.items.bim.common.ui.TopAppBarBack
+import com.items.bim.common.ui.WrapperUI
 import com.items.bim.common.util.CheckPermission
 import com.items.bim.common.util.PermissionsChecker
 import com.items.bim.common.util.QQUtils
@@ -77,7 +82,6 @@ fun SettingHome(
 ) {
     val permissionViewModel: PermissionViewModel = viewModel()
     val buttonModifier = Modifier.fillMaxWidth()
-    val iconModifier = Modifier.size(25.dp)
     val bottomModifier = Modifier.size(50.dp)
     Box(
         modifier = Modifier
@@ -133,70 +137,14 @@ fun SettingHome(
                         )
                     }
                 }
-
-                TextButton(
-                    onClick = {
-                        permissionViewModel.isCheck = true
-                    },
-                    modifier = buttonModifier
-                ) {
-                    Row(
-                        modifier = buttonModifier.padding(start = 10.dp),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            modifier = iconModifier,
-                            imageVector = Icons.Filled.Build,
-                            contentDescription = "Localized description"
-                        )
-                        Text(
-                            text = "  检查权限",
-                        )
-                    }
-                }
-
-                TextButton(
-                    onClick = { QQUtils.joinQQGroup("966922403") },
-                    modifier = buttonModifier
-                ) {
-                    Row(
-                        modifier = buttonModifier.padding(start = 10.dp),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            modifier = iconModifier,
-                            imageVector = Icons.Filled.MailOutline,
-                            contentDescription = "Localized description"
-                        )
-                        Text(
-                            text = "  意见反馈",
-//                        fontSize = 12.sp,
-                        )
-                    }
-                }
-
-                TextButton(
-                    onClick = { QQUtils.joinQQGroup("966922403") },
-                    modifier = buttonModifier
-                ) {
-                    Row(
-                        modifier = buttonModifier.padding(start = 10.dp),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            modifier = iconModifier,
-                            imageVector = Icons.Filled.Home,
-                            contentDescription = "Localized description"
-                        )
-                        Text(
-                            text = "  加入QQ群",
-//                        fontSize = 12.sp,
-                        )
-                    }
-                }
+                IconRowButton( painterResource(id = R.drawable.img), "  相册",  onClick = { mainController.navigate(PageRouteConfig.IMAGE_GROUP_LIST) },
+                    modifier = buttonModifier.padding(start = 10.dp))
+                IconRowButton(Icons.Filled.Build, "  检查权限",  onClick = { permissionViewModel.isCheck = true },
+                    modifier = buttonModifier.padding(start = 10.dp))
+                IconRowButton(Icons.Filled.MailOutline, "  意见反馈", onClick = { QQUtils.joinQQGroup("966922403") },
+                    modifier = buttonModifier.padding(start = 10.dp))
+                IconRowButton(Icons.Filled.Home, "  加入QQ群",  onClick = { QQUtils.joinQQGroup("966922403") },
+                    modifier = buttonModifier.padding(start = 10.dp))
             }
             Row(modifier = Modifier.fillMaxWidth()) {
                 AppBarButton(
@@ -207,19 +155,21 @@ fun SettingHome(
                         mainController.navigate(PageRouteConfig.SETTING_INDEX)
                               },
                 )
-                AppBarButton(
-                    active = homeViewModel.darkTheme,
-                    painter = painterResource(id = R.drawable.moon),
-                    activeColor = Color.Green,
-                    text = if (homeViewModel.darkTheme) "白天" else "夜间",
-                    modifier = Modifier.size(30.dp),
-                    onClick = { homeViewModel.darkTheme = !homeViewModel.darkTheme },
-                )
+//                AppBarButton(
+//                    active = homeViewModel.darkTheme,
+//                    painter = painterResource(id = R.drawable.moon),
+//                    activeColor = Color.Green,
+//                    text = if (homeViewModel.darkTheme) "白天" else "夜间",
+//                    modifier = Modifier.size(30.dp),
+//                    onClick = { homeViewModel.darkTheme = !homeViewModel.darkTheme },
+//                )
             }
         }
     }
-    if (permissionViewModel.isCheck) {
-        CheckPermissionDialog(permissionViewModel)
+    WrapperUI {
+        if (permissionViewModel.isCheck) {
+            CheckPermissionDialog(permissionViewModel)
+        }
     }
 }
 
@@ -428,46 +378,46 @@ fun SettingDetail(userLoginModel: UserLoginModel,
                   configViewModel : ConfigViewModel,
                   mainController: NavHostController){
     TopAppBarBack(
-        mainController=mainController, title = {
-        Text(text = "设置")
-    }){
-        Column(modifier=Modifier.padding(10.dp),) {
+        mainController=mainController, title = { Text(text = "设置") }){
+        Column(modifier=Modifier.padding(10.dp) ) {
+            IconRowButton(Icons.Filled.Info, "关于我们", onClick = {
+                mainController.navigate(PageRouteConfig.SETTING_ABOUT)
+            },modifier=Modifier.fillMaxWidth())
             TextButton(onClick = {
                 userLoginModel.logout()
                 mainController.navigate(PageRouteConfig.USER_LOGIN)
-            },
+            }, shape = StyleCommon.IMAGE_BUTTON_SHAPE,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(colorResource(id = R.color.active_button))) {
-                Text(text = "退出登录", color = Color.White)
+                    .padding(bottom = 5.dp)
+                    .border(1.dp, colorResource(id = R.color.active_button))) {
+                Text(text = "退出登录", color = Color.Black)
             }
-        }
-        TextButton(onClick = {
-            mainController.navigate(PageRouteConfig.SETTING_ABOUT)
-        }) {
-            Text(text = "关于", color = Color.White)
         }
     }
 }
 @Composable
 fun About(configViewModel : ConfigViewModel, mainController : NavHostController){
-    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Image(
-            painterResource(id = R.drawable.login_log),
-            contentDescription = "登录跳转页面"
-        )
-        IconRowButton(imageVector = Icons.Outlined.Info, title = "当前版本", data = BuildConfig.VERSION_NAME)
-        IconRowButton(imageVector = Icons.Outlined.Info, title = "版本更新", data = if (configViewModel.getConfig(
-                ConfigKey.APP_VERSION, String::class.java) == BuildConfig.VERSION_NAME)  "已是最新版本" else  "需要更新")
-        IconRowButton(imageVector = Icons.Outlined.Home, title = "官网", onClick = {
-            mainController.navigate(
-                WEB_API_ROURE.WEB_ROUTE + "/${
-                    Uri.encode(
-                        configViewModel.getConfig(
-                            ConfigKey.HOME_URL, String::class.java)
-                    )
-                }"
+    TopAppBarBack(
+        mainController=mainController, title = { Text(text = "设置") }){
+        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Image(
+                painterResource(id = R.drawable.login_log),
+                contentDescription = "登录跳转页面"
             )
-        })
+            IconRowButton(imageVector = Icons.Outlined.Info, title = "当前版本", data = BuildConfig.VERSION_NAME)
+            IconRowButton(imageVector = Icons.Outlined.Info, title = "版本更新", data = if (configViewModel.getConfig(
+                    ConfigKey.APP_VERSION, String::class.java) == BuildConfig.VERSION_NAME)  "已是最新版本" else  "需要更新")
+            IconRowButton(imageVector = Icons.Outlined.Home, title = "官网", onClick = {
+                mainController.navigate(
+                    WEB_API_ROURE.WEB_ROUTE + "/${
+                        Uri.encode(
+                            configViewModel.getConfig(
+                                ConfigKey.HOME_URL, String::class.java)
+                        )
+                    }"
+                )
+            })
+        }
     }
 }

@@ -87,6 +87,9 @@ fun TopAppRow(onNavigation : () -> Unit , title: @Composable () -> Unit){
     }
 }
 
+/**
+ * 限定作用域
+ */
 @Composable
 fun WrapperUI(content: @Composable () -> Unit){
     content()

@@ -3,12 +3,17 @@ package com.items.bim.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -18,9 +23,12 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.List
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,25 +38,27 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.items.bim.R
 import com.items.bim.common.consts.StyleCommon
 import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.ui.FullScreenImage
 import com.items.bim.common.util.ShareUtil
 import com.items.bim.common.util.Utils
-import com.items.bim.dto.FileEntity
 import com.items.bim.viewmodel.ImageViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.launch
@@ -57,8 +67,7 @@ import java.io.File
 
 private val logger = KotlinLogging.logger {}
 
-@SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(ExperimentalFoundationApi::class)
+@SuppressLint("CoroutineCreationDuringComposition", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ImageDetail(
     imageViewModel: ImageViewModel,
@@ -72,46 +81,60 @@ fun ImageDetail(
     var visible by remember {
         mutableStateOf(true)
     }
+    // 定位
+    coroutineScope.launch {
+        pagerState.scrollToPage(imageViewModel.imageDetail.value.index)
+    }
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = SystemApp.snackBarHostState, modifier = Modifier.padding(0.dp))
         },
         topBar = {
-            AnimatedVisibility(visible = visible) {
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
                 ImageTopBar(imageViewModel.imageDetail.value.name, mainController)
             }
         },
         bottomBar = {
-            AnimatedVisibility(visible = visible) {
+            AnimatedVisibility(visible = visible,
+                enter = fadeIn(),
+                exit = fadeOut()) {
                 GetBottomBar(imageViewModel.imageDetail.value.filePath, onChange = {
                     // 这里是异步
                     imageViewModel.reloadPath(imageViewModel.groupPath)
                 })
             }
         },
-    ) { innerPadding ->
-        // 定位
-        coroutineScope.launch {
-            pagerState.scrollToPage(imageViewModel.imageDetail.value.index)
-        }
+        modifier= Modifier.fillMaxSize()
+    ) {  _ ->
         // 详情页面
         HorizontalPager(
             state = pagerState,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
+                .navigationBarsPadding()
+//                .padding(innerPadding)
         ) { it ->
-            Button(
-                onClick = {
-                    visible = !visible
-                },
-                shape = StyleCommon.ZERO_SHAPE,
-                colors = ButtonDefaults.buttonColors(Color.White),
-            ) {
-                FullScreenImage(
-                    fileEntity = images[it]
-                )
+            Column(
+                modifier= Modifier.fillMaxSize(),
+                verticalArrangement=Arrangement.SpaceEvenly,
+                horizontalAlignment=Alignment.CenterHorizontally,) {
+                Button(
+                    onClick = {
+                        visible = !visible
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = StyleCommon.ZERO_SHAPE,
+                    colors = ButtonDefaults.buttonColors(Color.White),
+                ) {
+                    FullScreenImage(
+                        fileEntity = images[it],
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
     }
@@ -125,6 +148,7 @@ fun GetBottomBar(filePath: String, onChange: () -> Unit) {
 //    var visible by remember {
 //        mutableStateOf(false)
 //    }
+    var selectedIndex by remember { mutableIntStateOf(-1) }
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.primary,
@@ -217,7 +241,7 @@ fun GetBottomBar(filePath: String, onChange: () -> Unit) {
                 }
             }
             IconButton(
-                onClick = { Utils.message(scope, message, SystemApp.snackBarHostState) },
+                onClick = {  selectedIndex = 0 },
                 modifier = buttonModifier
             ) {
                 Column(
@@ -231,39 +255,25 @@ fun GetBottomBar(filePath: String, onChange: () -> Unit) {
                     Text(text = "更多", fontSize = 12.sp)
                 }
             }
+            DropdownMenu(
+                expanded = selectedIndex == 0,
+                onDismissRequest = { selectedIndex = -1 }) {
+                DropdownMenuItem(text = {
+                    Text(text = "图片转化gif")
+                }, onClick = {
+                })
+                DropdownMenuItem(text = {
+                    Text(text = "文字识别")
+                }, onClick = {
+                    logger.info { "开始导入图片" }
+                    selectedIndex = 1
+                })
+                DropdownMenuItem(text = {
+                    Text(text = "查看文件hash值")
+                }, onClick = {
+                    selectedIndex = 2
+                })
+            }
         }
     }
-//    if (visible) {
-//        ModalBottomSheet(
-//            onDismissRequest = {
-//                visible = false
-//            },
-//            sheetState = sheetState
-//        ) {
-//            LazyVerticalGrid(
-//                columns = GridCells.Adaptive(minSize = 128.dp),
-//                modifier = Modifier
-//            ) {
-//                item(1) {
-//                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-//                        Image(
-//                            painter =
-//                            painterResource(id = R.drawable.test),
-//                            alignment = Alignment.Center,
-//                            contentScale = ContentScale.Crop,
-//                            contentDescription = null,
-//                            modifier = Modifier
-//                                .height(80.dp)
-//                                .padding(5.dp)
-//                        )
-//                        Text(
-//                            text = "微信",
-//                            color = Color.Black
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    }
 }
-

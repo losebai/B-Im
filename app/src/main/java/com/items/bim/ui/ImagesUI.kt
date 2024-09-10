@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.List
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -69,6 +71,7 @@ import coil.request.ImageRequest
 import com.items.bim.common.consts.StyleCommon
 import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.consts.SystemApp.snackBarHostState
+import com.items.bim.common.provider.BaseContentProvider
 import com.items.bim.common.ui.DialogImageAdd
 import com.items.bim.common.ui.FullScreenImage
 import com.items.bim.common.ui.ImageGroupButton
@@ -94,7 +97,7 @@ private val TEXT_ROW_MODIFIER = Modifier.fillMaxWidth(0.8f)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ImageTopBar(name: String, mainController: NavHostController) {
+fun ImageTopBar(name: String, mainController: NavHostController, actions: @Composable RowScope.() -> Unit = {}) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -119,14 +122,7 @@ fun ImageTopBar(name: String, mainController: NavHostController) {
                 )
             }
         },
-        actions = {
-            IconButton(onClick = { /* do something */ }) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = "Localized description"
-                )
-            }
-        },
+        actions = actions,
         scrollBehavior = scrollBehavior,
     )
 }
@@ -181,14 +177,38 @@ fun PhotoDataSet(
             imageViewModel.loadPath(path)
         }
     }
-    val images = imageViewModel.getImageList(path)
+    var images = imageViewModel.getImageList(path)
     logger.info { "PhotoDataSet重组了 $path" }
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackBarHostState, modifier = Modifier.padding(0.dp))
         },
         topBar = {
-            ImageTopBar(imageViewModel.groupName, mainController)
+            ImageTopBar(imageViewModel.groupName, mainController,
+                actions = {
+                    var expanded by remember { mutableStateOf(false) }
+                    IconButton(onClick = { expanded = true }) {
+                        Icon(
+                            modifier = Modifier.size(50.dp),
+                            imageVector = Icons.Outlined.Menu,
+                            contentDescription = "Localized description"
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }) {
+                        DropdownMenuItem(text = {
+                            Text(text = "刷新")
+                        }, onClick = {
+                            imageViewModel.reload()
+                            ThreadPoolManager.getInstance().addTask("image", "loadPath"){
+                                imageViewModel.getDay7Images(BaseContentProvider.context())
+                                imageViewModel.loadPath(path)
+                            }
+                            images = imageViewModel.getImageList(path)
+                        })
+                    }
+            })
         },
     ) { innerPadding ->
         PhotoDataSetBody(
@@ -248,7 +268,6 @@ fun ImageGroupList(
                     Text(text = "导入")
                 }, onClick = {
                     logger.info { "开始导入图片" }
-                    imageViewModel.reload()
                     selectedIndex = 1
                 })
                 DropdownMenuItem(text = {
@@ -363,6 +382,8 @@ fun ImportImages(
                             enabled = false
                             loading = true
                             ThreadPoolManager.getInstance().addTask("imageLoad") {
+                                imageViewModel.reload()
+                                imageViewModel.getDay7Images(BaseContentProvider.context())
                                 for ((i, path) in SystemApp.IMAGE_PATHS.withIndex()) {
                                     currentProgress =
                                         ((i + 1) / SystemApp.IMAGE_PATHS.size).toFloat()

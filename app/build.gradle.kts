@@ -24,8 +24,8 @@ android {
     compileSdk = configProperties.getProperty("compileSdkVersion").toInt()
     defaultConfig {
         applicationId = "com.items.bim"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = configProperties.getProperty("minSdkVersion").toInt()
+        targetSdk =  configProperties.getProperty("targetSdkVersion").toInt()
         versionCode = 1
         versionName = "0.1.4"
 
@@ -56,7 +56,7 @@ android {
         getByName("androidTest") {
             setRoot("src/androidTest")
             java.srcDirs("src/androidTest/java")
-            res.srcDirs("src/main/res") // res源路径
+//            res.srcDirs("src/main/res") // res源路径
         }
     }
 
@@ -138,8 +138,8 @@ android {
             dimension = "tier"
             manifestPlaceholders["app_channel_value"] = name
             manifestPlaceholders["app_name_value"] = "Android"
-            buildConfigField("String", "BASE_URL", "\"http://192.168.1.3:8050\"")
-            buildConfigField("String", "SOCKET_URL", "\"sd:tcp://192.168.1.3:8002\"")
+            buildConfigField("String", "BASE_URL", "\"http://192.168.110.150:8050\"")
+            buildConfigField("String", "SOCKET_URL", "\"sd:tcp://192.168.110.150:8002\"")
         }
         create("pro") {
             //应用包名添加后缀

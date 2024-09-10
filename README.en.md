@@ -26,7 +26,7 @@ data: room
 
 ### 联系人
 
-![img.png](img/img.png)
+![img.png](img/img_group.png)
 
 ### 游戏
 
