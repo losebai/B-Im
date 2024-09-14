@@ -2,12 +2,11 @@ package com.items.bim.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.util.Log
+import androidx.camera.core.impl.utils.ContextUtil.getApplicationContext
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +22,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.outlined.List
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -45,18 +43,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import coil.compose.rememberAsyncImagePainter
+import cn.hutool.crypto.digest.MD5
 import com.items.bim.R
 import com.items.bim.common.consts.StyleCommon
 import com.items.bim.common.consts.SystemApp
 import com.items.bim.common.ui.FullScreenImage
+import com.items.bim.common.util.FileUtil
 import com.items.bim.common.util.ShareUtil
 import com.items.bim.common.util.Utils
 import com.items.bim.viewmodel.ImageViewModel
@@ -99,17 +97,19 @@ fun ImageDetail(
             }
         },
         bottomBar = {
-            AnimatedVisibility(visible = visible,
+            AnimatedVisibility(
+                visible = visible,
                 enter = fadeIn(),
-                exit = fadeOut()) {
+                exit = fadeOut()
+            ) {
                 GetBottomBar(imageViewModel.imageDetail.value.filePath, onChange = {
                     // 这里是异步
                     imageViewModel.reloadPath(imageViewModel.groupPath)
                 })
             }
         },
-        modifier= Modifier.fillMaxSize()
-    ) {  _ ->
+        modifier = Modifier.fillMaxSize()
+    ) { _ ->
         // 详情页面
         HorizontalPager(
             state = pagerState,
@@ -119,9 +119,10 @@ fun ImageDetail(
 //                .padding(innerPadding)
         ) { it ->
             Column(
-                modifier= Modifier.fillMaxSize(),
-                verticalArrangement=Arrangement.SpaceEvenly,
-                horizontalAlignment=Alignment.CenterHorizontally,) {
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 Button(
                     onClick = {
                         visible = !visible
@@ -241,7 +242,7 @@ fun GetBottomBar(filePath: String, onChange: () -> Unit) {
                 }
             }
             IconButton(
-                onClick = {  selectedIndex = 0 },
+                onClick = { selectedIndex = 0 },
                 modifier = buttonModifier
             ) {
                 Column(
@@ -261,17 +262,35 @@ fun GetBottomBar(filePath: String, onChange: () -> Unit) {
                 DropdownMenuItem(text = {
                     Text(text = "图片转化gif")
                 }, onClick = {
+                    scope.launch{
+                        try {
+                            val file = File(filePath)
+                            val newFile = File(FileUtil.externalStorageDir, file.name + ".gif")
+                            FileUtil.saveToFile(newFile.toPath(), file.readBytes())
+                        }catch (e: Exception){
+                            Log.e("image", e.toString())
+                            e.printStackTrace()
+                        }
+                    }
                 })
                 DropdownMenuItem(text = {
                     Text(text = "文字识别")
                 }, onClick = {
                     logger.info { "开始导入图片" }
-                    selectedIndex = 1
                 })
                 DropdownMenuItem(text = {
-                    Text(text = "查看文件hash值")
+                    Text(text = "查看文件md5值")
                 }, onClick = {
-                    selectedIndex = 2
+                    scope.launch{
+                        val file = File(filePath)
+                        Utils.copyToClipboard(MD5.create().digestHex(file))
+                        SystemApp.snackBarHostState.showSnackbar(
+                            "复制到剪贴板",
+                            actionLabel = "关闭",
+                            // Defaults to SnackbarDuration.Short
+                            duration = SnackbarDuration.Short
+                        )
+                    }
                 })
             }
         }

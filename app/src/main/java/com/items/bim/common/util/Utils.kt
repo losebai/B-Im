@@ -1,12 +1,17 @@
 package com.items.bim.common.util
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.ContextWrapper
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.getSystemService
+import com.items.bim.common.provider.BaseContentProvider
 import com.items.bim.entity.AppUserEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -90,5 +95,23 @@ object Utils {
             stringBuilder.append("*")
         }
         return "${str.substring(0, s)}${stringBuilder}${str.substring(s+stringBuilder.length..e)}"
+    }
+
+
+    fun copyToClipboard(text: String) {
+        val clipboard = BaseContentProvider.context().getSystemService<ClipboardManager>() as ClipboardManager
+        val clip = ClipData.newPlainText("label", text)
+        clipboard.setPrimaryClip(clip)
+    }
+
+    fun pasteFromClipboard(): String? {
+        val clipboard = BaseContentProvider.context().getSystemService<ClipboardManager>() as ClipboardManager
+        return clipboard.primaryClip?.let { clip ->
+            if (clip.itemCount > 0) {
+                clip.getItemAt(0).coerceToText(BaseContentProvider.context()) as? String
+            } else {
+                null
+            }
+        }
     }
 }
