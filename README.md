@@ -100,13 +100,17 @@ data: room
 <img alt="img_png" height="400" src="img/gameTool.jpg" width="200"/>
 <img alt="img5_png" height="400" src="img/gameWiki.jpg" width="200"/>
 
-#### 抽卡分析
-<img alt="img5_png" height="400" src="img/game_raking.png" width="200"/>
-<img alt="img5_png" height="400" src="img/image_award.png" width="200"/>
 
-#### 抽卡模拟
-<img alt="img5_png" height="400" src="img/image_lottery.png" width="200"/>
-<img alt="img5_png" height="400" src="img/lottery_award.png" width="200"/>
+### 抽卡分析
+
+![抽卡分析](img/gameTool.jpg){: height="400" width="200"} 
+![抽卡分析](img/gameWiki.jpg){: height="400" width="200"}
+
+### 抽卡模拟
+
+![抽卡模拟](img/game_raking.png){: height="400" width="200"} 
+![抽卡模拟](img/image_award.png){: height="400" width="200"}
 
 ### 社区
-<img alt="img_png" height="400" src="img/dongtai.jpg" width="200"/>
+
+![社区](img/dongtai.jpg){: height="400" width="200"}
